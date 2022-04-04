@@ -28,10 +28,9 @@
         <p>It is a long established fact that a reader will be distracted the readable content of page when looking at it layout the point using lorem Ipsum is that it has a more-or-less normal distribution.</p>
       </div>
       <div class="about_btn">
-        <router-link to="/contact" class="group primary-btn opacity-100 transition-all" style="background-image:url(public/images/others/btn-bg.webp)">
-          {{btnName}}
-          <img src="public/images/icon/arrrow-icon.webp" alt="Arrow Icon" class="ml-3 w-5 h-5 group-hover:ml-4 transition-all">
-        </router-link>
+        <PrimaryButton
+            text = "Play Now"
+        />
       </div>
     </div>
   </div>
@@ -42,8 +41,11 @@
 import { defineComponent } from "vue";
 // import CoolLightBox from 'vue-cool-lightbox';
 // import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
+import PrimaryButton from '@/components/Button/PrimaryButton.vue';
+
 export default defineComponent({
   components: {
+    PrimaryButton
     // CoolLightBox
   },
   data(){

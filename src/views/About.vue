@@ -3,8 +3,6 @@
 
     <HeaderSection/>
 
-    <OffCanvasMobileMenu :class="{'show-mobile-menu' : navOpen}" @togglenav="navOpen = !navOpen" />
-
     <Breadcrumb :BreadcrumbTitle="BreadcrumbTitle" :BreadcrumbSubTitle="BreadcrumbSubTitle"/>
 
     <AboutUs/>
@@ -17,7 +15,7 @@
 
     <Testimonial/>
 
-    <ContactBanner :paddingTop="paddingTop"/>
+    <ContactBanner :paddingTop="'pt-32'"/>
 
     <Footer/>
 
@@ -28,7 +26,6 @@
 import { defineComponent } from "vue";
 
 import HeaderSection from '@/components/HeaderSection.vue';
-import OffCanvasMobileMenu from '@/components/Header/OffCanvasMobileMenu.vue';
 import LiveStream from '@/components/LiveStream.vue';
 import CounterUp from '@/components/CounterUp.vue';
 import Testimonial from '@/components/Testimonial.vue';
@@ -44,7 +41,6 @@ export default defineComponent({
 
   components: {
     HeaderSection,
-    OffCanvasMobileMenu,
     LiveStream,
     CounterUp,
     Testimonial,
@@ -57,10 +53,8 @@ export default defineComponent({
   },
   data() {
     return {
-      navOpen: false,
       BreadcrumbTitle: "About Us",
       BreadcrumbSubTitle: "About Us",
-      paddingTop: "pt-32"
     }
   },
 });

@@ -8,7 +8,9 @@
 
         <MainMenu/>
 
-        <SignupButton/>
+        <PrimaryButton
+            text = "Sign up"
+        />
 
       </div>
     </div>
@@ -21,13 +23,13 @@ import { defineComponent } from "vue";
 
 import HeaderLogo from '@/components/Header/HeaderLogo.vue';
 import MainMenu from '@/components/Header/MainMenu.vue';
-import SignupButton from '@/components/Button/SignupButton.vue';
+import PrimaryButton from '@/components/Button/PrimaryButton.vue';
 
 export default defineComponent({
   components: {
     HeaderLogo,
     MainMenu,
-    SignupButton
+    PrimaryButton
   },
 
   data() {
