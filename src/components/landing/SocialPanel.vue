@@ -3,7 +3,7 @@
         class="social-panel"
         height="400px"
         shadow="#000"
-        shadow-opacity="0.7"
+        shadow-opacity="0.95"
         centered
         fixed
         :backgroundImageCss="'http://placekitten.com/2000/1000'"
@@ -41,8 +41,6 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faFacebookF, faInstagram, faTiktok, faYoutube, faWhatsapp, faTelegram } from "@fortawesome/free-brands-svg-icons";
 
 library.add(faFacebookF, faInstagram, faTiktok, faYoutube, faWhatsapp, faTelegram)
-
-
 
 export default defineComponent({
     name: "SocialPanel",

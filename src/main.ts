@@ -19,5 +19,3 @@ const i18n = createI18n({
 })
 
 createApp(App).use(router).use(store, key).use(vuetify).use(i18n).mount("#app");
-
-

@@ -222,7 +222,7 @@
                                 <h4 class="font-600">{{ item.code }}</h4>
                                 <p>{{ translateDateTime(item.datetime) }}</p>
                                 <p>{{ item.total }}{{ item.currency }}</p>
-                                <font-awesome-icon class="px-3" :icon="['fas', 'arrow-right']"/>
+                                <font-awesome-icon class="px-3" :icon="['fas', 'arrow-right']" />
                             </div>
                         </v-card>
                     </v-defaults-provider>

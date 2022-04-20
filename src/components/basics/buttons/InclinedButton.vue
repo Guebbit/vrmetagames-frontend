@@ -62,6 +62,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+
 .inclined-button{
     margin: 0 12px 12px 12px;
     transform: perspective(10px) rotateX(2deg);

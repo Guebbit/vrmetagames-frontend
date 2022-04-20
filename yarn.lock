@@ -1335,11 +1335,6 @@
   "resolved" "https://registry.npmmirror.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.3.tgz"
   "version" "2.0.3"
 
-"@mdi/font@5.9.55":
-  "integrity" "sha512-jswRF6q3eq8NWpWiqct6q+6Fg/I7nUhrxYJfiEM8JJpap0wVJLQdbKtyS65GdlK7S7Ytnx3TTi/bmw+tBhkGmg=="
-  "resolved" "https://registry.npmmirror.com/@mdi/font/-/font-5.9.55.tgz"
-  "version" "5.9.55"
-
 "@node-ipc/js-queue@2.0.3":
   "integrity" "sha512-fL1wpr8hhD5gT2dA1qifeVaoDFlQR5es8tFuKqjHX+kdOtdNHnxkVZbtIrR2rxnMFvehkjaZRNV2H/gPXlb0hw=="
   "resolved" "https://registry.npmmirror.com/@node-ipc/js-queue/-/js-queue-2.0.3.tgz"
@@ -4878,10 +4873,10 @@
   dependencies:
     "lodash" "^4.17.21"
 
-"guebbit-scss-library@^1.0.4":
-  "integrity" "sha512-bEWjPP9LORAhSTq626Sy5V2L81NXxxfkRehxPOWFsPnDoZvNsChxzd4qaPjIWngSt00rKZsITabKvcW3A9SmIw=="
-  "resolved" "https://registry.npmjs.org/guebbit-scss-library/-/guebbit-scss-library-1.0.4.tgz"
-  "version" "1.0.4"
+"guebbit-scss-library@^1.0.8":
+  "integrity" "sha512-X8Jl+0Gja/fNlyTfpnkYfikkaHZVcUWG9cEr4cN9GAXa9uz2tcPHe8qKw9HqwKsi/oj2M0BFsIP7ZQqXjm1CaA=="
+  "resolved" "https://registry.npmjs.org/guebbit-scss-library/-/guebbit-scss-library-1.0.8.tgz"
+  "version" "1.0.8"
 
 "gzip-size@^6.0.0":
   "integrity" "sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q=="
@@ -8817,9 +8812,9 @@
     "hash-sum" "^2.0.0"
     "loader-utils" "^2.0.0"
 
-"vue-router@^4.0.3":
+"vue-router@^4.0.14":
   "integrity" "sha512-wAO6zF9zxA3u+7AkMPqw9LjoUCjSxfFvINQj3E/DceTt6uEz1XZLraDhdg2EYmvVwTBSGlLYsUw8bDmx0754Mw=="
-  "resolved" "https://registry.npmmirror.com/vue-router/-/vue-router-4.0.14.tgz"
+  "resolved" "https://registry.npmjs.org/vue-router/-/vue-router-4.0.14.tgz"
   "version" "4.0.14"
   dependencies:
     "@vue/devtools-api" "^6.0.0"

@@ -1,5 +1,4 @@
 // ---- CSS IMPORTS ----
-import "@mdi/font/css/materialdesignicons.css"; // TODO remove
 // Vuetify
 import "vuetify/styles";
 // Swiper

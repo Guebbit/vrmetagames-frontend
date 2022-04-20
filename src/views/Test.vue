@@ -335,7 +335,7 @@
                         :double="$vuetify.theme.themes.default.colors.primary"
                     >
                         Lorem Ipsum
-                        <v-icon right dark>mdi-arrow-right</v-icon>
+                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
                     </InclinedButton>
                 </template>
             </ActionPanel>
@@ -358,7 +358,7 @@
                     :double="$vuetify.theme.themes.default.colors.primary"
                 >
                     Lorem Ipsum
-                    <v-icon right dark>mdi-arrow-right</v-icon>
+                    <font-awesome-icon :icon="['fas', 'arrow-right']" />
                 </InclinedButton>
             </template>
         </ActionPanel>
@@ -388,7 +388,7 @@
                         :double="$vuetify.theme.themes.default.colors.primary"
                     >
                         Lorem Ipsum
-                        <v-icon right dark>mdi-arrow-right</v-icon>
+                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
                     </InclinedButton>
                 </template>
             </ActionPanel>
@@ -437,13 +437,13 @@
                 >
                     <template v-slot:actions>
                         <a href="#">
-                            <v-icon right dark>mdi-arrow-right</v-icon>
+                            <font-awesome-icon :icon="['fas', 'arrow-right']" />
                         </a>
                         <a href="#">
-                            <v-icon right dark>mdi-arrow-right</v-icon>
+                            <font-awesome-icon :icon="['fas', 'arrow-right']" />
                         </a>
                         <a href="#">
-                            <v-icon right dark>mdi-arrow-right</v-icon>
+                            <font-awesome-icon :icon="['fas', 'arrow-right']" />
                         </a>
                     </template>
                 </inspirationCard>
@@ -464,6 +464,12 @@ import TrapezoidTitle from "@/components/basics/typography/TrapezoidTitle.vue";
 import PricingCardSimple from "@/components/basics/cards/PricingCardSimple.vue";
 import PricingCardMaterialize from "@/components/basics/cards/PricingCardMaterialize.vue";
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+
+library.add(faArrowRight)
+
 export default defineComponent({
     name: "TestPage",
 
@@ -475,7 +481,8 @@ export default defineComponent({
         BookCard,
         ActionPanel,
         TrapezoidTitle,
-        InclinedButton
+        InclinedButton,
+        FontAwesomeIcon
     },
 
     data: () => {

@@ -9,7 +9,7 @@ const ProductDetails = () => import("@/views/Product/ProductDetails.vue");
 
 import Test from "@/views/Test.vue";
 
-const routes: Array<RouteRecordRaw> = [
+export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "Home",

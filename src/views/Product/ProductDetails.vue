@@ -16,14 +16,13 @@
                         @click="isSidebar = !isSidebar"
                     >
                         <v-icon dark>
-                            mdi-format-list-bulleted-square
+                            AAAA
                         </v-icon>
                     </v-btn>
                     </div>
                     <div class="box-container">
                        <div class="d-flex justify-space-between">
                            <div class="d-flex align-center mb-5">
-                                <img src="@/assets/images/icons/delivery-box.svg" alt="" />
                                 <h2 class="mb-0">Edit Products</h2>
                             </div>
                             <v-btn 

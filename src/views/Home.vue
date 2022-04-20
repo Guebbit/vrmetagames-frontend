@@ -16,7 +16,7 @@
                     cross
                 >
                     {{ $t('generic.play-now') }}
-                    <v-icon right dark>mdi-arrow-right</v-icon>
+                    <font-awesome-icon :icon="['fas', 'arrow-right']" />
                 </InclinedButton>
             </template>
             <template v-slot:backgroundImage>
@@ -61,7 +61,7 @@
                             :double="$vuetify.theme.themes.default.colors.primary"
                         >
                             Lorem Ipsum
-                            <v-icon right dark>mdi-arrow-right</v-icon>
+                            <font-awesome-icon :icon="['fas', 'arrow-right']" />
                         </InclinedButton>
                     </template>
                 </ActionPanel>
@@ -86,7 +86,7 @@
                                     :double="$vuetify.theme.themes.default.colors.primary"
                                 >
                                     Lorem Ipsum
-                                    <v-icon right dark>mdi-arrow-right</v-icon>
+                                    <font-awesome-icon :icon="['fas', 'arrow-right']" />
                                 </InclinedButton>
                             </template>
                         </Panel>
@@ -119,7 +119,7 @@
                                     :double="$vuetify.theme.themes.default.colors.secondary"
                                 >
                                     Lorem Ipsum
-                                    <v-icon right dark>mdi-arrow-right</v-icon>
+                                    <font-awesome-icon :icon="['fas', 'arrow-right']" />
                                 </InclinedButton>
                             </template>
                         </Panel>
@@ -152,7 +152,7 @@
                                     :double="$vuetify.theme.themes.default.colors.primary"
                                 >
                                     Lorem Ipsum
-                                    <v-icon right dark>mdi-arrow-right</v-icon>
+                                    <font-awesome-icon :icon="['fas', 'arrow-right']" />
                                 </InclinedButton>
                             </template>
                         </Panel>
@@ -185,7 +185,7 @@
                                     :double="$vuetify.theme.themes.default.colors.secondary"
                                 >
                                     Lorem Ipsum
-                                    <v-icon right dark>mdi-arrow-right</v-icon>
+                                    <font-awesome-icon :icon="['fas', 'arrow-right']" />
                                 </InclinedButton>
                             </template>
                         </Panel>
@@ -215,7 +215,7 @@
 
                         >
                             Lorem
-                            <v-icon right dark>mdi-arrow-right</v-icon>
+                            <font-awesome-icon :icon="['fas', 'arrow-right']" />
                         </v-btn>
                         <v-btn color="secondary"
                                class="mx-5"
@@ -224,7 +224,7 @@
 
                         >
                             Ipsum
-                            <v-icon right dark>mdi-arrow-right</v-icon>
+                            <font-awesome-icon :icon="['fas', 'arrow-right']" />
                         </v-btn>
                     </div>
                 </div>
@@ -287,7 +287,7 @@
                             :double="$vuetify.theme.themes.default.colors.primary"
                         >
                             Lorem Ipsum
-                            <v-icon right dark>mdi-arrow-right</v-icon>
+                            <font-awesome-icon :icon="['fas', 'arrow-right']" />
                         </InclinedButton>
                     </template>
                 </ActionPanel>
@@ -315,7 +315,7 @@
 
                         >
                             Lorem
-                            <v-icon right dark>mdi-arrow-right</v-icon>
+                            <font-awesome-icon :icon="['fas', 'arrow-right']" />
                         </v-btn>
                         <v-btn color="secondary"
                                class="mx-5"
@@ -324,7 +324,7 @@
 
                         >
                             Ipsum
-                            <v-icon right dark>mdi-arrow-right</v-icon>
+                            <font-awesome-icon :icon="['fas', 'arrow-right']" />
                         </v-btn>
                     </div>
                 </div>
@@ -393,6 +393,12 @@ import PricingCardSimple from "@/components/basics/cards/PricingCardSimple.vue";
 import SocialPanel from "@/components/landing/SocialPanel.vue";
 import Footer from "@/components/Footer.vue";
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+
+library.add(faArrowRight)
+
 export default defineComponent({
     name: "HomeView",
 
@@ -405,6 +411,7 @@ export default defineComponent({
         InclinedButton,
         CyberpunkButton,
         GameList,
+        FontAwesomeIcon
     },
 
     data: () => {

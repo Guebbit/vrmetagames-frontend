@@ -18,10 +18,17 @@
             <v-list-item
                 class="button-parallelogram"
                 min-height="60"
-                prepend-icon="mdi-view-dashboard"
-                title="Home"
                 to="/"
-            />
+            >
+                <v-list-item-avatar class="v-list-item-avatar--start">
+                    <v-avatar>
+                        <font-awesome-icon :icon="['fas', 'vr-cardboard']" />
+                    </v-avatar>
+                </v-list-item-avatar>
+                <v-list-item-title>
+                    Home
+                </v-list-item-title>
+            </v-list-item>
 
             <v-list-item
                 class="v-beta-fix button-parallelogram"
@@ -41,18 +48,32 @@
             <v-list-item
                 class="button-parallelogram"
                 min-height="60"
-                prepend-icon="mdi-forum"
-                title="About"
                 to="about"
-            />
+            >
+                <v-list-item-avatar class="v-list-item-avatar--start">
+                    <v-avatar>
+                        <font-awesome-icon :icon="['fas', 'vr-cardboard']" />
+                    </v-avatar>
+                </v-list-item-avatar>
+                <v-list-item-title>
+                    About
+                </v-list-item-title>
+            </v-list-item>
 
             <v-list-item
                 class="button-parallelogram hover-only"
                 min-height="60"
-                prepend-icon="mdi-view-dashboard"
-                title="Profile"
                 to="/profile"
-            />
+            >
+                <v-list-item-avatar class="v-list-item-avatar--start">
+                    <v-avatar>
+                        <font-awesome-icon :icon="['fas', 'vr-cardboard']" />
+                    </v-avatar>
+                </v-list-item-avatar>
+                <v-list-item-title>
+                    Profile
+                </v-list-item-title>
+            </v-list-item>
         </v-list>
 
 
@@ -99,10 +120,17 @@
         <v-list-item
             class="button-parallelogram hover-only"
             min-height="60"
-            prepend-icon="mdi-view-dashboard"
-            title="Home"
             to="/"
-        />
+        >
+            <v-list-item-avatar class="v-list-item-avatar--start">
+                <v-avatar>
+                    <font-awesome-icon :icon="['fas', 'vr-cardboard']" />
+                </v-avatar>
+            </v-list-item-avatar>
+            <v-list-item-title>
+                Home
+            </v-list-item-title>
+        </v-list-item>
 
         <v-list-item
             class="v-beta-fix button-parallelogram hover-only"
@@ -122,18 +150,31 @@
         <v-list-item
             class="button-parallelogram hover-only"
             min-height="60"
-            prepend-icon="mdi-forum"
-            title="About"
             to="about"
-        />
-
+        >
+            <v-list-item-avatar class="v-list-item-avatar--start">
+                <v-avatar>
+                    <font-awesome-icon :icon="['fas', 'vr-cardboard']" />
+                </v-avatar>
+            </v-list-item-avatar>
+            <v-list-item-title>
+                About
+            </v-list-item-title>
+        </v-list-item>
         <v-list-item
             class="button-parallelogram hover-only"
             min-height="60"
-            prepend-icon="mdi-view-dashboard"
-            title="Profile"
             to="/profile"
-        />
+        >
+            <v-list-item-avatar class="v-list-item-avatar--start">
+                <v-avatar>
+                    <font-awesome-icon :icon="['fas', 'vr-cardboard']" />
+                </v-avatar>
+            </v-list-item-avatar>
+            <v-list-item-title>
+                Profile
+            </v-list-item-title>
+        </v-list-item>
 
         <v-spacer></v-spacer>
 
