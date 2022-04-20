@@ -1,0 +1,76 @@
+$ButtonSocialIcon-width: 90px !default;
+$ButtonSocialIcon-mini-width: $ButtonSocialIcon-width*0.5 !default;
+$ButtonSocialIcon-color: #000000;
+$ButtonSocialIcon-hover-color: #FFFFFF;
+$ButtonSocialIcon-background: #000000;
+$ButtonSocialIcon-hover-background: $ButtonSocialIcon-background;
+
+.button-social-icon {
+    display: inline-block;
+    font-size: $ButtonSocialIcon-width;
+    width: 1em;
+    height: 1em;
+    color: $ButtonSocialIcon-color;
+    margin:10px;
+    position: relative;
+    overflow: hidden;
+    opacity: .99;
+    border-radius: 28%;
+    z-index: 1;
+    transition: all 0.35s cubic-bezier(0.31, -0.105, 0.43, 1.59);
+
+    &:before,
+    svg,
+    i {
+        position:absolute;
+        transition: all 0.35s cubic-bezier(0.31, -0.105, 0.43, 1.59);
+    }
+
+    &:before {
+        content: '';
+        z-index: -1;
+        background-color: $ButtonSocialIcon-background;
+        width: 120%;
+        height: 120%;
+        top: 90%;
+        left: -110%;
+        transform: rotate(45deg);
+    }
+    svg,
+    i {
+        font-size: 0.5em;
+        top:50%;
+        left:50%;
+        transform: translate(-50%,-50%),
+    }
+
+    &:focus,
+    &:hover{
+        color: $ButtonSocialIcon-hover-color;
+        &::before{
+            top: -10%;
+            left: -10%;
+            background: $ButtonSocialIcon-hover-background;
+        }
+    }
+
+    @media (max-width: 600px){
+        font-size: $ButtonSocialIcon-mini-width;
+        margin: 5px;
+        svg,
+        i {
+            font-size: 0.8em;
+        }
+    }
+
+    // ---------- VARIANTS ----------
+
+    &.mini{
+        font-size: $ButtonSocialIcon-mini-width;
+        margin: 5px;
+        svg,
+        i {
+            font-size: 0.8em;
+        }
+    }
+}

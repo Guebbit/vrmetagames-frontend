@@ -1,0 +1,55 @@
+@import 'src/assets/scss/_global.scss';
+// TODO TEMPORARY: hope that vuetify make this easily modifiable
+@import './theme/_elevation.scss';
+
+.border-primary{
+    border-color: rgb(var(--v-theme-primary)) !important;
+}
+.border-secondary{
+    border-color: rgb(var(--v-theme-secondary)) !important;
+}
+
+section.theme-section{
+    padding: 60px 0;
+}
+
+.theme-panel {
+    &.hero-panel {
+        .hero-panel-content {
+            & > * {
+                max-width: 800px;
+            }
+        }
+    }
+}
+
+.theme-page-title,
+.theme-section-title{
+    line-height: 1;
+    & + .theme-page-subtitle,
+    & + .theme-section-subtitle{
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.theme-section-subtitle,
+.theme-page-subtitle{
+    line-height: 1.5;
+}
+
+.theme-page-title{
+    font-size: 5rem;
+}
+
+.theme-section-title{
+    font-size: 4rem;
+}
+
+.theme-section-title{
+    font-size: 3rem;
+}
+
+.theme-page-subtitle{
+    font-size: 2rem;
+}

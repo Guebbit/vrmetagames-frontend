@@ -1,0 +1,80 @@
+// TODO
+
+.swiper{
+    &.slides-per-view-auto{
+        .swiper-slide{
+            width: auto;
+        }
+    }
+}
+
+
+/*
+$swiperjs-controls-color: $primary-color !default;
+
+// .swiper-wrapper e .swiper-slide necessitano di box-sizing: content-box;
+.swiper-slide{
+    & > *{
+        box-sizing: border-box;
+    }
+}
+
+// ------- PAGINATION BUTTONS -------
+.swiper-button-next,
+.swiper-button-prev{
+    background-image: none;
+    width: auto;
+    height: auto;
+    margin-top: auto;
+    font-size: 1em;
+    &:after{
+        @include builder_abscenter-xy;
+        font-size: 8em;
+        color: $swiperjs-controls-color;
+        //text-shadow: 0 0 5px rgba(lighten($swiperjs-controls-color,50%), 0.5);
+        @include builder_media("small") {
+            display: none;
+        }
+    }
+    &.swiper-button-disabled{
+        display: none;
+    }
+}
+.swiper-button-next{
+    right: 2em;
+    &:after{
+        content: "›";
+    }
+}
+.swiper-button-prev{
+    left: 2em;
+    &:after{
+        content: "‹";
+    }
+}
+// ------- PAGINATION PROGRESSBAR -------
+.swiper-pagination-progressbar{
+    background: rgba($swiperjs-controls-color,0.1);
+    .swiper-pagination-progressbar-fill{
+        background: $swiperjs-controls-color;
+    }
+}
+// ------- PAGINATION SCROLLBAR -------
+.swiper-scrollbar{
+    background: rgba($swiperjs-controls-color,0.1);
+    .swiper-scrollbar-drag{
+        background: rgba($swiperjs-controls-color,0.5);
+    }
+}
+// ------- PAGINATION BULLETS -------
+.swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    border-radius: 100%;
+    background: $swiperjs-controls-color;
+    opacity: 0.2;
+    &.swiper-pagination-bullet-active{
+        opacity: 1;
+    }
+}
+*/

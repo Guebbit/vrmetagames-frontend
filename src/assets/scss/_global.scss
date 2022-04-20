@@ -1,0 +1,14 @@
+@import 'node_modules/vuetify/lib/styles/settings/_variables.scss';
+@import './_variables.scss';
+
+@mixin media-desktop(){
+    @media #{map-get($display-breakpoints, 'lg-and-up')} {
+        @content
+    }
+}
+
+@mixin media-mobile(){
+    @media #{map-get($display-breakpoints, 'lg-and-down')} {
+        @content
+    }
+}

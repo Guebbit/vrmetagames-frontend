@@ -1,0 +1,35 @@
+// TODO OPTIMIZE
+@import "src/assets/scss/components/ButtonParallelogram";
+@import "src/assets/scss/components/TypographyPanel";
+@import "src/assets/scss/components/SwiperJSHelper";
+
+.hero-panel-content{
+    padding: 24px;
+}
+
+.button-parallelogram{
+    &.v-list-item{
+        padding-right: 1em;
+        &:after{
+            width: 87%;
+        }
+        &:hover .v-list-item__overlay,
+        &.v-list-item--active .v-list-item__overlay{
+            opacity: 0;
+        }
+
+        &.v-list-item--active{
+            &:not(.hover-only){
+                &:after{
+                    background: rgb(var(--v-theme-secondary));
+
+                }
+            }
+            &.hover-only{
+                &:after{
+                    border: 2px solid rgb(var(--v-theme-primary));
+                }
+            }
+        }
+    }
+}
