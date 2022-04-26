@@ -26,6 +26,10 @@ export interface gameMap{
     image: string
 }
 
+export interface stateMainMap {
+    businessHours :string[][]
+}
+
 export interface stateEcommerceMap {
     games: {
         [key :string]: gameMap
@@ -39,6 +43,12 @@ export interface stateUserMap {
     payments: {
         [key :string]: paymentMap
     }
+}
+
+export interface stateRootMap {
+    main: stateMainMap,
+    user: stateUserMap,
+    ecommerce: stateEcommerceMap
 }
 
 

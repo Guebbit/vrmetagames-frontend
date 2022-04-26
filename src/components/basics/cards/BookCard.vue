@@ -6,8 +6,8 @@
             'book-hoverable': hover,
          }"
          :style="{
-            '--book-card-height': trueHeight + 'px',
-            '--book-card-width': trueWidth + 'px',
+            '--book-card-height': height ? trueHeight + 'px' : null,
+            '--book-card-width': width ? trueWidth + 'px' : null,
             '--book-card-ratio': trueRatio * 100 + '%',
             '--book-card-color': color,
             '--book-card-rotation': rotation,
@@ -112,23 +112,33 @@ export default defineComponent({
 
     computed: {
         trueHeight(){
-            return (this.height ? this.height : this.width ? (this.width * (9/6)) : null);
+            return (
+                this.height ? this.height :
+                    this.width ? (
+                        this.width * this.trueRatio
+                    ) : null);
         },
         trueWidth(){
-            return (this.width ? this.width : this.height ? (this.height * (6/9)) : null);
+            return (
+                this.width ? this.width :
+                    this.height ? (
+                        this.height * this.trueRatio
+                    ) : null);
         },
-        trueRatio(){
+        trueRatio() :number {
             if(!this.ratio){
-                return 0;
+                return 1;
             }
             const ratio = this.ratio.split('/');
-            return (parseInt(ratio[1]) / parseInt(ratio[0])).toFixed(2);
+            return parseFloat((parseFloat(ratio[1]) / parseFloat(ratio[0])).toFixed(2));
         }
     }
 });
 </script>
 
 <style lang="scss">
+// TODO resolve or WARNING ratio & fixed height\width spine bug and image position bug
+
 .book-card {
     position: relative;
     margin: 0 auto;
@@ -258,7 +268,6 @@ export default defineComponent({
             z-index: 2;
             .book-cover-image {
                 position: absolute;
-                top: 0;
                 width: 100%;
                 height: 100%;
                 object-fit: cover;

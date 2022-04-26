@@ -1,7 +1,16 @@
 // TODO OPTIMIZE
-@import "src/assets/scss/components/ButtonParallelogram";
-@import "src/assets/scss/components/TypographyPanel";
-@import "src/assets/scss/components/SwiperJSHelper";
+@import 'main/global';
+@import "atoms/ButtonParallelogram";
+@import 'atoms/ButtonSocialIcon';
+@import 'atoms/SimpleList';
+@import 'atoms/HoverLineHighlight';
+@import 'atoms/StatusCircle';
+@import "molecules/TypographyPanel";
+@import "fixes/SwiperJSHelper";
+// TODO TEMPORARY: hope that vuetify make this easily modifiable
+@import "fixes/VuetifyBetaFixes";
+@import 'fixes/elevation';
+
 
 .hero-panel-content{
     padding: 24px;
@@ -30,6 +39,65 @@
                     border: 2px solid rgb(var(--v-theme-primary));
                 }
             }
+        }
+    }
+}
+
+
+.button-social-icon{
+    .icon{
+        &.facebook-color{
+            color: g-color-get('socials', 'facebook');
+            &:before{
+                background: g-color-get('socials', 'facebook');
+            }
+        }
+        &.instagram-color{
+            color: g-color-get('socials', 'instagram-fallback');
+            &:before{
+                background: g-color-get('socials', 'instagram');
+            }
+        }
+        &.tiktok-color{
+            color: g-color-get('socials', 'tiktok-fallback');
+            &:before{
+                background: g-color-get('socials', 'tiktok');
+            }
+        }
+        &.youtube-color{
+            color: g-color-get('socials', 'youtube');
+            &:before{
+                background: g-color-get('socials', 'youtube');
+            }
+        }
+        &.whatsapp-color{
+            color: g-color-get('socials', 'whatsapp');
+            &:before{
+                background: g-color-get('socials', 'whatsapp');
+            }
+        }
+        &.telegram-color{
+            color: g-color-get('socials', 'telegram');
+            &:before{
+                background: g-color-get('socials', 'telegram');
+            }
+        }
+        &.primary-color{
+            color: rgb(var(--v-theme-primary));
+            &:before{
+                background: rgb(var(--v-theme-primary));
+            }
+        }
+        &.secondary-color{
+            color: rgb(var(--v-theme-secondary));
+            &:before{
+                background: rgb(var(--v-theme-secondary));
+            }
+        }
+    }
+    &:hover{
+        .icon{
+            color: #FFFFFF !important;
         }
     }
 }

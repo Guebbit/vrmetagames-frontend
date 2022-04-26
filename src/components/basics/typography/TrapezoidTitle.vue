@@ -58,8 +58,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-// TOOD MARGINS
+// TODO MARGINS
 .trapezoid-title-wrapper{
+    overflow: hidden;
     padding: 12px 0 20px 0;
     &.double{
         padding: 24px 0 40px 0;

@@ -3,13 +3,107 @@
     <br /><br /><br />
 
     <section class="theme-section">
-        <NeonButton
-            :background="$vuetify.theme.themes.default.colors.primary"
-            :color="$vuetify.theme.themes.default.colors.secondary"
-            speed="1.5s"
-        >
-            Lorem Ipsum
-        </NeonButton>
+        <v-container>
+            <NeonButton
+                :background="$vuetify.theme.themes.default.colors.primary"
+                :color="$vuetify.theme.themes.default.colors.secondary"
+                speed="1.5s"
+            >
+                Lorem Ipsum
+            </NeonButton>
+        </v-container>
+    </section>
+
+    <section class="theme-section">
+        <v-container>
+            <ul class="simple-list">
+                <li class="hover-line-highlight">
+                    <a href="#">
+                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                        Lorem Ipsum
+                    </a>
+                </li>
+                <li class="hover-line-highlight active">
+                    <a href="#">
+                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                        Sit Amet
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="hover-line-highlight right-highlight">
+                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                        Dolor
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="hover-line-highlight bottom-highlight">
+                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                        Lorem Ipsum
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="hover-line-highlight bottom-highlight active">
+                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                        Sit Amet
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="hover-line-highlight top-highlight">
+                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                        Dolor
+                    </a>
+                </li>
+                <li>
+                    <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                    Consectetur adipiscing elit<br />Consectetur adipiscing elit
+                </li>
+                <li>
+                    <span class="icon">LOL</span>
+                    Tempor incididunt
+                </li>
+                <li>
+                    <span>
+                        <ul class="simple-list">
+                            <li>
+                                <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                                Consectetur adipiscing elit<br />Consectetur adipiscing elit
+                            </li>
+                            <li>
+                                <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                                Tempor incididunt
+                            </li>
+                        </ul>
+                    </span>
+                </li>
+            </ul>
+
+            <ul class="simple-list horizontal">
+                <li class="hover-line-highlight">
+                    <a href="#">
+                        horizonal (is link)
+                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                    </a>
+                </li>
+                <li class="hover-line-highlight">
+                    <a href="#">
+                        Consectetur adipiscing elit
+                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                    </a>
+                </li>
+                <li class="hover-line-highlight">
+                    <a href="#">
+                        Lorem Ipsum <br /> Lorem Ipsum
+                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                    </a>
+                </li>
+                <li class="hover-line-highlight">
+                    <a href="#">
+                        <span class="icon">LOL</span>
+                        Tempor incididunt
+                    </a>
+                </li>
+            </ul>
+        </v-container>
     </section>
 
     <section class="theme-section">
@@ -82,15 +176,10 @@
                     logo="https://placekitten.com/200/200"
                 />
             </v-col>
-            <v-col cols="12" md="4" lg="3"></v-col>
+        </v-row>
+        <v-row>
             <v-col cols="12" md="4" lg="3">
-                <BookCard
-                    height="600"
-                    image="https://placekitten.com/700/700"
-                    spine="https://placekitten.com/400/400"
-                />
-            </v-col>
-            <v-col cols="12" md="4" lg="3">
+                pure ratio 4.25/6.87
                 <BookCard
                     ratio="4.25/6.87"
                     image="https://placekitten.com/400/700"
@@ -98,10 +187,49 @@
                 />
             </v-col>
             <v-col cols="12" md="4" lg="3">
+                pure ratio 16/9
                 <BookCard
                     ratio="16/9"
                     image="https://placekitten.com/1600/900"
                     spine="https://placekitten.com/700/700"
+                />
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col cols="12" md="4" lg="3">
+                ratio 4.25/6.87 - width 200
+                <BookCard
+                    ratio="4.25/6.87"
+                    width="200"
+                    image="https://placekitten.com/700/700"
+                    spine="https://placekitten.com/400/400"
+                />
+            </v-col>
+            <v-col cols="12" md="4" lg="3">
+                ratio 4.25/6.87 - height 200
+                <BookCard
+                    ratio="4.25/6.87"
+                    height="200"
+                    image="https://placekitten.com/700/700"
+                    spine="https://placekitten.com/400/400"
+                />
+            </v-col>
+            <v-col cols="12" md="4" lg="3">
+                ratio 16/9 - height 200
+                <BookCard
+                    ratio="16/9"
+                    height="200"
+                    image="https://placekitten.com/700/700"
+                    spine="https://placekitten.com/400/400"
+                />
+            </v-col>
+            <v-col cols="12" md="4" lg="3">
+                ratio 16/9 - width 200
+                <BookCard
+                    ratio="16/9"
+                    width="200"
+                    image="https://placekitten.com/700/700"
+                    spine="https://placekitten.com/400/400"
                 />
             </v-col>
         </v-row>
@@ -152,20 +280,23 @@
                     variant="outlined"
                     elevation="24"
                 >
-                    <v-card-header>
-                        <div>
-                            <div class="text-overline mb-1">
-                                OVERLINE
-                            </div>
-                            <div class="text-h6 mb-1">
-                                Headline
-                            </div>
-                            <div class="text-caption">Greyhound divisely hello coldly fonwderfully</div>
-                        </div>
-                    </v-card-header>
+                    <v-card-title>
+                        TITLE
+                    </v-card-title>
+
+                    <v-card-subtitle>
+                        SUBTITLE
+                    </v-card-subtitle>
+
+                    <v-card-text>
+                        Greyhound divisely hello coldly fonwderfully
+                    </v-card-text>
 
                     <v-card-actions>
-                        <v-btn variant="outlined" class="border-primary">
+                        <v-btn variant="outlined"
+                               class="border-primary theme-elevation-primary"
+                               elevation="24"
+                        >
                             Button
                         </v-btn>
                     </v-card-actions>
@@ -190,7 +321,10 @@
                     </v-card-header>
 
                     <v-card-actions>
-                        <v-btn variant="outlined" class="border-secondary">
+                        <v-btn variant="outlined"
+                               class="border-secondary"
+                               elevation="12"
+                        >
                             Button
                         </v-btn>
                     </v-card-actions>
@@ -200,87 +334,6 @@
                 <v-card
                     class="border-primary"
                     variant="outlined"
-                    elevation="12"
-                >
-                    <v-card-header>
-                        <div>
-                            <div class="text-overline mb-1">
-                                OVERLINE
-                            </div>
-                            <div class="text-h6 mb-1">
-                                Headline
-                            </div>
-                            <div class="text-caption">Greyhound divisely hello coldly fonwderfully</div>
-                        </div>
-                    </v-card-header>
-
-                    <v-card-actions>
-                        <v-btn variant="outlined" class="border-secondary">
-                            Button
-                        </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-col>
-        </v-row>
-    </section>
-    <section class="theme-section">
-
-        <v-row>
-            <v-col cols="12" md="6" lg="4">
-                <v-card
-                    class="theme-elevation-primary border-primary"
-                    variant="outlined"
-                    elevation="24"
-                >
-                    <v-card-header>
-                        <div>
-                            <div class="text-overline mb-1">
-                                OVERLINE
-                            </div>
-                            <div class="text-h6 mb-1">
-                                Headline
-                            </div>
-                            <div class="text-caption">Greyhound divisely hello coldly fonwderfully</div>
-                        </div>
-                    </v-card-header>
-
-                    <v-card-actions>
-                        <v-btn variant="outlined" class="border-primary">
-                            Button
-                        </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-col>
-            <v-col cols="12" md="6" lg="4">
-                <v-card
-                    class="theme-elevation-secondary border-secondary"
-                    variant="outlined"
-                    elevation="12"
-                >
-                    <v-card-header>
-                        <div>
-                            <div class="text-overline mb-1">
-                                OVERLINE
-                            </div>
-                            <div class="text-h6 mb-1">
-                                Headline
-                            </div>
-                            <div class="text-caption">Greyhound divisely hello coldly fonwderfully</div>
-                        </div>
-                    </v-card-header>
-
-                    <v-card-actions>
-                        <v-btn variant="outlined" class="border-secondary">
-                            Button
-                        </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-col>
-            <v-col cols="12" md="6" lg="4">
-                <v-card
-                    class="border-primary"
-                    variant="outlined"
-                    elevation="12"
                 >
                     <v-card-header>
                         <div>

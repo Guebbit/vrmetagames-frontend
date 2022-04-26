@@ -1,6 +1,3 @@
-@import 'src/assets/scss/_global.scss';
-// TODO TEMPORARY: hope that vuetify make this easily modifiable
-@import './theme/_elevation.scss';
 
 .border-primary{
     border-color: rgb(var(--v-theme-primary)) !important;
@@ -28,8 +25,8 @@ section.theme-section{
     line-height: 1;
     & + .theme-page-subtitle,
     & + .theme-section-subtitle{
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
+        margin-top: 1.5em;
+        margin-bottom: 1.5em;
     }
 }
 
@@ -39,17 +36,29 @@ section.theme-section{
 }
 
 .theme-page-title{
-    font-size: 5rem;
-}
-
-.theme-section-title{
-    font-size: 4rem;
-}
-
-.theme-section-title{
-    font-size: 3rem;
+    font-size: 4em;
+    @include media-desktop() {
+        font-size: 3em;
+    }
 }
 
 .theme-page-subtitle{
-    font-size: 2rem;
+    font-size: 3em;
+    @include media-desktop() {
+        font-size: 2em;
+    }
+}
+
+.theme-section-title{
+    font-size: 3em;
+    @include media-desktop() {
+        font-size: 2em;
+    }
+}
+
+.theme-page-subtitle{
+    font-size: 2em;
+    @include media-desktop() {
+        font-size: 1.5em;
+    }
 }

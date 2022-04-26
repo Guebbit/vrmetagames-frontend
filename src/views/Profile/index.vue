@@ -3,9 +3,10 @@
         <Panel class="theme-panel"
                height="50vh"
                shadow="#000000"
-               shadow-opacity="0.7"
+               :shadow-opacity="0.7"
                centered
                strict
+               hero
         >
             <template v-slot:default>
                 <TrapezoidTitle
@@ -62,18 +63,18 @@
                     <v-col cols="12" lg="8"></v-col>
                     <v-col cols="12" md="6" offset-md="6" lg="4" offset-lg="8">
                         <v-toolbar>
-                            <v-btn icon>
+                            <v-btn icon :elevation="0">
                                 <font-awesome-icon :icon="['fas', 'pen']" />
                             </v-btn>
                             <v-spacer></v-spacer>
                             <!-- <v-divider vertical></v-divider> -->
-                            <v-btn icon>
+                            <v-btn icon :elevation="0">
                                 <font-awesome-icon :icon="['fas', 'user']" />
                             </v-btn>
-                            <v-btn icon>
+                            <v-btn icon :elevation="0">
                                 <font-awesome-icon :icon="['fas', 'cart-shopping']" />
                             </v-btn>
-                            <v-btn icon>
+                            <v-btn icon :elevation="0">
                                 <font-awesome-icon :icon="['fas', 'credit-card']" />
                             </v-btn>
                         </v-toolbar>
@@ -357,7 +358,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import 'src/assets/scss/_global.scss';
+@import 'src/assets/scss/main/global';
 
 #ProfilePage{
     .theme-page-title{

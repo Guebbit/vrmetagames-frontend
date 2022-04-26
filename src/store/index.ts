@@ -1,6 +1,14 @@
+// https://www.stephenli.ca/vuex-4-typescript-declarations-generator
+// https://gist.github.com/luna-koury/ad3e2a2a62533aa590784a0eff2bef17
+
 import { InjectionKey } from 'vue';
 import { createStore, Store, useStore as baseUseStore } from 'vuex';
-import { stateUserMap } from '@/interfaces';
+import { stateRootMap } from '@/interfaces';
+
+import mainState from "./main/state";
+import mainGetters from "./main/getters";
+import mainMutations from "./main/mutations";
+import mainActions from "./main/actions";
 
 import usersState from "./users/state";
 import usersGetters from "./users/getters";
@@ -12,12 +20,17 @@ import ecommerceGetters from "./ecommerce/getters";
 import ecommerceMutations from "./ecommerce/mutations";
 import ecommerceActions from "./ecommerce/actions";
 
+export const key: InjectionKey<Store<stateRootMap>> = Symbol()
 
-// define injection key
-export const key: InjectionKey<Store<stateUserMap>> = Symbol()
-
-export const store = createStore<stateUserMap>({
+export const store = createStore({
   modules: {
+    main: {
+      state: mainState,
+      getters: mainGetters,
+      mutations: mainMutations,
+      actions: mainActions,
+      namespaced: true
+    },
     users: {
       state: usersState,
       getters: usersGetters,

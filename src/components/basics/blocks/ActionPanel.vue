@@ -3,11 +3,6 @@
         class="action-panel"
         v-bind="$props"
         centered
-        :class="{
-            'column-mode': column,
-            'column-mode column-right': columnRight,
-            'column-mode column-left': columnLeft
-        }"
     >
         <template v-slot:backgroundShadow>
             <slot name="backgroundShadow"></slot>
@@ -56,12 +51,10 @@ export default defineComponent({
             required: false
         },
 
-        // MIN height
+        // MIN height (because strict: false)
         height: {
             type: String,
-            default: () => {
-                return "none";
-            }
+            required: false
         },
 
         // MODES
@@ -88,6 +81,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+$action-panel-mobile-threshold: 600px !default;
+
 .hero-panel.action-panel {
     padding: 24px 48px;
 
@@ -97,6 +92,11 @@ export default defineComponent({
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+
+            @media (max-width: $action-panel-mobile-threshold){
+                justify-content: center;
+            }
         }
     }
 
@@ -107,27 +107,24 @@ export default defineComponent({
 
     .panel-title {
         line-height: 1.4;
-        font-size: 3rem;
+        font-size: 3em;
         margin-bottom: 0;
         text-transform: uppercase;
         font-weight: 700;
+
+        @media (max-width: $action-panel-mobile-threshold){
+            font-size: 2em;
+        }
+    }
+
+    .panel-button{
+        margin: 1em;
     }
 
     &.shadow-active {
         .panel-title,
         .panel-text {
             text-shadow: 1px -1px 20px var(--hero-panel-shadow-color);
-        }
-    }
-
-    &.column-mode{
-        flex-direction: column;
-        justify-content: space-evenly;
-        &.column-right{
-            align-items: flex-end;
-        }
-        &.column-right{
-            align-items: flex-start;
         }
     }
 }

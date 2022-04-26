@@ -1,0 +1,58 @@
+$hover-line-highlight-color: rgba(255,255,255,0.7) !default;
+$hover-line-highlight-size: 3px;
+
+.hover-line-highlight{
+    position: relative;
+    &:after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: -0.5em;
+        height: 90%;
+        width: $hover-line-highlight-size;
+        background-color: $hover-line-highlight-color;
+        transform: translateY(-50%) scaleY(0);
+        transition: transform 0.2s;
+    }
+
+    &.right-highlight{
+        &:after {
+            left: auto;
+            right: -0.5em;
+        }
+    }
+
+    &.active,
+    &:hover {
+        &:after {
+            transform: translateY(-50%) scaleY(1);
+        }
+    }
+
+    &.top-highlight,
+    &.bottom-highlight{
+        &:after{
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 90%;
+            height: $hover-line-highlight-size;
+        }
+        &.active,
+        &:hover {
+            &:after {
+                transform: translateX(-50%) scaleX(1);
+            }
+        }
+    }
+    &.top-highlight{
+        &:after {
+            top: -0.5em;
+        }
+    }
+    &.bottom-highlight{
+        &:after {
+            bottom: -0.5em;
+            top: auto;
+        }
+    }
+}

@@ -22,6 +22,5 @@ export default defineComponent({
 <style lang="scss">
 @import 'src/assets/scss/main.scss';
 @import 'src/assets/scss/theme.scss';
-@import 'src/assets/scss/beta-fixes.scss';
 </style>
 

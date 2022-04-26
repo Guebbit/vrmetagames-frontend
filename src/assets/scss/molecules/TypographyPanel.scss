@@ -1,13 +1,18 @@
+$typography-panel-color: #000000 !default;
+$typography-size: 14px !default;
+
 .typography-panel{
     max-width: 1200px;
     margin: 0 auto;
+    font-size: $typography-size;
+
     .panel-category{
         position: relative;
         font-weight: 700;
         font-size: 1.5em;
         padding-left: 5em;
         margin-bottom: 0.2em;
-        color: rgb(var(--v-theme-secondary));
+        color: $typography-panel-color;
 
         &:after{
             content: '';
@@ -18,7 +23,7 @@
             width: 4em;
             height: 0.25em;
             border-radius: 12px;
-            background: rgb(var(--v-theme-secondary));
+            background: $typography-panel-color;
         }
     }
 
@@ -28,8 +33,8 @@
     }
     .panel-title{
         font-weight: 700;
-        font-size: 3em;
-
+        font-size: 2.5em;
+        line-height: 1.4;
     }
     .panel-text{
         font-size: 1.5em;

@@ -1,5 +1,5 @@
 <template>
-    <div class="pricing-card text-center me-4 text-primary">
+    <div class="pricing-card text-center">
         <div>
             <h3 class="card-title">{{ title }}</h3>
             <div class="card-price">

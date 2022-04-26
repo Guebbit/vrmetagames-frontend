@@ -22,6 +22,12 @@
                     rotation="2"
                     :image="item.image"
                     :spine="item.spine"
+                    @click="$router.push({
+                        name: 'GameTarget',
+                        params: {
+                            id: item.id
+                        }
+                    })"
                 />
                 <div v-if="controls"
                      class="card-actions"

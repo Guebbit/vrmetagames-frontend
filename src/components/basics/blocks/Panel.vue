@@ -3,18 +3,20 @@
         class="hero-panel"
         :class="{
             'shadow-active': shadow && shadow.length > 0,
+            'aspect-ratio-mode': ratio,
             'centered-mode': centered,
             'centered-top-mode': centeredTop,
             'centered-bottom-mode': centeredBottom
         }"
         :style="{
-            'height': !strict ? 'auto' : height,
-            'min-height': strict ? 'none' : height,
+            'height': !strict ? null : (height ? height : (hero ? '100vh' : null)),
+            'min-height': strict ? null : (height ? height : (hero ? '100vh' : null)),
             'background-image': 'url(\''+backgroundImageCss+'\')',
             'background-attachment': fixed ? 'fixed' : null,
             '--hero-panel-background-color': background,
             '--hero-panel-shadow-color': shadow,
-            '--hero-panel-shadow-opacity': shadowOpacity
+            '--hero-panel-shadow-opacity': shadowOpacity,
+            '--hero-panel-aspect-ratio': trueRatio * 100 + '%'
         }"
     >
         <slot name="backgroundShadow">
@@ -27,11 +29,7 @@
                  :src="backgroundImage"
             />
         </slot>
-        <div class="panel-content"
-             :style="{
-                'min-height': strict ? 'none' : height,
-            }"
-        >
+        <div class="panel-content">
             <div>
                 <slot />
             </div>
@@ -43,14 +41,12 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-    name: "GenericPanel",
+    name: "Panel",
 
     props: {
         height: {
             type: String,
-            default: () => {
-                return "100vh";
-            }
+            required: false
         },
 
         background: {
@@ -119,11 +115,67 @@ export default defineComponent({
                 return false;
             }
         },
+        // if height is not set, it's 100vh
+        hero: {
+            type: Boolean,
+            default: () => {
+                return false;
+            }
+        },
+        
+        
+        // BACKGROUND dimensions
+        ratio: {
+            type: String,
+            required: false
+        },
+        /*
+        backgroundHeight: {
+            type: Number,
+            required: false
+        },
+        backgroundWidth: {
+            type: Number,
+            required: false
+        },
+        */
+    },
+    
+    computed: {
+        /*
+        trueBackgroundHeight(){
+            return (
+                this.backgroundHeight ? this.backgroundHeight :
+                    this.backgroundWidth ? (
+                        this.backgroundWidth * (
+                            this.trueRatio > 0 ? this.trueRatio : 1
+                        )
+                    ) : null);
+        },
+        trueBackgroundWidth(){
+            return (
+                this.backgroundWidth ? this.backgroundWidth :
+                    this.backgroundHeight ? (
+                        this.backgroundHeight * (
+                            this.trueRatio > 0 ? this.trueRatio : 1
+                        )
+                    ) : null);
+        },
+        */
+        trueRatio() :number {
+            if(!this.ratio){
+                return 1;
+            }
+            const ratio = this.ratio.split('/');
+            return parseFloat((parseFloat(ratio[1]) / parseFloat(ratio[0])).toFixed(2));
+        }
     }
 });
 </script>
 
 <style lang="scss">
+// TODO REMOVE overflow: hidden FROM &.aspect-ratio-mode  (for future mid-section or overflowing content)
+$hero-panel-mobile-threshold: 600px !default;
 
 .hero-panel {
     position: relative;
@@ -138,6 +190,7 @@ export default defineComponent({
     .panel-content {
         position: relative;
         z-index: 1;
+        width: 100%;
         & > * {
             margin: 0 auto;
         }
@@ -155,14 +208,17 @@ export default defineComponent({
         object-fit: cover;
         -o-object-fit: cover;
 
-        // Youtube
+        // Iframe are very problematic (es: Youtube)
         iframe{
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 100vw;
+            width: 150vw;
             height: 100vh;
             transform: translate(-50%, -50%);
+            @media (min-width: $hero-panel-mobile-threshold){
+                width: 100vw;
+            }
         }
     }
 
@@ -189,56 +245,63 @@ export default defineComponent({
     &.centered-mode,
     &.centered-top-mode,
     &.centered-bottom-mode {
+        display: flex;
+        align-items: center;
         .panel-content {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100%;
         }
     }
     &.centered-top-mode {
+        align-items: flex-start;
         .panel-content {
             align-items: flex-start;
         }
     }
     &.centered-bottom-mode {
+        align-items: flex-end;
         .panel-content {
             align-items: flex-end;
         }
     }
+    
+    &.aspect-ratio-mode{
+        overflow: hidden;
+        .panel-background{
+            object-fit: initial;
+            height: 0;
+            padding-bottom: var(--hero-panel-aspect-ratio);
+            iframe{
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
 
-    // IFRAME MODES
-
+    // IFRAME MODES (youtube mostly)
+    // never cut out content
     &.contained-iframe{
         iframe{
             max-width: 100%;
             max-height: 100%;
         }
     }
+    // the VIDEO in the iframe is horizontal, ex: 16:9
     &.horizontal-iframe{
         iframe{
-            max-width: 100%;
-        }
-        // INVERT on mobile
-        &.mobile-invert{
-            @media (max-width: 600px){
-                iframe{
-                    max-width: none;
-                    max-height: 100%;
-                }
+            width: 200vw; // because mobile width is very low
+            @media (min-width: $hero-panel-mobile-threshold){
+                width: 100vw;
+                max-height: 100%;
             }
         }
     }
+    // the VIDEO in the iframe is vertical
     &.vertical-iframe{
         iframe{
-            max-height: 100%;
-        }
-        &.mobile-invert {
-            @media (max-width: 600px) {
-                iframe {
-                    max-width: 100%;
-                    max-height: none;
-                }
+            @media (min-width: $hero-panel-mobile-threshold){
+                max-width: 120%;
             }
         }
     }

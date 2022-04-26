@@ -8832,7 +8832,7 @@
   "resolved" "https://registry.npmmirror.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz"
   "version" "1.9.1"
 
-"vue@^2 || ^3.2.13", "vue@^3.0.0", "vue@^3.0.0-0", "vue@^3.0.1", "vue@^3.0.2", "vue@^3.2.0", "vue@^3.2.13", "vue@^3.2.19", "vue@^3.2.25", "vue@>= 3.0.0 < 4", "vue@3.2.31":
+"vue@^2 || ^3.2.13", "vue@^3.0.0", "vue@^3.0.0-0", "vue@^3.0.1", "vue@^3.0.2", "vue@^3.2.0", "vue@^3.2.13", "vue@^3.2.25", "vue@^3.2.31", "vue@>= 3.0.0 < 4", "vue@3.2.31":
   "integrity" "sha512-odT3W2tcffTiQCy57nOT93INw1auq5lYLLYtWpPYQQYQOOdHiqFct9Xhna6GJ+pJQaF67yZABraH47oywkJgFw=="
   "resolved" "https://registry.npmmirror.com/vue/-/vue-3.2.31.tgz"
   "version" "3.2.31"
@@ -8857,10 +8857,10 @@
     "querystring" "^0.2.1"
     "upath" "^2.0.1"
 
-"vuetify@^3.0.0-alpha.11", "vuetify@^3.0.0-beta.0":
-  "integrity" "sha512-/xDoSTs1l/s9jkFwQ5uK9ok9py0TsImRENA7DrAJnsgx5cwH9yEvS3XJOUOsH3ra+VYt5xZP7Pfh8/HtBQaAlw=="
-  "resolved" "https://registry.npmmirror.com/vuetify/-/vuetify-3.0.0-beta.0.tgz"
-  "version" "3.0.0-beta.0"
+"vuetify@^3.0.0-alpha.11", "vuetify@^3.0.0-beta.1":
+  "integrity" "sha512-698CB/Xlvxku2Tm4AsFrmQ7LzMXOjleX7A5tbyQTnhPyt0NI1OTkf5zJUoXL3TNi2TN7DglN+adI6AE69e6CeQ=="
+  "resolved" "https://registry.npmjs.org/vuetify/-/vuetify-3.0.0-beta.1.tgz"
+  "version" "3.0.0-beta.1"
 
 "vuex@^4.0.0":
   "integrity" "sha512-M6r8uxELjZIK8kTKDGgZTYX/ahzblnzC4isU1tpmEuOIIKmV+TRdc+H4s8ds2NuZ7wpUTdGRzJRtoj+lI+pc0Q=="

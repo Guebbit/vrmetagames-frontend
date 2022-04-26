@@ -10,9 +10,11 @@ import { createVuetify } from "vuetify";
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
+  /*
   icons: {
     iconfont: 'mdi', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
   },
+  */
   theme: {
     defaultTheme: "default",
     themes: {
@@ -40,6 +42,7 @@ export default createVuetify({
         variables: {}, // BUGFIX: ADD AN EMPTY OBJECT
       },
     },
+    /*
     display: {
       mobileBreakpoint: "md",
       thresholds: {
@@ -50,5 +53,6 @@ export default createVuetify({
         xl: 1280,
       },
     },
+    */
   },
 });
