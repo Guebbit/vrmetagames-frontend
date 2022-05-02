@@ -1,6 +1,6 @@
 @import 'variables';
 @import '../../../../node_modules/vuetify/lib/styles/settings/variables';
-@import 'guebbit-scss-library';
+@import 'guebbit-scss-library/global';
 
 @mixin media-desktop(){
     @media #{map-get($display-breakpoints, 'lg-and-up')} {
@@ -9,7 +9,7 @@
 }
 
 @mixin media-mobile(){
-    @media #{map-get($display-breakpoints, 'lg-and-down')} {
+    @media #{map-get($display-breakpoints, 'md-and-down')} {
         @content
     }
 }

@@ -11,6 +11,7 @@
                 '--inclined-button-background-double': double
            }"
            :size="size"
+           :to="to"
            elevation="4"
            outlined
            raised
@@ -24,6 +25,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import type { PropType } from "vue";
+import { RouteLocationRaw } from "vue-router";
 
 export default defineComponent({
     name: "InclinedButton",
@@ -34,6 +37,10 @@ export default defineComponent({
             default: () => {
                 return "primary";
             }
+        },
+        to: {
+            type: Object as PropType<RouteLocationRaw>,
+            required: false
         },
         size: {
             type: String,

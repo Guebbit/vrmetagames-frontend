@@ -16,6 +16,101 @@
 
     <section class="theme-section">
         <v-container>
+            <TrapezoidTitle
+                class="theme-section-title text-center"
+                element="h2"
+                :color="$vuetify.theme.themes.default.colors.primary"
+                :double="$vuetify.theme.themes.default.colors.secondary"
+                outline
+                big
+                cross
+            >
+                Postazioni
+            </TrapezoidTitle>
+
+            <SlideOpenTripleCard
+                :image="'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png'"
+                :background-left="'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-controller-1.png'"
+                :background-right="'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-controller-2.png'"
+            >
+                <template v-slot:left>
+                    <h1>LOREM IPSUM</h1>
+                    <h1>LOREM IPSUM</h1>
+                    <h1>LOREM IPSUM</h1>
+                    <h1>LOREM IPSUM</h1>
+                    <h1>LOREM IPSUM</h1>
+                    <h1>LOREM IPSUM</h1>
+                </template>
+                <template v-slot:right>
+                    <h1>LOREM IPSUM</h1>
+                    <h1>LOREM IPSUM</h1>
+                    <h1>LOREM IPSUM</h1>
+                    <h1>LOREM IPSUM</h1>
+                </template>
+            </SlideOpenTripleCard>
+
+            <v-row
+                align="center"
+                justify="center"
+            >
+                <v-col cols="12" md="5" lg="4" xl="3">
+                    <ImageHoverCard
+                        :image="'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png'"
+                    >
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                    </ImageHoverCard>
+                </v-col>
+                <v-col cols="12" md="5" lg="4" xl="3">
+                    <ImageHoverCard
+                        :image="'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-controller-1.png'"
+                    >
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                    </ImageHoverCard>
+                </v-col>
+                <v-col cols="12" md="5" lg="4" xl="3">
+                    <ImageHoverCard
+                        :image="'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-controller-2.png'"
+                    >
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                        <h1>LOREM IPSUM</h1>
+                    </ImageHoverCard>
+                </v-col>
+            </v-row>
+            <div class="d-flex justify-center mt-10">
+                <CyberpunkButton
+                    :background="$vuetify.theme.themes.default.colors.primary"
+                    :border="$vuetify.theme.themes.default.colors.secondary"
+                    text="Details"
+                    @click="$router.push({ path: '/games' })"
+                >
+                    More
+                </CyberpunkButton>
+            </div>
+        </v-container>
+    </section>
+
+    <section class="theme-section">
+        <v-container>
             <ul class="simple-list">
                 <li class="hover-line-highlight">
                     <a href="#">
@@ -247,7 +342,7 @@
             Lorem Ipsum
         </TrapezoidTitle>
         <TrapezoidTitle
-            class="theme-page-title text-center"
+            class="theme-section-title text-center"
             :color="$vuetify.theme.themes.default.colors.primary"
             outline
             big
@@ -255,16 +350,14 @@
             Lorem Ipsum
         </TrapezoidTitle>
         <TrapezoidTitle
-            class="theme-page-title text-center"
-            :double="$vuetify.theme.themes.default.colors.secondary"
-            big
+            class="theme-section-title text-center"
+            :color="$vuetify.theme.themes.default.colors.secondary"
         >
             Lorem Ipsum
         </TrapezoidTitle>
         <TrapezoidTitle
-            class="theme-page-title text-center"
+            class="theme-section-title text-center"
             :double="$vuetify.theme.themes.default.colors.secondary"
-            big
             outline
         >
             Lorem Ipsum
@@ -509,8 +602,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import InspirationCard from "@/components/basics/cards/InspirationCard.vue";
-import BookCard from "@/components/basics/cards/BookCard.vue";
-import ActionPanel from "@/components/basics/blocks/ActionPanel.vue";
+import BookCard from "guebbit-vue-library/src/components/cards/BookCard.vue";
+import ActionPanel from "guebbit-vue-library/src/components/blocks/ActionPanel.vue";
 import InclinedButton from "@/components/basics/buttons/InclinedButton.vue";
 import NeonButton from "@/components/basics/buttons/NeonButton.vue";
 import TrapezoidTitle from "@/components/basics/typography/TrapezoidTitle.vue";
@@ -520,6 +613,8 @@ import PricingCardMaterialize from "@/components/basics/cards/PricingCardMateria
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import SlideOpenTripleCard from "@/components/basics/cards/SlideOpenTripleCard.vue";
+import ImageHoverCard from "@/components/basics/cards/ImageHoverCard.vue";
 
 library.add(faArrowRight)
 
@@ -527,6 +622,8 @@ export default defineComponent({
     name: "TestPage",
 
     components: {
+        ImageHoverCard,
+        SlideOpenTripleCard,
         PricingCardMaterialize,
         PricingCardSimple,
         NeonButton,

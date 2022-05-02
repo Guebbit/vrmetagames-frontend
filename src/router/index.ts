@@ -2,13 +2,16 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 import Home from "@/views/Home.vue";
 const About = () => import("@/views/About.vue");
-const ProfileIndex = () => import("@/views/Profile/index.vue");
+const Play = () => import("@/views/Play.vue");
+const ProfileRegistration = () => import("@/views/User/Registration.vue");
+const ProfilePage = () => import("@/views/User/Profile.vue");
 const ProductIndex = () => import("@/views/Product/index.vue");
 const ProductDetails = () => import("@/views/Product/ProductDetails.vue");
 
 
 import Test from "@/views/Test.vue";
 
+// TODO 404, 500, etc
 export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -29,10 +32,18 @@ export const routes: Array<RouteRecordRaw> = [
     // component: () => import(/* webpackChunkName: "about" */ "../views/About.vue"),
     component: About,
   },
+
+  // ------------ GAMES ------------
+
   {
-    path: "/profile",
-    name: "Profile",
-    component: ProfileIndex,
+    path: "/play",
+    name: "Play",
+    component: Play,
+  },
+  {
+    path: "/stations",
+    name: "Stations",
+    component: ProductIndex,
   },
   {
     path: "/games",
@@ -44,6 +55,25 @@ export const routes: Array<RouteRecordRaw> = [
     name: "GameTarget",
     component: ProductDetails,
     props: true
+  },
+
+  // ------------ USER ------------
+
+  /* TODO redirect a Home ma con "open login modal"
+  {
+    path: "/login",
+    name: "Login",
+  },
+  */
+  {
+    path: "/registration",
+    name: "Registration",
+    component: ProfileRegistration,
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: ProfilePage,
   },
 ];
 

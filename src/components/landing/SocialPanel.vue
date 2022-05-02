@@ -64,7 +64,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Panel from "@/components/basics/blocks/Panel.vue";
+import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

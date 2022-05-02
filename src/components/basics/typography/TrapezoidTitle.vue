@@ -60,7 +60,7 @@ export default defineComponent({
 <style lang="scss">
 // TODO MARGINS
 .trapezoid-title-wrapper{
-    overflow: hidden;
+    // overflow: hidden;
     padding: 12px 0 20px 0;
     &.double{
         padding: 24px 0 40px 0;
@@ -69,11 +69,12 @@ export default defineComponent({
 .trapezoid-title {
     position: relative;
     z-index: 1;
+
     &:after{
         content: '';
         position: absolute;
-        top: 5%;
-        left: 0;
+        top: 10%;
+        left: 5%;
         width: 90%;
         height: 80%;
         border-radius: 4px;
@@ -83,6 +84,7 @@ export default defineComponent({
         transition: transform 0.28s, background 0.28s;
         opacity: 0.5;
     }
+    &.active,
     &:hover{
         &:after{
             background: rgb(var(--v-theme-secondary));
@@ -92,14 +94,14 @@ export default defineComponent({
 
     &.big{
         &:after {
-            top: -10%;
+            top: -5%;
             left: -20%;
             width: 140%;
             height: 110%;
         }
         &.big:not(.cross){
             &:before{
-                top: -27%;
+                top: -20%;
                 left: -30%;
                 width: 160%;
                 height: 140%;
@@ -111,8 +113,8 @@ export default defineComponent({
         &:before{
             content: '';
             position: absolute;
-            top: -10%;
-            left: -15%;
+            top: -5%;
+            left: -10%;
             width: 120%;
             height: 110%;
             border-radius: 4px;
@@ -122,6 +124,7 @@ export default defineComponent({
             transition: transform 0.28s, background 0.28s;
             opacity: 0.5;
         }
+        &.active,
         &:hover{
             &:before{
                 background: rgb(var(--v-theme-primary));
@@ -130,11 +133,12 @@ export default defineComponent({
         }
         &.cross{
             &:before{
-                top: 5%;
-                left: 0;
+                top: 10%;
+                left: 5%;
                 width: 90%;
                 height: 80%;
             }
+            &.active,
             &:hover{
                 &:before{
                     transform: perspective(10px) rotateX(1deg);
@@ -143,7 +147,7 @@ export default defineComponent({
         }
         &.big{
             &:before{
-                top: -10%;
+                top: -5%;
                 left: -20%;
                 width: 140%;
                 height: 110%;
@@ -157,6 +161,7 @@ export default defineComponent({
             background: inherit;
             opacity: 1;
         }
+        &.active,
         &:hover{
             &:before,
             &:after{
@@ -166,6 +171,7 @@ export default defineComponent({
         &:after{
             border: 0.1em solid rgb(var(--v-theme-primary));
         }
+        &.active,
         &:hover{
             &:after{
                 border: 0.1em solid rgb(var(--v-theme-secondary));
@@ -174,6 +180,7 @@ export default defineComponent({
         &:before{
             border: 0.1em solid rgb(var(--v-theme-secondary));
         }
+        &.active,
         &:hover{
             &:before{
                 border: 0.1em solid rgb(var(--v-theme-primary));

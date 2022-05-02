@@ -1,4 +1,7 @@
 export default {
+    modals: {
+        login: false
+    },
     businessHours: [
         [],
         ['9.00', '22.30'],

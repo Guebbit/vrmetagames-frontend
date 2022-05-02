@@ -1,6 +1,6 @@
 <template>
     <div class="theme-page">
-        <h1>ABOUT</h1>
+        <h1>STATIONS</h1>
     </div>
 </template>
 
@@ -8,7 +8,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-    name: "AboutPage"
+    name: "StationPage"
 });
 </script>
 

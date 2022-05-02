@@ -1,18 +1,20 @@
 <template>
-    <h1>PRODUCT LIST</h1>
-    <section class="theme-section">
-        <v-container>
-            <GameList
-                :list="games"
-                :controls="true"
-            />
-        </v-container>
-    </section>
-    <section class="theme-section">
-        DESKTOP MENU A LATO, MOBILE A SCOMPARSA (O IN ALTO)
-        <br>
-        tabs / filtri per tipologia e sotto MASONRY (o normale lista)
-    </section>
+    <div id="product-list-page" class="theme-page">
+        <h1>PRODUCT LIST</h1>
+        <section class="theme-section">
+            <v-container>
+                <GameList
+                    :list="games"
+                    :controls="true"
+                />
+            </v-container>
+        </section>
+        <section class="theme-section">
+            DESKTOP MENU A LATO, MOBILE A SCOMPARSA (O IN ALTO)
+            <br>
+            tabs / filtri per tipologia e sotto MASONRY (o normale lista)
+        </section>
+    </div>
 </template>
 
 <script lang="ts">

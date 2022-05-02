@@ -1,5 +1,5 @@
 <template>
-    <div id="ProfilePage">
+    <div id="ProfilePage" class="theme-page">
         <Panel class="theme-panel"
                height="50vh"
                shadow="#000000"
@@ -86,7 +86,7 @@
                                 <div class="d-flex justify-space-between align-center flex-wrap">
                                     <div class="d-flex align-center">
                                         <v-avatar size="64" class="me-4">
-                                            <v-img src="http://placekitten.com/100/100" />
+                                            <v-img :src="user.avatar" />
                                         </v-avatar>
                                         <div>
                                             <h4 class="font-600">{{ form.username }}</h4>
@@ -209,7 +209,8 @@
                 </v-col>
                 <v-col cols="12" sm="9" md="9" lg="10">
                     <v-defaults-provider :defaults="defaultsPaymentHistory">
-                        <v-card v-for="item in payments" :key="'payment-history-' + item.id"
+                        <v-card v-for="item in payments"
+                                :key="'payment-history-' + item.id"
                                 class="waiting-class-default-provider-2"
                                 to="/order-details"
                         >
@@ -221,7 +222,7 @@
                                     :color="paymentTypeColor(item.type)"
                                 />
                                 <h4 class="font-600">{{ item.code }}</h4>
-                                <p>{{ translateDateTime(item.datetime) }}</p>
+                                <p>{{ translateDateTime(item.time) }}</p>
                                 <p>{{ item.total }}{{ item.currency }}</p>
                                 <font-awesome-icon class="px-3" :icon="['fas', 'arrow-right']" />
                             </div>
@@ -234,11 +235,13 @@
 </template>
 
 <script lang="ts">
+// TODO mixin tipo ACcenture
+// https://vuejs.org/guide/reusability/composables.html#what-is-a-composable
 import { defineComponent } from "vue";
 import { mapState } from "vuex";
-import Panel from "@/components/basics/blocks/Panel.vue";
+import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
 import TrapezoidTitle from "@/components/basics/typography/TrapezoidTitle.vue";
-import CreditCard from "@/components/basics/cards/CreditCard.vue";
+import CreditCard from "guebbit-vue-library/src/components/cards/CreditCard.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -258,12 +261,12 @@ export default defineComponent({
     data: () => {
         return {
             form: {
-                name: 'Tonio Cartonio',
-                username: 'UsernameTonio',
-                email: 'tonio.cartonio@gmail.com',
-                phone: '+39 123 4567',
-                birthdate: 1649620712000,
-                description: 'lorem ipsum blablabla cose a caso'
+                name: '',
+                username: '',
+                email: '',
+                phone: '',
+                birthdate: 0,
+                description: ''
             },
             formRules: {
                 required: (value :string) => !!value || 'Required.',
@@ -307,7 +310,9 @@ export default defineComponent({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             paymentMethods: ({ users: {paymentMethods} } :any) => Object.values(paymentMethods),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            payments: ({ users: {payments} } :any) => Object.values(payments)
+            payments: ({ users: {payments} } :any) => Object.values(payments),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            user: ({ users: { currentUserInfo } }: any) => currentUserInfo,
         }),
 
         birthdateTranslated() {
@@ -353,6 +358,9 @@ export default defineComponent({
             // @ts-ignore
             return this.$vuetify.theme.themes.default.colors.primary;
         }
+    },
+    mounted(){
+        this.form = this.user;
     }
 });
 </script>
@@ -361,13 +369,6 @@ export default defineComponent({
 @import 'src/assets/scss/main/global';
 
 #ProfilePage{
-    .theme-page-title{
-        font-size: 3rem;
-        @include media-desktop(){
-            font-size: 6rem;
-        }
-    }
-
     .theme-panel{
         .v-toolbar{
             &__content{

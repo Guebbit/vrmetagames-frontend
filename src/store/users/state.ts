@@ -1,4 +1,13 @@
 export default {
+    currentUserInfo: {
+        avatar: "https://randomuser.me/api/portraits/women/85.jpg",
+        name: "Tonio Cartonio",
+        username: "UsernameTonio",
+        email: "tonio.cartonio@gmail.com",
+        phone: "+39 123 4567",
+        birthdate: 1649620712000,
+        description: "lorem ipsum blablabla cose a caso"
+    },
     paymentMethods:{
         paypal1: {
             id: "paypal1",
@@ -22,23 +31,24 @@ export default {
         item1: {
             id: 'item-1',
             type: '',
-            datetime: 1649620712000,
+            code: 'XXXXXXXXX',
+            time: 1649620712000,
             total: 50,
             currency: '€'
         },
         item2: {
             id: 'item-2',
             type: 'paypal',
-            code: '6456754965',
-            datetime: 1649620712000,
+            code: '645675496',
+            time: 1649620712000,
             total: 50,
             currency: '€'
         },
         item3: {
             id: 'item-3',
             type: 'credit-card',
-            code: '435634GG',
-            datetime: 1649620712000,
+            code: '645674965',
+            time: 1649620712000,
             total: 50,
             currency: '€'
         },
@@ -46,14 +56,15 @@ export default {
             id: 'item-4',
             type: 'credit-card',
             code: '1050017AS',
-            datetime: 1649620712000,
+            time: 1649620712000,
             total: 50,
             currency: '€'
         },
         item5: {
             id: 'item-5',
             type: '',
-            datetime: 1649620712000,
+            code: 'XXXXXXXXX',
+            time: 1649620712000,
             total: 50,
             currency: '€'
         },
@@ -61,7 +72,7 @@ export default {
             id: 'item-6',
             type: 'paypal',
             code: '345364853',
-            datetime: 1649620712000,
+            time: 1649620712000,
             total: 50,
             currency: '€'
         }

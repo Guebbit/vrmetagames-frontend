@@ -1,6 +1,6 @@
 {
   "name": "vrmetagames",
-  "version": "0.1.0",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "serve": "vite preview",
@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "core-js": "^3.8.3",
-    "guebbit-javascript-library": "^2.2.5",
-    "guebbit-scss-library": "^1.0.8",
+    "dayjs": "^1.11.1",
+    "guebbit-javascript-library": "^2.2.7",
+    "guebbit-scss-library": "^1.1.0",
+    "guebbit-vue-library": "^1.0.8",
     "roboto-fontface": "*",
     "swiper": "^8.1.1",
     "vue": "^3.2.13",

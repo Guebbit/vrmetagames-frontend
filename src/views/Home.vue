@@ -16,6 +16,7 @@
                         :background="$vuetify.theme.themes.default.colors.primary"
                         :double="$vuetify.theme.themes.default.colors.secondary"
                         cross
+                        :to="{ path: '/play' }"
                     >
                         {{ $t('generic.play-now') }}
                         <font-awesome-icon :icon="['fas', 'arrow-right']" />
@@ -81,7 +82,7 @@
                                 </video>
                             </template>
                             <template v-slot:default>
-                                <h2 class="theme-page-subtitle">FIRST LOREM IPSUM</h2>
+                                <h3 class="theme-page-subtitle">FIRST LOREM IPSUM</h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
                                     size="x-large"
@@ -113,7 +114,7 @@
                                 </div>
                             </template>
                             <template v-slot:default>
-                                <h2 class="theme-page-subtitle">SECOND LOREM IPSUM</h2>
+                                <h3 class="theme-page-subtitle">SECOND LOREM IPSUM</h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
                                     size="x-large"
@@ -145,7 +146,7 @@
                                 </div>
                             </template>
                             <template v-slot:default>
-                                <h2 class="theme-page-subtitle">THIRD LOREM IPSUM</h2>
+                                <h3 class="theme-page-subtitle">THIRD LOREM IPSUM</h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
                                     size="x-large"
@@ -177,7 +178,7 @@
                                 </div>
                             </template>
                             <template v-slot:default>
-                                <h2 class="theme-page-subtitle">FOURTH LOREM IPSUM</h2>
+                                <h3 class="theme-page-subtitle">FOURTH LOREM IPSUM</h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
                                     size="x-large"
@@ -230,24 +231,68 @@
 
         <section class="theme-section">
             <v-container>
+                <TrapezoidTitle
+                    class="theme-section-title text-center"
+                    element="h2"
+                    :color="$vuetify.theme.themes.default.colors.primary"
+                    :double="$vuetify.theme.themes.default.colors.secondary"
+                    outline
+                    big
+                    cross
+                >
+                    Postazioni
+                </TrapezoidTitle>
+                    <StationList />
+                <v-lazy
+                    v-model="lazyStationList"
+                    :options="{
+                        threshold: .5
+                    }"
+                    transition="fade-transition"
+                >
+
+                </v-lazy>
+                <div class="d-flex justify-center mt-10">
+                    <CyberpunkButton
+                        :background="$vuetify.theme.themes.default.colors.primary"
+                        :border="$vuetify.theme.themes.default.colors.secondary"
+                        text="Now"
+                        @click="$router.push({ path: '/play' })"
+                    >
+                        Play
+                    </CyberpunkButton>
+                </div>
+            </v-container>
+        </section>
+
+        <section class="theme-section">
+            <v-container>
+                <TrapezoidTitle
+                    class="theme-section-title text-center"
+                    element="h2"
+                    :color="$vuetify.theme.themes.default.colors.primary"
+                    :double="$vuetify.theme.themes.default.colors.secondary"
+                    outline
+                    big
+                    cross
+                >
+                    Game list
+                </TrapezoidTitle>
                 <v-lazy
                     v-model="lazyGameList"
                     :options="{
                         threshold: .5
                     }"
-                    min-height="200"
                     transition="fade-transition"
                 >
-                    <GameList
-                        :list="games"
-                    />
+                    <GameList />
                 </v-lazy>
                 <div class="d-flex justify-center mt-10">
                     <CyberpunkButton
-                       :background="$vuetify.theme.themes.default.colors.primary"
-                       :border="$vuetify.theme.themes.default.colors.secondary"
-                       text="Games"
-                       @click="$router.push({ path: '/games' })"
+                        :background="$vuetify.theme.themes.default.colors.primary"
+                        :border="$vuetify.theme.themes.default.colors.secondary"
+                        text="Games"
+                        @click="$router.push({ path: '/games' })"
                     >
                         More
                     </CyberpunkButton>
@@ -407,21 +452,24 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { scripts } from 'guebbit-javascript-library';
 
 // Components
-import Panel from "@/components/basics/blocks/Panel.vue";
+import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
 import InclinedButton from "@/components/basics/buttons/InclinedButton.vue";
 import CyberpunkButton from "@/components/basics/buttons/CyberpunkButton.vue";
-import ActionPanel from "@/components/basics/blocks/ActionPanel.vue";
+import ActionPanel from "guebbit-vue-library/src/components/blocks/ActionPanel.vue";
+import TrapezoidTitle from "@/components/basics/typography/TrapezoidTitle.vue";
 import GameList from "@/components/landing/GameList.vue";
-import { mapState } from "vuex";
 import PricingCardVuetify from "@/components/basics/cards/PricingCardVuetify.vue";
 import SocialPanel from "@/components/landing/SocialPanel.vue";
-import Footer from "@/components/Footer.vue";
+import Footer from "@/components/generic/Footer.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import StationList from "@/components/landing/StationList.vue";
+
 
 library.add(faArrowRight)
 
@@ -429,6 +477,8 @@ export default defineComponent({
     name: "HomeView",
 
     components: {
+        StationList,
+        TrapezoidTitle,
         Footer,
         SocialPanel,
         PricingCardVuetify,
@@ -442,15 +492,14 @@ export default defineComponent({
 
     data: () => {
         return {
-            lazyGameList: false
+            lazyGameList: false,
+            lazyStationList: false
         }
     },
 
-    computed: {
-        ...mapState({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            games: ({ ecommerce: { games } }: any) => Object.values(games),
-        }),
+    mounted(){
+        scripts.lazyload();
+        scripts.activator();
     }
 });
 </script>

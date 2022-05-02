@@ -127,7 +127,7 @@
               Tempor incididunt
             </li>
             <li>
-              <span>
+              <div>
                 <ul class="simple-list">
                   <li class="hover-line-highlight">
                     <font-awesome-icon :icon="['fas', 'arrow-right']" />
@@ -138,7 +138,7 @@
                     Tempor incididunt
                   </li>
                 </ul>
-              </span>
+              </div>
             </li>
           </ul>
         </v-col>
@@ -216,16 +216,16 @@ export default defineComponent({
 
 <style lang="scss">
 @use "sass:math";
-@import 'src/assets/scss/main/global';
+@import '../../assets/scss/main/global';
 
 $event-footer-padding: 24px !default;
 $event-footer-background: rgba(#000000,0.8) !default;
 $event-footer-primary: #ffffff !default;
 $event-footer-secondary: $event-footer-primary !default;
 $event-footer-text: $event-footer-primary !default;
-$event-footer-mobile-threshold: 600px !default;
 $event-footer-title-line-width: 30px !default;
 $event-footer-title-line-height: 4px !default;
+$event-footer-mobile-threshold: 600px !default;
 
 #temporary-logotype{
     max-width: 300px;
@@ -323,20 +323,5 @@ $event-footer-title-line-height: 4px !default;
         }
     }
     */
-
-    .status-circle{
-        &.online{
-            background-color: #00c853;
-            &:before{
-                background-color: #00c853;
-            }
-        }
-        &.offline{
-            background-color: #F44336;
-            &:before{
-                background-color: #F44336;
-            }
-        }
-    }
 }
 </style>

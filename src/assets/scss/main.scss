@@ -1,11 +1,11 @@
 // TODO OPTIMIZE
 @import 'main/global';
 @import "atoms/ButtonParallelogram";
-@import 'atoms/ButtonSocialIcon';
-@import 'atoms/SimpleList';
-@import 'atoms/HoverLineHighlight';
-@import 'atoms/StatusCircle';
-@import "molecules/TypographyPanel";
+@import 'guebbit-scss-library/components/atoms/ButtonSocialIcon';
+@import 'guebbit-scss-library/components/atoms/SimpleList';
+@import 'guebbit-scss-library/components/atoms/HoverLineHighlight';
+@import 'guebbit-scss-library/components/atoms/StatusCircle';
+@import "guebbit-scss-library/components/molecules/TypographyPanel";
 @import "fixes/SwiperJSHelper";
 // TODO TEMPORARY: hope that vuetify make this easily modifiable
 @import "fixes/VuetifyBetaFixes";
@@ -98,6 +98,21 @@
     &:hover{
         .icon{
             color: #FFFFFF !important;
+        }
+    }
+}
+
+.status-circle{
+    &.online{
+        background-color: #00c853;
+        &:before{
+            background-color: #00c853;
+        }
+    }
+    &.offline{
+        background-color: #F44336;
+        &:before{
+            background-color: #F44336;
         }
     }
 }

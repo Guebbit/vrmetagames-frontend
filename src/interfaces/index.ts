@@ -14,7 +14,7 @@ export interface paymentMap {
     id: string
     type: string
     code: string
-    datetime: number
+    time: number
     total: number
     currency: string
 }
@@ -27,6 +27,7 @@ export interface gameMap{
 }
 
 export interface stateMainMap {
+    modals :Record<string,boolean>
     businessHours :string[][]
 }
 
@@ -37,6 +38,15 @@ export interface stateEcommerceMap {
 }
 
 export interface stateUserMap {
+    currentUserInfo: {
+        avatar: string
+        name: string
+        username: string
+        email: string
+        phone: string
+        birthdate: number
+        description: string
+    },
     paymentMethods: {
         [key :string]: paymentMethodMap
     }

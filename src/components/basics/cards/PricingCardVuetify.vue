@@ -90,7 +90,6 @@ export default defineComponent({
 // TODO colori personalizzabili
 
 .pricing-card-vuetify {
-
     .card-content{
         background: rgba(var(--v-theme-background), 0.5);
         display: flex;

@@ -12,6 +12,9 @@
 </template>
 
 <script lang="ts">
+// TODO trasformare in una classe?
+// TODO https://codepen.io/leandroruel/pen/XWbpbmR
+// TODO https://dev.to/leandroruel/how-to-make-a-cyberpunk-2077-button-with-css-c9m
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -41,24 +44,27 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.cyberpunk-button,
-.cyberpunk-button:after{
-    width:380px;
-    height:86px;
-    font-size:36px;
+$cyberpunk-button-text: #FFFFFF;
+
+%cyberpunk-button{
+    position:relative;
+    min-width: 300px;
+    display: block;
     background:linear-gradient(45deg, transparent 5%, var(--cyberpunk-button-background) 5%);
     border:0;
-    color:#ffffff;
+    color: $cyberpunk-button-text;
+    font-size: 30px;
     letter-spacing:3px;
-    line-height:88px;
-    box-shadow:6px 0px 0px var(--cyberpunk-button-border);
+    line-height:2.5;
+    box-shadow:6px 0 0 var(--cyberpunk-button-border);
     outline:transparent;
-    position:relative;
     text-transform: uppercase;
 }
 
 .cyberpunk-button{
+    @extend %cyberpunk-button;
     &:after{
+        @extend %cyberpunk-button;
         --cyberpunk-button-slice-0:inset(50% 50% 50% 50%);
         --cyberpunk-button-slice-1:inset(80% -6px 0 0);
         --cyberpunk-button-slice-2:inset(50% -6px 30% 0);
@@ -66,16 +72,16 @@ export default defineComponent({
         --cyberpunk-button-slice-4:inset(40% -6px 43% 0);
         --cyberpunk-button-slice-5:inset(80% -6px 5% 0);
         content: attr(data-cyberpunk-text);
-        display:block;
         position:absolute;
         top:0;
         left:0;
         right:0;
         bottom:0;
         background:linear-gradient(45deg,transparent 3%, var(--cyberpunk-button-border) 3%, var(--cyberpunk-button-border) 5%, var(--cyberpunk-button-background) 5%);
-        text-shadow:-3px -3px 0px #F8F005,3px 3px 0px var(--cyberpunk-button-border);
+        text-shadow:-3px -3px 0px var(--cyberpunk-button-border),3px 3px 0px var(--cyberpunk-button-border);
         clip-path:var(--cyberpunk-button-slice-0);
     }
+
     &.active,
     &:hover{
         &:after{
