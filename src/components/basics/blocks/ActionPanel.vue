@@ -4,13 +4,13 @@
         v-bind="$props"
         centered
     >
-        <template v-slot:backgroundShadow>
+        <template #backgroundShadow>
             <slot name="backgroundShadow"></slot>
         </template>
-        <template v-slot:backgroundImage>
+        <template #backgroundImage>
             <slot name="backgroundImage"></slot>
         </template>
-        <template v-slot:default>
+        <template #default>
             <slot>
                 <h3 class="panel-title" v-html="title"></h3>
                 <p class="panel-text" v-html="text"></p>

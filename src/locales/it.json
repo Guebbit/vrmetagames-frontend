@@ -31,6 +31,15 @@
       "Venerdì",
       "Sabato"
     ],
+    "days-cut": [
+      "Dom",
+      "Lun",
+      "Mar",
+      "Mer",
+      "Gio",
+      "Ven",
+      "Sab"
+    ],
     "months": [
       "Gennaio",
       "Febbraio",
@@ -44,6 +53,20 @@
       "Ottobre",
       "Novembre",
       "Dicembre"
+    ],
+    "months-cut": [
+      "Gen",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Mag",
+      "Giu",
+      "Lug",
+      "Ago",
+      "Set",
+      "Ott",
+      "Nov",
+      "Dic"
     ]
   }
 }

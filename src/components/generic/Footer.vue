@@ -56,12 +56,12 @@
               {{ $t("generic.opening-hours") }}
             </h4>
             <small>
-              ( {{ open ? "APERTO" : "CHIUSO" }} )
+              ( {{ isOpen ? "APERTO" : "CHIUSO" }} )
               <span
                 class="status-circle"
                 :class="{
-                  online: open,
-                  offline: !open,
+                  online: isOpen,
+                  offline: !isOpen,
                 }"
               />
             </small>

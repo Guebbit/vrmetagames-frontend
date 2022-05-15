@@ -1045,6 +1045,55 @@
   "resolved" "https://registry.npmjs.org/@fortawesome/vue-fontawesome/-/vue-fontawesome-3.0.0-5.tgz"
   "version" "3.0.0-5"
 
+"@fullcalendar/common@~5.11.0":
+  "integrity" "sha512-gWjbMAnN1u73Oqlgjbyky7i+3bY0hvFSnGT0YBPx44n874AkQa9e9OU12PMLTMOPy0tXPb8DEwRelFQ7CJNbcw=="
+  "resolved" "https://registry.npmjs.org/@fullcalendar/common/-/common-5.11.0.tgz"
+  "version" "5.11.0"
+  dependencies:
+    "tslib" "^2.1.0"
+
+"@fullcalendar/core@^5.11.0", "@fullcalendar/core@~5.11.0":
+  "integrity" "sha512-cF/d9LuJb/6xw14ms0urv1H4BiA70c4jrufe/EuVzLR6qTDpK92IZ3JK7GVtZtzptfTYZ/NQgDV9YCzIaO9Blw=="
+  "resolved" "https://registry.npmjs.org/@fullcalendar/core/-/core-5.11.0.tgz"
+  "version" "5.11.0"
+  dependencies:
+    "@fullcalendar/common" "~5.11.0"
+    "preact" "^10.0.5"
+    "tslib" "^2.1.0"
+
+"@fullcalendar/daygrid@^5.11.0", "@fullcalendar/daygrid@~5.11.0":
+  "integrity" "sha512-Ybh/dfHn/VL0qOVIRVyJc9I8oYiqqHl6xQONk8xXCe456QbPzAQLsAxpLLJLH+3smWNCfoQgvDKzR9e9XTzLMQ=="
+  "resolved" "https://registry.npmjs.org/@fullcalendar/daygrid/-/daygrid-5.11.0.tgz"
+  "version" "5.11.0"
+  dependencies:
+    "@fullcalendar/common" "~5.11.0"
+    "tslib" "^2.1.0"
+
+"@fullcalendar/interaction@^5.11.0":
+  "integrity" "sha512-9XTI5+ydqrSX+IL3iWgKBURXfnPewn57Tmsv9mJZhiqrUEF7/+qtftLoKEAc8ZdWk/+01aBe67PFL16uPXj2Jg=="
+  "resolved" "https://registry.npmjs.org/@fullcalendar/interaction/-/interaction-5.11.0.tgz"
+  "version" "5.11.0"
+  dependencies:
+    "@fullcalendar/common" "~5.11.0"
+    "tslib" "^2.1.0"
+
+"@fullcalendar/timegrid@^5.11.0":
+  "integrity" "sha512-GNy+/PwAj510PS4Fu18Mf/CytNBVftFU7M8XwsUXOCJ6ouyroHZje0a7k5cH/nE5IQ6NJZfH2eAPBlxGath1MQ=="
+  "resolved" "https://registry.npmjs.org/@fullcalendar/timegrid/-/timegrid-5.11.0.tgz"
+  "version" "5.11.0"
+  dependencies:
+    "@fullcalendar/common" "~5.11.0"
+    "@fullcalendar/daygrid" "~5.11.0"
+    "tslib" "^2.1.0"
+
+"@fullcalendar/vue3@^5.11.0":
+  "integrity" "sha512-vqRJRItEdIdtO+6B3/jNppF9dU1zkZVuEL+YiXmuqH3bwqrOH0xK5ALm7YfPJvZJq9TnrVI2HPaVl9D49Mxr7g=="
+  "resolved" "https://registry.npmjs.org/@fullcalendar/vue3/-/vue3-5.11.0.tgz"
+  "version" "5.11.0"
+  dependencies:
+    "@fullcalendar/core" "~5.11.0"
+    "tslib" "^2.1.0"
+
 "@hapi/hoek@^9.0.0":
   "integrity" "sha512-gfta+H8aziZsm8pZa0vj04KO6biEiisppNgA1kbJvFrrWu9Vm7eaUEy76DIxsuTaWvti5fkJVhllWc6ZTE+Mdw=="
   "resolved" "https://registry.npmmirror.com/@hapi/hoek/-/hoek-9.2.1.tgz"
@@ -1577,6 +1626,11 @@
   "integrity" "sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ=="
   "resolved" "https://registry.npmmirror.com/@types/json-schema/-/json-schema-7.0.11.tgz"
   "version" "7.0.11"
+
+"@types/lodash@^4.14.182":
+  "integrity" "sha512-/THyiqyQAP9AfARo4pF+aCGcyiQ94tX/Is2I7HofNRqoYLgN1PBoOWu2/zTA5zMxzP5EFutMtWtGAFRKUe961Q=="
+  "resolved" "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.182.tgz"
+  "version" "4.14.182"
 
 "@types/mime@^1":
   "integrity" "sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw=="
@@ -4866,17 +4920,17 @@
   "resolved" "https://registry.npmmirror.com/graceful-fs/-/graceful-fs-4.2.10.tgz"
   "version" "4.2.10"
 
-"guebbit-javascript-library@^2.2.7":
-  "integrity" "sha512-Iw0rf/SrCgP8PnpY+esDWD0kvhPbslGhO3r7SMO042wAZRIU8kpsk+Dv6cx/D1OGsQ7ACoT5r9wI8DmY1F+1FA=="
-  "resolved" "https://registry.npmjs.org/guebbit-javascript-library/-/guebbit-javascript-library-2.2.7.tgz"
-  "version" "2.2.7"
+"guebbit-javascript-library@^2.2.8":
+  "integrity" "sha512-NYneeoVcgyS3b6bfCYF3lUYgrrnZ0G3714EP4lFDdgIcuASmYa/2wGIvE6AURvLennKPCmNUe5p6n1ACXy7TjQ=="
+  "resolved" "https://registry.npmjs.org/guebbit-javascript-library/-/guebbit-javascript-library-2.2.8.tgz"
+  "version" "2.2.8"
   dependencies:
     "lodash" "^4.17.21"
 
-"guebbit-scss-library@^1.1.0":
-  "integrity" "sha512-Ci20cCIxD+u1162JrN/C3dvch1HZz7XyYh6QCtt3RUP1mVv+xxX9tvGT78c/9Vksvv88eoJCeGfEKYAO2SOHRA=="
-  "resolved" "https://registry.npmjs.org/guebbit-scss-library/-/guebbit-scss-library-1.1.0.tgz"
-  "version" "1.1.0"
+"guebbit-scss-library@^1.1.1":
+  "integrity" "sha512-0mByFSlZYCCazdJ+YUn4kSUCrISw3lqOnIUMvm7U6fBUnxbh5qTFhV6pwERzs8x4skVjZ7Dxf/mtt5gBWaJZFw=="
+  "resolved" "https://registry.npmjs.org/guebbit-scss-library/-/guebbit-scss-library-1.1.1.tgz"
+  "version" "1.1.1"
 
 "guebbit-vue-library@^1.0.8":
   "integrity" "sha512-cbMqQdjcnQY/PVsZgTSF6lMfaDVXuWRUmmgOH0rPGxvMJsE8uqwoXp4Yg9HB2dq3GqYT3A/PtzEzF694T5XS7Q=="
@@ -6199,7 +6253,7 @@
 
 "lodash@^4.17.14", "lodash@^4.17.20", "lodash@^4.17.21", "lodash@^4.7.0":
   "integrity" "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
-  "resolved" "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz"
+  "resolved" "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   "version" "4.17.21"
 
 "log-symbols@^4.0.0", "log-symbols@^4.1.0":
@@ -7161,6 +7215,11 @@
     "picocolors" "^0.2.1"
     "source-map" "^0.6.1"
 
+"preact@^10.0.5":
+  "integrity" "sha512-GLjn0I3r6ka+NvxJUppsVFqb4V0qDTEHT/QxHlidPuClGaxF/4AI2Qti4a0cv3XMh5n1+D3hLScW10LRIm5msQ=="
+  "resolved" "https://registry.npmjs.org/preact/-/preact-10.7.2.tgz"
+  "version" "10.7.2"
+
 "prelude-ls@^1.2.1":
   "integrity" "sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g=="
   "resolved" "https://registry.npmmirror.com/prelude-ls/-/prelude-ls-1.2.1.tgz"
@@ -7937,6 +7996,11 @@
     "faye-websocket" "^0.11.3"
     "uuid" "^8.3.2"
     "websocket-driver" "^0.7.4"
+
+"sortablejs@1.14.0":
+  "integrity" "sha512-pBXvQCs5/33fdN1/39pPL0NZF20LeRbLQ5jtnheIPN9JQAaufGjKdWduZn4U7wCtVuzKhmRkI0DFYHYRbB2H1w=="
+  "resolved" "https://registry.npmjs.org/sortablejs/-/sortablejs-1.14.0.tgz"
+  "version" "1.14.0"
 
 "source-map-js@^1.0.2", "source-map-js@>=0.6.2 <2.0.0":
   "integrity" "sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw=="
@@ -8837,7 +8901,7 @@
   "resolved" "https://registry.npmmirror.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz"
   "version" "1.9.1"
 
-"vue@^2 || ^3.2.13", "vue@^3.0.0", "vue@^3.0.0-0", "vue@^3.0.1", "vue@^3.0.2", "vue@^3.0.5", "vue@^3.2.0", "vue@^3.2.13", "vue@^3.2.25", "vue@^3.2.31", "vue@>= 3.0.0 < 4", "vue@3.2.33":
+"vue@^2 || ^3.2.13", "vue@^3.0.0", "vue@^3.0.0-0", "vue@^3.0.1", "vue@^3.0.11", "vue@^3.0.2", "vue@^3.0.5", "vue@^3.2.0", "vue@^3.2.13", "vue@^3.2.25", "vue@^3.2.31", "vue@>= 3.0.0 < 4", "vue@3.2.33":
   "integrity" "sha512-si1ExAlDUrLSIg/V7D/GgA4twJwfsfgG+t9w10z38HhL/HA07132pUQ2KuwAo8qbCyMJ9e6OqrmWrOCr+jW7ZQ=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-3.2.33.tgz"
   "version" "3.2.33"
@@ -8847,6 +8911,13 @@
     "@vue/runtime-dom" "3.2.33"
     "@vue/server-renderer" "3.2.33"
     "@vue/shared" "3.2.33"
+
+"vuedraggable@^4.1.0":
+  "integrity" "sha512-FU5HCWBmsf20GpP3eudURW3WdWTKIbEIQxh9/8GE806hydR9qZqRRxRE3RjqX7PkuLuMQG/A7n3cfj9rCEchww=="
+  "resolved" "https://registry.npmjs.org/vuedraggable/-/vuedraggable-4.1.0.tgz"
+  "version" "4.1.0"
+  dependencies:
+    "sortablejs" "1.14.0"
 
 "vuetify-loader@^2.0.0-alpha.0":
   "integrity" "sha512-M4u2XX9coe1U51jLKek54eJTo7wnroNfglh6sQplRTslhQRKQM3k84oh87D0VHqTzoTzlKPHP0sIWdpklwaEEQ=="

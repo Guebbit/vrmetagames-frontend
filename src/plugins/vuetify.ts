@@ -1,12 +1,5 @@
-// ---- CSS IMPORTS ----
-// Vuetify
-import "vuetify/styles";
-// Swiper
-import 'swiper/css';
-
-// --------------------
-
 import { createVuetify } from "vuetify";
+import { themeColors } from  "@/resources/constants";
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -21,18 +14,7 @@ export default createVuetify({
       default: {
         dark: true,
         colors: {
-          background: "#212121",
-          surface: "#212121",
-          primary: "#0086ff",
-          'primary-darken-1': "#0078e5",
-          'primary-darken-2': "#006bcc",
-          'primary-lighten-1': "#1992ff",
-          'primary-lighten-2': "#329eff",
-          secondary: "#ff8a23",
-          'secondary-darken-1': "#e57c1f",
-          'secondary-darken-2': "#cc6e1c",
-          'secondary-lighten-1': "#ff9538",
-          'secondary-lighten-2': "#ffa14e",
+          ...themeColors,
           text: "#ffffff",
           error: "#B00020",
           info: "#2196F3",

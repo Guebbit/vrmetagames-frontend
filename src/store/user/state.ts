@@ -1,12 +1,14 @@
 export default {
-    currentUserInfo: {
+    userInfo: {
+        id: 'user1',
         avatar: "https://randomuser.me/api/portraits/women/85.jpg",
-        name: "Tonio Cartonio",
         username: "UsernameTonio",
+        name: "Tonio Cartonio",
         email: "tonio.cartonio@gmail.com",
         phone: "+39 123 4567",
         birthdate: 1649620712000,
-        description: "lorem ipsum blablabla cose a caso"
+        description: "lorem ipsum blablabla cose a caso",
+        isAdmin: false,
     },
     paymentMethods:{
         paypal1: {

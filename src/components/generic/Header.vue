@@ -144,7 +144,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 library.add(faBars, faPlay, faHouse, faShop, faGamepad, faVrCardboard, faRightToBracket, faRightFromBracket)
 
 export default defineComponent({
-    name: "MainNavigation",
+    name: "Header",
 
     components: {
         InclinedButton,
@@ -188,9 +188,9 @@ export default defineComponent({
     computed: {
         ...mapState({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            user: ({ users: { currentUserInfo } }: any) => currentUserInfo,
+            user: ({ user: { userInfo } }: any) => userInfo,
         }),
-        ...mapGetters("users", [
+        ...mapGetters("user", [
             "isAuthenticated"
         ]),
     },

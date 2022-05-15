@@ -1,6 +1,6 @@
 {
   "name": "vrmetagames",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
     "serve": "vite preview",
@@ -11,16 +11,23 @@
     "dev": "vite"
   },
   "dependencies": {
+    "@fullcalendar/core": "^5.11.0",
+    "@fullcalendar/daygrid": "^5.11.0",
+    "@fullcalendar/interaction": "^5.11.0",
+    "@fullcalendar/timegrid": "^5.11.0",
+    "@fullcalendar/vue3": "^5.11.0",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.1",
-    "guebbit-javascript-library": "^2.2.7",
-    "guebbit-scss-library": "^1.1.0",
+    "guebbit-javascript-library": "^2.2.8",
+    "guebbit-scss-library": "^1.1.1",
     "guebbit-vue-library": "^1.0.8",
+    "lodash": "^4.17.21",
     "roboto-fontface": "*",
     "swiper": "^8.1.1",
     "vue": "^3.2.13",
     "vue-i18n": "^9.1.9",
     "vue-router": "^4.0.14",
+    "vuedraggable": "^4.1.0",
     "vuetify": "^3.0.0-beta.1",
     "vuex": "^4.0.0",
     "webfontloader": "^1.0.0"
@@ -31,6 +38,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/vue-fontawesome": "^3.0.0-5",
     "@types/jest": "^27.0.1",
+    "@types/lodash": "^4.14.182",
     "@types/webfontloader": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",

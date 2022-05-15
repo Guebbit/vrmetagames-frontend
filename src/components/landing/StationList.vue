@@ -4,7 +4,7 @@
         align="center"
         justify="center"
     >
-        <v-col v-for="item in stations"
+        <v-col v-for="item in list"
                :key="'item-wrapper-2-' + item.id"
                cols="12" md="5" lg="4" xl="3"
         >
@@ -24,9 +24,10 @@
 <script lang="ts">
 // https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-controller-1.png
 // https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-controller-2.png
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 import StationCard from "@/components/landing/StationCard.vue";
-import { mapState } from "vuex";
+
+import type { stationMap } from "@/interfaces";
 
 export default defineComponent({
     name: "StationList",
@@ -35,23 +36,19 @@ export default defineComponent({
         StationCard
     },
 
-    data: () => {
-        return {
-            //
+    props:{
+        list: {
+            type: Array as PropType<stationMap[]>,
+            default: () => {
+                return [];
+            }
         }
-    },
-
-    computed: {
-        ...mapState({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            stations: ({ ecommerce: { stations } }: any) => Object.values(stations),
-        }),
-    },
+    }
 });
 </script>
 
 <style lang="scss">
-@import 'src/assets/scss/main/global';
+@import '../../assets/scss/main/global';
 
 .station-list-section{
     margin-top: 24px;

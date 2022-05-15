@@ -12,7 +12,7 @@
         @slideChange="onSlideChange"
     >
         <swiper-slide
-            v-for="item in games"
+            v-for="item in list"
             :key="'slide-' + item.id"
         >
             <div class="book-card-wrapper">
@@ -52,15 +52,14 @@
     </swiper>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
+import { mapState } from "vuex";
 import { Autoplay, Scrollbar } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import BookCard from "guebbit-vue-library/src/components/cards/BookCard.vue";
 
-// swiper CSS
-import 'swiper/css/scrollbar';
-import 'swiper/css/autoplay';
-import { mapState } from "vuex";
+import { stationMap } from "@/interfaces";
+
 
 export default defineComponent({
     name: "GameList",
@@ -72,6 +71,13 @@ export default defineComponent({
     },
 
     props: {
+        list: {
+            type: Array as PropType<stationMap[]>,
+            default: () => {
+                return [];
+            }
+        },
+
         controls: {
             type: Boolean,
             default: () => {
@@ -91,13 +97,6 @@ export default defineComponent({
                 disableOnInteraction: false
             }
         }
-    },
-
-    computed: {
-        ...mapState({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            games: ({ ecommerce: { games } }: any) => Object.values(games),
-        }),
     },
 
     methods: {

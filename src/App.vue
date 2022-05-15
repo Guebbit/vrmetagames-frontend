@@ -4,15 +4,27 @@
         <v-main class="pt-0">
             <router-view />
         </v-main>
+        <Transition name="fade">
+            <div v-show="loading"
+                 class="theme-app-loading"
+            >
+                <v-progress-circular
+                    indeterminate
+                    color="primary"
+                    :size="200"
+                    :width="20"
+                ></v-progress-circular>
+            </div>
+        </Transition>
         <LoginModal />
     </v-app>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import MainNavigation from "@/components/generic/MainNavigation.vue";
 import { mapState } from "vuex";
-import LoginModal from "@/components/modals/LoginModal.vue";
+import MainNavigation from "@/components/generic/Header.vue";
+import LoginModal from "@/components/generic/modals/LoginModal.vue";
 
 export default defineComponent({
     name: "App",
@@ -23,9 +35,9 @@ export default defineComponent({
     computed: {
         ...mapState({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            showLoginModal: ({ main: { modals } }: any) => !!modals['login'],
-        }),
-    }
+            loading: ({ main: { loading } }: any) => loading.includes('main'),
+        })
+    },
 });
 </script>
 

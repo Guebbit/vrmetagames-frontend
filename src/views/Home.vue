@@ -7,7 +7,7 @@
                strict
                hero
         >
-            <template v-slot:default>
+            <template #default>
                 <v-container>
                     <h1 class="theme-page-title">VR Room <br> Carpi</h1>
                     <h4 class="theme-page-subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h4>
@@ -23,14 +23,14 @@
                     </InclinedButton>
                 </v-container>
             </template>
-            <template v-slot:backgroundImage>
+            <template #backgroundImage>
                 <v-img
                     cover
                     class="panel-background"
                     lazy-src="http://placekitten.com/100/100"
                     src="http://placekitten.com/2000/1000"
                 >
-                    <template v-slot:placeholder>
+                    <template #placeholder>
                         <v-row
                             class="fill-height ma-0"
                             align="center"
@@ -53,12 +53,12 @@
                     :title="'CONNECT WITH US <br/> FOR GAMING UPDATE'"
                     @button:click="() => {}"
                 >
-                    <template v-slot:backgroundImage>
+                    <template #backgroundImage>
                         <video class="panel-background" preload="metadata" playsinline="" muted="" loop="" autoplay="">
                             <source src="https://cdn.virtual-room.com/app/uploads/2018/12/teaser-home-virtualroom.mp4" type="video/mp4">
                         </video>
                     </template>
-                    <template v-slot:action>
+                    <template #action>
                         <InclinedButton
                             class="panel-button"
                             size="x-large"
@@ -76,12 +76,12 @@
                             class="px-10 py-15 text-center"
                             centered-bottom
                         >
-                            <template v-slot:backgroundImage>
+                            <template #backgroundImage>
                                 <video class="panel-background" preload="metadata" playsinline="" muted="" loop="" autoplay="">
                                     <source src="https://cdn.virtual-room.com/app/uploads/2018/12/teaser-home-virtualroom.mp4" type="video/mp4">
                                 </video>
                             </template>
-                            <template v-slot:default>
+                            <template #default>
                                 <h3 class="theme-page-subtitle">FIRST LOREM IPSUM</h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
@@ -99,7 +99,7 @@
                             class="horizontal-iframe px-10 py-15 text-center"
                             centered-bottom
                         >
-                            <template v-slot:backgroundImage>
+                            <template #backgroundImage>
                                 <div class="panel-background">
                                     <div>
                                         <iframe
@@ -113,7 +113,7 @@
                                     </div>
                                 </div>
                             </template>
-                            <template v-slot:default>
+                            <template #default>
                                 <h3 class="theme-page-subtitle">SECOND LOREM IPSUM</h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
@@ -131,7 +131,7 @@
                             class="horizontal-iframe px-10 py-15 text-center"
                             centered-bottom
                         >
-                            <template v-slot:backgroundImage>
+                            <template #backgroundImage>
                                 <div class="panel-background">
                                     <div>
                                         <iframe
@@ -145,7 +145,7 @@
                                     </div>
                                 </div>
                             </template>
-                            <template v-slot:default>
+                            <template #default>
                                 <h3 class="theme-page-subtitle">THIRD LOREM IPSUM</h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
@@ -163,7 +163,7 @@
                             class="vertical-iframe px-10 py-15 text-center"
                             centered-bottom
                         >
-                            <template v-slot:backgroundImage>
+                            <template #backgroundImage>
                                 <div class="panel-background">
                                     <div>
                                         <iframe
@@ -177,7 +177,7 @@
                                     </div>
                                 </div>
                             </template>
-                            <template v-slot:default>
+                            <template #default>
                                 <h3 class="theme-page-subtitle">FOURTH LOREM IPSUM</h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
@@ -242,7 +242,9 @@
                 >
                     Postazioni
                 </TrapezoidTitle>
-                    <StationList />
+                    <StationList
+                        :list="stations"
+                    />
                 <v-lazy
                     v-model="lazyStationList"
                     :options="{
@@ -285,7 +287,9 @@
                     }"
                     transition="fade-transition"
                 >
-                    <GameList />
+                    <GameList
+                        :list="games"
+                    />
                 </v-lazy>
                 <div class="d-flex justify-center mt-10">
                     <CyberpunkButton
@@ -305,7 +309,7 @@
             :title="'VIDEO YOUTUBE LOOP'"
             @button:click="() => {}"
         >
-            <template v-slot:backgroundImage>
+            <template #backgroundImage>
                 <div class="panel-background">
                     <div>
                         <iframe
@@ -319,7 +323,7 @@
                     </div>
                 </div>
             </template>
-            <template v-slot:action>
+            <template #action>
                 <InclinedButton
                     class="panel-button"
                     size="x-large"
@@ -375,7 +379,7 @@
                 centered
                 fixed
             >
-                <template v-slot:default>
+                <template #default>
                     <v-container>
                         <h3 class="theme-section-title text-center mb-10">
                             Lorem Ipsum Sit Dolor
@@ -469,6 +473,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import StationList from "@/components/landing/StationList.vue";
+import { mapActions, mapState } from "vuex";
 
 
 library.add(faArrowRight)
@@ -495,6 +500,25 @@ export default defineComponent({
             lazyGameList: false,
             lazyStationList: false
         }
+    },
+
+    computed: {
+        ...mapState({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            stations: ({ ecommerce: { stations } }: any) => Object.values(stations),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            games: ({ ecommerce: { games } }: any) => Object.values(games),
+        }),
+    },
+
+    methods:{
+        ...mapActions('main', [
+            'initApp'
+        ]),
+    },
+
+    created(){
+        this.initApp();
     },
 
     mounted(){

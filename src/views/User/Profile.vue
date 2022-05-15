@@ -308,11 +308,11 @@ export default defineComponent({
     computed: {
         ...mapState({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            paymentMethods: ({ users: {paymentMethods} } :any) => Object.values(paymentMethods),
+            paymentMethods: ({ user: {paymentMethods} } :any) => Object.values(paymentMethods),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            payments: ({ users: {payments} } :any) => Object.values(payments),
+            payments: ({ user: {payments} } :any) => Object.values(payments),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            user: ({ users: { currentUserInfo } }: any) => currentUserInfo,
+            user: ({ user: { userInfo } }: any) => userInfo,
         }),
 
         birthdateTranslated() {

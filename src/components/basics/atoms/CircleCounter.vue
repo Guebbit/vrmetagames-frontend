@@ -310,12 +310,7 @@ export default defineComponent({
             type: [Number, String],
             required: true,
         },
-        duration: {
-            type: Number,
-            default: () => {
-                return 500;
-            }
-        },
+        1
 
         TODOstart: {
             type: Number,

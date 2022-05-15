@@ -1,4 +1,4 @@
-// https://www.stephenli.ca/vuex-4-typescript-declarations-generator
+// https://www.codeproject.com/Tips/5295301/Correctly-Typing-Vuex-with-TypeScript
 // https://gist.github.com/luna-koury/ad3e2a2a62533aa590784a0eff2bef17
 
 import { InjectionKey } from 'vue';
@@ -10,10 +10,10 @@ import mainGetters from "./main/getters";
 import mainMutations from "./main/mutations";
 import mainActions from "./main/actions";
 
-import usersState from "./users/state";
-import usersGetters from "./users/getters";
-import usersMutations from "./users/mutations";
-import usersActions from "./users/actions";
+import usersState from "./user/state";
+import usersGetters from "./user/getters";
+import usersMutations from "./user/mutations";
+import usersActions from "./user/actions";
 
 import ecommerceState from "./ecommerce/state";
 import ecommerceGetters from "./ecommerce/getters";
@@ -31,7 +31,7 @@ export const store = createStore({
       actions: mainActions,
       namespaced: true
     },
-    users: {
+    user: {
       state: usersState,
       getters: usersGetters,
       mutations: usersMutations,

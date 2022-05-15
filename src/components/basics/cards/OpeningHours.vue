@@ -9,8 +9,8 @@
         <ul>
             <li v-for="day in 7" :key="'day-' + (day - 1)"
                 :class="{
-                'today': today === (day -1)
-            }"
+                    'today': today === (day -1)
+                }"
             >
                 <span class="label">
                     {{ $t('main.days.' + (day - 1) )}}
@@ -26,13 +26,14 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import type { PropType } from 'vue'
+import type { BusinessHoursMap } from "@/interfaces";
 
 export default defineComponent({
     name: "OpeningHours",
 
     props: {
         list: {
-            type: Array as PropType<string[][]>,
+            type: Array as PropType<BusinessHoursMap>,
             default: () => {
                 return [];
             }
