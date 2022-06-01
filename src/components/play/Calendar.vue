@@ -10,13 +10,14 @@
             '--fc-neutral-text-color': text,
             '--fc-daygrid-event-dot-width': '8px',
             '--fc-list-event-dot-width': '10px',
-            '--fc-highlight-color': 'rgba('+primaryRGB+', 0.2)',
             '--fc-hover-color': 'rgba('+primaryRGB+', 0.2)',
             '--fc-page-bg-color': primary,
 
+            '--fc-highlight-color': 'rgba('+secondaryRGB+', 0.3)',
             '--fc-event-bg-color': secondary,
             '--fc-event-border-color': secondary,
             '--fc-event-text-color': text,
+            '--fc-bg-event-opacity': '0.6',
 
             '--fc-button-bg-color': 'rgba('+primaryRGB+', 0.2)',
             '--fc-button-border-color': 'transparent',
@@ -35,33 +36,28 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { hexToRGB, timeToSeconds } from "guebbit-javascript-library";
+import {
+    hexToRGB,
+    timeToSeconds,
+    getUUID,
+    rangeOverlaps,
+    getOverlapRange,
+    arrayColumn
+} from "guebbit-javascript-library";
 
 // https://fullcalendar.io/docs#main
 // https://github.com/fullcalendar/fullcalendar-example-projects/blob/master/vue3-typescript/src/Demo.vue
 // https://github.com/fullcalendar/fullcalendar/blob/master/packages/common/src/styles/vars.css
-
-// GOOGLE CALENDAR
 // https://fullcalendar.io/docs/google-calendar
-
-/*
-// ADD
-this.calendarApi.addEvent({
-    id: Date.now().toString(),
-    title: 'User Selected Event',
-    start: new Date(selectInfo.start),
-    end: new Date(selectInfo.end),
-})
-event = this.calendarApi.getEventById('temporary');
-// REMOVE
-event.remove();
-*/
+// https://fullcalendar.io/docs/Calendar-select
 
 import '@fullcalendar/core/vdom';   // solves problem with Vite
 import FullCalendar from '@fullcalendar/vue3';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin  from '@fullcalendar/interaction';
+import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
+import resourceTimegridPlugin from '@fullcalendar/resource-timegrid';
 import itLocale from '@fullcalendar/core/locales/it';
 
 import type {
@@ -73,12 +69,20 @@ import type {
     DateSelectArg,
     EventClickArg,
     EventAddArg,
-    EventChangeArg,
     EventRemoveArg
 } from '@fullcalendar/vue3';
 import type {
     DateClickArg
 } from '@fullcalendar/interaction';
+import type {
+    ResourceInput
+} from '@fullcalendar/resource-common';
+
+interface cappedSlotMap {
+    start :Date
+    end :Date
+    events :string[]
+}
 
 export default defineComponent({
     name: "Calendar",
@@ -96,21 +100,38 @@ export default defineComponent({
             }
         },
 
+        resources: {
+            type: Array as PropType<ResourceInput[]>,
+            default: () => {
+                return [];
+            }
+        },
+
+        // SETTINGS
+        // 
         businessHours: {
             type: Array as PropType<BusinessHoursInput[]>,
             default: () => {
                 return [];
             }
         },
-
+        // 
         slotDuration: {
             type: String as PropType<DurationInput>,
             default: () => {
                 return '0:30';
             }
         },
+        // -1 = infinite
+        eventsPerDay: {
+            type: Number,
+            default: () => {
+                return -1;
+            }
+        },
 
         // MODES
+        // TODO admin can edit other events
         admin: {
             type: Boolean,
             default: () => {
@@ -119,6 +140,19 @@ export default defineComponent({
         },
         // hidden days or just disabled
         hideDisabledDays: {
+            type: Boolean,
+            default: () => {
+                return false;
+            }
+        },
+        // TODO to quickly create or edit events
+        fastMode: {
+            type: Boolean,
+            default: () => {
+                return false;
+            }
+        },
+        enableNativeApi: {
             type: Boolean,
             default: () => {
                 return false;
@@ -138,6 +172,12 @@ export default defineComponent({
             type: String,
             required: false
         },
+    },
+
+    data: () => {
+        return {
+            idLastEvent: '',
+        };
     },
 
     computed: {
@@ -163,6 +203,12 @@ export default defineComponent({
             return calendar;
         },
 
+        /**
+         * get the earnest and latest business hour of the week,
+         * to hide whatever beyond that dynamically
+         *
+         * @return {[string,string]}
+         */
         timeSlots(){
             let maxTime = '00:00';
             let minTime = '24:00';
@@ -178,6 +224,11 @@ export default defineComponent({
             return [minTime, maxTime];
         },
 
+        /**
+         * get the days without businesshours, to hide\disable them
+         *
+         * @return {number[]}
+         */
         closeDays(){
             let openDays :number[] = [];
             const closeDays = [];
@@ -193,10 +244,14 @@ export default defineComponent({
 
         calendarOptions() :CalendarOptions {
             return {
+                // FREE FOR USE key, buy in PROFIT projects
+                schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
                 plugins: [
                     timeGridPlugin,
                     dayGridPlugin,
-                    interactionPlugin
+                    interactionPlugin,
+                    resourceTimelinePlugin,
+                    resourceTimegridPlugin
                 ],
                 locales: [
                     itLocale
@@ -204,15 +259,22 @@ export default defineComponent({
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,resourceTimeGridDay'
                 },
-                /*
                 views: {
+                    resourceTimeline: {
+                        hiddenDays: this.closeDays,
+                    },
+                    resourceTimeGrid: {
+                        hiddenDays: this.closeDays,
+                    },
                     dayGrid: {
                         // options apply to dayGridMonth, dayGridWeek, and dayGridDay views
+                        hiddenDays: this.closeDays,
                     },
                     timeGrid: {
                         // options apply to timeGridWeek and timeGridDay views
+                        hiddenDays: this.closeDays,
                     },
                     week: {
                         // options apply to dayGridWeek and timeGridWeek views
@@ -221,9 +283,8 @@ export default defineComponent({
                         // options apply to dayGridDay and timeGridDay views
                     }
                 },
-                */
                 initialView: 'dayGridMonth',
-                // initialEvents: this.events,
+                resources: this.resources,
                 events: this.events,
                 height: 'auto',
                 slotDuration: this.slotDuration,                   // The frequency for displaying time slots.
@@ -232,38 +293,188 @@ export default defineComponent({
                 businessHours: this.businessHours,
                 selectConstraint: 'businessHours',
                 eventConstraint: 'businessHours',
-                editable: this.admin,                         // boolean, events can be dragged and resized
+                // defaultTimedEventDuration: "01:00:00",   // NOT WORKING
+                editable: this.admin,                   // boolean, events can be dragged and resized
+                eventResourceEditable: this.admin,      // same, but with resources
                 selectable: true,                       // boolean, select on calendar
                 selectMirror: true,                     // boolean, draw temporary event on select
                 // dayMaxEvents: true,                  // TODO https://fullcalendar.io/docs/dayMaxEvents
                 allDaySlot: false,                      // boolean, top slot
                 hiddenDays: this.hideDisabledDays ? this.closeDays : [],
-                slotEventOverlap: true,                 // boolean, should
-                selectOverlap: this.eventOverlapMethod, // boolean or function that return boolean
-                eventOverlap: this.eventOverlapMethod,  // boolean or function that return boolean
+                // forceEventDuration: true,               // boolean: force event's "end" to be specified
+                slotEventOverlap: true,                    // boolean, should
+                // selectOverlap: this.handleOverlap,      // boolean or function that return boolean
+                // eventOverlap: this.handleOverlap,       // boolean or function that return boolean
+
                 select: this.handleDateSelect,
                 dateClick: this.handleDateClick,
                 eventClick: this.handleEventClick,
-                eventsSet: this.handleEvents,
+                eventsSet: this.handleEventsSet,
                 eventAdd: this.handleEventAdd,
-                eventChange: this.handleChange,
-                eventRemove: this.handleRemove,
+                eventRemove: this.handleEventRemove,
+                // eventChange: this.handleEventChange
             }
         }
     },
 
     methods: {
+
+        /**
+         * Remove event
+         *
+         * @param {string} id
+         */
+        eventRemove(id :string){
+            const event = this.calendarApi.getEventById(id);
+            if(!event){
+                return;
+            }
+            // remove
+            this.$emit('event:remove', id);
+            if(this.enableNativeApi){
+                event.remove();
+            }
+        },
+
+        /**
+         * Create event
+         * Fullcalendar can have different events with same id (in case they are split)
+         *
+         * https://fullcalendar.io/docs/event-object
+         * https://fullcalendar.io/docs/event-parsing
+         * https://fullcalendar.io/docs/event-source-object
+         *
+         * @param {Object} selectInfo
+         */
+        eventCreate(selectInfo: DateSelectArg) :void {
+            const { start, end, allDay, resource: { id :resourceId, extendedProps: { capacity = -1 } = {} } = {} } = selectInfo;
+            // the lowest limit that is NOT -1
+            const eventNumberLimit = Math.min(capacity, this.eventsPerDay) !== -1  ? Math.min(capacity, this.eventsPerDay) : Math.max (capacity, this.eventsPerDay);
+            // Find all the events in range (to filter out and optimize calculous)
+            // if resourceId is specified, it belongs to a resource
+
+            // If no events are allowed (optimized)
+            if(eventNumberLimit === 0){
+                return;
+            }
+            // If there is an event limit
+            if(eventNumberLimit > -1){
+                // OPTIMIZE?
+                // divide the EventInput in timeslots and check how many events are already there,
+                // if even only 1 time slot in higher than eventNumberLimit, it fails
+                // from start to end step by step
+                let stepperStart = start;
+                let stepperEnd = new Date(stepperStart.getTime() + 1800000);
+                const cappedSlots :cappedSlotMap[] = [];
+                // do cycle
+                do {
+                    const eventsInRange = this.getEventsByTime(stepperStart, stepperEnd, resourceId);
+                    if(eventsInRange.length >= eventNumberLimit)
+                        cappedSlots.push({
+                            start: stepperStart,
+                            end: stepperEnd,
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            events: arrayColumn(eventsInRange, 'id')
+                        })
+                    // next step, until loading reach END
+                    stepperStart = new Date(stepperStart.getTime() + 1800000);  // TODO translate this.slotDuration
+                    stepperEnd = new Date(stepperEnd.getTime() + 1800000);  // TODO translate this.slotDuration
+                    // stepper end
+                } while (stepperEnd <= end);
+
+                if(cappedSlots.length > 0){
+                    for(let i = cappedSlots.length; i--; ){
+                        const { start, end, events } = cappedSlots[i];
+                        this.$emit('event:limit-reached', start, end, events);
+                    }
+                    return;
+                }
+            }
+            // Add the event
+            const id = getUUID();
+            const event :EventInput = {
+                id,
+                start: new Date(start),
+                end: new Date(end),
+                allDay,
+                resourceId,
+            };
+            // create
+            this.$emit('event:create', event);
+            if(this.enableNativeApi){
+                this.calendarApi.addEvent(event)
+            }
+            // last inserted event
+            this.idLastEvent = id;
+        },
+
+        /**
+         * Compare 2 events if they overlaps
+         *
+         * @param {Date} asRaw
+         * @param {Date} aeRaw
+         * @param {Date} bsRaw
+         * @param {Date} beRaw
+         * @return {boolean}
+         */
+        compareEventTimes({ start: asRaw, end: aeRaw } :EventApi, { start: bsRaw, end: beRaw } :EventApi){
+            const as = asRaw ? asRaw : new Date();
+            const ae = aeRaw ? aeRaw : as;
+            const bs = bsRaw ? bsRaw : new Date();
+            const be = beRaw ? beRaw : bs;
+            return rangeOverlaps(as.getTime(), ae.getTime(), bs.getTime(), be.getTime());
+        },
+
+        /**
+         * Get all events between 2 dates
+         * If resourceId is set, then get only those of that resource
+         *
+         * @param {Date} dateFrom
+         * @param {Date} dateTo
+         * @param {string} resourceId
+         * @return {Object[]}
+         */
+        getEventsByTime(dateFrom = new Date(), dateTo = new Date(), resourceId ?:string){
+            const fullcalendarEvents = this.calendar.getEvents();   // unfortunately this can't be a computed
+            return fullcalendarEvents.filter(({ id, start, end, display } :EventApi) => {
+                // backgrounds are never counted
+                if(display === 'background'){
+                    return false;
+                }
+                // if a resource was specified
+                if(resourceId){
+                    // need to get the related resource
+                    const resourcesArray = this.calendarApi.getEventById(id)?.getResources() || [];
+                    // there can be many, just check if one exist
+                    if(!resourcesArray.some(({ id }) => {
+                        return resourceId === id;
+                    })){
+                        // if no resourceId match, it's not on the requested resource
+                        return false;
+                    }
+                }
+                // the resourceId was not specified OR it was and it's present
+                // if null, take today (should never happen, but typescript have warnings)
+                const eventStart = start ? start : new Date();
+                // if null, take start (default fullcalendar behaviour)
+                const eventEnd = end ? end : eventStart;
+                return rangeOverlaps(dateFrom.getTime(), dateTo.getTime(), eventStart.getTime(), eventEnd.getTime());
+            });
+        },
+
         /**
          * Select date
-         * Can be single click, that triggers handleDateClick too.
-         * I need only timeGridWeek and timeGridDay
+         * Can be single click, give minimum time slot (trigger handleDateClick too).
+         * Needed only timeGrid*** or resourceTime***
          *
          * @param {Object} selectInfo
          */
         handleDateSelect(selectInfo: DateSelectArg) {
-            const { view: { type } } = selectInfo;
-            if(type === 'timeGridWeek' || type === 'timeGridDay'){
-                this.$emit('event:temporary:create', new Date(selectInfo.start), new Date(selectInfo.end), selectInfo.allDay)
+            const { view: { type } = {} } = selectInfo;
+            this.calendar.unselect(); // remove mirror
+            if(type === 'timeGridWeek' || type === 'timeGridDay' || type === 'resourceTimelineWeek' || type === 'resourceTimeGridDay'){
+                this.eventCreate(selectInfo);
             }
         },
 
@@ -280,34 +491,103 @@ export default defineComponent({
             }
         },
 
-        handleEventClick({ event }: EventClickArg) {
-            console.log("HANDLE EVENT CLICK", event);
+        /**
+         * When EVENT is clicked
+         * (warning: background events)
+         *
+         * @param {string} id
+         * @param {string} display
+         */
+        handleEventClick({ event: { id, display } }: EventClickArg) {
+            if(!id || display === 'background'){
+                return;
+            }
+            // console.log("handleEventClick", this.calendarApi.getEventById(id))
+            this.$emit('event:click', id);
         },
 
-        // TODO OVERLAP
-        eventOverlapMethod(stillEvent :EventApi, movingEvent :EventApi | null) {
-            // console.log("OVERLAP", stillEvent, movingEvent)
-            return true;
+        /**
+         * Called after event data is initialized OR changed in any way.
+         * Useful for syncing an external data source with all calendar event data.
+         *
+         * @param {Object[]} events - same as Calendar::getEvents
+         */
+        handleEventsSet(events: EventApi[]) {
+            // console.log("handleEventsSet", events.length, events)
         },
 
-        handleEvents(events: EventApi[]) {
-            console.log("HANDLE EVENTS", events);
+        /**
+         * Handle events overlap. Called on every overlapping event.
+         * https://fullcalendar.io/docs/eventOverlap
+         *
+         * eventOverlap(stillEvent, movingEvent) called on drag or resize
+         *
+         * selectOverlap(stillEvent) called on select\insertion
+         * no "movingEvent" because the selection is not an event per se,
+         * so it will be the encountered event
+         *
+         * WARNING TEMPORARY
+         * since the function is called X times for each overlapping event and I don't have an array,
+         * I don't use it to check overlapping elements, I manually check the final position of dragging or selecting events
+         *
+         * @param {Object} stillEvent
+         * @param {Object} movingEvent
+         * @return {boolean}
+         */
+        // handleOverlap(stillEvent :EventApi, movingEvent :EventApi | null) {},
+
+        /**
+         * Called after an event has been added to the calendar.
+         *
+         * @param {string} id
+         */
+        handleEventAdd({ event: { id } } :EventAddArg) {
+            this.$emit('event:added', id)
         },
-        handleEventAdd(test :EventAddArg) {
-            console.log("handleEventAdd", test)
+
+        /**
+         * Called after an event has been removed from the calendar.
+         *
+         * @param {string} id
+         */
+        handleEventRemove({ event: { id } } :EventRemoveArg) {
+            this.$emit('event:removed', id)
         },
-        handleChange(test :EventChangeArg) {
-            console.log("handleChange", test)
-        },
-        handleRemove(test :EventRemoveArg) {
-            console.log("handleRemove", test)
-        }
+
+        /**
+         * Called after an event has been modified in some way:
+         *  - when Event Object setter method is called
+         *  - when event has been dragger or resized
+         *  - AFTER eventDrop
+         *  - AFTER eventResize
+         *
+         * @param changeInfo
+         */
+        // handleEventChange({ oldEvent, event, relatedEvents, revert } :EventChangeArg) {},
+
+        /**
+         * Triggered when resizing stops and the event has changed in duration.
+         * BEFORE eventChange
+         * https://fullcalendar.io/docs/eventResize
+         *
+         * @param eventResizeInfo
+         */
+        // handleEventResize(eventResizeInfo :EventResizeDoneArg) {}
+
+        /**
+         * Triggered when resizing stops and the event has changed in duration.
+         * BEFORE eventChange
+         * https://fullcalendar.io/docs/eventDrop
+         *
+         * @param eventResizeInfo
+         */
+        // handleEventDrop(eventDropInfo :EventDropArg) {}
     }
 });
 </script>
 
 <style lang="scss">
-@import "src/assets/scss/main/global";
+$fullcalendar-mobile-threshold: 600px !default;
 
 .fc{
     table{
@@ -317,6 +597,17 @@ export default defineComponent({
         // fix default icons center
         vertical-align: top !important;
     }
+
+    .fc-header-toolbar{
+        @media (max-width: $fullcalendar-mobile-threshold){
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 1em;
+        }
+    }
+
     &.fc-theme-guebbit{
         .fc-toolbar-title{
             text-transform: capitalize;
@@ -331,6 +622,9 @@ export default defineComponent({
             &:hover{
                 // background:lightblue;cursor: pointer;
             }
+        }
+        .fc-scroller{
+
         }
     }
     &.no-borders{
@@ -355,6 +649,24 @@ export default defineComponent({
                     }
                 }
             }
+        }
+    }
+    .day-capacity-indicator{
+        &.capacity-disabled{
+            background-color: #424242;
+        }
+        &.capacity-green{
+            background-color: #388e3c;
+        }
+        &.capacity-yellow{
+            background-color: #ffeb3b;
+            color: #000000;
+        }
+        &.capacity-orange{
+            background-color: #e65100;
+        }
+        &.capacity-red{
+            background-color: #e53935;
         }
     }
 }

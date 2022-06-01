@@ -239,6 +239,8 @@
 // https://vuejs.org/guide/reusability/composables.html#what-is-a-composable
 import { defineComponent } from "vue";
 import { mapState } from "vuex";
+import { formRules } from "@/resources/constants";
+
 import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
 import TrapezoidTitle from "@/components/basics/typography/TrapezoidTitle.vue";
 import CreditCard from "guebbit-vue-library/src/components/cards/CreditCard.vue";
@@ -268,11 +270,7 @@ export default defineComponent({
                 birthdate: 0,
                 description: ''
             },
-            formRules: {
-                required: (value :string) => !!value || 'Required.',
-                min: (value :string) => value.length >= 8 || 'Min 8 characters',
-                emailMatch: () => (`The email and password you entered don't match`),
-            },
+            formRules,
             defaultsUserData: {
                 global: {
                     elevation: 12,

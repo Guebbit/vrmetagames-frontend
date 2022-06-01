@@ -26,6 +26,8 @@ export interface currentUserMap {
     phone: string
     birthdate: number
     description: string
+    wallet :number
+    lastPlayed: number
     isAdmin: boolean
 }
 

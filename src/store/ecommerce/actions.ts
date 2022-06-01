@@ -1,5 +1,7 @@
 import { randomColorList } from "@/resources/constants";
 import { shuffle } from "lodash";
+import { getUUID } from "guebbit-javascript-library";
+
 import type { ActionContext } from "vuex";
 import type { stateEcommerceMap, stateRootMap, scheduleMap } from "@/interfaces";
 
@@ -19,7 +21,7 @@ const mockServerSchedule = [
     {
         id: "item3",
         start: 1652353200000,
-        end: 1652353200000,
+        end: 1652355000000,
         userId: "user1"
     },
     {
@@ -45,54 +47,81 @@ const mockServerSchedule = [
         start: 1652344200000,
         end: 1652371200000,
         userId: "user5"
+    },
+    {
+        id: "item8",
+        start: 1652436000000,
+        end: 1652450400000,
+        userId: "user1",
+        resourceId: "item1"
+    },
+    {
+        id: "item9",
+        start: 1652457600000,
+        end: 1652466600000,
+        userId: "user2",
+        resourceId: "item1"
+    },
+    {
+        id: "item10",
+        start: 1652470200000,
+        end: 1652477400000,
+        userId: "user1",
+        resourceId: "item1"
+    },
+    {
+        id: "item11",
+        start: 1652470200000,
+        end: 1652477400000,
+        userId: "user3",
+        resourceId: "item2"
     }
 ];
 const mockServerUsers = [
     {
         id: "user1",
         avatar: "https://randomuser.me/api/portraits/women/85.jpg",
-        username: "UsernameTonio"
+        username: "UsernameTonio",
+        lastVisit: 1652385600000
     },
     {
         id: "user2",
         avatar: "https://randomuser.me/api/portraits/men/10.jpg",
-        username: "GeeenoPeeno"
+        username: "GeeenoPeeno",
+        lastVisit: 1652355000000
     },
     {
         id: "user3",
         avatar: "https://randomuser.me/api/portraits/women/84.jpg",
         username: "LoremIpsum",
-        color: "#"
+        lastVisit: 1652389200000
     },
     {
         id: "user4",
         avatar: "https://randomuser.me/api/portraits/men/80.jpg",
-        username: "LoremIpsum",
-        color: "#"
+        username: "Nickname",
+        lastVisit: 1652378400000
     },
     {
         id: "user5",
-        avatar: "https://randomuser.me/api/portraits/women/80.jpg",
-        username: "LoremIpsum",
-        color: "#"
+        username: "TizioCaio",
+        lastVisit: 1652371200000
     }
 ];
 const mockServerStations = [
     {
         id: 'item1',
         type: 'Oculus',
+        label: 'Oculus',
         image: 'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png',
-        available: true,
-        time: 1654121642000,
-        number: 2
+        capacity: 2
     },
     {
         id: 'item2',
         type: 'Computer',
+        label: 'Computer',
         image: 'https://res.cloudinary.com/muhammederdem/image/upload/v1536405218/starwars/item-3.png',
-        available: false,
-        time: 1654121642000,
-        number: 0
+        capacity: 1
     }
 ];
 const mockServerGames = [
@@ -229,7 +258,7 @@ const mockServerGames = [
 export default {
 
     /**
-     * Send NEW schedule to server and save in central store
+     * GET schedules from server and save them in central store
      *
      * @param {Function} dispatch
      * @param {Function} commit
@@ -364,55 +393,168 @@ export default {
         return Promise.resolve()
             .then(() => {
                 for (let i = mockServerSchedule.length; i--;) {
-                    commit("setSchedule", mockServerSchedule[i]);
+                    commit("setSchedule", {
+                        ...mockServerSchedule[i],
+                        online: true,
+                        unsaved: false
+                    });
                     commit("main/setLastUpdate", ["schedule", mockServerSchedule[i].id], { root: true });
                 }
-                commit("main/setLastUpdate", ["scheduleList"], { root: true });
+                commit("main/setLastUpdate", ["scheduleRecords"], { root: true });
             })
             .catch(() => dispatch("main/handleServerError", "getSchedules ERROR", { root: true }));
     },
 
-
     /**
-     * Send NEW schedule to server and save in central store
+     * Create OFFLINE schedule to LOCAL, waiting to be sent online
+     * to be saved and\or confirmed later
      *
      * @param {Function} dispatch
      * @param {Function} commit
      * @param {string} id
      * @param {boolean} isAdmin
-     * @param {Object[]} scheduleDataList
+     * @param {Object} scheduleData
      */
-    async addSchedules({ dispatch, commit, rootState: { user: { userInfo: { id, isAdmin }}}}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleDataList: scheduleMap[]): Promise<void> {
-        for(let i = scheduleDataList.length; i--; ){
-            scheduleDataList[i].id = Date.now().toString();
-            // If NOT admin, user can make decisions only for himself
-            if(!isAdmin){
-                scheduleDataList[i].userId = id;
-            }
-            // Events MUST have userId
-            if(!scheduleDataList[i].userId){
-                commit("main/addError", {
-                    text: 'Schedule MUST have an userId'
-                }, { root: true });
-                scheduleDataList.splice(i, 1);
+    addSchedule({ commit, rootState: { user: { userInfo: { id, isAdmin }}}}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :void {
+        // TODO colori diversi se utente normale?
+        // TODO console.log("AAAAAAAAAAAAAAAA", scheduleData)
+        // If NOT admin, user can make decisions only for himself
+        if(!isAdmin){
+            scheduleData.userId = id;
+        }
+        // Events without userId are admin inserted events
+        // if(!scheduleData.userId){}
+        // instanteity and reactivity
+        commit("setSchedule", {
+            ...scheduleData,
+            id: getUUID(),
+            online: false,
+            confirmed: false,
+            canceled: false,
+            unsaved: false
+        });
+    },
+
+    /**
+     * EDIT schedules from LOCAL
+     * unsaved edits to be confirmed\sent
+     *
+     * @param {Object} scheduleEditableTime
+     * @param {Function} dispatch
+     * @param {Function} commit
+     * @param {Function} getItem
+     * @param {string} id
+     * @param {boolean} isAdmin
+     * @param {Object} scheduleData
+     */
+    editSchedule({ state: { scheduleEditableTime }, commit, getters: { getItem }, rootState: { user: { userInfo: { id :userId, isAdmin }}}}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :void {
+        const oldScheduleData = getItem('scheduleRecords', scheduleData.id);
+        const { id, start, end, userId :scheduleUserId } = oldScheduleData;
+        // se non trovato
+        if(!id){
+            return;
+        }
+
+        // TODO ALL CHECKS
+        console.log("11111111111111", id, isAdmin, start, end, userId, scheduleUserId)
+
+        // user can make decisions only for himself
+        if(!isAdmin && userId !== scheduleUserId){
+            console.error("TODO NEVER: user can make decisions only for himself")
+            return;
+        }
+
+        if(!isAdmin && (start + scheduleEditableTime < Date.now())){
+            // WARNING: check already done in Play.vue selectItem TODO
+            console.log("CAN'T EDIT IN THE PAST")
+            return;
+        }
+
+        // TODO CHECK disponibilità (play.vue? qui? calendar.vue? tutti e 3?)
+        commit("setSchedule", {
+            ...oldScheduleData,
+            ...scheduleData,
+            unsaved: true
+        });
+    },
+
+    /**
+     * Send OFFLINE schedules to server and save in central store
+     *
+     * @param {Function} dispatch
+     * @param {Function} commit
+     * @param {Object} scheduleRecords
+     * @param {string[]} scheduleIdList
+     */
+    // TODO "confirmed: true" quando fare i pagamenti?
+    //  Il server paga in automatico se hai ore nel wallet e restituisce la lista di ID pagati + nuovo wallet
+    //  Restituisce lista "da pagare"\"in attesa di conferma"?
+    async sendSchedules({ dispatch, commit, state: { scheduleRecords } }: ActionContext<stateEcommerceMap, stateRootMap>, scheduleIdList: string[]): Promise<void> {
+        const oldScheduleArray :scheduleMap[] = [];
+        for(let i = scheduleIdList.length; i--; ){
+            // if it doesn't exist it's an error OR if it exists and it's already online (should never happen), ignore it
+            if(!Object.prototype.hasOwnProperty.call(scheduleRecords, scheduleIdList[i]) || scheduleRecords[scheduleIdList[i]].online){
                 continue;
             }
-            // instanteity and reactivity
-            commit("setSchedule", scheduleDataList[i]);
+            oldScheduleArray.push(scheduleRecords[scheduleIdList[i]]);
+            commit("setSchedule", {
+                ...oldScheduleArray[oldScheduleArray.length - 1],
+                unsaved: false,
+                online: true
+            });
         }
-        return Promise.resolve()
+        return Promise.resolve(oldScheduleArray)
             .then(() => {
                 // TODO Possible logical error and revert needed
                 // TODO controlla se ha senso mettere catch per primo con
                 //   "adderror" che poi casca nel then che fa le sue cose ed eventualmente catch revert
-                // dispatch("main/handleLogicalError", "addSchedules ERROR", { root: true })
+
+                // TODO LOGICAL ERROR: timeslot unavaible (simultaneous bookings)
+                // dispatch("main/handleLogicalError", "sendSchedules ERROR", { root: true })
             })
             .catch(() => {
                 // REVERT in case of error
-                for(let i = scheduleDataList.length; i--; ){
-                    commit("removeSchedule", scheduleDataList[i].id);
+                for(let i = oldScheduleArray.length; i--; ){
+                    commit("setSchedule", oldScheduleArray[i]);
                 }
-                return dispatch("main/handleServerError", "addSchedules ERROR", { root: true });
+                return dispatch("main/handleServerError", "sendSchedules ERROR", { root: true });
+            });
+    },
+
+    /**
+     * Send OFFLINE schedules to server and save in central store
+     *
+     * @param {Function} dispatch
+     * @param {Function} commit
+     * @param {Object} scheduleRecords
+     * @param {string[]} scheduleIdList
+     */
+    async removeSchedules({ dispatch, commit, state: { scheduleRecords } }: ActionContext<stateEcommerceMap, stateRootMap>, scheduleIdList: string[]): Promise<void> {
+        // schedule array to be reverted in case of connection error while removing
+        const scheduleArray :scheduleMap[] = [];
+        for(let i = scheduleIdList.length; i--; ){
+            if(scheduleRecords[scheduleIdList[i]]){
+                scheduleArray.push(scheduleRecords[scheduleIdList[i]])
+            }
+            commit("removeSchedule", scheduleIdList[i]);
+        }
+        return Promise.resolve(scheduleArray)
+            .then(() => {
+                // TODO Possible logical error and revert needed
+                // TODO controlla se ha senso mettere catch per primo con
+                //   "adderror" che poi casca nel then che fa le sue cose ed eventualmente catch revert
+                // dispatch("main/handleLogicalError", "removeSchedules ERROR", { root: true })
+            })
+            .catch(() => {
+                // REVERT in case of error
+                for(let i = scheduleArray.length; i--; ){
+                    commit("setSchedule", {
+                        ...scheduleArray[i],
+                        online: false,
+                        confirmed: false // TODO payments
+                    });
+                }
+                return dispatch("main/handleServerError", "removeSchedules ERROR", { root: true });
             });
     }
 };

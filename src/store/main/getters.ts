@@ -1,5 +1,5 @@
 import { GetterTree } from 'vuex';
-import { stateRootMap, stateMainMap, stateEcommerceMap } from "@/interfaces";
+import { stateRootMap, stateMainMap } from "@/interfaces";
 import { timeToSeconds } from "guebbit-javascript-library";
 
 export default {
@@ -17,22 +17,34 @@ export default {
     },
 
     /**
-     * Determine if today is open, based on businessHours
+     * Determine if the chosen day and hour it's open,
+     * based on businessHours
      *
      * @param {BusinessHoursMap} businessHours
      */
     isOpen: ({ businessHours }: stateMainMap) => {
-        const todayObject = new Date();
-        const todayDay = todayObject.getDay();
-        if(!businessHours[todayDay] || businessHours[todayDay].length < 1){
-            return false;
+        return (dayObject = new Date()) => {
+            const todayDay = dayObject.getDay();
+            if(!businessHours[todayDay] || businessHours[todayDay].length < 1){
+                return false;
+            }
+            const [ preHours = '0', preMinutes = '0' ] = businessHours[todayDay]![0]!.split(".");
+            const [ postHours = '0', postMinutes = '0' ] = businessHours[todayDay]![1]!.split(".");
+            const preSeconds = parseInt(preHours) * 3600 + parseInt(preMinutes) * 60;
+            const postSeconds = parseInt(postHours) * 3600 + parseInt(postMinutes) * 60;
+            const currentSeconds = dayObject.getHours()  * 3600 + dayObject.getMinutes() * 60;
+            return preSeconds < currentSeconds && currentSeconds < postSeconds;
         }
-        const [ preHours = '0', preMinutes = '0' ] = businessHours[todayDay]![0]!.split(".");
-        const [ postHours = '0', postMinutes = '0' ] = businessHours[todayDay]![1]!.split(".");
-        const preSeconds = parseInt(preHours) * 3600 + parseInt(preMinutes) * 60;
-        const postSeconds = parseInt(postHours) * 3600 + parseInt(postMinutes) * 60;
-        const currentSeconds = todayObject.getHours()  * 3600 + todayObject.getMinutes() * 60;
-        return preSeconds < currentSeconds && currentSeconds < postSeconds;
+    },
+
+    /**
+     * Determine if today is open, based on businessHours
+     *
+     * @param {Object} context
+     * @param {Function} isOpen
+     */
+    todayIsOpen: (context: stateMainMap, { isOpen }) => {
+        return isOpen();
     },
 
     /**

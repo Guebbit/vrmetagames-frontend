@@ -5,10 +5,10 @@ export default {
 
     initApp({ dispatch }: ActionContext<stateMainMap, stateRootMap>){
         return Promise.all([
-            dispatch('ecommerce/getStations'),
-            dispatch('ecommerce/getGames'),
-            dispatch('ecommerce/getUsers'),
-            dispatch('ecommerce/getSchedules'),
+            dispatch('ecommerce/getStations', null, { root: true }),
+            dispatch('ecommerce/getGames', null, { root: true }),
+            dispatch('ecommerce/getUsers', null, { root: true }),
+            dispatch('ecommerce/getSchedules', null, { root: true }),
         ]);
     },
 

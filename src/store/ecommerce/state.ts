@@ -1,9 +1,9 @@
 export default {
-    // basic other users info
-    temporarySchedule: {},
     // calendario prenotazioni
-    scheduleList: {},
+    scheduleRecords: {},
     users: {},
     stations: {},
-    games:{}
+    games:{},
+    scheduleTimeStep: 1800000,      // 1800 seconds = 30 min
+    scheduleEditableTime: 1800000,  // 1800 seconds = 30 min
 }

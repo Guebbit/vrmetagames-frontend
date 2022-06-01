@@ -56,12 +56,12 @@
               {{ $t("generic.opening-hours") }}
             </h4>
             <small>
-              ( {{ isOpen ? "APERTO" : "CHIUSO" }} )
+              ( {{ todayIsOpen ? "APERTO" : "CHIUSO" }} )
               <span
                 class="status-circle"
                 :class="{
-                  online: isOpen,
-                  offline: !isOpen,
+                  online: todayIsOpen,
+                  offline: !todayIsOpen,
                 }"
               />
             </small>
@@ -71,7 +71,7 @@
               :color="$vuetify.theme.themes.default.colors.primary"
               :text="$vuetify.theme.themes.default.colors.text"
               :list="businessHours"
-              :open="isOpen"
+              :open="todayIsOpen"
             />
             <div>
               <span class="button-social-icon mini">
@@ -209,7 +209,7 @@ export default defineComponent({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       businessHours: ({ main: { businessHours } }: any) => businessHours,
     }),
-    ...mapGetters("main", ["isOpen"]),
+    ...mapGetters("main", ["todayIsOpen"]),
   },
 });
 </script>

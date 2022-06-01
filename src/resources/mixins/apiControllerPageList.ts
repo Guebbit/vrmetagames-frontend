@@ -1,17 +1,18 @@
 import { defineComponent } from "vue";
-import { mapMutations, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 
 // export default {
 export default defineComponent({
 
     data: () => {
         return {
-            selectedItem: '',
+            selectedItemIdentifier: '',
             // filtered by (array of params)
             searchBy: [] as string[],         // TODO
             // ordered by (array of params)
             orderBy: [] as string[],          // TODO
-            itemIdentifier: 'id',
+            itemIdentifier: 'id',             // TODO
+            itemLabel: 'label',               // TODO
             loadingName: 'generic',
         }
     },
@@ -19,32 +20,58 @@ export default defineComponent({
     computed: {
         ...mapState({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            loadingList: ({ main: { loading } }: any) => loading,
+            loadingItems: ({ main: { loading } }: any) => loading,
         }),
 
         /**
          * loading of page
+         * 
+         * @return {boolean}
          */
-        loading(){
-            return this.loadingList.includes(this.loadingName);
+        loading() :boolean {
+            return this.loadingItems.includes(this.loadingName);
+        },
+
+        /**
+         * Records of items
+         * 
+         * @return {Object}
+         */
+        itemsRecords() :Record<string,unknown> {
+            return {};
         },
 
         /**
          * list of items
+         * 
+         * @return {Object[]}
          */
-        itemList() {
-            return [];
+        itemList() :unknown[] {
+            return Object.values(this.itemsRecords);
         },
 
         /**
          * if filters are needed
          */
-        filteredItemList() {
+        filteredItemList() :unknown[] {
             return this.itemList;
-        }
+        },
+
+        /**
+         * current selected item
+         */
+        selectedItem() :unknown {
+            if(!Object.prototype.hasOwnProperty.call(this.itemsRecords, this.selectedItemIdentifier)){
+                return undefined;
+            }
+            return this.itemsRecords[this.selectedItemIdentifier];
+        },
     },
 
     methods:{
+        ...mapActions('main', [
+            'initApp'
+        ]),
         ...mapMutations("main", [
             "startLoading",
             "stopLoading"
@@ -53,8 +80,11 @@ export default defineComponent({
         /**
          * Promise that load data
          */
-        resourcePromise() :Promise<void | void[]> {
-            return this.getItems();
+        async resourcePromise() :Promise<void | void[]> {
+            return Promise.all([
+                this.initApp(),
+                this.getItems()
+            ]);
         },
 
         /**
@@ -76,15 +106,16 @@ export default defineComponent({
 
         // ------------ PLACEHOLDERS ------------
 
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        resourceHandleSuccess(){},
-        getItems(){
+        async resourceHandleSuccess(){
             return Promise.resolve();
         },
-        addItems(){
+        async getItems(){
             return Promise.resolve();
         },
-        removeItems(){
+        async setItems(){
+            return Promise.resolve();
+        },
+        async removeItems(){
             return Promise.resolve();
         },
     },

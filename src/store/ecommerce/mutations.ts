@@ -39,32 +39,22 @@ export default {
     },
 
     /**
-     * Set schedule data
+     * Set schedule data, overwrite data
      *
-     * @param {Object} scheduleList
+     * @param {Object} scheduleRecords
      * @param {Object} scheduleData
      */
-    setSchedule({ scheduleList }: stateEcommerceMap, scheduleData: scheduleMap) {
-        scheduleList[scheduleData.id] = scheduleData;
+    setSchedule({ scheduleRecords }: stateEcommerceMap, scheduleData: scheduleMap) {
+        scheduleRecords[scheduleData.id] = scheduleData;
     },
 
-    /**
+    /*
      * Remove schedule data
      *
-     * @param {Object} scheduleList
+     * @param {Object} scheduleRecords
      * @param {string} id
      */
-    removeSchedule({ scheduleList }: stateEcommerceMap, id: string) {
-        delete scheduleList[id];
-    },
-
-    /**
-     * Open/Close modal
-     *
-     * @param {Object} state
-     * @param {Object} scheduleData
-     */
-    setTemporarySchedule(state: stateEcommerceMap, scheduleData: scheduleMap) {
-        state.temporarySchedule = scheduleData;
+    removeSchedule({ scheduleRecords }: stateEcommerceMap, id: string) {
+        delete scheduleRecords[id];
     }
 };

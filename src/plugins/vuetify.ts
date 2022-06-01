@@ -1,13 +1,13 @@
 import { createVuetify } from "vuetify";
 import { themeColors } from  "@/resources/constants";
+import '@mdi/font/css/materialdesignicons.css';
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
-  /*
   icons: {
+    // TODO REMOVE
     iconfont: 'mdi', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
   },
-  */
   theme: {
     defaultTheme: "default",
     themes: {

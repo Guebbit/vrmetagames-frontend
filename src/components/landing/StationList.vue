@@ -4,7 +4,7 @@
         align="center"
         justify="center"
     >
-        <v-col v-for="item in list"
+        <v-col v-for="(item, index) in list"
                :key="'item-wrapper-2-' + item.id"
                cols="12" md="5" lg="4" xl="3"
         >
@@ -14,10 +14,11 @@
                 :image="item.image"
 
                 :type="item.type"
-                :time="item.time"
-                :number="item.number"
-                :available="item.available"
+                :time="1654121642000"
+                :number="index % 2 ? 2 : 0"
+                :available="index % 2 ? true : false"
             />
+            <!-- TODO available && number && time? -->
         </v-col>
     </v-row>
 </template>

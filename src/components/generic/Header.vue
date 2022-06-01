@@ -134,13 +134,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 import { shyJs, classScroll } from 'guebbit-javascript-library';
 import InclinedButton from "@/components/basics/buttons/InclinedButton.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faBars, faPlay, faHouse, faShop, faGamepad, faVrCardboard, faRightToBracket, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 library.add(faBars, faPlay, faHouse, faShop, faGamepad, faVrCardboard, faRightToBracket, faRightFromBracket)
 
 export default defineComponent({

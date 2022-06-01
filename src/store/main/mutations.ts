@@ -8,7 +8,7 @@ export default {
      * Add error\toast for a set amount of time
      */
     addError() {
-        console.log("ERROR")
+        console.error("ERROR")
         // text, time, type?
     },
 

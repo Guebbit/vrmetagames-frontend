@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 import Home from "@/views/Home.vue";
-
 const About = () => import("@/views/About.vue");
 const Play = () => import("@/views/Play.vue");
 const ProfileRegistration = () => import("@/views/User/Registration.vue");

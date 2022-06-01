@@ -27,5 +27,10 @@ export interface stateRootMap {
     ecommerce: stateEcommerceMap
 }
 
+export interface disclaimerMap {
+    icon :string
+    text :string
+    dismissable :boolean
+}
 
 

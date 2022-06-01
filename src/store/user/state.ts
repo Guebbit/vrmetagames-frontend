@@ -8,7 +8,9 @@ export default {
         phone: "+39 123 4567",
         birthdate: 1649620712000,
         description: "lorem ipsum blablabla cose a caso",
-        isAdmin: false,
+        wallet: 50,
+        lastPlayed: 1653050140000,
+        isAdmin: true,  // TODO false test
     },
     paymentMethods:{
         paypal1: {
