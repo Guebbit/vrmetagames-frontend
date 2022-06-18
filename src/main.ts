@@ -14,4 +14,9 @@ import 'swiper/css/autoplay';
 
 loadFonts();
 
-createApp(App).use(router).use(store, key).use(vuetify).use(i18n).mount("#app");
+createApp(App)
+    .use(router)
+    .use(store, key)
+    .use(vuetify)
+    .use(i18n)
+    .mount("#app");

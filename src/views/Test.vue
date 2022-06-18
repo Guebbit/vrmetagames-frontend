@@ -2,6 +2,49 @@
     <br /><br /><br />
     <br /><br /><br />
 
+    <EventLongCard
+        :time="Date.now()"
+        image="https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png"
+        :color="$vuetify.theme.themes.default.colors.primary"
+        background="#FFFFFF"
+        text="#3c3c3c"
+        facebook="#"
+        instagram="#"
+        tiktok="#"
+    >
+        <h3 class="card-title">Independence Day</h3>
+        <h5 class="card-subtitle">United States Holiday</h5>
+        <p class="card-desc">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+    </EventLongCard>
+
+    <EventLongCard
+        :time="Date.now()"
+        :color="$vuetify.theme.themes.default.colors.secondary"
+        background="#FFFFFF"
+        text="#3c3c3c"
+    >
+        <h3 class="card-title">Independence Day</h3>
+        <v-btn color="primary"
+               elevation="24"
+        >
+            Button
+        </v-btn>
+    </EventLongCard>
+
+    <HyperplexedCard
+        image="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1468070/btc.svg"
+        primary="#ff6f00"
+        secondary="#ffeb3b"
+        background="#FFFFFF"
+        textColor="#3c3c3c"
+        textRight="BTC"
+    >
+        <h1>CONTENTS</h1>
+    </HyperplexedCard>
+
     <section class="theme-section">
         <v-container>
             <NeonButton
@@ -615,6 +658,8 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import SlideOpenTripleCard from "@/components/basics/cards/SlideOpenTripleCard.vue";
 import ImageHoverCard from "@/components/basics/cards/ImageHoverCard.vue";
+import HyperplexedCard from "@/components/basics/cards/HyperplexedCard.vue";
+import EventLongCard from "@/components/basics/cards/EventLongCard.vue";
 
 library.add(faArrowRight)
 
@@ -622,6 +667,8 @@ export default defineComponent({
     name: "TestPage",
 
     components: {
+        EventLongCard,
+        HyperplexedCard,
         ImageHoverCard,
         SlideOpenTripleCard,
         PricingCardMaterialize,

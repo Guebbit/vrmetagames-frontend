@@ -1,16 +1,35 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { store } from "@/store";
+
+import {
+    createRouter,
+    createWebHistory
+} from "vue-router";
+
+import type {
+    RouteRecordRaw,
+    NavigationGuardNext,
+    RouteLocationNormalized,
+} from "vue-router";
 
 import Home from "@/views/Home.vue";
 const About = () => import("@/views/About.vue");
 const Play = () => import("@/views/Play.vue");
-const ProfileRegistration = () => import("@/views/User/Registration.vue");
-const ProfilePage = () => import("@/views/User/Profile.vue");
+const UserAuthentication = () => import("@/views/User/Authentication.vue");
+const UserProfile = () => import("@/views/User/Profile.vue");
 const ProductIndex = () => import("@/views/Product/index.vue");
 const ProductDetails = () => import("@/views/Product/ProductDetails.vue");
 const EcommerceManagement = () => import("@/views/Admin/Product/EcommerceManagament.vue");
 
 
 import Test from "@/views/Test.vue";
+
+async function authenticationCheck(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+    if(!store.getters['user/isAuthenticated']){
+        next('login');
+        return;
+    }
+    next();
+}
 
 // TODO 404, 500, etc
 export const routes: Array<RouteRecordRaw> = [
@@ -37,11 +56,6 @@ export const routes: Array<RouteRecordRaw> = [
     // ------------ GAMES ------------
 
     {
-        path: "/play",
-        name: "Play",
-        component: Play
-    },
-    {
         path: "/stations",
         name: "Stations",
         component: ProductIndex
@@ -58,32 +72,45 @@ export const routes: Array<RouteRecordRaw> = [
         props: true
     },
 
-    // ------------ USER ------------
-
-    /* TODO redirect a Home ma con "open login modal"
     {
-      path: "/login",
-      name: "Login",
+        path: "/login",
+        name: "Login",
+        component: UserAuthentication,
     },
-    */
+
     {
         path: "/registration",
         name: "Registration",
-        component: ProfileRegistration
+        component: UserAuthentication,
+        props:{
+            registrationMode: true
+        }
     },
+
+    // ------------ AUTHENTICATION NEEDED ------------
+
+    // ------------ USER ------------
+
     {
         path: "/profile",
         name: "Profile",
-        component: ProfilePage
+        component: UserProfile
     },
 
-    // ------------ GAMES ------------
+    {
+        path: "/play",
+        name: "Play",
+        component: Play,
+        beforeEnter: [authenticationCheck],
+    },
 
-  {
-    path: "/admin/ecommerce",
-    name: "AdminEcommerceManagement",
-    component: EcommerceManagement
-  }
+    // ------------ ADMIN ------------
+
+    {
+        path: "/admin/ecommerce",
+        name: "AdminEcommerceManagement",
+        component: EcommerceManagement
+    }
 ];
 
 const router = createRouter({

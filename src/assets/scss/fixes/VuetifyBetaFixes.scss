@@ -7,5 +7,21 @@
     padding-top: 64px;
 }
 
+.vuetify-icon-button{
+    .v-btn__content{
+        width: 100%;
+        svg{
+            float: right;
+        }
+    }
+}
+.vuetify-icon-button-between{
+    .v-btn__content{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+}
+
 // .v-list-item-avatar--start
 // .waiting-class-default-provider

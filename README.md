@@ -16,9 +16,7 @@ SCHEDULE
 
 TOAST: https://next.vuetifyjs.com/en/components/snackbars/
 
-
-
-
+GUEBBIT LIBRARY: object join
 
         /*
         <!-- direction="vertical" -->

@@ -16,7 +16,7 @@
                     {{ $t('main.days.' + (day - 1) )}}
                 </span>
                 <span class="hours">
-                    {{ list[day-1] && list[day-1].length > 0 ? list[day-1][0] + ' - ' + list[day-1][1] : $t('main.closed') }}
+                    {{ list[day-1] && list[day-1].length > 0 ? list[day-1][0] + ' - ' + list[day-1][1] : $t('generic.closed') }}
                 </span>
             </li>
         </ul>

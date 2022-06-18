@@ -3,6 +3,7 @@ const { t } = i18n.global;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import vuetifyColors from "vuetify/lib/util/colors";
+import { secondsToTime } from "guebbit-javascript-library";
 
 export const baseUrl = 'https://www.vrmetagames.it/'
 export const assetsUrl = 'https://assets.guebbit.com/vrmetagames';
@@ -107,4 +108,38 @@ export const formRules = {
     min: (value :string) => value.length >= 8 || 'Min 8 characters',
     emailMatch: () => (`The email and password you entered don't match`),
     rulesCheckbox: (value :string) => !!value || 'You must agree to continue!',
+};
+
+export const labelFromToDuration = (start :number, end :number) :{
+    mode :number,
+    hours :number,
+    minutes :number
+} => {
+    let mode = 0;
+    const { hours = 0, minutes = 0 } = secondsToTime(end - start);
+    
+    if(hours === 0 && minutes > 0){
+        mode = 1;
+    }
+    if(minutes === 0){
+        if(hours === 1){
+            mode = 2;
+        }
+        if(hours > 1){
+            mode = 3;
+        }
+    }else{
+        if(hours === 1){
+            mode = 4;
+        }
+        if(hours > 1){
+            mode = 5;
+        }
+    }
+    
+    return {
+        mode,
+        hours,
+        minutes
+    }
 };

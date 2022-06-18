@@ -31,6 +31,7 @@
 </template>
 
 <script lang="ts">
+// TODO https://codepen.io/JavaScriptJunkie/pen/vzWPbV
 import { defineComponent } from "vue";
 
 export default defineComponent({

@@ -9,7 +9,7 @@ import type {
 export default {
 
     /**
-     * Set user data
+     * Set station data
      *
      * @param {Object} stations
      * @param {Object} stationData
@@ -19,7 +19,7 @@ export default {
     },
 
     /**
-     * Set user data
+     * Set game data
      *
      * @param {Object} games
      * @param {Object} gameData

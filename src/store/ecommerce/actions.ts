@@ -114,7 +114,7 @@ const mockServerStations = [
         type: 'Oculus',
         label: 'Oculus',
         image: 'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png',
-        capacity: 2
+        capacity: 4
     },
     {
         id: 'item2',
@@ -324,10 +324,12 @@ export default {
     // ------------- USERS -------------
 
     /**
+     * ADMIN ONLY
      * Get all users data TODO ottimizzare con only byId quando richiesto
      *
      * @param {Function} dispatch
      * @param {Function} commit
+     * @param {boolean} isAdmin
      * @param {number} lastUpdate
      * @param {number} refresh
      */
@@ -335,6 +337,11 @@ export default {
         dispatch,
         commit,
         rootState: {
+            user: {
+                userInfo: {
+                    isAdmin
+                }
+            },
             main: {
                 lastUpdate: { users: lastUpdate = 0 },
                 refresh: { users: refresh = 3600000 }
@@ -342,7 +349,7 @@ export default {
         }
     }: ActionContext<stateEcommerceMap, stateRootMap>): Promise<void> {
         // TTL
-        if(lastUpdate + refresh > Date.now()){
+        if(!isAdmin || lastUpdate + refresh > Date.now()){
             return Promise.resolve();
         }
         return Promise.resolve()
@@ -409,73 +416,73 @@ export default {
      * Create OFFLINE schedule to LOCAL, waiting to be sent online
      * to be saved and\or confirmed later
      *
-     * @param {Function} dispatch
      * @param {Function} commit
+     * @param {Function} checkScheduleIsAllowed
      * @param {string} id
      * @param {boolean} isAdmin
      * @param {Object} scheduleData
      */
-    addSchedule({ commit, rootState: { user: { userInfo: { id, isAdmin }}}}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :void {
-        // TODO colori diversi se utente normale?
-        // TODO console.log("AAAAAAAAAAAAAAAA", scheduleData)
+    async addSchedule({ commit, getters: { checkScheduleIsAllowed }, rootState: { user: { userInfo: { id, isAdmin }}}}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :Promise<string> {
         // If NOT admin, user can make decisions only for himself
-        if(!isAdmin){
-            scheduleData.userId = id;
+        if(!isAdmin && scheduleData.userId !== id){
+            return Promise.reject(['error-403']);
         }
+
+        // if schedule is not allowed in that timeframe
+        const errorArray = checkScheduleIsAllowed(scheduleData.start, scheduleData.end, scheduleData.resourceId);
+        if(errorArray.length > 0){
+            return Promise.reject(errorArray);
+        }
+
+        const scheduleId = scheduleData.id || getUUID();
         // Events without userId are admin inserted events
         // if(!scheduleData.userId){}
         // instanteity and reactivity
         commit("setSchedule", {
             ...scheduleData,
-            id: getUUID(),
+            id: scheduleId,
             online: false,
             confirmed: false,
             canceled: false,
             unsaved: false
         });
+
+        return Promise.resolve(scheduleId);
     },
 
     /**
      * EDIT schedules from LOCAL
      * unsaved edits to be confirmed\sent
      *
-     * @param {Object} scheduleEditableTime
      * @param {Function} dispatch
      * @param {Function} commit
      * @param {Function} getItem
-     * @param {string} id
-     * @param {boolean} isAdmin
      * @param {Object} scheduleData
      */
-    editSchedule({ state: { scheduleEditableTime }, commit, getters: { getItem }, rootState: { user: { userInfo: { id :userId, isAdmin }}}}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :void {
-        const oldScheduleData = getItem('scheduleRecords', scheduleData.id);
-        const { id, start, end, userId :scheduleUserId } = oldScheduleData;
-        // se non trovato
-        if(!id){
-            return;
+    async editSchedule({ commit, getters: { getItem, checkScheduleIsEditable, checkScheduleIsAllowed }}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :Promise<void> {
+        const { id, start, end, resourceId } = scheduleData;
+        const oldScheduleData = getItem('scheduleRecords', id);
+        // if not found (shouldn't happen)
+        if(!oldScheduleData){
+            return Promise.reject(['error-404']);
         }
-
-        // TODO ALL CHECKS
-        console.log("11111111111111", id, isAdmin, start, end, userId, scheduleUserId)
-
-        // user can make decisions only for himself
-        if(!isAdmin && userId !== scheduleUserId){
-            console.error("TODO NEVER: user can make decisions only for himself")
-            return;
+        // CHECK if user can edit target schedule
+        const errorEditableArray = checkScheduleIsEditable(id);
+        if(errorEditableArray.length > 0){
+            return Promise.reject(errorEditableArray);
         }
-
-        if(!isAdmin && (start + scheduleEditableTime < Date.now())){
-            // WARNING: check already done in Play.vue selectItem TODO
-            console.log("CAN'T EDIT IN THE PAST")
-            return;
+        // CHECK if the edited schedule is allowed in the new timeslots
+        const errorAllowedArray = checkScheduleIsAllowed(start, end, resourceId);
+        if(errorAllowedArray.length > 0){
+            return Promise.reject(errorAllowedArray);
         }
-
-        // TODO CHECK disponibilità (play.vue? qui? calendar.vue? tutti e 3?)
+        // edit target schedule
         commit("setSchedule", {
             ...oldScheduleData,
             ...scheduleData,
             unsaved: true
         });
+        return Promise.resolve();
     },
 
     /**

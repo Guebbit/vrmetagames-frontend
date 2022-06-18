@@ -41,7 +41,6 @@ import {
     timeToSeconds,
     getUUID,
     rangeOverlaps,
-    getOverlapRange,
     arrayColumn
 } from "guebbit-javascript-library";
 
@@ -63,13 +62,16 @@ import itLocale from '@fullcalendar/core/locales/it';
 import type {
     CalendarOptions,
     BusinessHoursInput,
-    DurationInput,
+    // DateSpanApi,
     EventApi,
     EventInput,
     DateSelectArg,
     EventClickArg,
     EventAddArg,
-    EventRemoveArg
+    EventRemoveArg,
+    EventChangeArg,
+    OverlapFunc,
+    AllowFunc
 } from '@fullcalendar/vue3';
 import type {
     DateClickArg
@@ -77,12 +79,6 @@ import type {
 import type {
     ResourceInput
 } from '@fullcalendar/resource-common';
-
-interface cappedSlotMap {
-    start :Date
-    end :Date
-    events :string[]
-}
 
 export default defineComponent({
     name: "Calendar",
@@ -115,11 +111,11 @@ export default defineComponent({
                 return [];
             }
         },
-        // 
+        //
         slotDuration: {
-            type: String as PropType<DurationInput>,
+            type: Number,
             default: () => {
-                return '0:30';
+                return 1800000; // '0:30'
             }
         },
         // -1 = infinite
@@ -172,10 +168,32 @@ export default defineComponent({
             type: String,
             required: false
         },
+
+        // HANDLES (see commented methods for info)
+        handleEventsSet: {
+            type: Function as PropType<(events: EventApi[]) => void>,
+            required: false,
+        },
+
+        handleOverlap: {
+            type: Function as PropType<OverlapFunc>,
+            required: false,
+        },
+
+        handleAllow: {
+            type: Function as PropType<AllowFunc>,
+            required: false,
+        },
+
+        handleEventChange: {
+            type: Function as PropType<(arg: EventChangeArg) => void>,
+            required: false,
+        },
     },
 
     data: () => {
         return {
+            // TODO per ora inutile
             idLastEvent: '',
         };
     },
@@ -294,6 +312,7 @@ export default defineComponent({
                 selectConstraint: 'businessHours',
                 eventConstraint: 'businessHours',
                 // defaultTimedEventDuration: "01:00:00",   // NOT WORKING
+                longPressDelay: 0,                      // integer, time user must hold touch before drag\select WARNING: 0 because scroll is never needed https://fullcalendar.io/docs/touch
                 editable: this.admin,                   // boolean, events can be dragged and resized
                 eventResourceEditable: this.admin,      // same, but with resources
                 selectable: true,                       // boolean, select on calendar
@@ -303,16 +322,16 @@ export default defineComponent({
                 hiddenDays: this.hideDisabledDays ? this.closeDays : [],
                 // forceEventDuration: true,               // boolean: force event's "end" to be specified
                 slotEventOverlap: true,                    // boolean, should
-                // selectOverlap: this.handleOverlap,      // boolean or function that return boolean
-                // eventOverlap: this.handleOverlap,       // boolean or function that return boolean
-
+                selectOverlap: this.handleOverlap || true,// boolean or function that return boolean
+                eventOverlap: this.handleOverlap || true, // boolean or function that return boolean
+                eventAllow: this.handleAllow,             // function that return boolean
                 select: this.handleDateSelect,
                 dateClick: this.handleDateClick,
                 eventClick: this.handleEventClick,
                 eventsSet: this.handleEventsSet,
                 eventAdd: this.handleEventAdd,
                 eventRemove: this.handleEventRemove,
-                // eventChange: this.handleEventChange
+                eventChange: this.handleEventChange
             }
         }
     },
@@ -337,8 +356,37 @@ export default defineComponent({
         },
 
         /**
+         * SAME as getEventsByTime, but "breaking" the result for every slot
+         *
+         * @param {Date} dateFrom
+         * @param {Date} dateTo
+         * @param {string} resourceId
+         * @return {Object[]}
+         */
+        getEventsBySlots(dateFrom = new Date(), dateTo = new Date(), resourceId ?:string) :Record<string, string[]> {
+            // if even only 1 time slot in higher than eventNumberLimit, it fails
+            // from start to end step by step
+            let stepperStart = dateFrom;
+            let stepperEnd = new Date(stepperStart.getTime() + this.slotDuration);
+            const cappedSlots :Record<string, string[]> = {};
+            // do cycle
+            do {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                cappedSlots[stepperStart.getTime() + '_' + stepperEnd.getTime()] = arrayColumn(this.getEventsByTime(stepperStart, stepperEnd, resourceId), 'id');
+                // next step, until loading reach END
+                stepperStart = new Date(stepperStart.getTime() + this.slotDuration);
+                stepperEnd = new Date(stepperEnd.getTime() + this.slotDuration);
+                // stepper end
+            } while (stepperEnd <= dateTo);
+            return cappedSlots;
+        },
+
+        /**
          * Create event
-         * Fullcalendar can have different events with same id (in case they are split)
+         * (WARNING: Fullcalendar can have different events with same id (in case they are split))
+         *
+         * If cap is reached: emit
          *
          * https://fullcalendar.io/docs/event-object
          * https://fullcalendar.io/docs/event-parsing
@@ -359,44 +407,28 @@ export default defineComponent({
             }
             // If there is an event limit
             if(eventNumberLimit > -1){
-                // OPTIMIZE?
                 // divide the EventInput in timeslots and check how many events are already there,
-                // if even only 1 time slot in higher than eventNumberLimit, it fails
-                // from start to end step by step
-                let stepperStart = start;
-                let stepperEnd = new Date(stepperStart.getTime() + 1800000);
-                const cappedSlots :cappedSlotMap[] = [];
-                // do cycle
-                do {
-                    const eventsInRange = this.getEventsByTime(stepperStart, stepperEnd, resourceId);
-                    if(eventsInRange.length >= eventNumberLimit)
-                        cappedSlots.push({
-                            start: stepperStart,
-                            end: stepperEnd,
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore
-                            events: arrayColumn(eventsInRange, 'id')
-                        })
-                    // next step, until loading reach END
-                    stepperStart = new Date(stepperStart.getTime() + 1800000);  // TODO translate this.slotDuration
-                    stepperEnd = new Date(stepperEnd.getTime() + 1800000);  // TODO translate this.slotDuration
-                    // stepper end
-                } while (stepperEnd <= end);
-
-                if(cappedSlots.length > 0){
-                    for(let i = cappedSlots.length; i--; ){
-                        const { start, end, events } = cappedSlots[i];
-                        this.$emit('event:limit-reached', start, end, events);
+                const cappedSlots = this.getEventsBySlots(start, end, resourceId);
+                // if events are found
+                if(Object.keys(cappedSlots).length > 0) {
+                    for(const key in cappedSlots) {
+                        // check if NOT prototype (default) AND check if the number of events exceed the event number limit
+                        if(!Object.prototype.hasOwnProperty.call(cappedSlots, key) || cappedSlots[key].length < eventNumberLimit) {
+                            continue;
+                        }
+                        // if limit reached, emit and return
+                        const [ start, end ] = key.split("_");
+                        this.$emit('event:limit-reached', start, end, cappedSlots[key]);
+                        return;
                     }
-                    return;
                 }
             }
             // Add the event
             const id = getUUID();
             const event :EventInput = {
                 id,
-                start: new Date(start),
-                end: new Date(end),
+                start,
+                end,
                 allDay,
                 resourceId,
             };
@@ -463,7 +495,10 @@ export default defineComponent({
             });
         },
 
+
         /**
+         * https://fullcalendar.io/docs/select-callback
+         *
          * Select date
          * Can be single click, give minimum time slot (trigger handleDateClick too).
          * Needed only timeGrid*** or resourceTime***
@@ -479,6 +514,8 @@ export default defineComponent({
         },
 
         /**
+         * https://fullcalendar.io/docs/dateClick
+         *
          * Click on date
          * Need only on the dayGridMonth view
          * Doesn't work if close day
@@ -492,6 +529,8 @@ export default defineComponent({
         },
 
         /**
+         * https://fullcalendar.io/docs/eventClick
+         *
          * When EVENT is clicked
          * (warning: background events)
          *
@@ -502,25 +541,27 @@ export default defineComponent({
             if(!id || display === 'background'){
                 return;
             }
-            // console.log("handleEventClick", this.calendarApi.getEventById(id))
+            console.log("handleEventClick", this.calendarApi.getEventById(id))
             this.$emit('event:click', id);
         },
 
         /**
+         * https://fullcalendar.io/docs/eventsSet
+         *
          * Called after event data is initialized OR changed in any way.
          * Useful for syncing an external data source with all calendar event data.
          *
          * @param {Object[]} events - same as Calendar::getEvents
          */
-        handleEventsSet(events: EventApi[]) {
-            // console.log("handleEventsSet", events.length, events)
-        },
+        // handleEventsSet(events: EventApi[]) {},
 
         /**
-         * Handle events overlap. Called on every overlapping event.
          * https://fullcalendar.io/docs/eventOverlap
          *
-         * eventOverlap(stillEvent, movingEvent) called on drag or resize
+         * Handle events overlap. Called on every overlapping event.
+         *
+         * eventOverlap(stillEvent, movingEvent)
+         * called on drag or resize
          *
          * selectOverlap(stillEvent) called on select\insertion
          * no "movingEvent" because the selection is not an event per se,
@@ -534,9 +575,22 @@ export default defineComponent({
          * @param {Object} movingEvent
          * @return {boolean}
          */
-        // handleOverlap(stillEvent :EventApi, movingEvent :EventApi | null) {},
+        // handleOverlap(stillEvent :EventApi, movingEvent :EventApi | null)  {},
 
         /**
+         * https://fullcalendar.io/docs/eventAllow
+         *
+         * Function to allow or not
+         *
+         * @param {Object} dropInfo - given location where to drop the given event
+         * @param {Object} draggedEvent - given event
+         * @return {boolean} => true = allowed, false = not allowed
+         */
+        // handleAllow(dropInfo :DateSpanApi, draggedEvent: EventApi | null) {},
+
+        /**
+         * https://fullcalendar.io/docs/eventAdd
+         *
          * Called after an event has been added to the calendar.
          *
          * @param {string} id
@@ -546,6 +600,8 @@ export default defineComponent({
         },
 
         /**
+         * https://fullcalendar.io/docs/eventRemove
+         *
          * Called after an event has been removed from the calendar.
          *
          * @param {string} id
@@ -555,6 +611,8 @@ export default defineComponent({
         },
 
         /**
+         * https://fullcalendar.io/docs/eventChange
+         *
          * Called after an event has been modified in some way:
          *  - when Event Object setter method is called
          *  - when event has been dragger or resized
@@ -566,18 +624,20 @@ export default defineComponent({
         // handleEventChange({ oldEvent, event, relatedEvents, revert } :EventChangeArg) {},
 
         /**
+         * https://fullcalendar.io/docs/eventResize
+         *
          * Triggered when resizing stops and the event has changed in duration.
          * BEFORE eventChange
-         * https://fullcalendar.io/docs/eventResize
          *
          * @param eventResizeInfo
          */
         // handleEventResize(eventResizeInfo :EventResizeDoneArg) {}
 
         /**
+         * https://fullcalendar.io/docs/eventDrop
+         *
          * Triggered when resizing stops and the event has changed in duration.
          * BEFORE eventChange
-         * https://fullcalendar.io/docs/eventDrop
          *
          * @param eventResizeInfo
          */
@@ -587,6 +647,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+/** TODO
+Admin mode: users with different colors, opacity 0.8? Admin with opacity 1 primary\secondary color
+User mode: users with different colors? opacity 0.4? User with opacity 1 primary\secondary color
+ */
+
 $fullcalendar-mobile-threshold: 600px !default;
 
 .fc{
@@ -622,9 +687,6 @@ $fullcalendar-mobile-threshold: 600px !default;
             &:hover{
                 // background:lightblue;cursor: pointer;
             }
-        }
-        .fc-scroller{
-
         }
     }
     &.no-borders{

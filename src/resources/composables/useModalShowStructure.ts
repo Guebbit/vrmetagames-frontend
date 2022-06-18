@@ -1,4 +1,4 @@
-import { computed, watch, defineEmits } from 'vue';
+import { computed } from 'vue';
 import { useStore } from "@/store";
 
 // by convention, composable function names start with "use"

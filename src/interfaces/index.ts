@@ -2,6 +2,7 @@
 
 export {
     // ecommerce
+    scheduleInputMap,
     scheduleMap,
     userMap,
     stationMap,
@@ -19,7 +20,7 @@ export {
     stateUserMap,
 } from './state';
 
-import { stateMainMap, stateUserMap, stateEcommerceMap} from './state';
+import type { stateMainMap, stateUserMap, stateEcommerceMap} from './state';
 
 export interface stateRootMap {
     main: stateMainMap,

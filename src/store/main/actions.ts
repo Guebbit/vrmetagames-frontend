@@ -3,13 +3,21 @@ import { stateMainMap, stateRootMap } from "@/interfaces";
 
 export default {
 
-    initApp({ dispatch }: ActionContext<stateMainMap, stateRootMap>){
-        return Promise.all([
+    initApp({ dispatch, rootGetters }: ActionContext<stateMainMap, stateRootMap>){
+        const promisesArray = [
             dispatch('ecommerce/getStations', null, { root: true }),
             dispatch('ecommerce/getGames', null, { root: true }),
             dispatch('ecommerce/getUsers', null, { root: true }),
             dispatch('ecommerce/getSchedules', null, { root: true }),
-        ]);
+        ];
+
+        if(rootGetters['user/isAuthenticated']){
+            promisesArray.push(
+                dispatch('user/getUserInfo', null, { root: true })
+            );
+        }
+
+        return Promise.all(promisesArray);
     },
 
     /**

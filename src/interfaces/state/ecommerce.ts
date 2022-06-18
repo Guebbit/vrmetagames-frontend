@@ -10,18 +10,25 @@
  * UNSAVED
  *  - false: normal situation
  *  - true: unsaved (offline) changes on event
+ *  - online true + unsaved true = means the event is already online but user have unsaved edits
  * CANCELED
  *  - false: normal situation
  *  - true: a previously CONFIRMED schedule that has been canceled (online:true & confirmed:false only)
  */
-export interface scheduleMap {
+export interface scheduleInputMap {
+    start: number
+    end: number
+    allDay: boolean
+    resourceId?: string
+}
+
+export interface scheduleMap extends scheduleInputMap {
     id :string
     userId :string
     online :boolean     // WARNING: FE only
     confirmed :boolean
     unsaved: boolean     // WARNING: FE only
     canceled: boolean
-    [key :string] :any  // TODO
 }
 
 export interface userMap {
@@ -29,6 +36,7 @@ export interface userMap {
     avatar: string
     username: string
     lastVisit: number
+    color: string // color assigned to user in current session (fullcalendar event color)
     // admin options
     wallet ?:number
 }

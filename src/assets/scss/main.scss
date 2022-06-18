@@ -11,6 +11,10 @@
 @import "fixes/VuetifyBetaFixes";
 @import 'fixes/elevation';
 
+
+@include guebbit-include-social-colors();
+
+
 .hero-panel-content{
     padding: 24px;
 }
@@ -43,44 +47,49 @@
 }
 
 
+
+
+
+.facebook-color{
+    color: g-color-get('socials', 'facebook') !important;
+    &:before{
+        background: g-color-get('socials', 'facebook') !important;
+    }
+}
+.instagram-color{
+    color: g-color-get('socials', 'instagram-fallback') !important;
+    &:before{
+        background: g-color-get('socials', 'instagram') !important;
+    }
+}
+.tiktok-color{
+    color: g-color-get('socials', 'tiktok-fallback') !important;
+    &:before{
+        background: g-color-get('socials', 'tiktok') !important;
+    }
+}
+.youtube-color{
+    color: g-color-get('socials', 'youtube') !important;
+    &:before{
+        background: g-color-get('socials', 'youtube') !important;
+    }
+}
+.whatsapp-color{
+    color: g-color-get('socials', 'whatsapp') !important;
+    &:before{
+        background: g-color-get('socials', 'whatsapp') !important;
+    }
+}
+.telegram-color{
+    color: g-color-get('socials', 'telegram') !important;
+    &:before{
+        background: g-color-get('socials', 'telegram') !important;
+    }
+}
+
+
 .button-social-icon{
     .icon{
-        &.facebook-color{
-            color: g-color-get('socials', 'facebook');
-            &:before{
-                background: g-color-get('socials', 'facebook');
-            }
-        }
-        &.instagram-color{
-            color: g-color-get('socials', 'instagram-fallback');
-            &:before{
-                background: g-color-get('socials', 'instagram');
-            }
-        }
-        &.tiktok-color{
-            color: g-color-get('socials', 'tiktok-fallback');
-            &:before{
-                background: g-color-get('socials', 'tiktok');
-            }
-        }
-        &.youtube-color{
-            color: g-color-get('socials', 'youtube');
-            &:before{
-                background: g-color-get('socials', 'youtube');
-            }
-        }
-        &.whatsapp-color{
-            color: g-color-get('socials', 'whatsapp');
-            &:before{
-                background: g-color-get('socials', 'whatsapp');
-            }
-        }
-        &.telegram-color{
-            color: g-color-get('socials', 'telegram');
-            &:before{
-                background: g-color-get('socials', 'telegram');
-            }
-        }
         &.primary-color{
             color: rgb(var(--v-theme-primary));
             &:before{

@@ -53,7 +53,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { mapState } from "vuex";
 import { Autoplay, Scrollbar } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import BookCard from "guebbit-vue-library/src/components/cards/BookCard.vue";

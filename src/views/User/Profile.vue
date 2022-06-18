@@ -209,7 +209,7 @@
                 </v-col>
                 <v-col cols="12" sm="9" md="9" lg="10">
                     <v-defaults-provider :defaults="defaultsPaymentHistory">
-                        <v-card v-for="item in payments"
+                        <v-card v-for="item in paymentRecords"
                                 :key="'payment-history-' + item.id"
                                 class="waiting-class-default-provider-2"
                                 to="/order-details"
@@ -308,7 +308,7 @@ export default defineComponent({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             paymentMethods: ({ user: {paymentMethods} } :any) => Object.values(paymentMethods),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            payments: ({ user: {payments} } :any) => Object.values(payments),
+            paymentRecords: ({ user: {paymentRecords} } :any) => Object.values(paymentRecords),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             user: ({ user: { userInfo } }: any) => userInfo,
         }),

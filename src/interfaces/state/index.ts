@@ -6,6 +6,7 @@ export {
 } from './user';
 
 export {
+    scheduleInputMap,
     scheduleMap,
     userMap,
     stationMap,

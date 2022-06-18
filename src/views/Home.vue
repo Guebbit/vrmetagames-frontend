@@ -473,7 +473,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import StationList from "@/components/landing/StationList.vue";
-import { mapActions, mapState } from "vuex";
+import { mapState } from "vuex";
 
 
 library.add(faArrowRight)
@@ -509,16 +509,6 @@ export default defineComponent({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             games: ({ ecommerce: { games } }: any) => Object.values(games),
         }),
-    },
-
-    methods:{
-        ...mapActions('main', [
-            'initApp'
-        ]),
-    },
-
-    created(){
-        this.initApp();
     },
 
     mounted(){

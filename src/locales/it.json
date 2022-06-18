@@ -1,9 +1,13 @@
 {
   "generic": {
     "name": "VR Metagames",
-    "play-now": "Play Now",
-    "book-now": "Book Now",
-    "opening-hours": "Orari"
+    "play": "Gioca",
+    "play-now": "Gioca adesso",
+    "book": "Prenota",
+    "book-now": "Prenota adesso",
+    "opening-hours": "Orari",
+    "user": "Utente",
+    "closed": "Chiuso"
   },
   "meta": {
     "title": "VRMetagames di Carpi",
@@ -20,21 +24,34 @@
       "twitter:card": "summary"
     }
   },
+  "key": "{count} item | {count} items",
   "play": {
     "schedule-details-last-visit": "Ultima visita",
+    "schedule-details-time-count": [
+      "Tempo non valido",
+      "{minutes} minuti",
+      "{hours} ora",
+      "{hours} ore",
+      "{hours} ora e {minutes} minuti",
+      "{hours} ore e {minutes} minuti"
+    ],
+    "schedule-button-play-now": "Gioca subito!",
     "schedule-button-new": "Inserisci evento",
     "schedule-button-edit": "Modifica evento",
     "schedule-button-rules": "Accetta le regole",
     "schedule-button-invalid": "Dati non validi",
-    "schedule-form-schedule-available": "Available",
-    "schedule-form-schedule-full": "Posti esauriti",
+    "schedule-form-schedule-available": "Aperto",
+    "schedule-form-schedule-closed": "Chiuso",
+    "schedule-form-schedule-max-reached": "Posti esauriti",
     "select-event-form-rules": "Accetta le <b><a href=\"#\" target=\"_blank\" class=\"text-decoration-none text-secondary\">condizioni</a></b>",
     "select-event-label-date":  "Seleziona una data",
     "select-event-label-hours": "Seleziona gli orari",
-    "select-event-label-disclaimer": "Seleziona uno spazio disponibile per trovare facilmente posto o prenota direttamente nel form qui sotto"
+    "select-event-label-disclaimer": "Seleziona uno spazio disponibile per trovare facilmente posto o prenota direttamente nel form qui sotto",
+    "select-event-fast-play": "Oppure gioca subito!",
+    "select-event-mode-fast":  "Veloce",
+    "select-event-mode-slow": "Multiplo"
   },
   "main": {
-    "closed": "Chiuso",
     "days": [
       "Domenica",
       "Lunedì",

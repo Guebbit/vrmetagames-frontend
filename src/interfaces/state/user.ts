@@ -32,7 +32,8 @@ export interface currentUserMap {
 }
 
 export interface stateUserMap {
-    userInfo: currentUserMap,
+    jwt :string
+    userInfo: currentUserMap
     paymentMethods: Record<string, paymentMethodMap>
-    payments: Record<string, paymentMap>
+    paymentRecords: Record<string, paymentMap>
 }

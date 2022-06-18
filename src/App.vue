@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 import MainNavigation from "@/components/generic/Header.vue";
 import LoginModal from "@/components/generic/modals/LoginModal.vue";
 
@@ -37,6 +37,16 @@ export default defineComponent({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             loading: ({ main: { loading } }: any) => loading.includes('main'),
         })
+    },
+
+    methods:{
+        ...mapActions('main', [
+            'initApp'
+        ]),
+    },
+
+    created(){
+        this.initApp();
     },
 });
 </script>

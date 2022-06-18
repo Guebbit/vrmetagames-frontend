@@ -1,18 +1,19 @@
 import dayjs from "dayjs";
+import { arrayColumn, rangeOverlaps } from "guebbit-javascript-library";
 
 import type { GetterTree } from 'vuex';
 import type { stateRootMap, stateEcommerceMap, scheduleMap } from "@/interfaces";
 
+
 export default {
 
     /**
-     * schedule JOIN users
-     * TODO generic function guebbit-javascript-library
+     * Schedule list with FE only elaborated data
      *
      * @param {Object[]} scheduleRecords
      * @param {Object[]} users
      * @param {Object[]} stations
-     * @param {Function} getters
+     * @param {Object} totalStations
      * @param {Object} rootState
      * @param {Object} rootGetters
      * @return {Object[]}
@@ -20,11 +21,10 @@ export default {
     // TODO admin can see all events (opacity 0.8 su tutti gli eventi non-admin?)
     // TODO normal user can see only his events (with multiple random colors) and other users events are greyed out
     // TODO separare in multipli
-    scheduleDetailedList: ({ scheduleRecords, users, stations } :stateEcommerceMap, getters, rootState, rootGetters) => {
+    scheduleDetailedList: ({ scheduleRecords, users } :stateEcommerceMap, { totalStations }, rootState, rootGetters) => {
         // stations
-        let i, k;
+        let i :number;
         const scheduleArray = Object.values(scheduleRecords);
-        const stationsArray = Object.values(stations);
         const fullCalendarScheduleArray = [];
         const businessSeconds = rootGetters['main/businessSeconds'];
         const businessAvailableTime = [];
@@ -32,24 +32,27 @@ export default {
 
         // calculate the total seconds available on a business day
         for(i = businessSeconds.length; i--; ){
-            businessAvailableTime[i] = 0;
-            for(k = stationsArray.length; k--; ){
-                // multiply for total stations
-                // TODO different stations with different possible games
-                businessAvailableTime[i] += businessSeconds[i] * stationsArray[k].capacity;
-            }
+            // TODO different stations with different possible games
+            // multiply for total stations
+            businessAvailableTime[i] = businessSeconds[i] * totalStations['global'];
         }
 
         // calculate the event seconds, grouped daily
         for(i = scheduleArray.length; i--; ){
             // push event in calendar
             fullCalendarScheduleArray.push({
-                ...users[scheduleArray[i].userId] || {},
                 ...scheduleArray[i],
+                user: users?.[scheduleArray[i].userId], // if NOT admin, there will be no user info
+                color: users?.[scheduleArray[i].userId]?.color,
                 className: 'regular-schedule'
             });
-            // SAME DAY (WARNING: -1 second to .end to have 23.59.59 and not the 00 of the day after)
-            if(new Date(scheduleArray[i].start).toDateString() === new Date(scheduleArray[i].end - 1).toDateString()){
+            // SAME DAY
+            // TODO WARNING In inserimento via FullCalendar necessito del -1, via form invece è d'intralcio
+            if(
+                new Date(scheduleArray[i].start).toDateString() === new Date(scheduleArray[i].end - 1).toDateString() ||
+                // WARNING: -1 second to .end to have 23.59.59 and not the 00 of the day after
+                new Date(scheduleArray[i].start).toDateString() === new Date(scheduleArray[i].end).toDateString()
+            ){
                 const day = dayjs(scheduleArray[i].start).format('YYYY-MM-DD');
                 let seconds = scheduleArray[i].end - scheduleArray[i].start;
                 // if there was already data in there, SUM
@@ -68,10 +71,10 @@ export default {
             if(!Object.prototype.hasOwnProperty.call(dateRecords, day)){
                 continue;
             }
-            const [ weekday, seconds ] = dateRecords[day];
+            const [ weekday, rentedSeconds ] = dateRecords[day];
             // calculate remaining seconds (percentage)
-            const remainingTimePercentage = (seconds / businessSeconds[weekday]) * 100;
-            console.log("AAAAAAAAA", seconds / 10000, businessSeconds[weekday] / 10000, seconds / businessSeconds[weekday])
+            const remainingTimePercentage = (rentedSeconds / businessAvailableTime[weekday]) * 100;
+            // UI color
             let capacityClass = 'capacity-disabled';
             switch (true){
                 case remainingTimePercentage < 25:
@@ -87,17 +90,15 @@ export default {
                     capacityClass = 'capacity-red';
                     break;
             }
-            console.log("444444444444", day, remainingTimePercentage);
+            // finished schedule
             fullCalendarScheduleArray.push({
                 start: day,
                 // end: day,
                 display: 'background',
-                overlap: false,
-                editable: false,
                 className: 'day-capacity-indicator ' + capacityClass
             })
         }
-
+        // list of schedule for fullcalendar
         return fullCalendarScheduleArray;
     },
 
@@ -114,12 +115,13 @@ export default {
 
     /**
      * Get list of ONHOLD (NOT CONFIRMED) schedules
+     * Since every OFFLINE is ONHOLD by default, I filter them out
      *
      * @param {Object} scheduleRecords
      */
     schedulesOnHold: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] => {
-        return Object.values(scheduleRecords).filter(({ confirmed = true }) => {
-            return !confirmed;
+        return Object.values(scheduleRecords).filter(({ online = true, confirmed = true }) => {
+            return online && !confirmed;
         });
     },
 
@@ -135,7 +137,7 @@ export default {
     },
 
     /**
-     * Get list of CANCELED schedules
+     * Get list of UNSAVED schedules
      *
      * @param {Object} scheduleRecords
      */
@@ -143,35 +145,6 @@ export default {
         return Object.values(scheduleRecords).filter(({ unsaved = false }) => {
             return unsaved;
         });
-    },
-
-    /**
-     * id
-     *
-     * @param {Object} scheduleRecords
-     * @param {number} scheduleEditableTime
-     * @param {Object} getters
-     * @param {string} currentUserId
-     * @param {boolean} isAdmin
-     * @return {Function<boolean>}
-     */
-    scheduleIsEditable: ({ scheduleRecords, scheduleEditableTime }: stateEcommerceMap, getters, { user: { userInfo: { id :currentUserId, isAdmin }}}) => {
-        /**
-         * @param {string} id
-         * @return {boolean}
-         */
-        return (id :string) :boolean => {
-            if(!Object.prototype.hasOwnProperty.call(scheduleRecords, id)){
-                return false;
-            }
-            const { start, userId } = scheduleRecords[id];
-                // Edit schedule only if current user OR it's admin
-            return !(currentUserId !== userId && !isAdmin) ||
-                // Event is in the past. edit time expired
-                !(start < Date.now() && !isAdmin) ||
-                // event can be edited only until 1 hour from the start, edit time expired
-                !(start + scheduleEditableTime >= Date.now());
-        }
     },
 
     /**
@@ -200,13 +173,190 @@ export default {
      * WARNING: different stations can have different characteristics, it's ok only for "all around games"
      * or if all stations are of the same type
      *
+     * There can be different stations with different possible games/characteristics/limits
+     *
      * @param {object[]} stations
      * @return {number}
      */
-    totalStations({ stations } :stateEcommerceMap){
-        return Object.values(stations).reduce((total, { capacity = 0 }) => {
+    totalStations({ stations } :stateEcommerceMap) :Record<string, number> {
+        const stationTypes :Record<string, number> = {};
+        stationTypes['global'] = Object.values(stations).reduce((total, { capacity = 0 }) => {
             return total + capacity;
         }, 0);
+        // TODO array of types? stationTypes['oculus'] somma di tutte le stations con questa caratteristica? Al posto di capacity
+        return stationTypes;
+    },
+
+    /**
+     * Get all events between 2 dates
+     * If resourceId is set, then get only those of that resource
+     *
+     * @param {Object} scheduleRecords
+     * @return {boolean}
+     */
+    getSchedulesByTime: ({ scheduleRecords }: stateEcommerceMap) => {
+
+        /**
+         * @param {number} dateFrom
+         * @param {number} dateTo
+         * @param {string} checkResourceId
+         */
+        return (dateFrom :number, dateTo :number, checkResourceId ?:string) => {
+            let scheduleList = Object.values(scheduleRecords);
+            // if a resource was specified, I check only the schedules of that same resource
+            if(checkResourceId){
+                scheduleList = scheduleList.filter(({ resourceId } :scheduleMap) => {
+                    return checkResourceId === resourceId;
+                })
+            }
+
+            // main filter 
+            return scheduleList.filter(({ start, end } :scheduleMap) => {
+                // if null, take today (should never happen, but typescript have warnings)
+                const eventStart = start ? start : Date.now();
+                // if null, take start (default fullcalendar behaviour)
+                const eventEnd = end ? end : eventStart;
+                return rangeOverlaps(dateFrom, dateTo, eventStart, eventEnd);
+            });
+        }
+    },
+
+    /**
+     * SAME as getSchedulesByTime, but "breaking" the result for every slot
+     *
+     * @param {number} scheduleTimeStep
+     * @param {Function} getSchedulesByTime
+     */
+    getSchedulesBySlots: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesByTime }) => {
+
+        /**
+         * @param {number} dateFrom
+         * @param {number} dateTo
+         * @param {number} slotDuration - default 30 min
+         * @param {string} checkResourceId
+         * @return {boolean}
+         */
+        return (dateFrom :number, dateTo :number, slotDuration = scheduleTimeStep, checkResourceId ?:string) => {
+            // if even only 1 time slot in higher than eventNumberLimit, it fails
+            // from start to end step by step
+            let stepperStart = dateFrom;
+            let stepperEnd = stepperStart + slotDuration;
+            const cappedSlots :Record<string, string[]> = {};
+            // do cycle
+            do {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                cappedSlots[stepperStart + '_' + stepperEnd] = arrayColumn(getSchedulesByTime(stepperStart, stepperEnd, checkResourceId), 'id');
+                // next step, until loading reach END
+                stepperStart = stepperStart + slotDuration;
+                stepperEnd = stepperEnd + slotDuration;
+                // stepper end
+            } while (stepperEnd <= dateTo);
+            return cappedSlots;
+        }
+    },
+
+    /**
+     * Check if schedule is editable.
+     * - Only current user OR Admin
+     * - Only schedules in the future (if NOT Admin)
+     *
+     * @param {Object} scheduleRecords
+     * @param {number} scheduleEditableTime
+     * @param {Object} getters
+     * @param {string} currentUserId
+     * @param {boolean} isAdmin
+     * @return {Function<boolean>}
+     */
+    checkScheduleIsEditable: ({ scheduleRecords, scheduleEditableTime }: stateEcommerceMap, getters, { user: { userInfo: { id :currentUserId, isAdmin }}}) :(id: string) => string[] => {
+
+        /**
+         * @param {string} id
+         * @return {boolean}
+         */
+        return (id :string) :string[] => {
+            const errorArray :string[] = [];
+            if(!Object.prototype.hasOwnProperty.call(scheduleRecords, id)){
+                errorArray.push('error-404');
+            }
+            const { start, userId } = scheduleRecords[id];
+
+            // Edit schedule only if current user OR it's admin
+            if(!isAdmin && currentUserId !== userId){
+                errorArray.push('error-403');
+            }
+            // Event is in the past. Only admin can edit
+            if(!isAdmin && start < Date.now()){
+                errorArray.push('error-400-past');
+            }
+            // Edit time expired, a schedule can be edited only until 1 hour from the start (if NOT admin)
+            if(!isAdmin && start + scheduleEditableTime >= Date.now()){
+                errorArray.push('error-400-edit-expired');
+            }
+
+            return errorArray;
+        }
+    },
+
+    /**
+     * Check if schedule is allowed
+     * - businessHours check
+     * - schedule limit check
+     * - Users CAN book multiple stations
+     *
+     * @param {number} scheduleTimeStep
+     * @param {Function} getSchedulesBySlots
+     * @param {Object} totalStations
+     * @param {Object} rootState
+     * @param {Object} rootGetters
+     */
+    checkScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, totalStations }, rootState, rootGetters) => {
+
+        /**
+         * @param {number} dateFrom
+         * @param {number} dateTo
+         * @param {string} checkResourceId
+         */
+        return (dateFrom :number, dateTo :number, checkResourceId ?:string) :string[] => {
+            const errorArray :string[] = [];
+
+            // ----- businessHours check -----
+            if(!rootGetters['main/isOpen'](dateFrom) || !rootGetters['main/isOpen'](dateTo)){
+                errorArray.push('closed');
+            }
+
+            // ----- schedule limit check -----
+            const cappedSlots = Object.values(getSchedulesBySlots(dateFrom, dateTo, scheduleTimeStep, checkResourceId));
+            if(
+                (cappedSlots as Array<string[]>).some((idArray :string[]) => {
+                    // TODO different stations with different possible games
+                    return idArray.length >= totalStations['global']
+                })
+            ){
+                errorArray.push('max-reached');
+            }
+
+            return errorArray;
+        }
+    },
+
+    /**
+     * UNITE checkScheduleIsEditable AND checkScheduleIsAllowed
+     *
+     * @param {Object} state
+     * @param {Function} checkScheduleIsEditable
+     * @param {Function} checkScheduleIsAllowed
+     */
+    checkScheduleIsEditableAndAllowed: (state: stateEcommerceMap, { checkScheduleIsEditable, checkScheduleIsAllowed }) => {
+        /**
+         * @param {string} id
+         */
+        return (id :string, start :number, end :number, resourceId ?:string) :string[] => {
+            return [
+                ...checkScheduleIsEditable(id),
+                ...checkScheduleIsAllowed(start, end, resourceId)
+            ]
+        }
     },
 
     /**
