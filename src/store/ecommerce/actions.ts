@@ -444,7 +444,8 @@ export default {
             online: false,
             confirmed: false,
             canceled: false,
-            unsaved: false
+            unsaved: false,
+            paid: false
         });
 
         return Promise.resolve(scheduleId);

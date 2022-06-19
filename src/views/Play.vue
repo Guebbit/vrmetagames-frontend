@@ -10,182 +10,92 @@
         <v-container fluid>
             <v-row>
                 <v-col cols="12" lg="3" class="schedule-form-details">
-                    <v-defaults-provider :defaults="defaultsEventData">
-                        <div class="schedule-form-header">
-                            <h3 class="schedule-form-title">{{ $t('generic.book') }}</h3>
-                        </div>
-                        <v-form
-                            ref="form"
-                            v-model="formIsValid"
-                            lazy-validation
-                        >
-                            <v-card v-show="selectedItemUser.id"
-                                color="primary"
-                                class="schedule-user-card"
-                            >
-                                <div class="d-flex justify-space-between align-center flex-wrap">
-                                    <div class="d-flex align-center">
-                                        <v-avatar size="64" class="me-4">
-                                            <!-- <v-img :src="selectedItemUser.avatar" /> TODO VUETIFY FIX -->
-                                            <img alt="user avatar" class="avatar-image" :src="selectedItemUser.avatar" />
-                                        </v-avatar>
-                                        <div>
-                                            <h4 class="font-600">{{ selectedItemUser.username }}</h4>
-                                            <p v-show="selectedItemUser.lastVisit && selectedItemUser.lastVisit > 0"
-                                                class="mb-0 grey--text text--darken-1"
-                                            >
-                                                {{ $t('play.schedule-details-last-visit') + ': ' + formatUIDate(selectedItemUser.lastVisit) }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <v-btn v-show="selectedItemUser.wallet" color="secondary">
-                                        {{ selectedItemUser.wallet }}
-                                    </v-btn>
-                                </div>
-                            </v-card>
+                    <div class="schedule-form-header">
+                        <h3 class="schedule-form-title">{{ $t('generic.book') }}</h3>
+                    </div>
 
-                            <v-list class="schedule-info-card bg-primary">
-                                <v-list-item>
-                                    <v-list-item-avatar start>
-                                        <font-awesome-icon :icon="['fas', 'calendar']" />
-                                    </v-list-item-avatar>
-                                    <v-list-item-title>{{ selectedItemReadable.date || $t('play.select-event-label-date') }}</v-list-item-title>
-                                </v-list-item>
-                                <v-list-item>
-                                    <v-list-item-avatar start>
-                                        <font-awesome-icon :icon="['fas', 'clock']" />
-                                    </v-list-item-avatar>
-                                    <v-list-item-title>
-                                        {{ selectedItemReadable.hourStart && selectedItemReadable.hourEnd ? selectedItemReadable.hourStart + ' - ' + selectedItemReadable.hourEnd : $t('play.select-event-label-hours') }}
-                                    </v-list-item-title>
-                                </v-list-item>
-                                <v-list-item v-show="selectedItemDuration">
-                                    <v-list-item-avatar start>
-                                        <font-awesome-icon :icon="['fas', 'play']" />
-                                    </v-list-item-avatar>
-                                    <v-list-item-title>{{ selectedItemDuration }}</v-list-item-title>
-                                </v-list-item>
-                                <v-list-item v-show="!selectedItemDuration" lines="">
-                                    <v-list-item-avatar start>
-                                        <font-awesome-icon :icon="['fas', 'circle-info']" />
-                                    </v-list-item-avatar>
-                                    <v-list-item-subtitle>{{ $t('play.select-event-label-disclaimer') }}</v-list-item-subtitle>
-                                </v-list-item>
-                                <v-list-item>
-                                    <v-list-item-avatar start>
-                                        <font-awesome-icon :icon="['fas', 'play']" />
-                                    </v-list-item-avatar>
-                                    <v-list-item-title>
-                                        <small>{{ $t('play.select-event-fast-play') }}</small>
-                                    </v-list-item-title>
-                                </v-list-item>
-                            </v-list>
-
-                            <v-card variant="outlined"
-                                    :color="$vuetify.theme.themes.default.colors.secondary"
-                            >
-                                <v-btn-toggle
-                                    v-model="fastMode"
-                                    :color="$vuetify.theme.themes.default.colors.secondary"
-                                    class="card-top-action"
-                                    tile
-                                    group
-                                >
-                                    <v-btn :value="true">
-                                        {{ $t('play.select-event-mode-fast') }}
-                                    </v-btn>
-
-                                    <v-btn :value="false">
-                                        {{ $t('play.select-event-mode-slow') }}
-                                    </v-btn>
-                                </v-btn-toggle>
-
-                                <v-card-text>
-                                    <v-row>
-                                        <!-- TODO aggiungere orari\giorni limite alle rules? -->
-                                        <v-col cols="12">
-                                            <!-- TODO buggato :rules="[formRules.required]" -->
-                                            <v-text-field
-                                                :value="formatInputTypeDate(form.date, 'YYYY-MM-DD', timeFormatDate)"
-                                                @input="({target:{value}}) => form.date = formatInputTypeDate(value, timeFormatDate, 'YYYY-MM-DD')"
-                                                type="date"
-                                                hide-details="auto"
-                                            />
-                                        </v-col>
-                                        <v-col cols="6">
-                                            <v-text-field
-                                                v-model="form.hourStart"
-                                                @input="({target:{value}}) => form.hourStart = formatInputTypeTime(value)"
-                                                type="time"
-                                                :rules="[formRules.required]"
-                                                label="Start"
-                                                :step="scheduleTimeStep / 1000"
-                                                hide-details="auto"
-                                            />
-                                        </v-col>
-                                        <v-col cols="6">
-                                            <v-text-field
-                                                v-model="form.hourEnd"
-                                                @input="({target:{value}}) => form.hourEnd = formatInputTypeTime(value)"
-                                                type="time"
-                                                :rules="[formRules.required]"
-                                                label="End"
-                                                :step="scheduleTimeStep / 1000"
-                                                hide-details="auto"
-                                            />
-                                        </v-col>
-                                        <v-col cols="12">
-                                            <v-list>
-                                                <v-list-item v-show="selectedFormDuration">
-                                                    <v-list-item-avatar start class="text-secondary">
-                                                        <font-awesome-icon :icon="['fas', 'play']" />
-                                                    </v-list-item-avatar>
-                                                    <v-list-item-title>{{ selectedFormDuration }}</v-list-item-title>
-                                                </v-list-item>
-                                                <v-list-item>
-                                                    <v-list-item-avatar start>
-                                                    <span class="status-circle"
-                                                          :class="[formScheduleAvailability.length > 0 ? 'offline' : 'online']"
-                                                    />
-                                                    </v-list-item-avatar>
-                                                    <v-list-item-title>
-                                                        {{ formScheduleAvailability.length > 0 ? $t('play.schedule-form-schedule-' + formScheduleAvailability[0]) : $t('play.schedule-form-schedule-available') }}
-                                                    </v-list-item-title>
-                                                </v-list-item>
-                                            </v-list>
-                                        </v-col>
-                                    </v-row>
-                                    <v-checkbox
-                                        v-model="form.rules"
-                                        color="secondary"
-                                        class="text-secondary"
-                                        :rules="[formRules.rulesCheckbox]"
-                                        hide-details="auto"
+                    <v-card
+                        v-show="selectedItemUser.id && selectedItemUser.id !== 'none'"
+                        color="primary"
+                        class="schedule-user-card"
+                    >
+                        <div class="d-flex justify-space-between align-center flex-wrap">
+                            <div class="d-flex align-center">
+                                <v-avatar size="64" class="me-4">
+                                    <!-- <v-img :src="selectedItemUser.avatar" /> TODO VUETIFY FIX -->
+                                    <img alt="user avatar" class="avatar-image" :src="selectedItemUser.avatar" />
+                                </v-avatar>
+                                <div>
+                                    <h4 class="font-600">{{ selectedItemUser.username }}</h4>
+                                    <p v-show="selectedItemUser.lastVisit && selectedItemUser.lastVisit > 0"
+                                       class="mb-0 grey--text text--darken-1"
                                     >
-                                        <template #label>
-                                            <span v-html="$t('play.select-event-form-rules')"></span>
-                                        </template>
-                                    </v-checkbox>
-                                </v-card-text>
+                                        {{ $t('play.schedule-details-last-visit') + ': ' + formatUIDate(selectedItemUser.lastVisit) }}
+                                    </p>
+                                </div>
+                            </div>
+                            <v-btn v-show="selectedItemUser.wallet" color="secondary">
+                                {{ selectedItemUser.wallet }}
+                            </v-btn>
+                        </div>
+                    </v-card>
 
+                    <v-list class="schedule-info-card bg-primary">
+                        <v-list-item>
+                            <v-list-item-avatar start>
+                                <font-awesome-icon :icon="['fas', 'calendar']" />
+                            </v-list-item-avatar>
+                            <v-list-item-title>{{ selectedItemReadable.date || $t('play.select-event-label-date') }}</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item>
+                            <v-list-item-avatar start>
+                                <font-awesome-icon :icon="['fas', 'clock']" />
+                            </v-list-item-avatar>
+                            <v-list-item-title>
+                                {{ selectedItemReadable.hourStart && selectedItemReadable.hourEnd ? selectedItemReadable.hourStart + ' - ' + selectedItemReadable.hourEnd : $t('play.select-event-label-hours') }}
+                            </v-list-item-title>
+                        </v-list-item>
+                        <v-list-item v-show="selectedItemDuration">
+                            <v-list-item-avatar start>
+                                <font-awesome-icon :icon="['fas', 'play']" />
+                            </v-list-item-avatar>
+                            <v-list-item-title>{{ selectedItemDuration }}</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item v-show="!selectedItemDuration" lines="">
+                            <v-list-item-avatar start>
+                                <font-awesome-icon :icon="['fas', 'circle-info']" />
+                            </v-list-item-avatar>
+                            <v-list-item-subtitle>{{ $t('play.select-event-label-disclaimer') }}</v-list-item-subtitle>
+                        </v-list-item>
+                        <template v-if="userInfo.isAdmin && selectedItemIdentifier">
+                            <v-list-item>
                                 <v-btn
                                     block
-                                    color="secondary"
-                                    class="card-bottom-action vuetify-icon-button"
-                                    @click="formAddSchedule"
+                                    @click="removeItems([selectedItemIdentifier])"
                                 >
-                                    {{
-                                        !form.rules ? $t('play.schedule-button-rules') :
-                                            !formIsValid ? $t('play.schedule-button-invalid') :
-                                                selectedItemIdentifier ? $t('play.schedule-button-edit') :
-                                                    fastMode ? $t('play.schedule-button-play-now') :
-                                                        $t('play.schedule-button-new')
-                                    }}
-                                    <font-awesome-icon :icon="!formIsValid ? ['fas', 'ban'] : fastMode ? ['fas', 'play'] : ['fas', 'check']" />
+                                    Rimuovi evento
                                 </v-btn>
-                            </v-card>
-                        </v-form>
-                    </v-defaults-provider>
+                            </v-list-item>
+                            <v-list-item>
+                                <v-btn
+                                    block
+                                    @click="selectedItemIdentifier = null"
+                                >
+                                    Deseleziona evento
+                                </v-btn>
+                            </v-list-item>
+                        </template>
+                    </v-list>
+
+
+
+                    <ScheduleFormCard
+                        :scheduleId="selectedItemIdentifier"
+
+                        @schedule:add = "formAddSchedule"
+                        @schedule:edit = "formEditSchedule"
+                        @schedule:reset = "selectedItemIdentifier = null"
+                    />
                 </v-col>
                 <v-col cols="12" lg="9">
                     <!-- TODO test admin mode -->
@@ -233,38 +143,21 @@
                 @button:confirm="confirmItem(id)"
             />
 
-            <EventLongCard
-                v-for="schedule in schedulesUnsaved"
-                :key="'event-unsaved-' + schedule.id"
-                :time="new Date(schedule.start).getTime()"
-                image="https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png"
-                :color="$vuetify.theme.themes.default.colors.primary"
-            >
-                <h1>UNSAVED</h1>
-                {{ schedule }}
-            </EventLongCard>
+            <EventCard
+                v-for="{ id } in schedulesOffline"
+                :key="'event-offline-' + id"
+                :id="id"
 
-            <EventLongCard
-                v-for="schedule in schedulesOffline"
-                :key="'event-unsaved-' + schedule.id"
-                :time="new Date(schedule.start).getTime()"
-                image="https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png"
-                :color="$vuetify.theme.themes.default.colors.primary"
-            >
-                <h1>OFFLINE</h1>
-                {{ schedule }}
-            </EventLongCard>
+                @button:confirm="confirmItem(id)"
+            />
 
-            <EventLongCard
-                v-for="schedule in schedulesOnHold"
-                :key="'event-unsaved-' + schedule.id"
-                :time="new Date(schedule.start).getTime()"
-                image="https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png"
-                :color="$vuetify.theme.themes.default.colors.primary"
-            >
-                <h1>ONHOLD</h1>
-                {{ schedule }}
-            </EventLongCard>
+            <EventCard
+                v-for="{ id } in schedulesOnHold"
+                :key="'event-onhold-' + id"
+                :id="id"
+
+                @button:confirm="confirmItem(id)"
+            />
         </v-container>
     </div>
 </template>
@@ -272,7 +165,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { mapActions, mapGetters, mapState } from "vuex";
-import { timeToSeconds } from "guebbit-javascript-library";
+
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
@@ -280,24 +173,26 @@ dayjs.extend(customParseFormat);
 import {
     defaultUserAvatar,
     formRules,
-    labelFromToDuration,
     timeFormatDate,
     timeFormatHours
 } from "@/resources/constants";
 import apiControllerPageList from "@/resources/mixins/apiControllerPageList";
 import Calendar from "@/components/play/Calendar.vue";
 import EventContentCard from "@/components/play/FAEventContentCard.vue";
+import EventCard from "@/components/play/EventCard.vue";
+import ScheduleFormCard from "@/components/generic/ScheduleFormCard.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faCheck, faBan, faCalendar, faClock, faPlay, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-library.add(faCheck, faBan, faCalendar, faClock, faPlay, faCircleInfo);
+import { faCalendar, faClock, faPlay, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+library.add(faCalendar, faClock, faPlay, faCircleInfo);
 
 import type {
     scheduleInputMap,
     scheduleMap,
     userMap,
-    stationMap
+    stationMap,
+    formScheduleMap
 } from "@/interfaces";
 
 import type {
@@ -308,16 +203,7 @@ import type {
 import type {
     ResourceInput
 } from '@fullcalendar/resource-common';
-import EventLongCard from "@/components/basics/cards/EventLongCard.vue";
-import EventCard from "@/components/play/EventCard.vue";
 
-
-interface scheduleFormMap {
-    date?: string
-    hourStart?: string
-    hourEnd?: string
-    rules?: boolean
-}
 
 export default defineComponent({
     name: "PlayPage",
@@ -327,106 +213,16 @@ export default defineComponent({
     ],
 
     components: {
+        ScheduleFormCard,
         EventCard,
-        EventLongCard,
         Calendar,
         EventContentCard,
         FontAwesomeIcon
     },
 
-    watch: {
-        /**
-         * When selectedItemIdentifier is successfully changed,
-         * update form with info of new selectedItem
-         */
-        selectedItemIdentifier(){
-            if(!this.selectedItem){
-                return;
-            }
-            const { start, end } = this.selectedItem as scheduleMap;
-            this.fillForm(start, end);
-        },
-
-        /**
-         * When form change
-         * Must NOT be initialization
-         * Must NOT be just different schedule's switching
-         * Must NOT be non consequential-parameter
-         *
-         */
-        watcherHelperScheduleChange: {
-            /**
-             *
-             * @param {string} newSelectedItemIdentifier - this.selectedItemIdentifier
-             * @param {string} newDate - this.form.date
-             * @param {string} newHourEnd - this.form.hourEnd
-             * @param {string} newHourStart - this.form.hourStart
-             * @param {string} oldSelectedItemIdentifier - this.selectedItemIdentifier
-             * @param {string} oldDate - this.form.date
-             * @param {string} oldHourEnd - this.form.hourEnd
-             * @param {string} oldHourStart - this.form.hourStart
-             */
-            handler({ selectedItemIdentifier: newSelectedItemIdentifier, date: newDate, hourEnd: newHourEnd, hourStart: newHourStart }, { selectedItemIdentifier: oldSelectedItemIdentifier, date: oldDate, hourEnd: oldHourEnd, hourStart: oldHourStart }){
-                // if no selected item or all undefined then this the initialization
-                if(!oldSelectedItemIdentifier || !oldDate || !oldHourEnd || !oldHourStart){
-                    return;
-                }
-                // if the identifier changed, then it's a different event being loaded
-                if(oldSelectedItemIdentifier !== newSelectedItemIdentifier){
-                    return;
-                }
-                // if all is the same, then it changed a non-consequential parameter
-                if(newDate === oldDate && newHourEnd === oldHourEnd && newHourStart === oldHourStart){
-                    return;
-                }
-                console.log(
-                    "ARGGGGGGGGGGG",
-                    newDate, oldDate, newHourEnd, oldHourEnd, newHourStart, oldHourStart,
-                    newDate === oldDate, newHourEnd === oldHourEnd, newHourStart === oldHourStart
-                );
-                // after all checks: EDIT CURRENT EVENT (offline changes, online after confirm)
-                this.editSchedule({
-                    ...this.formItemSchedule,
-                    id: this.selectedItemIdentifier
-                }).catch((errors: string[]) => {
-                    // TODO toast OR TODO disclaimer & computed
-                    console.error("editSchedule", errors)
-                })
-            },
-            deep: true
-        },
-
-        'form.hourStart'(){
-            this.resetFormHours();
-        },
-        'form.hourEnd'(){
-            this.resetFormHours(true);
-        },
-    },
-
     data: () => {
         return {
             loadingName: 'schedule',
-            fastMode: true,
-            form: {
-                date: undefined,
-                hourStart: undefined,
-                hourEnd: undefined,
-                rules: false
-            } as scheduleFormMap,
-            formIsValid: true,
-            defaultsEventData: {
-                global: {
-                    // variant: 'outlined',
-                },
-                VCard: {
-                    // color: 'secondary',
-                },
-                VTextField: {
-                    color: 'secondary',
-                    variant: 'outlined'
-                }
-            },
             timeFormatDate,
             timeFormatHours,
             defaultUserAvatar,
@@ -453,6 +249,7 @@ export default defineComponent({
         }),
         ...mapGetters('ecommerce', [
             'scheduleDetailedList',
+            'scheduleReadable',
             'checkScheduleIsEditable',
             'checkScheduleIsAllowed',
             'schedulesUnsaved',
@@ -460,27 +257,6 @@ export default defineComponent({
             'schedulesOnHold',
             'totalStations',
         ]),
-
-        /**
-         * HELPER to watch 2 different variables
-         */
-        watcherHelperScheduleChange(){
-            return {
-                ...this.form,
-                selectedItemIdentifier: this.selectedItemIdentifier
-            }
-        },
-
-        /**
-         * Form Hour End TRANSLATION
-         * hourEnd 00.00 is considered 24.00
-         * hourStart 00.00 is considered 00.00 so no need to translate
-         *
-         * @return {string | undefined}
-         */
-        translatedHourEnd() :string | undefined {
-            return this.form.hourEnd === '00:00' ? '24:00' : this.form.hourEnd;
-        },
 
         resources() :ResourceInput[] {
             let resourcesArray :ResourceInput[] = [];
@@ -551,43 +327,17 @@ export default defineComponent({
         },
 
         /**
-         * schedule data from FORM
-         *
-         * WARNING: hourStart 00.00 IS 00.00, hourEnd 00.00 is considered 24.00
-         * @return {Object}
-         */
-        formItemSchedule() :scheduleInputMap {
-            return {
-                allDay: false,
-                start: dayjs(this.form.date + ' ' + this.form.hourStart, timeFormatDate + ' ' + timeFormatHours).valueOf(),
-                end: dayjs(this.form.date + ' ' + this.translatedHourEnd, timeFormatDate + ' ' + timeFormatHours).valueOf(),
-            }
-        },
-
-        /**
          * Get date, hourStart and hourEnd from selectedItem
          * and translate them in a human readable way.
          *
          * @return {Object}
          */
-        selectedItemReadable() :scheduleFormMap {
+        selectedItemReadable() :formScheduleMap {
             if(!this.selectedItem){
                 return {};
             }
             let { start, end } = this.selectedItem as scheduleMap;
-            return {
-                date: dayjs(start).format(timeFormatDate),    //(end) MUST be the same
-                hourStart: dayjs(start).format(timeFormatHours),
-                hourEnd: dayjs(end).format(timeFormatHours)
-            };
-        },
-
-        /**
-         * Form schedule is on a valid time?
-         */
-        formScheduleAvailability() :string[] {
-            const { start, end } = this.formItemSchedule;
-            return this.checkScheduleIsAllowed(start, end);
+            return this.scheduleReadable(start, end);
         },
 
         /**
@@ -600,24 +350,7 @@ export default defineComponent({
                 return '';
             }
             const { start, end } = this.selectedItem as scheduleMap;
-            const { mode, hours, minutes } = labelFromToDuration(start, end);
-            return this.$t('play.schedule-details-time-count.' + mode, {
-                hours,
-                minutes
-            });
-        },
-
-        /**
-         * Readable duration
-         *
-         * @return {string}
-         */
-        selectedFormDuration() :string {
-            if(!this.formItemSchedule){
-                return '';
-            }
-            const { start, end } = this.formItemSchedule;
-            const { mode, hours, minutes } = labelFromToDuration(start, end);
+            const { durationData: { mode, hours, minutes } } = this.scheduleReadable(start, end);
             return this.$t('play.schedule-details-time-count.' + mode, {
                 hours,
                 minutes
@@ -645,13 +378,41 @@ export default defineComponent({
     methods: {
         ...mapActions('ecommerce', {
             getItems: 'getSchedules',
-            removeItems: 'removeSchedule'
+            removeItems: 'removeSchedules'
         }),
         ...mapActions('ecommerce', [
             'addSchedule',
             'editSchedule'
         ]),
 
+        /**
+         *
+         *
+         * @param {Object} schedule
+         */
+        formAddSchedule(schedule :scheduleInputMap){
+            this.addSchedule(schedule)
+                .then(id => {
+                    if(id){
+                        this.selectItem(id);
+                    }
+                })
+                .catch((errors :string[]) => {
+                    console.error("formAddSchedule", errors)
+                })
+        },
+
+        /**
+         * Edit selectedItem with new data from FORM
+         *
+         * @param {Object} schedule
+         */
+        formEditSchedule(schedule :scheduleMap){
+            this.editSchedule(schedule).catch((errors: string[]) => {
+                // TODO toast OR TODO disclaimer & computed
+                console.error("editSchedule", errors)
+            })
+        },
 
         /**
          * handleAllow function of FullCalendar
@@ -660,7 +421,6 @@ export default defineComponent({
          * @param {Object} draggedEvent
          * @return {boolean}
          */
-        // TODO WARNING parte loop infinito se cerco di modificare un evento dopo averlo cliccato
         handleAllowFullcalendar(dropInfo :DateSpanApi, draggedEvent: EventApi | null) :boolean {
             const { start, end, resource: { id :resourceId } = {} } = dropInfo;
 
@@ -702,25 +462,10 @@ export default defineComponent({
         },
 
         /**
-         * Add schedule via FORM
+         * Select schedule on fullcalendar
          *
+         * @param {string} id
          */
-        formAddSchedule(){
-            if(!this.formIsValid){
-                return;
-            }
-
-            this.addSchedule(this.formItemSchedule)
-                .then(id => {
-                    if(id){
-                        this.selectItem(id);
-                    }
-                })
-                .catch((errors :string[]) => {
-                    console.error("formAddSchedule", errors)
-                })
-        },
-
         selectItem(id :string){
             if(!id || this.checkScheduleIsEditable(id).length > 0){
                 return;
@@ -729,10 +474,11 @@ export default defineComponent({
             this.selectedItemIdentifier = id;
             const { start } = this.selectedItem as scheduleMap;
             const { isAdmin } = this.userInfo;
+            // TODO check already done?
             // POST CHECK: Current user can edit event only until 1 hour from the start of it (edit time expired)
             if(!isAdmin && start + this.scheduleEditableTime < Date.now()){
                 // TODO toast timesup!
-                console.log("CAN'T EDIT IN THE PAST")
+                console.error("CAN'T EDIT IN THE PAST")
                 this.selectedItemIdentifier = '';
                 return;
             }
@@ -748,39 +494,8 @@ export default defineComponent({
          * @param {string} id
          */
         confirmItem(id :string){
-            console.log("AAAAAAAAAAAAAAAAAAAAAAAA", id)
+            console.log("CCCCCCCCCCCCCONFIRM", id)
             // TODO confirm multiple?
-        },
-
-        /**
-         * Fill form with selected dates
-         *
-         * @param {number} start
-         * @param {number} end
-         */
-        fillForm(start ?:number, end ?:number) :void {
-            // if START is empty => put today
-            if(!start){
-                start = Date.now();
-            }
-            // if END is empty => put today + double timeStep (1 hour) as standard starting value
-            if(!end){
-                // 1 hour later
-                end = start + this.scheduleTimeStep * 2;
-            }
-            // all times must be divided in "steps" (30 min steps)
-            start = Math.round(start / this.scheduleTimeStep) * this.scheduleTimeStep;
-            end = Math.round(end / this.scheduleTimeStep) * this.scheduleTimeStep;
-            // fill the form with the new data
-            this.form = {
-                date: dayjs(start).format(timeFormatDate),    //(end) MUST be the same
-                hourStart: dayjs(start).format(timeFormatHours),
-                hourEnd: dayjs(end).format(timeFormatHours),
-                rules: false
-            };
-            // TODO VUETIFY BUG lazy-loading
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (this.$refs.form as any).validate();
         },
 
         /**
@@ -796,28 +511,6 @@ export default defineComponent({
         },
 
         /**
-         * Put hourStart behind hourEnd of 1 hour.
-         * Edit the one who was not edited by the user
-         *
-         * TODO adapt to businessHours
-         *
-         * @param {boolean} hourEndWasEdited
-         */
-        resetFormHours(hourEndWasEdited = false){
-            const start = timeToSeconds(this.form.hourStart);
-            const end = timeToSeconds(this.translatedHourEnd);
-            if(start >= end){
-                if(!hourEndWasEdited){
-                    const newTime = dayjs(this.form.date + ' ' + this.form.hourStart, timeFormatDate + ' ' + timeFormatHours).valueOf();
-                    this.form.hourEnd = dayjs(newTime + (this.scheduleTimeStep * 2)).format(timeFormatHours);
-                }else{
-                    const newTime = dayjs(this.form.date + ' ' + this.translatedHourEnd, timeFormatDate + ' ' + timeFormatHours).valueOf();
-                    this.form.hourStart = dayjs(newTime - (this.scheduleTimeStep * 2)).format(timeFormatHours);
-                }
-            }
-        },
-
-        /**
          *
          * @param {number} timestamp
          * @param {string} formatTo - format
@@ -825,37 +518,14 @@ export default defineComponent({
         formatUIDate(timestamp :number, formatTo = timeFormatDate + ' ' + timeFormatHours){
             return dayjs(timestamp).format(formatTo);
         },
-
-        /**
-         * input type="date" accept only YYYY-MM-DD format, even if it shows another format,
-         * so it needs to be translated.
-         *
-         * @param {string} value
-         * @param {string} formatTo - format
-         * @param {string} formatFrom - format
-         */
-        formatInputTypeDate(value :string, formatTo = timeFormatDate, formatFrom = timeFormatDate){
-            return dayjs(value, formatFrom).format(formatTo);
-        },
-
-        /**
-         * input type="time" has a stepper that is ignored in the dropdown (so its unreliable)
-         *
-         * @param {string} value
-         * @param {string} separator
-         * @param {number} step
-         */
-        formatInputTypeTime(value :string, separator = ":", step = 30){
-            const [hours = '00', minutes = '00'] = value.split(separator);
-            return hours + separator + (parseInt(minutes) >= step ? step.toString() : '00');
-            // const newMinutes = Math.round(parseInt(minutes) / step) * step;
-            // return hours + separator + (newMinutes < 60 ? newMinutes.toString().padStart(2, '0') : '00');
-        },
-
     },
 
     mounted(){
-        this.fillForm();
+        this.formAddSchedule({
+            start: 1655640000000,
+            end: 1655647200000,
+            allDay: false,
+        })
     }
 });
 </script>
@@ -897,6 +567,7 @@ export default defineComponent({
             object-fit: cover;
         }
     }
+
     .schedule-info-card{
         margin-bottom: 24px;
     }

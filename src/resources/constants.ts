@@ -110,6 +110,7 @@ export const formRules = {
     rulesCheckbox: (value :string) => !!value || 'You must agree to continue!',
 };
 
+// TODO eliminare\accorpare?
 export const labelFromToDuration = (start :number, end :number) :{
     mode :number,
     hours :number,

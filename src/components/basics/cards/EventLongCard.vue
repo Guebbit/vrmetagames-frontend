@@ -147,9 +147,11 @@ export default defineComponent({
         dateDayNumber() :number {
             return this.dateObject.getDate();
         },
+        /*
         dateMonthNumber() :number {
             return this.dateObject.getMonth();
         },
+        */
         dateYearNumber() :number {
             return this.dateObject.getFullYear();
         },

@@ -1,8 +1,15 @@
 import dayjs from "dayjs";
 import { arrayColumn, rangeOverlaps } from "guebbit-javascript-library";
+import { labelFromToDuration, timeFormatDate, timeFormatHours } from "@/resources/constants";
 
 import type { GetterTree } from 'vuex';
-import type { stateRootMap, stateEcommerceMap, scheduleMap } from "@/interfaces";
+import type {
+    stateRootMap,
+    stateEcommerceMap,
+    scheduleMap,
+    scheduleReadableMap
+} from "@/interfaces";
+
 
 
 export default {
@@ -100,6 +107,27 @@ export default {
         }
         // list of schedule for fullcalendar
         return fullCalendarScheduleArray;
+    },
+
+    /**
+     * human readable schedule data
+     */
+    scheduleReadable() :(start :number, end :number) => scheduleReadableMap {
+        return (start :number, end :number) :scheduleReadableMap => {
+            // to build a i18n label
+            const { mode, hours, minutes } = labelFromToDuration(start, end);
+            //
+            return {
+                date: dayjs(start).format(timeFormatDate),    //(end) MUST be the same
+                hourStart: dayjs(start).format(timeFormatHours),
+                hourEnd: dayjs(end).format(timeFormatHours),
+                durationData: {
+                    mode,
+                    hours,
+                    minutes
+                }
+            };
+        };
     },
 
     /**

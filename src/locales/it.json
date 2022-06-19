@@ -40,6 +40,7 @@
     "schedule-button-edit": "Modifica evento",
     "schedule-button-rules": "Accetta le regole",
     "schedule-button-invalid": "Dati non validi",
+    "schedule-button-business-closed": "Siamo chiusi",
     "schedule-form-schedule-available": "Aperto",
     "schedule-form-schedule-closed": "Chiuso",
     "schedule-form-schedule-max-reached": "Posti esauriti",
@@ -47,7 +48,6 @@
     "select-event-label-date":  "Seleziona una data",
     "select-event-label-hours": "Seleziona gli orari",
     "select-event-label-disclaimer": "Seleziona uno spazio disponibile per trovare facilmente posto o prenota direttamente nel form qui sotto",
-    "select-event-fast-play": "Oppure gioca subito!",
     "select-event-mode-fast":  "Veloce",
     "select-event-mode-slow": "Multiplo"
   },

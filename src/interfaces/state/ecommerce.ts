@@ -25,10 +25,11 @@ export interface scheduleInputMap {
 export interface scheduleMap extends scheduleInputMap {
     id :string
     userId :string
-    online :boolean     // WARNING: FE only
+    online :boolean      // WARNING: FE only
     confirmed :boolean
     unsaved: boolean     // WARNING: FE only
     canceled: boolean
+    paid: boolean
 }
 
 export interface userMap {

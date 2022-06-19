@@ -277,7 +277,7 @@ export default defineComponent({
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay,resourceTimeGridDay'
+                    right: 'dayGridMonth,timeGridDay' // 'dayGridMonth,timeGridWeek,timeGridDay,resourceTimeGridDay'
                 },
                 views: {
                     resourceTimeline: {
@@ -687,6 +687,9 @@ $fullcalendar-mobile-threshold: 600px !default;
             &:hover{
                 // background:lightblue;cursor: pointer;
             }
+        }
+        .fc-daygrid-day-number{
+            font-size: 2em;
         }
     }
     &.no-borders{

@@ -34,4 +34,21 @@ export interface disclaimerMap {
     dismissable :boolean
 }
 
+export interface formScheduleMap {
+    date?: string
+    hourStart?: string
+    hourEnd?: string
+    rules?: boolean
+}
+
+export interface scheduleReadableMap {
+    date?: string
+    hourStart?: string
+    hourEnd?: string
+    durationData?: {
+        mode: number
+        hours: number
+        minutes: number
+    }
+}
 
