@@ -2,6 +2,9 @@
     <br /><br /><br />
     <br /><br /><br />
 
+    <ScheduleFormCard
+        :id="'item1'"
+    />
     <EventLongCard
         :time="Date.now()"
         image="https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png"
@@ -660,6 +663,7 @@ import SlideOpenTripleCard from "@/components/basics/cards/SlideOpenTripleCard.v
 import ImageHoverCard from "@/components/basics/cards/ImageHoverCard.vue";
 import HyperplexedCard from "@/components/basics/cards/HyperplexedCard.vue";
 import EventLongCard from "@/components/basics/cards/EventLongCard.vue";
+import ScheduleFormCard from "@/components/play/EventCard.vue";
 
 library.add(faArrowRight)
 
@@ -667,6 +671,7 @@ export default defineComponent({
     name: "TestPage",
 
     components: {
+        ScheduleFormCard,
         EventLongCard,
         HyperplexedCard,
         ImageHoverCard,

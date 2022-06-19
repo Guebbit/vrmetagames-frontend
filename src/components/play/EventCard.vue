@@ -27,7 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, defineEmits } from 'vue';
+
+import { defineProps, defineEmits, computed } from 'vue';
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
 import EventLongCard from "@/components/basics/cards/EventLongCard.vue";

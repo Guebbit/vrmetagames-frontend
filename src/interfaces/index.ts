@@ -39,6 +39,7 @@ export interface formScheduleMap {
     hourStart?: string
     hourEnd?: string
     rules?: boolean
+    temporaryFillFormFlag ?:boolean
 }
 
 export interface scheduleReadableMap {

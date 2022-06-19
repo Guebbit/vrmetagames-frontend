@@ -71,7 +71,7 @@
                             <v-list-item>
                                 <v-btn
                                     block
-                                    @click="removeItems([selectedItemIdentifier])"
+                                    @click="removeItems([selectedItemIdentifier]); selectedItemIdentifier = null"
                                 >
                                     Rimuovi evento
                                 </v-btn>
@@ -87,13 +87,13 @@
                         </template>
                     </v-list>
 
-
-
                     <ScheduleFormCard
                         :scheduleId="selectedItemIdentifier"
 
                         @schedule:add = "formAddSchedule"
+                        @schedule:confirm = "formConfirmSchedule"
                         @schedule:edit = "formEditSchedule"
+                        @schedule:remove = "removeItems([selectedItemIdentifier]); selectedItemIdentifier = null"
                         @schedule:reset = "selectedItemIdentifier = null"
                     />
                 </v-col>
@@ -393,12 +393,34 @@ export default defineComponent({
         formAddSchedule(schedule :scheduleInputMap){
             this.addSchedule(schedule)
                 .then(id => {
-                    if(id){
-                        this.selectItem(id);
+                    if(!id){
+                        throw 'TODO errore sconosciuto';
                     }
+                    this.selectItem(id);
                 })
                 .catch((errors :string[]) => {
+                    // TODO toast OR TODO disclaimer & computed
                     console.error("formAddSchedule", errors)
+                })
+        },
+
+
+        /**
+         *
+         *
+         * @param {Object} schedule
+         */
+        formConfirmSchedule(schedule :scheduleInputMap){
+            this.addSchedule(schedule)
+                .then(id => {
+                    if(!id){
+                        throw 'TODO errore sconosciuto';
+                    }
+                    // TODO confirm diretto dello schedule, con richiesta pagamento o scalo automatico dal wallet
+                })
+                .catch((errors :string[]) => {
+                    // TODO toast OR TODO disclaimer & computed
+                    console.error("formConfirmSchedule", errors)
                 })
         },
 
