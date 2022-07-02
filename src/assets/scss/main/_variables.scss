@@ -10,4 +10,7 @@ $hover-line-highlight-color: rgb(var(--v-theme-primary));
 
 $event-footer-primary: rgb(var(--v-theme-primary));
 $event-footer-secondary: rgb(var(--v-theme-secondary));
-$event-footer-text: rgb(var(--v-theme-text));
+$event-footer-text: rgb(var(--v-theme-on-surface));
+
+$great-blockquote-color: rgb(var(--v-theme-primary));
+$great-blockquote-cite-text: rgb(var(--v-theme-on-primary));

@@ -7,29 +7,35 @@
         v-ripple
     >
         <div class="card-content">
-            <h3 class="card-title">{{ title }}</h3>
-            <div class="card-price"
-                :class="'text-' + (priceColor ? priceColor : color)"
-            >
-                <span class="card-currency">{{ currency }}</span>
-                {{ price }}
-            </div>
-            <span v-show="text"
-                  v-html="text"
-                  class="card-text"
-            />
-            <v-btn v-show="buttonText"
-                   block
-                   :variant="variant"
-                   :color="color"
-                   class="border-primary theme-elevation-primary"
-                   size="x-large"
-                   elevation="24"
-                   :ripple="{ class: 'text-secondary' }"
-                   :to="to"
-            >
-                {{ buttonText }}
-            </v-btn>
+            <slot name="title">
+                <h3 class="card-title">{{ title }}</h3>
+            </slot>
+            <slot name="price">
+                <div class="card-price"
+                     :class="'text-' + (priceColor ? priceColor : color)"
+                >
+                    <span class="card-currency">{{ currency }}</span>
+                    {{ price }}
+                </div>
+            </slot>
+            <slot name="content">
+                <span v-show="text"
+                      v-html="text"
+                      class="card-text"
+                />
+                <v-btn v-show="buttonText"
+                       block
+                       :variant="variant"
+                       :color="color"
+                       class="border-primary theme-elevation-primary"
+                       size="x-large"
+                       elevation="24"
+                       v-ripple
+                       :to="to"
+                >
+                    {{ buttonText }}
+                </v-btn>
+            </slot>
         </div>
     </v-card>
 </template>
@@ -106,7 +112,8 @@ export default defineComponent({
     }
     .card-text{
         font-size: 1.2em;
-        color: rgb(var(--v-theme-text));
+        color: rgb(var(--v-theme-on-surface));
+        margin-bottom: 24px;
     }
 
     .card-price{

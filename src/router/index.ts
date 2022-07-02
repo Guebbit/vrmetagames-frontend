@@ -12,14 +12,16 @@ import type {
 } from "vue-router";
 
 import Home from "@/views/Home.vue";
-const About = () => import("@/views/About.vue");
+const WorkInProgress = () => import("@/views/WorkInProgress.vue");
 const Play = () => import("@/views/Play.vue");
+const PlayAdvanced = () => import("@/views/PlayAdvanced.vue");
 const UserAuthentication = () => import("@/views/User/Authentication.vue");
 const UserProfile = () => import("@/views/User/Profile.vue");
+const CheckoutPage = () => import("@/views/Checkout.vue");
 const ProductIndex = () => import("@/views/Product/index.vue");
 const ProductDetails = () => import("@/views/Product/ProductDetails.vue");
 const EcommerceManagement = () => import("@/views/Admin/Product/EcommerceManagament.vue");
-
+const PathNotFound = () => import("@/views/PathNotFound.vue");
 
 import Test from "@/views/Test.vue";
 
@@ -41,16 +43,30 @@ export const routes: Array<RouteRecordRaw> = [
     {
         path: "/test",
         name: "Test",
-        component: Test
-    },
-    {
-        path: "/about",
-        name: "About",
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         // component: () => import(/* webpackChunkName: "about" */ "../views/About.vue"),
-        component: About
+        component: Test,
+        beforeEnter: [authenticationCheck],
+    },
+
+    {
+        path: "/about",
+        name: "About",
+        redirect: {
+            name: 'AboutUs'
+        }
+    },
+    {
+        path: "/about/us",
+        name: "AboutUs",
+        component: WorkInProgress
+    },
+    {
+        path: "/about/vr",
+        name: "AboutVr",
+        component: WorkInProgress
     },
 
     // ------------ GAMES ------------
@@ -58,17 +74,27 @@ export const routes: Array<RouteRecordRaw> = [
     {
         path: "/stations",
         name: "Stations",
-        component: ProductIndex
+        // component: StationIndex
+        component: WorkInProgress
+    },
+    {
+        path: "/stations/:id",
+        name: "StationTarget",
+        // component: StationDetails
+        component: WorkInProgress,
+        props: true
     },
     {
         path: "/games",
         name: "Games",
-        component: ProductIndex
+        // component: ProductIndex
+        component: WorkInProgress
     },
     {
         path: "/games/:id",
         name: "GameTarget",
-        component: ProductDetails,
+        // component: ProductDetails,
+        component: WorkInProgress,
         props: true
     },
 
@@ -87,21 +113,46 @@ export const routes: Array<RouteRecordRaw> = [
         }
     },
 
-    // ------------ AUTHENTICATION NEEDED ------------
+    // ------------ Ecommerce ------------
+
+    {
+        path: "/cart",
+        name: "Cart",
+        redirect: {
+            name: 'Checkout'
+        }
+    },
+
+
+    {
+        path: "/checkout",
+        name: "Checkout",
+        component: CheckoutPage,
+        beforeEnter: [authenticationCheck],
+    },
 
     // ------------ USER ------------
 
     {
         path: "/profile",
         name: "Profile",
-        component: UserProfile
+        component: UserProfile,
+        beforeEnter: [authenticationCheck],
     },
 
     {
         path: "/play",
         name: "Play",
         component: Play,
+        props: true
+    },
+
+    {
+        path: "/play/advanced",
+        name: "PlayAdvanced",
+        component: PlayAdvanced,
         beforeEnter: [authenticationCheck],
+        props: true
     },
 
     // ------------ ADMIN ------------
@@ -109,8 +160,17 @@ export const routes: Array<RouteRecordRaw> = [
     {
         path: "/admin/ecommerce",
         name: "AdminEcommerceManagement",
-        component: EcommerceManagement
-    }
+        component: EcommerceManagement,
+        beforeEnter: [authenticationCheck],
+    },
+
+    // ------------ ERRORS ------------
+
+    {
+        path: "/:pathMatch(.*)*",
+        name: "PathNotFound",
+        component: PathNotFound
+    },
 ];
 
 const router = createRouter({

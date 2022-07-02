@@ -2,6 +2,7 @@
     <div class="opening-hours-list"
         :style="{
             '--opening-hours-color': color,
+            '--opening-hours-closed-color': colorClosed,
             '--opening-hours-text': text,
             '--opening-hours-background': background,
         }"
@@ -9,7 +10,8 @@
         <ul>
             <li v-for="day in 7" :key="'day-' + (day - 1)"
                 :class="{
-                    'today': today === (day -1)
+                    'today': today === (day -1),
+                    'closed': !list[day-1] || list[day-1].length < 1
                 }"
             >
                 <span class="label">
@@ -51,6 +53,12 @@ export default defineComponent({
                 return '#FFFFFF';
             }
         },
+        colorClosed: {
+            type: String,
+            default: () => {
+                return '#FFFFFF';
+            }
+        },
         text: {
             type: String,
             default: () => {
@@ -77,11 +85,6 @@ export default defineComponent({
 .opening-hours-list{
     background: var(--opening-hours-background);
     color: var(--opening-hours-text);
-    .title{
-        font-size: 1.4em;
-        padding-left: 0.5em;
-        border-left: 4px solid var(--opening-hours-color);
-    }
     ul{
         li{
             display: flex;
@@ -90,6 +93,9 @@ export default defineComponent({
             padding: 0.4em 1em;
             &.today{
                 color: var(--opening-hours-color);
+                &.closed{
+                    color: var(--opening-hours-closed-color);
+                }
             }
             &:nth-child(odd){
                 background: rgba(#000000, 0.1);

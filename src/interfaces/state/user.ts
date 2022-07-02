@@ -27,7 +27,7 @@ export interface currentUserMap {
     birthdate: number
     description: string
     wallet :number
-    lastPlayed: number
+    lastVisit: number
     isAdmin: boolean
 }
 

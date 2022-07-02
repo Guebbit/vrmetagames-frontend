@@ -2,6 +2,7 @@ import { createVuetify } from "vuetify";
 import { themeColors } from  "@/resources/constants";
 import '@mdi/font/css/materialdesignicons.css';
 
+
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   icons: {
@@ -9,19 +10,19 @@ export default createVuetify({
     iconfont: 'mdi', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
   },
   theme: {
-    defaultTheme: "default",
+    defaultTheme: "dark",
     themes: {
-      default: {
+      dark: {
         dark: true,
         colors: {
-          ...themeColors,
-          text: "#ffffff",
-          error: "#B00020",
-          info: "#2196F3",
-          success: "#4CAF50",
-          warning: "#FB8C00",
+          ...themeColors
         },
         variables: {}, // BUGFIX: ADD AN EMPTY OBJECT
+      },
+      light: {
+        dark: false,
+        colors: {},
+        variables: {},
       },
     },
     /*

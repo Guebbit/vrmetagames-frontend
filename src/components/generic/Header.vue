@@ -1,15 +1,15 @@
 <template>
     <v-navigation-drawer
         id="main-navigation-drawer"
-        v-model="mobileDrawer"
+        v-model="mobileMenuDrawer"
         temporary
     >
         <v-list>
             <v-list-item
                 min-height="100"
-                :prepend-avatar="user.avatar"
-                :title="user.username"
-                :subtitle="user.email"
+                :prepend-avatar="userInfo.avatar"
+                :title="userInfo.username"
+                :subtitle="userInfo.email"
             />
         </v-list>
 
@@ -44,9 +44,9 @@
                 block
                 class="display-flex justify-space-between"
                 size="x-large"
-                @click="toggleModal(['login', true])"
+                @click="commit('main/toggleModal', ['login', true])"
             >
-                Login
+                {{ t('generic.login') }}
                 <font-awesome-icon :icon="['fas', 'right-to-bracket']" />
             </v-btn>
             <v-divider v-show="!isAuthenticated" />
@@ -58,9 +58,9 @@
                 block
                 class="display-flex justify-space-between"
                 size="x-large"
-                @click="userLogout"
+                @click="dispatch('user/userLogout')"
             >
-                Logout
+                {{ t('generic.logout') }}
                 <font-awesome-icon :icon="['fas', 'right-from-bracket']" />
             </v-btn>
         </template>
@@ -83,20 +83,35 @@
                 v-show="!isAuthenticated"
                 type="light"
                 class="bg-secondary login-button"
-                @click="toggleModal(['login', true])"
+                @click="commit('main/toggleModal', ['login', true])"
             >
-                Login
+                {{ t('generic.login') }}
                 <font-awesome-icon :icon="['fas', 'right-to-bracket']" />
             </InclinedButton>
+
             <InclinedButton
                 v-show="$route.name !== 'Play'"
                 type="light"
-                class="bg-primary play-button"
+                class="bg-primary"
                 :to="{ name: 'Play' }"
             >
-                Play
-                <font-awesome-icon :icon="['fas', 'play']" />
+                {{ t('generic.play') }}
+                <font-awesome-icon class="ml-2" :icon="['fas', 'play']" />
             </InclinedButton>
+
+            <v-btn
+                v-show="scheduleTotal > 0"
+                stacked
+                :to="{ name: 'Checkout' }"
+            >
+                {{ scheduleCartTotalCostDiscounted }}€
+                <v-badge
+                    :content="scheduleTotal"
+                    color="secondary"
+                >
+                    <font-awesome-icon size="2x" :icon="['fas', 'cart-shopping']" />
+                </v-badge>
+            </v-btn>
 
             <v-btn
                 class="button-toggle-drawer"
@@ -104,7 +119,7 @@
                 size="large"
                 color="secondary"
                 icon
-                @click="mobileDrawer = !mobileDrawer"
+                @click="mobileMenuDrawer = !mobileMenuDrawer"
             >
                 <font-awesome-icon :icon="['fas', 'bars']" />
             </v-btn>
@@ -131,92 +146,83 @@
     </v-app-bar>
 </template>
 
+<script setup lang="ts">
+import { computed, onMounted, ref, toRefs } from "vue";
+import { useI18n } from "vue-i18n";
+import { useStore } from "@/store";
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 import { shyJs, classScroll } from 'guebbit-javascript-library';
 import InclinedButton from "@/components/basics/buttons/InclinedButton.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faBars, faPlay, faHouse, faShop, faGamepad, faVrCardboard, faRightToBracket, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-library.add(faBars, faPlay, faHouse, faShop, faGamepad, faVrCardboard, faRightToBracket, faRightFromBracket)
+import { faBars, faPlay, faCartShopping, faHouse, faShop, faGamepad, faVrCardboard, faRightToBracket, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
-export default defineComponent({
-    name: "Header",
 
-    components: {
-        InclinedButton,
-        FontAwesomeIcon
+library.add(faBars, faPlay, faCartShopping, faHouse, faShop, faGamepad, faVrCardboard, faRightToBracket, faRightFromBracket)
+
+const { t } = useI18n();
+const {
+    state,
+    getters,
+    commit,
+    dispatch
+} = useStore();
+
+const mobileMenuDrawer = ref(false);
+const mainNavigation = ref<{ $el: HTMLElement | null }>();
+const menuList = ref([
+    {
+        label: 'Home',
+        route: { name: 'Home' },
+        icon: ['fas', 'house'],
     },
-
-    data: () => {
-        return {
-            mobileDrawer: false,
-            menuList: [
-                {
-                    label: 'Home',
-                    route: { name: 'Home' },
-                    icon: ['fas', 'house'],
-                },
-                {
-                    label: 'About',
-                    route: { path: 'About' },
-                    icon: ['fas', 'shop'],
-                },
-                {
-                    label: 'Games',
-                    route: { name: 'Games' },
-                    icon: ['fas', 'gamepad'],
-                },
-                {
-                    label: 'Stations',
-                    route: { name: 'Stations' },
-                    icon: ['fas', 'vr-cardboard'],
-                },
-                {
-                    label: 'Profile',
-                    route: { name: 'Profile' },
-                    icon: ['fas', 'vr-cardboard'],
-                    authentication: true
-                },
-            ],
-        };
+    {
+        label: 'About',
+        route: { path: 'About' },
+        icon: ['fas', 'shop'],
     },
-
-    computed: {
-        ...mapState({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            user: ({ user: { userInfo } }: any) => userInfo,
-        }),
-        ...mapGetters("user", [
-            "isAuthenticated"
-        ]),
+    {
+        label: 'Games',
+        route: { name: 'Games' },
+        icon: ['fas', 'gamepad'],
     },
-
-    methods: {
-        ...mapMutations("main", [
-            "toggleModal"
-        ]),
-        ...mapActions("user", [
-            "userLogout"
-        ]),
+    {
+        label: 'Stations',
+        route: { name: 'Stations' },
+        icon: ['fas', 'vr-cardboard'],
     },
+    {
+        label: 'Profile',
+        route: { name: 'Profile' },
+        icon: ['fas', 'vr-cardboard'],
+        authentication: true
+    },
+]);
 
-    mounted(){
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        shyJs((this.$refs.mainNavigation as any).$el,{
-            threshold: 400
-        });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        classScroll((this.$refs.mainNavigation as any).$el, [{
-            class: "ghost-mode",
-            scroll: 200,
-            remove: true
-        }])
+const { userInfo } = toRefs(state.user);
+
+const isAuthenticated = computed<boolean>(() => getters['user/isAuthenticated']);
+const scheduleTotal = computed<number>(() => getters['ecommerce/scheduleListCart'].length);
+const scheduleCartTotalCostDiscounted = computed<number>(() => getters['ecommerce/scheduleCartTotalCostDiscounted']);
+
+
+
+
+onMounted(() => {
+    if(!mainNavigation.value?.$el){
+        return;
     }
+    shyJs(mainNavigation.value?.$el,{
+        threshold: 400
+    });
+    classScroll(mainNavigation.value?.$el, [{
+        class: "ghost-mode",
+        scroll: 0,
+        remove: true
+    }])
 });
+
 </script>
 
 <style lang="scss">
@@ -226,6 +232,7 @@ export default defineComponent({
     &.ghost-mode{
         background: transparent !important;
         box-shadow: none !important;
+        transition: background 0.3s;
     }
 
     .inclined-button{

@@ -42,9 +42,14 @@ export default {
      * Set schedule data, overwrite data
      *
      * @param {Object} scheduleRecords
+     * @param {Object} scheduleArchive
      * @param {Object} scheduleData
      */
-    setSchedule({ scheduleRecords }: stateEcommerceMap, scheduleData: scheduleMap) {
+    setSchedule({ scheduleRecords, scheduleArchive }: stateEcommerceMap, scheduleData: scheduleMap) {
+        // if we are creating an "unsaved" edits, for restoring and compare reasons, we create a clone
+        if(scheduleData.unsaved){
+            scheduleArchive[scheduleData.id] = scheduleRecords[scheduleData.id];
+        }
         scheduleRecords[scheduleData.id] = scheduleData;
     },
 
@@ -56,5 +61,15 @@ export default {
      */
     removeSchedule({ scheduleRecords }: stateEcommerceMap, id: string) {
         delete scheduleRecords[id];
-    }
+    },
+
+    /*
+     * Remove schedule from archive
+     *
+     * @param {Object} scheduleArchive
+     * @param {string} id
+     */
+    removeScheduleArchive({ scheduleArchive }: stateEcommerceMap, id: string) {
+        delete scheduleArchive[id];
+    },
 };

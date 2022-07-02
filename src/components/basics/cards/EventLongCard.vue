@@ -199,7 +199,7 @@ $event-long-card-mobile-threshold: 600px !default;
         align-items: center;
         flex-direction: column;
         width: 100%;
-        color: var(--event-long-card-background);
+        color: var(--event-long-card-text);
         background-color: var(--event-long-card-color);
         padding: 5px;
         text-align: center;

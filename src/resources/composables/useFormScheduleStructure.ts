@@ -3,29 +3,44 @@ import {
     computed,
     watch,
     onMounted,
-} from 'vue';
+    toRefs
+} from "vue";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
+import useTimeHelpers from "./useTimeHelpers";
+
 import { timeToSeconds } from "guebbit-javascript-library";
 import { formRules, timeFormatDate, timeFormatHours } from "@/resources/constants";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
-import type { formScheduleMap, scheduleInputMap, scheduleMap } from "@/interfaces";
+import type { scheduleFormMap, scheduleInputMap, scheduleMap } from "@/interfaces";
 
 dayjs.extend(customParseFormat);
 
+export interface useFormSchedulePropsMap {
+    scheduleId ?:string,
+    showSpeedModeTab :boolean,
+    defaultFastMode :boolean,
+    defaultFormTimeStep :number
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default (props: { scheduleId ?:string }, emit :any) => {
+export default (props: useFormSchedulePropsMap, emit :any) => {
     const { state, getters } = useStore();
     const { t } = useI18n();
 
+    const {
+        translateToDate,
+        formatInputTypeDate,
+        formatInputTypeTime
+    } = useTimeHelpers(timeFormatDate + ' ' + timeFormatHours);
 
 
     // --------- DATA ---------
 
     const formIsValid = ref(true);
-    const form = ref<formScheduleMap>({
+    const form = ref<scheduleFormMap>({
         date: undefined,
         hourStart: undefined,
         hourEnd: undefined,
@@ -33,29 +48,20 @@ export default (props: { scheduleId ?:string }, emit :any) => {
         temporaryFillFormFlag: false            // TODO TEMPORARY - trova una soluzione più bella
     });
     const formEl = ref<HTMLFormElement>();
+    const fastMode = ref(props.defaultFastMode);
+    const { scheduleRecords, scheduleTimeStep } = toRefs(state.ecommerce);
+    const { businessHours } = toRefs(state.main);
 
-
-
-    // --------- COMPUTED ---------
-
-    /**
-     * MAPSTATE
-     */
-    const scheduleRecords = computed(() => {
-        return state.ecommerce.scheduleRecords;
-    });
-    const scheduleTimeStep = computed(() => {
-        return state.ecommerce.scheduleTimeStep;
-    });
-
-    /**
-     * MAPGETTERS
-     */
     const scheduleReadable = computed(() => {
         return getters['ecommerce/scheduleReadable'];
     });
     const checkScheduleIsAllowed = computed(() => {
         return getters['ecommerce/checkScheduleIsAllowed'];
+    });
+
+
+    const formTimeStep = computed(() => {
+        return scheduleTimeStep.value * props.defaultFormTimeStep;
     });
 
     /**
@@ -81,6 +87,40 @@ export default (props: { scheduleId ?:string }, emit :any) => {
     });
 
     /**
+     * Date object of form START date
+     * 
+     * @return {Date}
+     */
+    const dateObjectFormStart = computed<Date>(() => {
+        return translateToDate(form.value.date + ' ' + form.value.hourStart) || new Date();
+    });
+    /**
+     * Same but timestamp
+     * 
+     * @return {number}
+     */
+    const timeFormStart = computed<number>(() => {
+        return dateObjectFormStart.value.getTime();
+    });
+    
+    /**
+     * Date object of form END date
+     * 
+     * @return {Date}
+     */
+    const dateObjectFormEnd = computed<Date>(() => {
+        return translateToDate(form.value.date + ' ' + translatedHourEnd.value) || new Date();
+    });
+    /**
+     * Same but timestamp
+     *
+     * @return {number}
+     */
+    const timeFormEnd = computed<number>(() => {
+        return dateObjectFormEnd.value.getTime();
+    });
+
+    /**
      *
      */
     const selectedSchedule = computed<scheduleMap | undefined>(() => {
@@ -99,8 +139,8 @@ export default (props: { scheduleId ?:string }, emit :any) => {
     const formItemSchedule = computed<scheduleInputMap>(() => {
         return {
             allDay: false,
-            start: dayjs(form.value.date + ' ' + form.value.hourStart, timeFormatDate + ' ' + timeFormatHours).valueOf(),
-            end: dayjs(form.value.date + ' ' + translatedHourEnd.value, timeFormatDate + ' ' + timeFormatHours).valueOf(),
+            start: timeFormStart.value,
+            end: timeFormEnd.value,
         }
     });
 
@@ -122,8 +162,8 @@ export default (props: { scheduleId ?:string }, emit :any) => {
             return '';
         }
         const { start, end } = formItemSchedule.value;
-        const { durationData: { mode, hours, minutes } } = scheduleReadable.value(start, end);
-        return t('play.schedule-details-time-count.' + mode, {
+        const { durationData: { mode = 0, hours = 0, minutes = 0 } = {} } = scheduleReadable.value(start, end);
+        return t('generic.schedule-details-time-count.' + mode, {
             hours,
             minutes
         });
@@ -133,10 +173,21 @@ export default (props: { scheduleId ?:string }, emit :any) => {
 
     // --------- METHODS ---------
 
+    const formConfirmButton = () => {
+        if(!formIsValid.value){
+            return;
+        }
+        if(props.scheduleId){
+            editSchedule();
+        }
+        return fastMode.value ? confirmSchedule() : addSchedule();
+    };
+
     /**
      * ADD new schedule with form data
      */
     const addSchedule = () => {
+        // TODO toast OR TODO disclaimer & computed
         emit('schedule:add', formItemSchedule.value);
     };
 
@@ -145,6 +196,7 @@ export default (props: { scheduleId ?:string }, emit :any) => {
      * (fast mode)
      */
     const confirmSchedule = () => {
+        // TODO toast OR TODO disclaimer & computed
         emit('schedule:confirm', formItemSchedule.value);
     };
 
@@ -153,6 +205,7 @@ export default (props: { scheduleId ?:string }, emit :any) => {
      * EDIT new schedule with form data
      */
     const editSchedule = () => {
+        // TODO toast OR TODO disclaimer & computed
         emit('schedule:edit', {
             ...formItemSchedule.value,
             id: props.scheduleId
@@ -163,6 +216,7 @@ export default (props: { scheduleId ?:string }, emit :any) => {
      * REMOVE selected schedule
      */
     const removeSchedule = () => {
+        // TODO toast OR TODO disclaimer & computed
         emit('schedule:remove', props.scheduleId);
     };
 
@@ -181,11 +235,9 @@ export default (props: { scheduleId ?:string }, emit :any) => {
         // not valid, reset
         if(start >= end){
             if(!hourEndWasEdited){
-                const newTime = dayjs(form.value.date + ' ' + form.value.hourStart, timeFormatDate + ' ' + timeFormatHours).valueOf();
-                form.value.hourEnd = dayjs(newTime + (scheduleTimeStep.value * 2)).format(timeFormatHours);
+                form.value.hourEnd = dayjs(timeFormStart.value + formTimeStep.value).format(timeFormatHours);
             }else{
-                const newTime = dayjs(form.value.date + ' ' + translatedHourEnd.value, timeFormatDate + ' ' + timeFormatHours).valueOf();
-                form.value.hourStart = dayjs(newTime - (scheduleTimeStep.value * 2)).format(timeFormatHours);
+                form.value.hourStart = dayjs(timeFormEnd.value - formTimeStep.value).format(timeFormatHours);
             }
         }
     };
@@ -204,54 +256,64 @@ export default (props: { scheduleId ?:string }, emit :any) => {
         // if END is empty => put today + double timeStep (1 hour) as standard starting value
         if(!end){
             // 1 hour later
-            end = start + scheduleTimeStep.value * 2;
+            end = start + formTimeStep.value;
         }
         // all times must be divided in "steps" (30 min steps)
         start = Math.round(start / scheduleTimeStep.value) * scheduleTimeStep.value;
         end = Math.round(end / scheduleTimeStep.value) * scheduleTimeStep.value;
-        // fill the form with the new data
 
+        // starting values
+        let dateObject = dayjs(start);
+        let hourStartObject = dayjs(start);
+        let hourEndObject = dayjs(end);
+
+        /**
+         * POSSIBLE OPTIMIZATION: work with timestamps to understand if you have time or not
+         * TODO può segnare "chiuso" anche se magari ci starebbe dentro con un "formTimeStep" minore
+         * TODO come fare per 'max-reached'?
+         * TODO fare funzione a parte?
+         *
+         * Predict and set good schedule time based on actual time, opening hours and formTimeStep decided
+         *  - If closed, take the first time possible on the next days
+         *  - Set hours based on "start" and "end" where "end" is "start + step" as default
+         */ 
+        if(checkScheduleIsAllowed.value(hourStartObject.valueOf(), hourEndObject.valueOf()).includes('closed')){
+            // the day after until it's opened
+            do {
+                dateObject = dateObject.add(1, 'day');
+                hourStartObject = hourStartObject.add(1, 'day');
+                hourEndObject = hourEndObject.add(1, 'day');
+                // continue until an open day is found
+            } while(businessHours.value[dateObject.day()].length < 1);
+            // find the day hours
+            const [ tempTodayStart = "00.00", tempTodayEnd = "00.00" ] = businessHours.value[dateObject.day()];
+            // START and END hour and minutes
+            const [ hourStartToday, minuteStartToday ] = tempTodayStart.split('.');
+            const [ hourEndToday, minuteEndToday ] = tempTodayEnd.split('.');
+            // START from the beginning
+            hourStartObject = hourStartObject.set('hour', parseInt(hourStartToday)).set('minute', parseInt(minuteStartToday));
+            // take the end time based on the START + TIMESTEP
+            hourEndObject = dayjs(hourStartObject.valueOf() + formTimeStep.value)
+            // if it would be closed, then set the maximum time possible for the day
+            if(checkScheduleIsAllowed.value(hourStartObject.valueOf(), hourEndObject.valueOf()).includes('closed')){
+                hourEndObject = hourEndObject.set('hour', parseInt(hourEndToday)).set('minute', parseInt(minuteEndToday));
+            }
+        }
+
+        // fill the form with the new data
         form.value = {
-            date: dayjs(start).format(timeFormatDate),
-            hourStart: dayjs(start).format(timeFormatHours),
-            hourEnd: dayjs(end).format(timeFormatHours),
-            rules: false,
+            date: dateObject.format(timeFormatDate),
+            hourStart: hourStartObject.format(timeFormatHours),
+            hourEnd: hourEndObject.format(timeFormatHours),
+            rules: form.value.rules,
             temporaryFillFormFlag: !form.value.temporaryFillFormFlag
         };
-
+        // console.log("FORMFILLED", form.value.date, form.value.hourStart, form.value.hourEnd)
         // to make visible errors and warnings
         if(formEl.value){
             formEl.value.validate();
         }
     };
-
-
-    /**
-     * input type="date" accept only YYYY-MM-DD format, even if it shows another format,
-     * so it needs to be translated.
-     *
-     * @param {string} value
-     * @param {string} formatTo - format
-     * @param {string} formatFrom - format
-     */
-    const formatInputTypeDate = (value :string, formatTo = timeFormatDate, formatFrom = timeFormatDate) => {
-        return dayjs(value, formatFrom).format(formatTo);
-    };
-
-    /**
-     * input type="time" has a stepper that is ignored in the dropdown (so its unreliable)
-     *
-     * @param {string} value
-     * @param {string} separator
-     * @param {number} step
-     */
-    const formatInputTypeTime = (value :string, separator = ":", step = 30) => {
-        const [hours = '00', minutes = '00'] = value.split(separator);
-        return hours + separator + (parseInt(minutes) >= step ? step.toString() : '00');
-        // const newMinutes = Math.round(parseInt(minutes) / step) * step;
-        // return hours + separator + (newMinutes < 60 ? newMinutes.toString().padStart(2, '0') : '00');
-    };
-
 
     // --------- OTHER ---------
 
@@ -312,6 +374,7 @@ export default (props: { scheduleId ?:string }, emit :any) => {
         formItemSchedule,
         formScheduleAvailability,
         selectedFormDuration,
+        formConfirmButton,
         addSchedule,
         confirmSchedule,
         editSchedule,

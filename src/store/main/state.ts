@@ -17,7 +17,7 @@ export default {
     // generic
     modals: {
         login: false,
-        event: false
+        play: false
     },
     // on loading list
     loading: [],

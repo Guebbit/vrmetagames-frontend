@@ -1,15 +1,11 @@
 <template>
     <div class="theme-page">
-        <h1>ABOUT</h1>
+        <h1>WORK IN PROGRESS</h1>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
 
-export default defineComponent({
-    name: "AboutPage"
-});
 </script>
 
 <style lang="scss">

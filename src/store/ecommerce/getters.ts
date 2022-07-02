@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import { arrayColumn, rangeOverlaps } from "guebbit-javascript-library";
-import { labelFromToDuration, timeFormatDate, timeFormatHours } from "@/resources/constants";
+import { arrayColumn, rangeOverlaps, secondsToTime } from "guebbit-javascript-library";
+import { timeFormatDate, timeFormatHours } from "@/resources/constants";
 
 import type { GetterTree } from 'vuex';
 import type {
@@ -100,7 +100,7 @@ export default {
             // finished schedule
             fullCalendarScheduleArray.push({
                 start: day,
-                // end: day,
+                end: day,
                 display: 'background',
                 className: 'day-capacity-indicator ' + capacityClass
             })
@@ -112,89 +112,116 @@ export default {
     /**
      * human readable schedule data
      */
-    scheduleReadable() :(start :number, end :number) => scheduleReadableMap {
-        return (start :number, end :number) :scheduleReadableMap => {
-            // to build a i18n label
-            const { mode, hours, minutes } = labelFromToDuration(start, end);
-            //
+    scheduleReadable({ scheduleTimeCost, scheduleTimeStep } :stateEcommerceMap) :(start :number, end :number) => scheduleReadableMap {
+        // function
+        return (start = 0, end = 0) :scheduleReadableMap => {
+            // to build a i18n label TODO fare meglio?
+            let mode = 0;
+            const { hoursOnly :hours = 0, minutes = 0 } = secondsToTime(end - start);
+            if(hours === 0 && minutes === 0){
+                mode = 1;
+            }
+            if(hours === 0 && minutes > 0){
+                mode = 2;
+            }
+            if(minutes === 0){
+                if(hours === 1){
+                    mode = 3;
+                }
+                if(hours > 1){
+                    mode = 4;
+                }
+            }else{
+                if(hours === 1){
+                    mode = 5;
+                }
+                if(hours > 1){
+                    mode = 6;
+                }
+            }
+            // calculate the cost
+            const totalSteps = (end - start) / scheduleTimeStep;
+            // const cost = totalSteps < scheduleTimeCost.length ? scheduleTimeCost[totalSteps] : totalSteps * scheduleTimeCost[0];
+            const cost = Object.prototype.hasOwnProperty.call(scheduleTimeCost, totalSteps) ? scheduleTimeCost[totalSteps] : totalSteps * scheduleTimeCost[0];
+            // return human readable schedule info
             return {
                 date: dayjs(start).format(timeFormatDate),    //(end) MUST be the same
                 hourStart: dayjs(start).format(timeFormatHours),
                 hourEnd: dayjs(end).format(timeFormatHours),
+                cost: cost / 100,
                 durationData: {
                     mode,
                     hours,
-                    minutes
+                    minutes,
                 }
             };
         };
     },
 
     /**
-     * Get list of OFFLINE schedules
+     * Get list of OFFLINE OR UNSAVED schedules
      *
      * @param {Object} scheduleRecords
      */
-    schedulesOffline: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] => {
-        return Object.values(scheduleRecords).filter(({ online = true }) => {
-            return !online;
+    scheduleListOffline: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] => {
+        return Object.values(scheduleRecords).filter(({ online = true, unsaved = false }) => {
+            return !online || unsaved;
         });
     },
 
     /**
      * Get list of ONHOLD (NOT CONFIRMED) schedules
-     * Since every OFFLINE is ONHOLD by default, I filter them out
+     * Can be ONLINE or OFFLINE
      *
      * @param {Object} scheduleRecords
      */
-    schedulesOnHold: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] => {
-        return Object.values(scheduleRecords).filter(({ online = true, confirmed = true }) => {
-            return online && !confirmed;
+    scheduleListCart: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] => {
+        return Object.values(scheduleRecords).filter(({ confirmed = true }) => {
+            return !confirmed;
         });
     },
 
-    /**
-     * Get list of CANCELED schedules
-     *
-     * @param {Object} scheduleRecords
-     */
-    schedulesCanceled: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] => {
-        return Object.values(scheduleRecords).filter(({ canceled = false }) => {
-            return canceled;
-        });
-    },
 
     /**
-     * Get list of UNSAVED schedules
-     *
-     * @param {Object} scheduleRecords
-     */
-    schedulesUnsaved: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] => {
-        return Object.values(scheduleRecords).filter(({ unsaved = false }) => {
-            return unsaved;
-        });
-    },
-
-    /**
-     * id
+     * TODO funzione con ID dato
      *
      * @param {BusinessHoursMap} businessHours
      * @param {Object} getters
      * @param {string} currentUserId
      */
     /*
-    userEvents: ({ scheduleRecords }: stateEcommerceMap, getters, { user: { userInfo: { id :currentUserId}}}) :string[] => {
+    scheduleUserList: ({ scheduleRecords }: stateEcommerceMap, getters, { user: { userInfo: { id :currentUserId}}}) :string[] => {
         const userOwnedEvents :string[] = [];
         Object.values(scheduleRecords).reduce((reducer, { id, userId }) => {
             if (userId === currentUserId) {
                 userOwnedEvents.push(id);
             }
             return reducer;
-        }, []);
+        }, [] as string[]);
 
         return userOwnedEvents;
     },
     */
+
+
+    /**
+     * REAL cart COST
+     * AFTER base discounts (many step special pack discounts)
+     *
+     * @param {object} state
+     * @param {object[]} scheduleListCart
+     * @param {Function} getScheduleTotalCostDiscounted
+     * @return {number}
+     */
+    scheduleCartTotalCostDiscounted(state :stateEcommerceMap, { scheduleListCart, getScheduleTotalCostDiscounted }) :number {
+        return getScheduleTotalCostDiscounted(
+            (scheduleListCart as scheduleMap[]).reduce((idArray, { id }) => {
+                idArray.push(id)
+                return idArray;
+            }, [] as string[])
+        ) / 100
+    },
+
 
     /**
      * Total number of stations
@@ -214,6 +241,101 @@ export default {
         // TODO array of types? stationTypes['oculus'] somma di tutte le stations con questa caratteristica? Al posto di capacity
         return stationTypes;
     },
+
+
+    /**
+     * Sum the TIME of selected schedules
+     *
+     * @param {Object} scheduleRecords
+     * @return {boolean}
+     */
+    getScheduleTotalTime: ({ scheduleRecords }: stateEcommerceMap) :(idArray :string[]) => number => {
+        /**
+         * @param {string[]} idArray - schedule id array
+         * @return {number}
+         */
+        return (idArray :string[] = []) :number => {
+            // no items = 0 time
+            if(idArray.length === 0){
+                return 0;
+            }
+            return Object.values(scheduleRecords).reduce((total, { id, start, end }) :number => {
+                return idArray.includes(id) ? total + (end - start) : total;
+            }, 0);
+        }
+    },
+
+    /**
+     * Sum the STEPS of selected schedules
+     *
+     * @param {number} scheduleTimeStep
+     * @param {Function} getScheduleTotalTime
+     * @return {boolean}
+     */
+    getScheduleTotalSteps: ({ scheduleTimeStep }: stateEcommerceMap, { getScheduleTotalTime }) :(idArray :string[]) => number => {
+        /**
+         * @param {string[]} idArray - schedule id array
+         * @return {number}
+         */
+        return (idArray :string[] = []) :number => getScheduleTotalTime(idArray) / scheduleTimeStep;
+    },
+
+    /**
+     * Sum the COST of selected schedules
+     *
+     * @param {number} scheduleTimeCost
+     * @param {Function} getScheduleTotalSteps
+     */
+    getScheduleTotalCost: ({ scheduleTimeCost }: stateEcommerceMap, { getScheduleTotalSteps }) :(idArray :string[]) => number => {
+        /**
+         * @param {string[]} idArray - schedule id array
+         * @return {number} - total steps * default time cost per step
+         */
+        return (idArray :string[] = []) :number => getScheduleTotalSteps(idArray) * scheduleTimeCost[0];
+    },
+
+
+    /**
+     * Sum the COST of selected schedules
+     * WARNING: Discount applied BEFORE the user wallet subtraction. That means that wallet fill discounts are DIFFERENT and SEPARATED
+     *
+     * @param {number} scheduleTimeCost
+     * @param {Function} getScheduleTotalSteps
+     */
+    getScheduleTotalCostDiscounted: ({ scheduleTimeCost }: stateEcommerceMap, { getScheduleTotalSteps }) :(idArray :string[]) => number => {
+        /**
+         * @param {string[]} idArray - schedule id array
+         * @return {number}
+         */
+        return (idArray :string[] = []) :number => {
+            let totalCost = 0;
+            // no items = 0 cost
+            if(idArray.length === 0){
+                return 0;
+            }
+            // for every discounted amount
+            const leftoverSteps = Object.keys(scheduleTimeCost).reduce((total, step) :number => {
+                const stepInt = parseInt(step);
+                // how many times the discounted amount is present in the total of steps
+                const stepDiscounted = Math.floor(total / stepInt);
+                // if step = 0 then it's the default (and obviously can't be used in a division)
+                if(stepInt > 0 && stepDiscounted > 0){
+                    // add the total discounted cost
+                    totalCost += stepDiscounted * scheduleTimeCost[stepInt];
+                    // remove the quantity of steps that got discounted
+                    return total % stepInt;
+                }
+                // in the end, only the non-discountable amount of steps will remain
+                return total;
+                // total steps:
+            }, getScheduleTotalSteps(idArray));
+            // remaining steps with standard price
+            totalCost += leftoverSteps * scheduleTimeCost[0]
+            // discounted total
+            return totalCost;
+        }
+    },
+
 
     /**
      * Get all events between 2 dates
@@ -255,7 +377,7 @@ export default {
      * @param {number} scheduleTimeStep
      * @param {Function} getSchedulesByTime
      */
-    getSchedulesBySlots: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesByTime }) => {
+    getSchedulesBySlots: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesByTime }) :(dateFrom :number, dateTo :number, slotDuration ?:number, checkResourceId ?:string) => Record<string, string[]> => {
 
         /**
          * @param {number} dateFrom
@@ -264,7 +386,7 @@ export default {
          * @param {string} checkResourceId
          * @return {boolean}
          */
-        return (dateFrom :number, dateTo :number, slotDuration = scheduleTimeStep, checkResourceId ?:string) => {
+        return (dateFrom :number, dateTo :number, slotDuration = scheduleTimeStep, checkResourceId ?:string) :Record<string, string[]> => {
             // if even only 1 time slot in higher than eventNumberLimit, it fails
             // from start to end step by step
             let stepperStart = dateFrom;
@@ -272,9 +394,7 @@ export default {
             const cappedSlots :Record<string, string[]> = {};
             // do cycle
             do {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                cappedSlots[stepperStart + '_' + stepperEnd] = arrayColumn(getSchedulesByTime(stepperStart, stepperEnd, checkResourceId), 'id');
+                cappedSlots[stepperStart + '_' + stepperEnd] = arrayColumn(getSchedulesByTime(stepperStart, stepperEnd, checkResourceId), 'id') as string[];
                 // next step, until loading reach END
                 stepperStart = stepperStart + slotDuration;
                 stepperEnd = stepperEnd + slotDuration;
@@ -343,22 +463,22 @@ export default {
         /**
          * @param {number} dateFrom
          * @param {number} dateTo
+         * @param {string} id - id of event, to filter away while counting (would be counted 2 times)
          * @param {string} checkResourceId
          */
-        return (dateFrom :number, dateTo :number, checkResourceId ?:string) :string[] => {
+        return (dateFrom :number, dateTo :number, id ?:string, checkResourceId ?:string) :string[] => {
             const errorArray :string[] = [];
 
             // ----- businessHours check -----
             if(!rootGetters['main/isOpen'](dateFrom) || !rootGetters['main/isOpen'](dateTo)){
                 errorArray.push('closed');
             }
-
             // ----- schedule limit check -----
-            const cappedSlots = Object.values(getSchedulesBySlots(dateFrom, dateTo, scheduleTimeStep, checkResourceId));
+            const cappedSlots :string[][] = Object.values(getSchedulesBySlots(dateFrom, dateTo, scheduleTimeStep, checkResourceId));
             if(
-                (cappedSlots as Array<string[]>).some((idArray :string[]) => {
+                cappedSlots.some((idArray :string[]) => {
                     // TODO different stations with different possible games
-                    return idArray.length >= totalStations['global']
+                    return idArray.length - (id && idArray.includes(id) ? 1 : 0) >= totalStations['global']
                 })
             ){
                 errorArray.push('max-reached');
@@ -382,7 +502,7 @@ export default {
         return (id :string, start :number, end :number, resourceId ?:string) :string[] => {
             return [
                 ...checkScheduleIsEditable(id),
-                ...checkScheduleIsAllowed(start, end, resourceId)
+                ...checkScheduleIsAllowed(start, end, id, resourceId)
             ]
         }
     },
@@ -399,9 +519,7 @@ export default {
          * @param {string} branch
          * @param {string} id
          */
-        return (branch :string, id :string | number) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+        return (branch :keyof stateEcommerceMap, id :string | number) => {
             if(!Object.prototype.hasOwnProperty.call(state, branch) || !Object.prototype.hasOwnProperty.call(state[branch], id)){
                 return undefined;
             }

@@ -7,7 +7,7 @@
         >
             <v-card
                 variant="outlined"
-                class="schedule-form-card"
+                class="schedule-form-panel"
                 :color="themeColors.secondary"
             >
                 <v-btn-toggle
@@ -40,7 +40,6 @@
                             />
                         </v-col>
                         <v-col cols="6">
-                            <!-- TODO split in hours && minutes dove minuti è una SELECT 00 o 30? -->
                             <v-text-field
                                 v-model="form.hourStart"
                                 @input="({target:{value}}) => form.hourStart = formatInputTypeTime(value)"
@@ -52,7 +51,6 @@
                             />
                         </v-col>
                         <v-col cols="6">
-                            <!-- TODO split in hours && minutes dove minuti è una SELECT 00 o 30? -->
                             <v-text-field
                                 v-model="form.hourEnd"
                                 @input="({target:{value}}) => form.hourEnd = formatInputTypeTime(value)"
@@ -191,7 +189,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.schedule-form-card{
+.schedule-form-panel{
     .card-top-action{
         width: 100%;
         display: flex;

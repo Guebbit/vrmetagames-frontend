@@ -11,8 +11,8 @@
             <template v-slot:default>
                 <TrapezoidTitle
                     class="theme-page-title text-center"
-                    :color="$vuetify.theme.themes.default.colors.primary"
-                    :double="$vuetify.theme.themes.default.colors.secondary"
+                    :color="themeColors.primary"
+                    :double="themeColors.secondary"
                     outline
                     big
                     cross
@@ -234,6 +234,12 @@
     </div>
 </template>
 
+<script setup lang="ts">
+import { useTheme } from "vuetify";
+
+const { global: { current: { value: { colors: themeColors } } } } = useTheme();
+</script>
+
 <script lang="ts">
 // TODO mixin tipo ACcenture
 // https://vuejs.org/guide/reusability/composables.html#what-is-a-composable
@@ -354,7 +360,7 @@ export default defineComponent({
             }
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            return this.$vuetify.theme.themes.default.colors.primary;
+            return this.themeColors.primary;
         }
     },
     mounted(){

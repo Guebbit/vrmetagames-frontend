@@ -8,6 +8,14 @@
 
 .theme-page{
     position: relative;
+    &.full-page{
+        min-height: 100vh;
+    }
+    &.centered{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 .theme-app-loading{
@@ -87,5 +95,14 @@
                 max-width: 800px;
             }
         }
+    }
+}
+
+.theme-icon-text{
+    display: flex;
+    align-items: center;
+    svg{
+        min-width: 1em;
+        padding: 0.5em;
     }
 }

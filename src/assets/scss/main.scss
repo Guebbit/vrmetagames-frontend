@@ -3,6 +3,8 @@
 @import "atoms/ButtonParallelogram";
 @import 'guebbit-scss-library/components/atoms/ButtonSocialIcon';
 @import 'guebbit-scss-library/components/atoms/SimpleList';
+@import 'guebbit-scss-library/components/atoms/SimpleBlockquote';
+@import 'guebbit-scss-library/components/atoms/GreatBlockquote';
 @import 'guebbit-scss-library/components/atoms/HoverLineHighlight';
 @import 'guebbit-scss-library/components/atoms/StatusCircle';
 @import "guebbit-scss-library/components/molecules/TypographyPanel";
@@ -13,6 +15,7 @@
 
 
 @include guebbit-include-social-colors();
+@include guebbit-include-flex-gap((6, 12, 24));
 
 
 .hero-panel-content{
@@ -110,17 +113,18 @@
     }
 }
 
+
 .status-circle{
     &.online{
-        background-color: #00c853;
+        background-color: rgb(var(--v-theme-success));
         &:before{
-            background-color: #00c853;
+            background-color: rgba(var(--v-theme-success), .3);
         }
     }
     &.offline{
-        background-color: #F44336;
+        background-color: rgb(var(--v-theme-error));
         &:before{
-            background-color: #F44336;
+            background-color: rgba(var(--v-theme-error), .3);
         }
     }
 }

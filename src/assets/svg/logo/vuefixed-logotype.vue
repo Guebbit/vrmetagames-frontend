@@ -1,16 +1,6 @@
 <template>
     <svg id="guebbit-logo-long-simple" version="1.1" xmlns="http://www.w3.org/2000/svg"
          viewBox="0 0 577.347 175.894" xml:space="preserve">
-<desc xmlns:guebbit="https://guebbit.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="https://guebbit.com ">
-    <guebbit:title>guebbit</guebbit:title>
-    <guebbit:descr>
-        <guebbit:emph>guebbit</guebbit:emph>
-        web developer
-        website ecommerce gestionali portali
-        soluzioni digitali internet
-    </guebbit:descr>
-</desc>
         <!-- uebbit chiaro -->
         <g>
 <!-- G -->

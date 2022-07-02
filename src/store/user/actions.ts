@@ -10,8 +10,8 @@ const mockUserInfo = {
     phone: "+39 123 4567",
     birthdate: 1649620712000,
     description: "lorem ipsum blablabla cose a caso",
-    wallet: 50,
-    lastPlayed: 1653050140000,
+    wallet: 95,
+    lastVisit: 1653050140000,
     isAdmin: true,  // TODO false test
 };
 const mockPaymentMethods = [
@@ -98,7 +98,7 @@ export default {
                 jwt: '1234'
             });
             // redo init, with authentication this time (TTL of previous info prevent useless calls)
-            return dispatch("main/initApp", null, { root: true });
+            return dispatch("main/initApp", undefined, { root: true });
         })
         .catch(() => dispatch("main/handleServerError", "getStations ERROR", { root: true }));
     },
@@ -109,6 +109,7 @@ export default {
      * @param {Function} commit
      */
     userLogout({ commit }: ActionContext<stateUserMap, stateRootMap>) {
+        // reset tokens
         commit("setAuthenticationTokens");
     },
 
@@ -137,7 +138,7 @@ export default {
         }
         return Promise.resolve()
             .then(() => {
-                commit("setUserInfo", mockUserInfo);
+                commit("setUserInfo", { ...mockUserInfo });
                 for (let i = mockPaymentMethods.length; i--;) {
                     commit("setPaymentMethods", mockPaymentMethods[i]);
                 }

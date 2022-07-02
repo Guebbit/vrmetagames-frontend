@@ -9,9 +9,10 @@
         :backgroundImageCss="'http://placekitten.com/2000/1000'"
     >
         <h3 class="theme-section-title text-center mb-10">
-            Follow Me On Socials
+            {{ t('home-page.socials-title') }}
         </h3>
-        <a href="#"
+
+        <a :href="socialFacebook"
            class="button-social-icon"
            target="_blank"
         >
@@ -19,7 +20,7 @@
                 <font-awesome-icon class="px-3" :icon="['fab', 'facebook-f']"/>
             </span>
         </a>
-        <a href="#"
+        <a :href="socialInstagram"
            class="button-social-icon"
            target="_blank"
         >
@@ -27,7 +28,7 @@
                 <font-awesome-icon class="px-3" :icon="['fab', 'instagram']"/>
             </span>
         </a>
-        <a href="#"
+        <a :href="socialTiktok"
            class="button-social-icon"
            target="_blank"
         >
@@ -35,7 +36,7 @@
                 <font-awesome-icon class="px-3" :icon="['fab', 'tiktok']"/>
             </span>
         </a>
-        <a href="#"
+        <a :href="socialYoutube"
            class="button-social-icon"
            target="_blank"
         >
@@ -43,7 +44,7 @@
                 <font-awesome-icon class="px-3" :icon="['fab', 'youtube']"/>
             </span>
         </a>
-        <a href="#"
+        <a :href="'https://wa.me/' + contactNumber.replace(' ','')"
            class="button-social-icon"
            target="_blank"
         >
@@ -51,7 +52,7 @@
                 <font-awesome-icon class="px-3" :icon="['fab', 'whatsapp']"/>
             </span>
         </a>
-        <a href="#"
+        <a :href="'https://t.me/' + contactTelegram"
            class="button-social-icon"
            target="_blank"
         >
@@ -62,22 +63,24 @@
     </Panel>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
+
+import {
+    contactNumber,
+    contactTelegram,
+    socialFacebook,
+    socialInstagram,
+    socialTiktok,
+    socialYoutube
+} from "@/resources/constants";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faFacebookF, faInstagram, faTiktok, faYoutube, faWhatsapp, faTelegram } from "@fortawesome/free-brands-svg-icons";
 
-library.add(faFacebookF, faInstagram, faTiktok, faYoutube, faWhatsapp, faTelegram)
 
-export default defineComponent({
-    name: "SocialPanel",
-
-    components: {
-        Panel,
-        FontAwesomeIcon
-    }
-});
+library.add(faFacebookF, faInstagram, faTiktok, faYoutube, faWhatsapp, faTelegram);
+const { t } = useI18n();
 </script>

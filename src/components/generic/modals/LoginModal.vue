@@ -85,15 +85,6 @@ import useModalShowStructure from "@/resources/composables/useModalShowStructure
 const { dialogValue, toggleModal } = useModalShowStructure('login');
 </script>
 
-<script lang="ts">
-// https://codepen.io/search/pens?q=login
-import { defineComponent } from "vue";
-
-export default defineComponent({
-    name: "LoginModal",
-});
-</script>
-
 <style lang="scss">
 .theme-modal{
     .v-card{

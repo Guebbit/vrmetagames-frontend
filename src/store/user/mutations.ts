@@ -7,7 +7,7 @@ export default {
      * @param {Object} state
      * @param {Object} userInfo
      */
-    setAuthenticationTokens(state: stateUserMap, { jwt }: Record<string, string>) {
+    setAuthenticationTokens(state: stateUserMap, { jwt }: Record<string, string> = {}) {
         state.jwt = jwt;
     },
 

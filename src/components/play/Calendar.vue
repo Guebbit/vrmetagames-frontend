@@ -2,16 +2,22 @@
     <FullCalendar
         ref="fullCalendar"
         :options='calendarOptions'
-        class="fc-theme-guebbit hide-events-month"
+        class="hide-events-month"
+        :class="{
+            'anonymous-mode': !admin
+        }"
         :style="{
+            '--fc-primary-color-rgb': primaryRGB,
+            '--fc-secondary-color-rgb': secondaryRGB,
+            '--fc-custom-background-color': background,
+            '--fc-page-bg-color': primary,
             '--fc-border-color': primary,
-            '--fc-today-bg-color': 'rgba('+secondaryRGB+', 0.3)',
+            '--fc-today-bg-color': 'transparent',
             '--fc-non-business-color': 'rgba(255, 255,255, 0.05)',
             '--fc-neutral-text-color': text,
             '--fc-daygrid-event-dot-width': '8px',
             '--fc-list-event-dot-width': '10px',
             '--fc-hover-color': 'rgba('+primaryRGB+', 0.2)',
-            '--fc-page-bg-color': primary,
 
             '--fc-highlight-color': 'rgba('+secondaryRGB+', 0.3)',
             '--fc-event-bg-color': secondary,
@@ -62,22 +68,24 @@ import itLocale from '@fullcalendar/core/locales/it';
 import type {
     CalendarOptions,
     BusinessHoursInput,
-    // DateSpanApi,
+    DateSpanApi,
     EventApi,
     EventInput,
+    EventDropArg,
     DateSelectArg,
     EventClickArg,
     EventAddArg,
     EventRemoveArg,
     EventChangeArg,
     OverlapFunc,
-    AllowFunc
+    AllowFunc,
 } from '@fullcalendar/vue3';
 import type {
-    DateClickArg
+    DateClickArg,
+    EventResizeDoneArg,
 } from '@fullcalendar/interaction';
 import type {
-    ResourceInput
+    ResourceInput,
 } from '@fullcalendar/resource-common';
 
 export default defineComponent({
@@ -164,6 +172,10 @@ export default defineComponent({
             type: String,
             required: false
         },
+        background: {
+            type: String,
+            required: false
+        },
         text: {
             type: String,
             required: false
@@ -182,12 +194,26 @@ export default defineComponent({
 
         handleAllow: {
             type: Function as PropType<AllowFunc>,
-            required: false,
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            default: () => {},
+        },
+
+        handleEventResize: {
+            type: Function as PropType<(arg: EventResizeDoneArg) => void>,
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            default: () => {},
+        },
+
+        handleEventDrop: {
+            type: Function as PropType<(arg: EventDropArg) => void>,
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            default: () => {},
         },
 
         handleEventChange: {
             type: Function as PropType<(arg: EventChangeArg) => void>,
-            required: false,
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            default: () => {},
         },
     },
 
@@ -312,26 +338,30 @@ export default defineComponent({
                 selectConstraint: 'businessHours',
                 eventConstraint: 'businessHours',
                 // defaultTimedEventDuration: "01:00:00",   // NOT WORKING
-                longPressDelay: 0,                      // integer, time user must hold touch before drag\select WARNING: 0 because scroll is never needed https://fullcalendar.io/docs/touch
-                editable: this.admin,                   // boolean, events can be dragged and resized
-                eventResourceEditable: this.admin,      // same, but with resources
-                selectable: true,                       // boolean, select on calendar
-                selectMirror: true,                     // boolean, draw temporary event on select
-                // dayMaxEvents: true,                  // TODO https://fullcalendar.io/docs/dayMaxEvents
-                allDaySlot: false,                      // boolean, top slot
+                longPressDelay: 0,                          // integer, time user must hold touch before drag\select WARNING: 0 because scroll is never needed https://fullcalendar.io/docs/touch
+                editable: this.admin,                       // boolean, events can be dragged and resized
+                eventResourceEditable: this.admin,          // same, but with resources
+                selectable: true,                           // boolean, select on calendar
+                selectMirror: true,                         // boolean, draw temporary event on select
+                // dayMaxEvents: true,                      // TODO https://fullcalendar.io/docs/dayMaxEvents
+                allDaySlot: false,                          // boolean, top slot
                 hiddenDays: this.hideDisabledDays ? this.closeDays : [],
-                // forceEventDuration: true,               // boolean: force event's "end" to be specified
-                slotEventOverlap: true,                    // boolean, should
-                selectOverlap: this.handleOverlap || true,// boolean or function that return boolean
-                eventOverlap: this.handleOverlap || true, // boolean or function that return boolean
-                eventAllow: this.handleAllow,             // function that return boolean
+                // forceEventDuration: true,                // boolean: force event's "end" to be specified
+                slotEventOverlap: true,                     // boolean, should
+                eventStartEditable: true,                   // if event can be dragged
+                eventDurationEditable : false,              // if event can be resized by dragging TODO TEMPORARY non triggera eventAllow
+                selectOverlap: this.handleOverlap || true,  // boolean or function that return boolean
+                eventOverlap: this.handleOverlap || true,   // boolean or function that return boolean
+                eventAllow: this._handleAllow,              // function that return boolean
                 select: this.handleDateSelect,
                 dateClick: this.handleDateClick,
                 eventClick: this.handleEventClick,
                 eventsSet: this.handleEventsSet,
                 eventAdd: this.handleEventAdd,
                 eventRemove: this.handleEventRemove,
-                eventChange: this.handleEventChange
+                eventChange: this._handleEventChange,
+                eventDrop: this._handleEventDrop,
+                eventResize: this._handleEventResize
             }
         }
     },
@@ -373,7 +403,7 @@ export default defineComponent({
             do {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                cappedSlots[stepperStart.getTime() + '_' + stepperEnd.getTime()] = arrayColumn(this.getEventsByTime(stepperStart, stepperEnd, resourceId), 'id');
+                cappedSlots[stepperStart.getTime() + '_' + stepperEnd.getTime()] = arrayColumn(this.getEventsByTime(stepperStart, stepperEnd, resourceId), 'id') as string[];
                 // next step, until loading reach END
                 stepperStart = new Date(stepperStart.getTime() + this.slotDuration);
                 stepperEnd = new Date(stepperEnd.getTime() + this.slotDuration);
@@ -541,7 +571,7 @@ export default defineComponent({
             if(!id || display === 'background'){
                 return;
             }
-            console.log("handleEventClick", this.calendarApi.getEventById(id))
+            console.log("handleEventClick", id, this.calendarApi.getEventById(id))
             this.$emit('event:click', id);
         },
 
@@ -586,7 +616,9 @@ export default defineComponent({
          * @param {Object} draggedEvent - given event
          * @return {boolean} => true = allowed, false = not allowed
          */
-        // handleAllow(dropInfo :DateSpanApi, draggedEvent: EventApi | null) {},
+        _handleAllow(dropInfo :DateSpanApi, draggedEvent: EventApi | null) {
+            return this.handleAllow(dropInfo, draggedEvent);
+        },
 
         /**
          * https://fullcalendar.io/docs/eventAdd
@@ -613,7 +645,7 @@ export default defineComponent({
         /**
          * https://fullcalendar.io/docs/eventChange
          *
-         * Called after an event has been modified in some way:
+         * Called AFTER an event HAS BEEN MODIFIED in some way:
          *  - when Event Object setter method is called
          *  - when event has been dragger or resized
          *  - AFTER eventDrop
@@ -621,7 +653,10 @@ export default defineComponent({
          *
          * @param changeInfo
          */
-        // handleEventChange({ oldEvent, event, relatedEvents, revert } :EventChangeArg) {},
+        _handleEventChange({ oldEvent, event, relatedEvents, revert } :EventChangeArg) {
+            this.$emit('event:changed', { oldEvent, event, relatedEvents, revert });
+            return this.handleEventChange({ oldEvent, event, relatedEvents, revert });
+        },
 
         /**
          * https://fullcalendar.io/docs/eventResize
@@ -631,7 +666,9 @@ export default defineComponent({
          *
          * @param eventResizeInfo
          */
-        // handleEventResize(eventResizeInfo :EventResizeDoneArg) {}
+        _handleEventResize(eventResizeInfo :EventResizeDoneArg) :void {
+            return this.handleEventResize(eventResizeInfo);
+        },
 
         /**
          * https://fullcalendar.io/docs/eventDrop
@@ -641,7 +678,9 @@ export default defineComponent({
          *
          * @param eventResizeInfo
          */
-        // handleEventDrop(eventDropInfo :EventDropArg) {}
+        _handleEventDrop(eventDropInfo :EventDropArg) :void {
+            return this.handleEventDrop(eventDropInfo);
+        },
     }
 });
 </script>
@@ -657,6 +696,7 @@ $fullcalendar-mobile-threshold: 600px !default;
 .fc{
     table{
         cursor: pointer;
+        // background: var(--fc-custom-background-color);
     }
     .fc-icon{
         // fix default icons center
@@ -673,23 +713,65 @@ $fullcalendar-mobile-threshold: 600px !default;
         }
     }
 
-    &.fc-theme-guebbit{
-        .fc-toolbar-title{
-            text-transform: capitalize;
-        }
-        .fc-timegrid-slot-minor {
-            border-style: none;
-        }
-        .fc-v-event{
-            //
-        }
-        .fc-day{
-            &:hover{
-                // background:lightblue;cursor: pointer;
-            }
-        }
+    .fc-toolbar-title{
+        text-transform: capitalize;
+    }
+    .fc-timegrid-slot-minor {
+        border-style: none;
+    }
+    .fc-v-event{
+        //
+    }
+    .fc-day{ // .fc-daygrid-day
         .fc-daygrid-day-number{
             font-size: 2em;
+        }
+        &.fc-day-today{
+            .fc-daygrid-day-frame{
+                border: var(--fc-border-color) solid 4px;
+            }
+            .fc-daygrid-day-number{
+                font-weight: 600;
+                /*
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 3em;
+                */
+            }
+        }
+        &:hover{
+            // background:lightblue;cursor: pointer;
+        }
+    }
+
+
+    .day-capacity-indicator{
+        &.capacity-disabled{
+            background-color: #424242;
+        }
+        &.capacity-green{
+            background-color: #388e3c;
+        }
+        &.capacity-yellow{
+            background-color: #ffeb3b;
+            color: #000000;
+        }
+        &.capacity-orange{
+            background-color: #e65100;
+        }
+        &.capacity-red{
+            background-color: #e53935;
+        }
+    }
+
+    &.anonymous-mode{
+        .fc-v-event{
+            background: var(--fc-event-bg-color) !important;
+            border: none !important;
+            opacity: 0.5;
+            box-shadow: none !important;
         }
     }
     &.no-borders{
@@ -714,24 +796,6 @@ $fullcalendar-mobile-threshold: 600px !default;
                     }
                 }
             }
-        }
-    }
-    .day-capacity-indicator{
-        &.capacity-disabled{
-            background-color: #424242;
-        }
-        &.capacity-green{
-            background-color: #388e3c;
-        }
-        &.capacity-yellow{
-            background-color: #ffeb3b;
-            color: #000000;
-        }
-        &.capacity-orange{
-            background-color: #e65100;
-        }
-        &.capacity-red{
-            background-color: #e53935;
         }
     }
 }

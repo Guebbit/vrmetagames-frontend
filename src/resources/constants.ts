@@ -3,13 +3,26 @@ const { t } = i18n.global;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import vuetifyColors from "vuetify/lib/util/colors";
-import { secondsToTime } from "guebbit-javascript-library";
 
 export const baseUrl = 'https://www.vrmetagames.it/'
-export const assetsUrl = 'https://assets.guebbit.com/vrmetagames';
-export const defaultUserAvatar = assetsUrl + '/images/logo/logo.jpg';
+export const assetsUrl = 'https://assets.guebbit.com/vrmetagames/';
+export const imagesUrl = assetsUrl + 'images/';
+export const defaultUserAvatar = assetsUrl + 'images/logo/logo.jpg';
 export const timeFormatDate = 'DD/MM/YYYY';
 export const timeFormatHours = 'HH:mm';
+export const contactAddressStreet = "Via C. Catellani 1/D";
+export const contactAddressCity = "Carpi";
+export const contactAddressProvince = "MO";
+export const contactAddressCap = "41012";
+export const contactEmail = "ecarpiasd@gmail.com";
+export const contactNumber = "+39 3914678284";
+export const contactTelegram = "loremipsum";
+
+export const socialFacebook = "#";
+export const socialInstagram = "#";
+export const socialTiktok = "#";
+export const socialYoutube = "#";
+
 
 export const dayNames = [
     t('main.days.0'),
@@ -87,60 +100,33 @@ export const randomColorList = [
     // vuetifyColors.yellow.darken4,
 ];
 
+// "on-surface" sarebbe automatico, ma posso customizzarlo
 export const themeColors = {
-    background: "#212121",
-    surface: "#212121",
     primary: "#0086ff",
     'primary-darken-1': "#0078e5",
     'primary-darken-2': "#006bcc",
     'primary-lighten-1': "#1992ff",
     'primary-lighten-2': "#329eff",
+    'on-primary': "#ffffff",
     secondary: "#ff8a23",
     'secondary-darken-1': "#e57c1f",
     'secondary-darken-2': "#cc6e1c",
     'secondary-lighten-1': "#ff9538",
     'secondary-lighten-2': "#ffa14e",
-    text: "#ffffff",
+    'on-secondary': "#ffffff",
+    background: "#212121",
+    surface: "#2e2e2e",
+    'on-surface': "#ffffff",
+    info: "#2196F3",
+    success: "#4CAF50",
+    error: "#F44336", // "#B00020",
+    warning: "#FB8C00",
 };
+
 
 export const formRules = {
     required: (value :string) => !!value || 'Required.',
-    min: (value :string) => value.length >= 8 || 'Min 8 characters',
+    min: (value :string) => value.length >= 8 || 'Min 8 characters',    // TODO test sostituire 8 con X
     emailMatch: () => (`The email and password you entered don't match`),
     rulesCheckbox: (value :string) => !!value || 'You must agree to continue!',
-};
-
-// TODO eliminare\accorpare?
-export const labelFromToDuration = (start :number, end :number) :{
-    mode :number,
-    hours :number,
-    minutes :number
-} => {
-    let mode = 0;
-    const { hours = 0, minutes = 0 } = secondsToTime(end - start);
-    
-    if(hours === 0 && minutes > 0){
-        mode = 1;
-    }
-    if(minutes === 0){
-        if(hours === 1){
-            mode = 2;
-        }
-        if(hours > 1){
-            mode = 3;
-        }
-    }else{
-        if(hours === 1){
-            mode = 4;
-        }
-        if(hours > 1){
-            mode = 5;
-        }
-    }
-    
-    return {
-        mode,
-        hours,
-        minutes
-    }
 };

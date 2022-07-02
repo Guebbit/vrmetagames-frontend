@@ -64,7 +64,7 @@ export default defineComponent({
     justify-content: space-between;
     align-items: center;
     min-height: 500px;
-    background: rgb(var(--v-theme-text));
+    background: rgb(var(--v-theme-on-surface));
     color: rgb(var(--v-theme-primary));
     box-shadow: rgba(black, 0.4) 0 4px 16px;
     border-radius: 8px;
@@ -96,11 +96,11 @@ export default defineComponent({
     &.active,
     &:hover{
         background: rgb(var(--v-theme-primary));
-        color: rgb(var(--v-theme-text));
+        color: rgb(var(--v-theme-on-surface));
         .card-title,
         .card-text,
         .card-price{
-            color: rgb(var(--v-theme-text));
+            color: rgb(var(--v-theme-on-surface));
         }
     }
 }

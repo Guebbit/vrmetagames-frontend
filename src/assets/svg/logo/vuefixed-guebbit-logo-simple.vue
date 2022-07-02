@@ -1,14 +1,5 @@
 <template>
     <svg id="guebbit-logo-simple" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 557.775 548.025" style="enable-background:new 0 0 557.775 548.025;" xml:space="preserve">
-        <desc xmlns:guebbit="https://guebbit.com">
-            <guebbit:title>guebbit</guebbit:title>
-            <guebbit:descr>
-                <guebbit:emph>guebbit</guebbit:emph>
-                web developer
-                website ecommerce
-                soluzioni digitali internet
-            </guebbit:descr>
-        </desc>
             <path fill="#ffffff" d="M548.868,256.184C538.612,104.797,407.571-9.616,256.186,0.639
             C104.797,10.894-9.615,141.936,0.639,293.32c6.171,91.095,42.999,166.669,124.415,212.986l-0.02,0.075
             c9.358,5.857,20.079,11.2,32.182,15.979c12.099,4.789,24.961,8.795,38.582,12.025c23.426,5.556,45.804,3.106,63.017,0.854

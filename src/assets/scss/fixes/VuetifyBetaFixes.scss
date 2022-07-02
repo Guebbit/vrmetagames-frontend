@@ -4,7 +4,7 @@
     }
 }
 .page-menu-padding{
-    padding-top: 64px;
+    padding-top: 88px; // 64 + 24
 }
 
 .vuetify-icon-button{
@@ -23,5 +23,15 @@
     }
 }
 
+
+.v-overlay{
+    .v-overlay__scrim{
+        background: rgb(var(--v-theme-background));
+        opacity: 0.75;
+    }
+}
+
 // .v-list-item-avatar--start
 // .waiting-class-default-provider
+
+

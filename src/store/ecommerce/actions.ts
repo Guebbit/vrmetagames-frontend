@@ -1,4 +1,4 @@
-import { randomColorList } from "@/resources/constants";
+import { randomColorList, imagesUrl } from "@/resources/constants";
 import { shuffle } from "lodash";
 import { getUUID } from "guebbit-javascript-library";
 
@@ -10,71 +10,93 @@ const mockServerSchedule = [
         id: "item1",
         start: 1652349600000,
         end: 1652360400000,
-        userId: "user4"
+        userId: "user4",
+        confirmed: true,
+        paid: true,
     },
     {
         id: "item2",
         start: 1652364000000,
         end: 1652385600000,
-        userId: "user4"
+        userId: "user4",
+        confirmed: true,
+        paid: true,
     },
     {
         id: "item3",
         start: 1652353200000,
         end: 1652355000000,
-        userId: "user1"
+        userId: "user1",
+        confirmed: true,
+        paid: false,
     },
     {
         id: "item4",
         start: 1652344200000,
         end: 1652389200000,
-        userId: "user3"
+        userId: "user3",
+        confirmed: true,
+        paid: true,
     },
     {
         id: "item5",
         start: 1652358600000,
         end: 1652378400000,
-        userId: "user2"
+        userId: "user2",
+        confirmed: true,
+        paid: true,
     },
     {
         id: "item6",
         start: 1652376600000,
         end: 1652392800000,
-        userId: "user1"
+        userId: "user1",
+        canceled: true,
+        paid: false,
     },
     {
         id: "item7",
         start: 1652344200000,
         end: 1652371200000,
-        userId: "user5"
+        userId: "user5",
+        confirmed: true,
+        paid: true,
     },
     {
         id: "item8",
         start: 1652436000000,
         end: 1652450400000,
         userId: "user1",
-        resourceId: "item1"
+        resourceId: "item1",
+        confirmed: true,
+        paid: true,
     },
     {
         id: "item9",
         start: 1652457600000,
         end: 1652466600000,
         userId: "user2",
-        resourceId: "item1"
+        resourceId: "item1",
+        confirmed: true,
+        paid: true,
     },
     {
         id: "item10",
         start: 1652470200000,
         end: 1652477400000,
         userId: "user1",
-        resourceId: "item1"
+        resourceId: "item1",
+        confirmed: true,
+        paid: true,
     },
     {
         id: "item11",
         start: 1652470200000,
         end: 1652477400000,
         userId: "user3",
-        resourceId: "item2"
+        resourceId: "item2",
+        confirmed: true,
+        paid: true,
     }
 ];
 const mockServerUsers = [
@@ -124,135 +146,203 @@ const mockServerStations = [
         capacity: 1
     }
 ];
+// TODO C:\Users\guerz\Lavoro\Temporary\drive-download-20220407T203652Z-001\games
 const mockServerGames = [
     {
         id: "item-1",
-        title: "LOREM IPSUM",
-        author: "TOAST",
-        category: ["First Person Shooter"],
-        stations: ["Computer"],
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
+        stations: ["Oculus"],
         hashtags: [
-            "lorem ipsum",
-            "cartoon",
-            "shooter",
-            "mecha"
+            "Dance",
+            "Music",
+            "Lightsabers"
         ],
-        image: "https://assets.guebbit.com/rogheneach/images/volumes/rogh-vol1.jpg",
-        spine: "https://assets.guebbit.com/rogheneach/images/volumes/rogh-vol1-spine.jpg"
+        image: imagesUrl + 'games/beat-saber.jpg',
+        gameCover: imagesUrl + 'games/beat-saber-cover.jpg',
+        gameSpine: imagesUrl + 'games/beat-saber-spine.jpg',
     },
     {
         id: "item-2",
-        title: "LOREM IPSUM",
-        author: "TOAST",
-        category: ["First Person Shooter"],
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
         stations: ["Oculus"],
         hashtags: [
-            "lorem ipsum",
-            "cartoon",
-            "shooter",
-            "mecha"
+            "Dance",
+            "Music",
+            "Lightsabers"
         ],
-        image: "https://assets.guebbit.com/rogheneach/images/volumes/rogh-vol2.jpg",
-        spine: "https://assets.guebbit.com/rogheneach/images/volumes/rogh-vol2-spine.jpg"
+        image: imagesUrl + 'games/acron-attack-of-the-squirrels.jpg',
+        gameCover: imagesUrl + 'games/acron-attack-of-the-squirrels.jpg',
+        gameSpine: imagesUrl + 'games/acron-attack-of-the-squirrels.jpg',
+    },
+    {
+        id: "item-3",
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
+        stations: ["Oculus"],
+        hashtags: [
+            "Dance",
+            "Music",
+            "Lightsabers"
+        ],
+        image: imagesUrl + 'games/angry-birds-isle-of-pigs.jpg',
+        gameCover: imagesUrl + 'games/angry-birds-isle-of-pigs.jpg',
+        gameSpine: imagesUrl + 'games/angry-birds-isle-of-pigs.jpg',
     },
     {
         id: "item-4",
-        title: "LOREM IPSUM",
-        author: "TOAST",
-        category: ["First Person Shooter"],
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
         stations: ["Oculus"],
         hashtags: [
-            "lorem ipsum",
-            "cartoon",
-            "shooter",
-            "mecha"
+            "Dance",
+            "Music",
+            "Lightsabers"
         ],
-        image: "http://placekitten.com/600/300"
+        image: imagesUrl + 'games/blaston.jpg',
+        gameCover: imagesUrl + 'games/blaston.jpg',
+        gameSpine: imagesUrl + 'games/blaston.jpg',
     },
     {
         id: "item-5",
-        title: "LOREM IPSUM",
-        author: "TOAST",
-        category: ["First Person Shooter"],
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
         stations: ["Oculus"],
         hashtags: [
-            "lorem ipsum",
-            "cartoon",
-            "shooter",
-            "mecha"
+            "Dance",
+            "Music",
+            "Lightsabers"
         ],
-        image: "http://placekitten.com/800/400"
+        image: imagesUrl + 'games/echo-arena.jpg',
+        gameCover: imagesUrl + 'games/echo-arena.jpg',
+        gameSpine: imagesUrl + 'games/echo-arena.jpg',
     },
     {
         id: "item-6",
-        title: "LOREM IPSUM",
-        author: "TOAST",
-        category: ["First Person Shooter"],
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
         stations: ["Oculus"],
         hashtags: [
-            "lorem ipsum",
-            "cartoon",
-            "shooter",
-            "mecha"
+            "Dance",
+            "Music",
+            "Lightsabers"
         ],
-        image: "http://placekitten.com/1000/500"
+        image: imagesUrl + 'games/loco-dojo.jpg',
+        gameCover: imagesUrl + 'games/loco-dojo.jpg',
+        gameSpine: imagesUrl + 'games/loco-dojo.jpg',
     },
     {
         id: "item-7",
-        title: "LOREM IPSUM",
-        author: "TOAST",
-        category: ["First Person Shooter"],
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
         stations: ["Oculus"],
         hashtags: [
-            "lorem ipsum",
-            "cartoon",
-            "shooter",
-            "mecha"
+            "Dance",
+            "Music",
+            "Lightsabers"
         ],
-        image: "http://placekitten.com/600/600"
+        image: imagesUrl + 'games/nock.jpg',
+        gameCover: imagesUrl + 'games/nock.jpg',
+        gameSpine: imagesUrl + 'games/nock.jpg',
     },
     {
         id: "item-8",
-        title: "LOREM IPSUM",
-        author: "TOAST",
-        category: ["First Person Shooter"],
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
         stations: ["Oculus"],
         hashtags: [
-            "lorem ipsum",
-            "cartoon",
-            "shooter",
-            "mecha"
+            "Dance",
+            "Music",
+            "Lightsabers"
         ],
-        image: "http://placekitten.com/400/600"
+        image: imagesUrl + 'games/population-one.png',
+        gameCover: imagesUrl + 'games/population-one.png',
+        gameSpine: imagesUrl + 'games/population-one.png',
     },
     {
         id: "item-9",
-        title: "LOREM IPSUM",
-        author: "TOAST",
-        category: ["First Person Shooter"],
-        stations: ["Computer"],
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
+        stations: ["Oculus"],
         hashtags: [
-            "lorem ipsum",
-            "cartoon",
-            "shooter",
-            "mecha"
+            "Dance",
+            "Music",
+            "Lightsabers"
         ],
-        image: "http://placekitten.com/900/800"
+        image: imagesUrl + 'games/puzzle-bobble-vacation-odyssey.jpg',
+        gameCover: imagesUrl + 'games/puzzle-bobble-vacation-odyssey.jpg',
+        gameSpine: imagesUrl + 'games/puzzle-bobble-vacation-odyssey.jpg',
     },
     {
         id: "item-10",
-        title: "LOREM IPSUM",
-        author: "TOAST",
-        category: ["First Person Shooter"],
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
         stations: ["Oculus"],
         hashtags: [
-            "lorem ipsum",
-            "cartoon",
-            "shooter",
-            "mecha"
+            "Dance",
+            "Music",
+            "Lightsabers"
         ],
-        image: "http://placekitten.com/300/400"
-    }
+        image: imagesUrl + 'games/ragnarock.jpg',
+        gameCover: imagesUrl + 'games/ragnarock.jpg',
+        gameSpine: imagesUrl + 'games/ragnarock.jpg',
+    },
+    {
+        id: "item-11",
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
+        stations: ["Oculus"],
+        hashtags: [
+            "Dance",
+            "Music",
+            "Lightsabers"
+        ],
+        image: imagesUrl + 'games/the-room-a-dark-matter.jpg',
+        gameCover: imagesUrl + 'games/the-room-a-dark-matter.jpg',
+        gameSpine: imagesUrl + 'games/the-room-a-dark-matter.jpg',
+    },
+    {
+        id: "item-12",
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
+        stations: ["Oculus"],
+        hashtags: [
+            "Dance",
+            "Music",
+            "Lightsabers"
+        ],
+        image: imagesUrl + 'games/walkabout-mini-golf.jpg',
+        gameCover: imagesUrl + 'games/walkabout-mini-golf.jpg',
+        gameSpine: imagesUrl + 'games/walkabout-mini-golf.jpg',
+    },
+    {
+        id: "item-13",
+        title: "Beat Saber",
+        author: "Beat Games",
+        category: ["Rhythm"],
+        stations: ["Oculus"],
+        hashtags: [
+            "Dance",
+            "Music",
+            "Lightsabers"
+        ],
+        image: imagesUrl + 'games/zenith-the-last-city.jpg',
+        gameCover: imagesUrl + 'games/zenith-the-last-city.jpg',
+        gameSpine: imagesUrl + 'games/zenith-the-last-city.jpg',
+    },
 ];
 
 export default {
@@ -377,26 +467,90 @@ export default {
     // ------------- SCHEDULES -------------
 
     /**
-     * Send NEW schedule to server and save in central store
+     * GET schedule list from server and save in central store
      *
      * @param {Function} dispatch
      * @param {Function} commit
      * @param {number} lastUpdate
      * @param {number} refresh
+     * @param {Function} rootGetters
+     * @param {string[]} idArray - if empty: getAllRecords mode
      */
     async getSchedules({
         dispatch,
         commit,
         rootState: {
             main: {
-                lastUpdate: { schedules: lastUpdate = 0 },
-                refresh: { schedules: refresh = 3600000 }
+                lastUpdate: { scheduleRecordsList: lastUpdate = 0 },
+                refresh: { scheduleRecordsList: refresh = 3600000 }
             }
-        }
-    }: ActionContext<stateEcommerceMap, stateRootMap>): Promise<void> {
-        if (lastUpdate + refresh > Date.now()) {
+        },
+        rootGetters
+    }: ActionContext<stateEcommerceMap, stateRootMap>, idArray :string[] = []): Promise<void> {
+        // if idArray empty, count as "getAllRecords" mode, so use the generic lastUpdate
+        if(idArray.length === 0 && lastUpdate + refresh > Date.now()) {
             return Promise.resolve();
         }
+        // idArray is specified, then it's getTargetRecords
+        if(idArray.length > 0){
+            // filter away the records tat are not expired so doesn't need to be re-downloaded
+            let filteredIdArray :string[] = [];
+            filteredIdArray = [...new Set(idArray)].filter((id :string) => {
+                return !(refresh + rootGetters['user/getLastUpdate']('scheduleRecords', id) > Date.now());
+            });
+            //se non c'è nulla da aggiornare, mi fermo
+            if(filteredIdArray.length < 1)
+                return Promise.resolve();
+        }
+
+        // TODO TEMPORARY
+        commit('setSchedule', {
+            id: "itemxxxx",
+            start: 1655640000000,
+            end: 1655647200000,
+            userId: "user4",
+            online: false,
+            confirmed: false,
+            canceled: false,
+            unsaved: false,
+            paid: false
+        });
+        // TODO TEMPORARY
+        commit('setSchedule', {
+            id: "itemyyyy",
+            start: 1655640000000,
+            end: 1655649000000,
+            userId: "user4",
+            online: false,
+            confirmed: false,
+            canceled: false,
+            unsaved: false,
+            paid: false
+        })
+        commit('setSchedule', {
+            id: "itemzzz",
+            start: 1655640000000,
+            end: 1655649000000,
+            userId: "user4",
+            online: false,
+            confirmed: false,
+            canceled: false,
+            unsaved: false,
+            paid: false
+        });
+        commit('setSchedule', {
+            id: "itemwwww",
+            start: 1655640000000,
+            end: 1655649000000,
+            userId: "user4",
+            online: false,
+            confirmed: false,
+            canceled: false,
+            unsaved: false,
+            paid: false
+        })
+
+        // TODO filteredIdArray or generic
         return Promise.resolve()
             .then(() => {
                 for (let i = mockServerSchedule.length; i--;) {
@@ -405,9 +559,9 @@ export default {
                         online: true,
                         unsaved: false
                     });
-                    commit("main/setLastUpdate", ["schedule", mockServerSchedule[i].id], { root: true });
+                    commit("main/setLastUpdate", ['scheduleRecords', mockServerSchedule[i].id], { root: true });
                 }
-                commit("main/setLastUpdate", ["scheduleRecords"], { root: true });
+                commit("main/setLastUpdate", ["scheduleRecordsList"], { root: true });
             })
             .catch(() => dispatch("main/handleServerError", "getSchedules ERROR", { root: true }));
     },
@@ -429,7 +583,7 @@ export default {
         }
 
         // if schedule is not allowed in that timeframe
-        const errorArray = checkScheduleIsAllowed(scheduleData.start, scheduleData.end, scheduleData.resourceId);
+        const errorArray = checkScheduleIsAllowed(scheduleData.start, scheduleData.end, scheduleData.id, scheduleData.resourceId);
         if(errorArray.length > 0){
             return Promise.reject(errorArray);
         }
@@ -452,7 +606,7 @@ export default {
     },
 
     /**
-     * EDIT schedules from LOCAL
+     * EDIT schedule from LOCAL
      * unsaved edits to be confirmed\sent
      *
      * @param {Function} dispatch
@@ -473,7 +627,7 @@ export default {
             return Promise.reject(errorEditableArray);
         }
         // CHECK if the edited schedule is allowed in the new timeslots
-        const errorAllowedArray = checkScheduleIsAllowed(start, end, resourceId);
+        const errorAllowedArray = checkScheduleIsAllowed(start, end, id, resourceId);
         if(errorAllowedArray.length > 0){
             return Promise.reject(errorAllowedArray);
         }
@@ -484,6 +638,33 @@ export default {
             unsaved: true
         });
         return Promise.resolve();
+    },
+
+    /**
+     * RESET schedule
+     * If we have data in the archive (a previous non-confirmed version of the schedule), we restore the old data.
+     * If, for some reason, we don't have the data, we will download it from the server TODO
+     *
+     * @param {Function} dispatch
+     * @param {Function} commit
+     * @param {Function} getItem
+     * @param {string} id
+     */
+    async resetSchedule({ dispatch, commit, getters: { getItem } }: ActionContext<stateEcommerceMap, stateRootMap>, id: string) :Promise<void> {
+        // const currentEvent = getItem('scheduleRecords', id);
+        const archivedEvent = getItem('scheduleArchive', id);
+        if(archivedEvent){
+            commit("setSchedule", {
+                ...archivedEvent,
+                unsaved: false
+            });
+            commit("removeScheduleArchive", id);
+            return Promise.resolve();
+        }
+        // if not on archive, download from server
+        // force download
+        commit("main/setLastUpdate", ['scheduleRecords', id], { root: true });
+        return dispatch('getSchedules', [id]);
     },
 
     /**

@@ -5,7 +5,7 @@
             <router-view />
         </v-main>
         <Transition name="fade">
-            <div v-show="loading"
+            <div v-show="loading.includes('main')"
                  class="theme-app-loading"
             >
                 <v-progress-circular
@@ -17,38 +17,25 @@
             </div>
         </Transition>
         <LoginModal />
+        <PlayModal />
     </v-app>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import { mapActions, mapState } from "vuex";
+<script setup lang="ts">
+import { toRefs } from "vue";
+import { useStore } from "@/store";
 import MainNavigation from "@/components/generic/Header.vue";
 import LoginModal from "@/components/generic/modals/LoginModal.vue";
+import PlayModal from "@/components/generic/modals/PlayModal.vue";
 
-export default defineComponent({
-    name: "App",
-    components: {
-        LoginModal,
-        MainNavigation
-    },
-    computed: {
-        ...mapState({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            loading: ({ main: { loading } }: any) => loading.includes('main'),
-        })
-    },
+const {
+    state,
+    dispatch
+} = useStore();
 
-    methods:{
-        ...mapActions('main', [
-            'initApp'
-        ]),
-    },
+const { loading } = toRefs(state.main);
 
-    created(){
-        this.initApp();
-    },
-});
+dispatch('main/initApp');
 </script>
 
 <style lang="scss">

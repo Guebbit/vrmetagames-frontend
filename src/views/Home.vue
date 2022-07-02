@@ -1,6 +1,6 @@
 <template>
     <div id="HomePage">
-        <Panel class="theme-panel"
+        <Panel class="theme-panel landing-panel"
                shadow="#000000"
                :shadow-opacity="0.7"
                centered
@@ -9,26 +9,45 @@
         >
             <template #default>
                 <v-container>
-                    <h1 class="theme-page-title">VR Room <br> Carpi</h1>
-                    <h4 class="theme-page-subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h4>
-                    <InclinedButton
-                        size="x-large"
-                        :background="$vuetify.theme.themes.default.colors.primary"
-                        :double="$vuetify.theme.themes.default.colors.secondary"
-                        cross
-                        :to="{ path: '/play' }"
-                    >
-                        {{ $t('generic.play-now') }}
-                        <font-awesome-icon :icon="['fas', 'arrow-right']" />
-                    </InclinedButton>
+                    <h1 class="theme-page-title" v-html="t('home-page.landing-title')"></h1>
+                    <h4 class="theme-page-subtitle">{{ t('home-page.landing-subtitle') }}</h4>
+                    <div class="d-flex align-center justify-end">
+                        <div class="text-right">
+                            <v-btn
+                                block
+                                size="x-large"
+                                variant="outlined"
+                                :color="todayIsOpen ? 'success' : 'error'"
+                                :to="{ name: 'Play' }"
+                            >
+                                {{ todayIsOpen ? t('generic.play-now') : t('generic.book-now') }}
+                                <font-awesome-icon class="ml-3" :icon="['fas', 'play']" />
+                            </v-btn>
+                            <v-btn
+                                variant="tonal"
+                                class="mt-3"
+                                size="small"
+                                @click="goToSectionOpenings"
+                            >
+                                {{ t('generic.look-openings') }}
+                            </v-btn>
+                        </div>
+                        <span class="status-circle"
+                              :class="{
+                                  online: todayIsOpen,
+                                  'pulse-mode': todayIsOpen,
+                                  offline: !todayIsOpen
+                              }"
+                        />
+                    </div>
                 </v-container>
             </template>
             <template #backgroundImage>
                 <v-img
                     cover
                     class="panel-background"
-                    lazy-src="http://placekitten.com/100/100"
-                    src="http://placekitten.com/2000/1000"
+                    :lazy-src="todayIsOpen ? 'http://placekitten.com/100/100' : 'http://placekitten.com/200/200'"
+                    :src="todayIsOpen ? 'http://placekitten.com/2000/1000' : 'http://placekitten.com/1800/1000'"
                 >
                     <template #placeholder>
                         <v-row
@@ -46,11 +65,11 @@
             </template>
         </Panel>
 
-        <section class="theme-section">
+        <section class="theme-section presentation-panels">
             <v-container>
                 <ActionPanel
                     class="py-10"
-                    :title="'CONNECT WITH US <br/> FOR GAMING UPDATE'"
+                    :title="t('home-page.landing-presentation-title')"
                     @button:click="() => {}"
                 >
                     <template #backgroundImage>
@@ -62,7 +81,7 @@
                         <InclinedButton
                             class="panel-button"
                             size="x-large"
-                            :double="$vuetify.theme.themes.default.colors.primary"
+                            :double="themeColors.primary"
                         >
                             Lorem Ipsum
                             <font-awesome-icon :icon="['fas', 'arrow-right']" />
@@ -70,7 +89,7 @@
                     </template>
                 </ActionPanel>
 
-                <v-row class="mt-5 four-panels-temporary-name">
+                <v-row class="mt-5 four-panels">
                     <v-col cols="12" md="6" lg="3">
                         <Panel
                             class="px-10 py-15 text-center"
@@ -82,13 +101,16 @@
                                 </video>
                             </template>
                             <template #default>
-                                <h3 class="theme-page-subtitle">FIRST LOREM IPSUM</h3>
+                                <h3 class="theme-section-subtitle">
+                                    {{ t('home-page.landing-presentation-text-1') }}
+                                </h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
                                     size="x-large"
-                                    :double="$vuetify.theme.themes.default.colors.primary"
+                                    :double="themeColors.primary"
+                                    :to="{ name: 'AboutUs' }"
                                 >
-                                    Lorem Ipsum
+                                    {{ t('home-page.landing-presentation-button-1') }}
                                     <font-awesome-icon :icon="['fas', 'arrow-right']" />
                                 </InclinedButton>
                             </template>
@@ -114,13 +136,16 @@
                                 </div>
                             </template>
                             <template #default>
-                                <h3 class="theme-page-subtitle">SECOND LOREM IPSUM</h3>
+                                <h3 class="theme-section-subtitle">
+                                    {{ t('home-page.landing-presentation-text-2') }}
+                                </h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
                                     size="x-large"
-                                    :double="$vuetify.theme.themes.default.colors.secondary"
+                                    :double="themeColors.secondary"
+                                    :to="{ name: 'AboutVr' }"
                                 >
-                                    Lorem Ipsum
+                                    {{ t('home-page.landing-presentation-button-2') }}
                                     <font-awesome-icon :icon="['fas', 'arrow-right']" />
                                 </InclinedButton>
                             </template>
@@ -146,13 +171,16 @@
                                 </div>
                             </template>
                             <template #default>
-                                <h3 class="theme-page-subtitle">THIRD LOREM IPSUM</h3>
+                                <h3 class="theme-section-subtitle">
+                                    {{ t('home-page.landing-presentation-text-3') }}
+                                </h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
                                     size="x-large"
-                                    :double="$vuetify.theme.themes.default.colors.primary"
+                                    :double="themeColors.primary"
+                                    :to="{ name: 'Games' }"
                                 >
-                                    Lorem Ipsum
+                                    {{ t('home-page.landing-presentation-button-3') }}
                                     <font-awesome-icon :icon="['fas', 'arrow-right']" />
                                 </InclinedButton>
                             </template>
@@ -178,13 +206,16 @@
                                 </div>
                             </template>
                             <template #default>
-                                <h3 class="theme-page-subtitle">FOURTH LOREM IPSUM</h3>
+                                <h3 class="theme-section-subtitle">
+                                    {{ t('home-page.landing-presentation-text-4') }}
+                                </h3>
                                 <InclinedButton
                                     class="panel-button mt-10"
                                     size="x-large"
-                                    :double="$vuetify.theme.themes.default.colors.secondary"
+                                    :double="themeColors.secondary"
+                                    :to="{ name: 'Play' }"
                                 >
-                                    Lorem Ipsum
+                                    {{ t('home-page.landing-presentation-button-4') }}
                                     <font-awesome-icon :icon="['fas', 'arrow-right']" />
                                 </InclinedButton>
                             </template>
@@ -194,57 +225,41 @@
             </v-container>
         </section>
 
-        <section class="theme-section">
-            <v-container>
-                <div class="typography-panel">
-                    <span class="panel-category">lorem ipsum</span>
-                    <h3 class="panel-title">Lorem ipsum dolor sit amet, <b class="text-primary">consectetur</b> adipiscing elit</h3>
-                    <p class="panel-text">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        Ut enim ad minim veniam, quis nostrud <b class="text-secondary">exercitation ullamco</b> laboris nisi ut aliquip ex ea commodo consequat.
-                    </p>
-                    <p class="panel-text">
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-                        non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    </p>
-                    <div class="d-flex justify-center mt-10">
-                        <v-btn color="primary"
-                               class="mx-5"
-                               elevation="4"
-                               size="x-large"
-                        >
-                            Lorem
-                            <font-awesome-icon class="ml-3" :icon="['fas', 'arrow-right']" />
-                        </v-btn>
-                        <v-btn color="secondary"
-                               class="mx-5"
-                               elevation="4"
-                               size="x-large"
-                        >
-                            Ipsum
-                            <font-awesome-icon class="ml-3" :icon="['fas', 'arrow-right']" />
-                        </v-btn>
-                    </div>
-                </div>
-            </v-container>
+        <section class="theme-section openings-section">
+            <TrapezoidTitle
+                class="theme-section-title text-center"
+                element="h2"
+                :color="themeColors.primary"
+                :double="themeColors.secondary"
+                outline
+                big
+                cross
+            >
+                {{ t('generic.opening-hours') }}
+            </TrapezoidTitle>
+            <OpeningHours
+                :color="themeColors.primary"
+                :colorClosed="themeColors.error"
+                :text="themeColors['on-surface']"
+                :list="businessHours"
+                :open="todayIsOpen"
+            />
         </section>
+
 
         <section class="theme-section">
             <v-container>
                 <TrapezoidTitle
                     class="theme-section-title text-center"
                     element="h2"
-                    :color="$vuetify.theme.themes.default.colors.primary"
-                    :double="$vuetify.theme.themes.default.colors.secondary"
+                    :color="themeColors.primary"
+                    :double="themeColors.secondary"
                     outline
                     big
                     cross
                 >
-                    Postazioni
+                    {{ t('home-page.station-list-title') }}
                 </TrapezoidTitle>
-                    <StationList
-                        :list="stations"
-                    />
                 <v-lazy
                     v-model="lazyStationList"
                     :options="{
@@ -252,16 +267,16 @@
                     }"
                     transition="fade-transition"
                 >
-
+                    <StationList />
                 </v-lazy>
                 <div class="d-flex justify-center mt-10">
                     <CyberpunkButton
-                        :background="$vuetify.theme.themes.default.colors.primary"
-                        :border="$vuetify.theme.themes.default.colors.secondary"
+                        :background="themeColors.primary"
+                        :border="themeColors.secondary"
                         text="Now"
-                        @click="$router.push({ path: '/play' })"
+                        :to="{ name: 'Play' }"
                     >
-                        Play
+                        {{ t('home-page.station-list-more-button') }}
                     </CyberpunkButton>
                 </div>
             </v-container>
@@ -272,13 +287,13 @@
                 <TrapezoidTitle
                     class="theme-section-title text-center"
                     element="h2"
-                    :color="$vuetify.theme.themes.default.colors.primary"
-                    :double="$vuetify.theme.themes.default.colors.secondary"
+                    :color="themeColors.primary"
+                    :double="themeColors.secondary"
                     outline
                     big
                     cross
                 >
-                    Game list
+                    {{ t('home-page.games-list-title') }}
                 </TrapezoidTitle>
                 <v-lazy
                     v-model="lazyGameList"
@@ -287,27 +302,47 @@
                     }"
                     transition="fade-transition"
                 >
-                    <GameList
-                        :list="games"
-                    />
+                    <GameList />
                 </v-lazy>
                 <div class="d-flex justify-center mt-10">
                     <CyberpunkButton
-                        :background="$vuetify.theme.themes.default.colors.primary"
-                        :border="$vuetify.theme.themes.default.colors.secondary"
+                        :background="themeColors.primary"
+                        :border="themeColors.secondary"
                         text="Games"
-                        @click="$router.push({ path: '/games' })"
+                        @click="$router.push({ name: 'Games' })"
                     >
-                        More
+                        {{ t('home-page.games-list-more-button') }}
                     </CyberpunkButton>
                 </div>
             </v-container>
         </section>
 
+        <section class="theme-section quote-section">
+            <v-container>
+                <v-carousel
+                    v-model="blockquoteCarouselStep"
+                    cycle
+                    hide-delimiters
+                    height="300"
+                    show-arrows="hover"
+                >
+                    <v-carousel-item
+                        v-for="([ text, author ], index) in quoteList"
+                        :key="'quote-list-item-' + index"
+                    >
+                        <div class="d-flex fill-height justify-center align-center">
+                            <blockquote class="great-blockquote">
+                                <p>{{ text }}</p>
+                                <cite>{{ author }}</cite>
+                            </blockquote>
+                        </div>
+                    </v-carousel-item>
+                </v-carousel>
+            </v-container>
+        </section>
+
         <ActionPanel
             :height="'400px'"
-            :title="'VIDEO YOUTUBE LOOP'"
-            @button:click="() => {}"
         >
             <template #backgroundImage>
                 <div class="panel-background">
@@ -323,139 +358,91 @@
                     </div>
                 </div>
             </template>
-            <template #action>
-                <InclinedButton
-                    class="panel-button"
-                    size="x-large"
-                    :double="$vuetify.theme.themes.default.colors.primary"
-                >
-                    Lorem Ipsum
-                    <font-awesome-icon :icon="['fas', 'arrow-right']" />
-                </InclinedButton>
-            </template>
         </ActionPanel>
+
+
 
         <section class="theme-section">
             <v-container>
                 <div class="typography-panel">
-                    <span class="panel-category">lorem ipsum</span>
-                    <h3 class="panel-title">Lorem ipsum dolor sit amet, <b class="text-primary">consectetur</b> adipiscing elit</h3>
-                    <p class="panel-text">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        Ut enim ad minim veniam, quis nostrud <b class="text-secondary">exercitation ullamco</b> laboris nisi ut aliquip ex ea commodo consequat.
-                    </p>
-                    <p class="panel-text">
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-                        non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    </p>
-                    <div class="d-flex justify-center mt-10">
+                    <span class="panel-category">{{ t('home-page.about-us-suptitle') }}</span>
+                    <h3 class="panel-title">{{ t('home-page.about-us-title') }}</h3>
+                    <p class="panel-text" v-html="t('home-page.about-us-text-1')"></p>
+                    <p class="panel-text" v-html="t('home-page.about-us-text-2')"></p>
+                    <p class="panel-text" v-html="t('home-page.about-us-text-3')"></p>
+                    <p class="panel-text" v-html="t('home-page.about-us-text-4')"></p>
+
+                    <div class="d-flex justify-center flex-wrap mt-10">
                         <v-btn color="primary"
-                               class="mx-5"
+                               class="ma-2"
                                elevation="4"
                                size="x-large"
 
                         >
-                            Lorem
+                            {{ t('home-page.about-us-button-1') }}
                             <font-awesome-icon class="ml-3" :icon="['fas', 'arrow-right']" />
                         </v-btn>
                         <v-btn color="secondary"
-                               class="mx-5"
+                               class="ma-2"
                                elevation="4"
                                size="x-large"
 
                         >
-                            Ipsum
+                            {{ t('home-page.about-us-button-2') }}
                             <font-awesome-icon class="ml-3" :icon="['fas', 'arrow-right']" />
                         </v-btn>
+                    </div>
+                    <div class="text-center mt-10">
+                        <InclinedButton
+                            size="x-large"
+                            :background="themeColors.primary"
+                            :double="themeColors.secondary"
+                            cross
+                            :to="{ name: 'Play' }"
+                        >
+                            {{ t('home-page.about-us-button-3') }}
+                            <font-awesome-icon :icon="['fas', 'arrow-right']" />
+                        </InclinedButton>
                     </div>
                 </div>
             </v-container>
         </section>
 
-        <section class="theme-section pb-0">
-            <Panel
-                :backgroundImageCss="'https://www.virtual-room.com/app/themes/virtual-room/build/images/bg-pattern.jpg'"
-                height="75vh"
-                centered
-                fixed
+        <section class="theme-section pb-0 pt-0">
+            <v-lazy
+                v-model="lazyPricings"
+                :options="{
+                        threshold: .5
+                    }"
+                transition="fade-transition"
             >
-                <template #default>
-                    <v-container>
-                        <h3 class="theme-section-title text-center mb-10">
-                            Lorem Ipsum Sit Dolor
-                        </h3>
-                        <v-row
-                            align="center"
-                            justify="center"
-                        >
-                            <v-col cols="12" md="5" lg="4" xl="3">
-                                <PricingCardVuetify
-                                    color="primary"
-                                    variant="outlined"
-                                    priceColor="secondary"
-                                    title="Lorem Ipsum"
-                                    :price="60"
-                                    currency="€"
-                                    text="Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                                            sed do eiusmod <b>tempor incididunt</b> ut labore et dolore magna aliqua."
-                                    buttonText="Lorem Ipsum"
-                                />
-                            </v-col>
-                            <v-col cols="12" md="5" lg="4" xl="3">
-                                <PricingCardVuetify
-                                    color="transparent"
-                                    priceColor="secondary"
-                                    title="Lorem Ipsum"
-                                    :price="150"
-                                    currency="€"
-                                    text="Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                                            sed do eiusmod <b>tempor incididunt</b> ut labore et dolore magna aliqua."
-                                    buttonText="Lorem Ipsum"
-                                />
-                            </v-col>
-                        </v-row>
-                        <!--
-                        <v-row>
-                            <v-col cols="12" md="5" offset-md="1" lg="4" offset-lg="2" xl="3" offset-xl="3">
-                                <PricingCardVuetify
-                                    class="active"
-                                    title="Lorem Ipsum"
-                                    :price="60"
-                                    currency="€"
-                                    text="Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                                            sed do eiusmod <b>tempor incididunt</b> ut labore et dolore magna aliqua."
-                                    buttonText="Lorem Ipsum"
-                                />
-                            </v-col>
-                            <v-col cols="12" md="5" lg="4" xl="3">
-                                <PricingCardVuetify
-                                    title="Lorem Ipsum"
-                                    :price="150"
-                                    currency="€"
-                                    text="Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                                            sed do eiusmod <b>tempor incididunt</b> ut labore et dolore magna aliqua."
-                                    buttonText="Lorem Ipsum"
-                                />
-                            </v-col>
-                        </v-row>
-                        -->
-                    </v-container>
-                </template>
-            </Panel>
+                <PricingsPanel />
+            </v-lazy>
         </section>
         <section class="theme-section py-0">
-            <SocialPanel />
+            <v-lazy
+                v-model="lazySocial"
+                :options="{
+                        threshold: .5
+                    }"
+                transition="fade-transition"
+            >
+                <SocialPanel />
+            </v-lazy>
         </section>
 
         <Footer
-            :primary="$vuetify.theme.themes.default.colors.primary"
-            :secondary="$vuetify.theme.themes.default.colors.secondary"
+            :primary="themeColors.primary"
+            :secondary="themeColors.secondary"
         />
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { ref, computed, onMounted, toRefs } from "vue";
+import { useTheme } from "vuetify";
+import { useI18n } from "vue-i18n";
+import { useStore } from "@/store";
 import { scripts } from 'guebbit-javascript-library';
 
 // Components
@@ -465,74 +452,153 @@ import CyberpunkButton from "@/components/basics/buttons/CyberpunkButton.vue";
 import ActionPanel from "guebbit-vue-library/src/components/blocks/ActionPanel.vue";
 import TrapezoidTitle from "@/components/basics/typography/TrapezoidTitle.vue";
 import GameList from "@/components/landing/GameList.vue";
-import PricingCardVuetify from "@/components/basics/cards/PricingCardVuetify.vue";
+import OpeningHours from "@/components/basics/cards/OpeningHours.vue";
+
 import SocialPanel from "@/components/landing/SocialPanel.vue";
+import StationList from "@/components/landing/StationList.vue";
 import Footer from "@/components/generic/Footer.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import StationList from "@/components/landing/StationList.vue";
-import { mapState } from "vuex";
-
+import PricingsPanel from "@/components/landing/PricingsPanel.vue";
 
 library.add(faArrowRight)
 
-export default defineComponent({
-    name: "HomeView",
+const { t } = useI18n();
+const { global: { current: { value: { colors: themeColors } } } } = useTheme();
+const {
+    state,
+    getters
+} = useStore();
 
-    components: {
-        StationList,
-        TrapezoidTitle,
-        Footer,
-        SocialPanel,
-        PricingCardVuetify,
-        Panel,
-        ActionPanel,
-        InclinedButton,
-        CyberpunkButton,
-        GameList,
-        FontAwesomeIcon
-    },
+const lazyGameList = ref(false);
+const lazyStationList = ref(false);
+const lazyPricings = ref(false);
+const lazySocial = ref(false);
+const blockquoteCarouselStep = ref(0);
+const quoteList = ref([
+    [
+        t('home-page.quote-list-item-1-text'),
+        t('home-page.quote-list-item-1-author')
+    ],
+    [
+        t('home-page.quote-list-item-2-text'),
+        t('home-page.quote-list-item-2-author')
+    ],
+    [
+        t('home-page.quote-list-item-3-text'),
+        t('home-page.quote-list-item-3-author')
+    ]
+])
 
-    data: () => {
-        return {
-            lazyGameList: false,
-            lazyStationList: false
-        }
-    },
+const { businessHours } = toRefs(state.main);
+const todayIsOpen = computed(() => getters['main/todayIsOpen']);
 
-    computed: {
-        ...mapState({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            stations: ({ ecommerce: { stations } }: any) => Object.values(stations),
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            games: ({ ecommerce: { games } }: any) => Object.values(games),
-        }),
-    },
+const goToSectionOpenings = () => {
+    document.querySelector('.openings-section')?.scrollIntoView({behavior: "smooth"});
+}
 
-    mounted(){
-        scripts.lazyload();
-        scripts.activator();
-    }
+/*
+const goToFooter = () => {
+    window.scroll({
+        top: document.body.scrollHeight,
+        left: 0,
+        behavior: 'smooth'
+    });
+};
+*/
+/*
+const goToHeader = () => {
+    window.scroll({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+    });
+};
+*/
+
+onMounted(() => {
+    scripts.lazyload();
+    scripts.activator();
 });
 </script>
+
 
 <style lang="scss">
 @import 'src/assets/scss/main/global';
 
 #HomePage{
-    .theme-page-title{
-        font-size: 4rem;
-        @include media-desktop(){
-            font-size: 8rem;
+    .theme-section{
+        & > .hero-panel,
+        & > .v-lazy > .hero-panel{
+            padding: 60px 0;
         }
     }
-    .four-panels-temporary-name{
-        .hero-panel{
+
+    .landing-panel{
+        .status-circle{
+            font-size: 2em;
+            margin: 0 2em;
+        }
+        .theme-page-title{
+            font-size: 4rem;
             @include media-desktop(){
-                height: 700px;
+                font-size: 8rem;
             }
+        }
+        .theme-page-subtitle{
+            font-size: 1.5rem;
+            @include media-desktop(){
+                font-size: 2.5rem;
+            }
+        }
+    }
+
+    .presentation-panels{
+        .theme-section-subtitle{
+            text-transform: uppercase;
+        }
+        .four-panels{
+            .hero-panel{
+                @include media-desktop(){
+                    height: 700px;
+                }
+            }
+        }
+    }
+
+    .openings-section{
+        .opening-hours-list{
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 2em;
+            font-width: 600;
+
+            ul {
+                li{
+                    &:nth-child(odd) {
+                        position: relative;
+                        background: initial;
+                        &:after{
+                            content: "";
+                            position: absolute;
+                            top: 0;
+                            left: -500%;
+                            width: 1000%;
+                            height: 100%;
+                            // height: 100%;
+                            background: rgba(0, 0, 0, 0.1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .quote-section{
+        .great-blockquote{
+            max-width: 500px;
         }
     }
 }

@@ -12,7 +12,7 @@
         @slideChange="onSlideChange"
     >
         <swiper-slide
-            v-for="item in list"
+            v-for="item in gamesList"
             :key="'slide-' + item.id"
         >
             <div class="book-card-wrapper">
@@ -20,8 +20,8 @@
                     :key="'game-' + item.id"
                     ratio="4.25/6.87"
                     rotation="2"
-                    :image="item.image"
-                    :spine="item.spine"
+                    :image="item.gameCover"
+                    :spine="item.gameSpine"
                     @click="$router.push({
                         name: 'GameTarget',
                         params: {
@@ -51,63 +51,53 @@
         </swiper-slide>
     </swiper>
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+
+<script setup lang="ts">
+import { computed, toRefs, defineProps } from "vue";
+import { useStore } from "@/store";
+import { useI18n } from "vue-i18n";
+
 import { Autoplay, Scrollbar } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import BookCard from "guebbit-vue-library/src/components/cards/BookCard.vue";
 
-import { stationMap } from "@/interfaces";
+import type { gameMap } from '@/interfaces';
 
+const { t } = useI18n();
+const {
+    state
+} = useStore();
 
-export default defineComponent({
-    name: "GameList",
-
-    components: {
-        BookCard,
-        Swiper,
-        SwiperSlide,
-    },
-
-    props: {
-        list: {
-            type: Array as PropType<stationMap[]>,
-            default: () => {
-                return [];
-            }
-        },
-
-        controls: {
-            type: Boolean,
-            default: () => {
-                return false;
-            }
-        }
-    },
-
-    data: () => {
-        return {
-            modules: [
-                Autoplay,
-                Scrollbar
-            ],
-            autoplaySettings: {
-                delay: 3000,
-                disableOnInteraction: false
-            }
-        }
-    },
-
-    methods: {
-        onSwiper(swiper :typeof Swiper) {
-            console.log("gamelist swiper", swiper);
-        },
-
-        onSlideChange() {
-            console.log('slide change');
+const props = defineProps({
+    controls: {
+        type: Boolean,
+        default: () => {
+            return false;
         }
     }
 });
+
+const { games } = toRefs(state.ecommerce);
+const gamesList = computed<gameMap[]>(() => Object.values(games.value));
+
+
+const modules = [
+    Autoplay,
+    Scrollbar
+];
+const autoplaySettings = {
+    delay: 3000,
+    disableOnInteraction: false
+};
+
+const onSwiper = (swiper :typeof Swiper) => {
+    console.log("gamelist swiper", swiper);
+};
+
+const onSlideChange = () => {
+    console.log('slide change');
+};
+
 </script>
 
 <style lang="scss">

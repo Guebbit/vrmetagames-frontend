@@ -8,6 +8,7 @@ import { i18n } from "./plugins/i18n"
 
 // CSS
 import "vuetify/styles";
+import "leaflet/dist/leaflet.css";
 import 'swiper/css';
 import 'swiper/css/scrollbar';
 import 'swiper/css/autoplay';

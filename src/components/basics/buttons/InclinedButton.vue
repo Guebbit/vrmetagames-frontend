@@ -73,10 +73,11 @@ export default defineComponent({
     margin: 0 12px 12px 12px;
     transform: perspective(10px) rotateX(2deg);
     .inclined-button-text{
+        position: relative;
+        z-index: 1;
         margin-top: 0.3em;
         transform: perspective(10px) rotateX(-2deg);
         transition: transform 0.28s;
-        z-index: 1;
         color: var(--inclined-button-color);
     }
     &:hover{

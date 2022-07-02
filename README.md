@@ -14,6 +14,9 @@ SCHEDULE
  - FUTURE: Sono sempre mono giornata e quindi "date" è sempre lo stesso giorno, ma ideare che possano essere più giorni per il futuro
 
 
+COMPONENTS
+ - BookCard lieve overflow hidden a destra, all'hover\rotate
+
 TOAST: https://next.vuetifyjs.com/en/components/snackbars/
 
 GUEBBIT LIBRARY: object join

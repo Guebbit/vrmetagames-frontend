@@ -4,7 +4,7 @@
         align="center"
         justify="center"
     >
-        <v-col v-for="(item, index) in list"
+        <v-col v-for="(item, i) in stationsList"
                :key="'item-wrapper-2-' + item.id"
                cols="12" md="5" lg="4" xl="3"
         >
@@ -15,40 +15,33 @@
 
                 :type="item.type"
                 :time="1654121642000"
-                :number="index % 2 ? 2 : 0"
-                :available="index % 2 ? true : false"
+                :number="i % 2 ? 2 : 0"
+                :available="i % 2 ? true : false"
             />
             <!-- TODO available && number && time? -->
         </v-col>
     </v-row>
+    <pre>{{stationsList}}</pre>
 </template>
-<script lang="ts">
-// https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-controller-1.png
-// https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-controller-2.png
-import { defineComponent, PropType } from "vue";
-import StationCard from "@/components/landing/StationCard.vue";
 
+<script setup lang="ts">
+import { computed, toRefs } from "vue";
+import { useStore } from "@/store";
 import type { stationMap } from "@/interfaces";
 
-export default defineComponent({
-    name: "StationList",
+import StationCard from "@/components/landing/StationCard.vue";
 
-    components: {
-        StationCard
-    },
+const {
+    state
+} = useStore();
 
-    props:{
-        list: {
-            type: Array as PropType<stationMap[]>,
-            default: () => {
-                return [];
-            }
-        }
-    }
-});
+const { stations } = toRefs(state.ecommerce);
+const stationsList = computed<stationMap[]>(() => Object.values(stations.value));
 </script>
 
 <style lang="scss">
+// https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-controller-1.png
+// https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-controller-2.png
 @import '../../assets/scss/main/global';
 
 .station-list-section{
