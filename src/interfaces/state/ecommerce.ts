@@ -52,10 +52,23 @@ export interface stationMap {
 }
 
 export interface gameMap {
-    id: string
-    title: string
-    author: string
-    image: string
+    id :string
+    title :string
+    author :string
+    description :string
+    categories :string[]
+    stations :string[]
+    tags :string[]
+    image :string
+    coverFront :string
+    coverSpine :string
+    // TODO CHECK INFO:
+    maxPlayersOffline :number
+    maxPlayersOnline :number
+    flagFamilyFriendly :boolean
+    // età minima
+    // difficoltà
+    // durata consigliata
 }
 
 
@@ -80,9 +93,6 @@ export interface stateEcommerceMap {
     /**
      * payment for each step.
      * 0 = default 5.00€, 1 step 5€, 2 step special price 7€, 3 step no special price = default price * 3, etc
-     *
-     * TODO IMPORTANT WARNING: I "pack" di sconto da svariate ore dovrebbero essere moltiplicabili.
-     *  fare tipo: compri 60 ore, 50 sono con il bonus e 10 sono normali
      */
     scheduleTimeCost :Record<number, number>
 }

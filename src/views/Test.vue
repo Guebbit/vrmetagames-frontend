@@ -4,66 +4,151 @@
       <br /><br /><br />
       <br /><br /><br />
 
-
-      <!--
-      <h1>{{mapIsReady}}</h1>
-      <pre>{{ geojsonObject }}</pre>
-      <pre>{{ geojsonOptions }}</pre>
-      <l-map
-          v-show="mapIsReady"
-          style="height:50vh"
-      >
-          <l-geo-json
-              :geojson="geojsonObject"
-              :options="geojsonOptions"
+      <section class="theme-section pa-0 bg-secondary">
+          <PanoramicCard
+                image = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/908370/jelly.png"
+                background = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/908370/jelly-back.png"
           />
-      </l-map>
-    -->
+      </section>
 
-
-      <h1>MAP</h1>
-      <l-map
-          v-if="showMap"
-          :zoom="zoom"
-          :center="center"
-          :options="mapOptions"
-          style="height: 80%"
-          @update:center="centerUpdate"
-          @update:zoom="zoomUpdate"
-      >
-          <l-tile-layer
-              :url="url"
-              :attribution="attribution"
+      <section class="theme-section">
+          <LeafletMap
+              :center="[44.7793747, 10.8807905]"
+              :icons="[
+                {
+                    name: 'leaf',
+                    iconUrl: 'https://leafletjs.com/examples/custom-icons/leaf-green.png',
+                    shadowUrl: 'https://leafletjs.com/examples/custom-icons/leaf-shadow.png',
+                    iconSize:     [38, 95], // size of the icon
+                    shadowSize:   [50, 64], // size of the shadow
+                    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+                    shadowAnchor: [4, 62],  // the same for the shadow
+                    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+                },
+                {
+                    name: 'logo',
+                    iconUrl: 'https://assets.guebbit.com/vrmetagames/images/logo/logo.png',
+                    iconSize: [40, 50]
+                }
+            ]"
+              :markers="[
+                {
+                    coordinates: [44.7893747, 10.8907905],
+                    options: { alt: 'lorem-ipsum-1' }
+                },
+                {
+                    coordinates: [44.7993747, 10.8807905],
+                    icon: 'logo',
+                    options: { alt: 'lorem-ipsum-2' }
+                },
+                {
+                    coordinates: [44.7793747, 10.8807905],
+                    icon: 'leaf',
+                    options: { alt: 'lorem-ipsum-3' }
+                },
+            ]"
+              :draw="[
+                {
+                    type: 'circle',
+                    coordinates: [[44.7793747, 10.7807905]],
+                    options: {
+                        color: themeColors.secondary,
+                        fillColor: themeColors.secondary,
+                        fillOpacity: 1,
+                        radius: 10
+                    }
+                },
+                {
+                    type: 'polygon',
+                    coordinates: [
+                        [44.7793747, 10.7807905],
+                        [44.8793747, 10.8807905],
+                        [44.9793747, 10.9807905]
+                    ],
+                }
+            ]"
           />
-          <l-marker :lat-lng="withPopup">
-              <l-popup>
-                  <div @click="innerClick">
-                      I am a popup
-                      <p v-show="showParagraph">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
-                          sed pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi.
-                          Donec finibus semper metus id malesuada.
-                      </p>
-                  </div>
-              </l-popup>
-          </l-marker>
-          <l-marker :lat-lng="withTooltip">
-              <l-tooltip :options="{ permanent: true, interactive: true }">
-                  <div @click="innerClick">
-                      I am a tooltip
-                      <p v-show="showParagraph">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
-                          sed pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi.
-                          Donec finibus semper metus id malesuada.
-                      </p>
-                  </div>
-              </l-tooltip>
-          </l-marker>
-      </l-map>
-      <h1>MOP</h1>
+          <v-row>
+              <v-col cols="12" md="6" lg="3">
+                  <h1>Stiamaps Dark</h1>
+                  <LeafletMap
+                      :center="[44.7793747, 10.8807905]"
+                      map="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+                      mapAttribution='<a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+                      :mapOptions="{
+                        maxZoom: 20,
+                        subdomains:['mt0','mt1','mt2','mt3']
+                      }"
+                  />
+              </v-col>
+              <v-col cols="12" md="6" lg="3">
+                  <h1>Google Maps Classic</h1>
+                  <LeafletMap
+                      :center="[44.7793747, 10.8807905]"
+                      map="http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}"
+                      mapAttribution="© Google"
+                      :mapOptions="{
+                        maxZoom: 20,
+                        subdomains:['mt0','mt1','mt2','mt3']
+                      }"
+                  />
+              </v-col>
+              <v-col cols="12" md="6" lg="3">
+                  <h1>Satellite</h1>
+                  <LeafletMap
+                      :center="[44.7793747, 10.8807905]"
+                      map="http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+                      mapAttribution="© Google"
+                      :mapOptions="{
+                        maxZoom: 20,
+                        subdomains:['mt0','mt1','mt2','mt3']
+                      }"
+                  />
+              </v-col>
+              <v-col cols="12" md="6" lg="3">
+                  <h1>Hybrid</h1>
+                  <LeafletMap
+                      :center="[44.7793747, 10.8807905]"
+                      map="http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}"
+                      mapAttribution="© Google"
+                      :mapOptions="{
+                        maxZoom: 20,
+                        subdomains:['mt0','mt1','mt2','mt3']
+                      }"
+                  />
+              </v-col>
+              <v-col cols="12" md="6" lg="3">
+                  <h1>Stamen Toner</h1>
+                  <LeafletMap
+                      :center="[44.7793747, 10.8807905]"
+                      map="http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png"
+                      mapAttribution="© Stamen"
+                  />
+              </v-col>
+              <v-col cols="12" md="6" lg="3">
+                  <h1>Stamen Terrain</h1>
+                  <LeafletMap
+                      :center="[44.7793747, 10.8807905]"
+                      map="http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.png"
+                      mapAttribution="© Stamen"
+                  />
+              </v-col>
+              <v-col cols="12" md="6" lg="3">
+                  <h1>Stamen Watercolor</h1>
+                  <LeafletMap
+                      :center="[44.7793747, 10.8807905]"
+                      map="http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png"
+                      mapAttribution="© Stamen"
+                  />
+              </v-col>
+              <v-col cols="12" md="6" lg="3">
 
 
-      <section>
+              </v-col>
+          </v-row>
+      </section>
+
+      <section class="theme-section">
           <v-row>
               <v-col cols="12" md="6" lg="3">
                   <SimpleUserCard
@@ -108,7 +193,7 @@
                   :title="'LOREM IPSUM SIT DOLOR AMET'"
                   @button:click="() => {}"
               >
-                  <template #backgroundImage>
+                  <template #background>
                       <video class="panel-background" preload="metadata" playsinline="" muted="" loop="" autoplay="">
                           <source src="https://cdn.virtual-room.com/app/uploads/2018/12/teaser-home-virtualroom.mp4" type="video/mp4">
                       </video>
@@ -131,7 +216,7 @@
                           class="px-10 py-15 text-center"
                           centered-bottom
                       >
-                          <template #backgroundImage>
+                          <template #background>
                               <video class="panel-background" preload="metadata" playsinline="" muted="" loop="" autoplay="">
                                   <source src="https://cdn.virtual-room.com/app/uploads/2018/12/teaser-home-virtualroom.mp4" type="video/mp4">
                               </video>
@@ -157,7 +242,7 @@
                           class="horizontal-iframe px-10 py-15 text-center"
                           centered-bottom
                       >
-                          <template #backgroundImage>
+                          <template #background>
                               <div class="panel-background">
                                   <div>
                                       <iframe
@@ -192,7 +277,7 @@
                           class="horizontal-iframe px-10 py-15 text-center"
                           centered-bottom
                       >
-                          <template #backgroundImage>
+                          <template #background>
                               <div class="panel-background">
                                   <div>
                                       <iframe
@@ -227,7 +312,7 @@
                           class="vertical-iframe px-10 py-15 text-center"
                           centered-bottom
                       >
-                          <template #backgroundImage>
+                          <template #background>
                               <div class="panel-background">
                                   <div>
                                       <iframe
@@ -266,7 +351,7 @@
           :title="'VIDEO YOUTUBE LOOP'"
           @button:click="() => {}"
       >
-          <template #backgroundImage>
+          <template #background>
               <div class="panel-background">
                   <div>
                       <iframe
@@ -926,7 +1011,7 @@
                   :title="'CONNECT WITH US <br/> FOR GAMING UPDATE'"
                   @button:click="() => {}"
               >
-                  <template v-slot:backgroundImage>
+                  <template v-slot:background>
                       <v-img
                           cover
                           class="panel-background"
@@ -961,7 +1046,7 @@
               :title="'CONNECT WITH US <br/> FOR GAMING UPDATE'"
               @button:click="() => {}"
           >
-              <template v-slot:backgroundImage>
+              <template v-slot:background>
                   <video class="panel-background" preload="metadata" playsinline="" muted="" loop="" autoplay="">
                       <source src="https://cdn.virtual-room.com/app/uploads/2018/12/teaser-home-virtualroom.mp4" type="video/mp4">
                   </video>
@@ -1069,59 +1154,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from "vue";
 import { useTheme } from "vuetify";
-import { latLng } from "leaflet";
-import { LMap, LTileLayer, LMarker, LPopup, LTooltip } from "@vue-leaflet/vue-leaflet";
 import SimpleUserCard from "@/components/basics/cards/SimpleUserCard.vue";
-
+import LeafletMap from "@/components/basics/interfaces/LeafletMap.vue";
+import PanoramicCard from "@/components/basics/cards/PanoramicCard.vue";
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
-const geojsonObject = ref({
-    type: 'FeatureCollection',
-    features: [],
-});
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const geojsonOptions = ref<any>({});
-const mapIsReady = ref(false);
-
-
-const zoom = ref(13);
-const url = ref('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-const attribution = ref('&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors');
-const currentZoom = ref(11.5);
-const showParagraph = ref(false);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapOptions = ref<any>({
-    zoomSnap: 0.5
-});
-const zoomSnap = ref(0.5);
-const showMap = ref(true);
-
-const center = computed(() => latLng(47.41322, -1.219482));
-const withPopup = computed(() => latLng(47.41322, -1.219482));
-const withTooltip = computed(() => latLng(47.41422, -1.250482));
-const currentCenter = computed(() => latLng(47.41322, -1.219482));
-
-
-const loadLeaflet = async () => {
-    // HERE is where to load Leaflet components!
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { circleMarker } = await import("leaflet/dist/leaflet-src.esm");
-
-    // And now the Leaflet circleMarker function can be used by the options:
-    geojsonOptions.value.pointToLayer = (feature :string, latLng :string) => {
-        console.log("GGGGGGGGGgeojsonOptions", feature, latLng)
-        circleMarker(latLng, { radius: 8 })
-    };
-    mapIsReady.value = true;
-}
-
-onMounted(() => {
-    loadLeaflet();
-})
-
 </script>
 
 <script lang="ts">

@@ -34,7 +34,7 @@
                     </v-btn>
                 </v-toolbar>
             </template>
-            <template v-slot:backgroundImage>
+            <template v-slot:background>
                 <v-img
                     cover
                     class="panel-background"

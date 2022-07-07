@@ -1,3 +1,7 @@
+https://www.virtual-room.com/en/
+https://toulon.virtual-room.com/reservation/
+
+
 TIMESTAMP: conversione secondi\millisecondi via server. PUT & POST = secondi, GET = millisecondi
 
 RELOAD ogni secondo di station e schedule

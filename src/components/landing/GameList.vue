@@ -20,8 +20,8 @@
                     :key="'game-' + item.id"
                     ratio="4.25/6.87"
                     rotation="2"
-                    :image="item.gameCover"
-                    :spine="item.gameSpine"
+                    :image="item.coverFront"
+                    :spine="item.coverSpine"
                     @click="$router.push({
                         name: 'GameTarget',
                         params: {
@@ -69,6 +69,7 @@ const {
 } = useStore();
 
 const props = defineProps({
+    // TODO
     controls: {
         type: Boolean,
         default: () => {

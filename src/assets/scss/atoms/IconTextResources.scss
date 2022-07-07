@@ -1,0 +1,25 @@
+$icon-text-resources-duration: 0.4s !default;
+$icon-text-resources-shadow: #000 !default;
+
+.icon-text-resources{
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 1.2em;
+    margin: 0.4em;
+    line-height: 2;
+    text-decoration: none;
+    transition: (transform $icon-text-resources-duration, color $icon-text-resources-duration);
+    .icon{
+        line-height: 1;
+        font-size: 1.5em;
+        transition: (transform $icon-text-resources-duration, color $icon-text-resources-duration);
+    }
+    &:hover{
+        .icon{
+            transform: translateY(-10px);
+            color: inherit;
+        }
+    }
+}

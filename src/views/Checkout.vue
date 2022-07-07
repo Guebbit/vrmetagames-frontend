@@ -1,7 +1,7 @@
 <template>
-    <v-container fluid id="checkout-page" class="theme-page full-page centered">
+    <v-container fluid id="checkout-page" class="theme-page page-menu-padding full-page centered">
         <v-row>
-            <v-col cols="12" lg="3">
+            <v-col cols="12" lg="3" class="user-info-section">
                 <UserInfoCard
                     class="mb-4"
                     :id="userInfo.id"
@@ -14,7 +14,7 @@
                                 <v-list-item-avatar start>
                                     <font-awesome-icon size="2x" class="text-secondary" :icon="['fas', 'wallet']" />
                                 </v-list-item-avatar>
-                                <v-list-item-title class="wallet-value">{{ userInfoWalletDuration }}</v-list-item-title>
+                                <v-list-item-title class="font-size-2">{{ userInfoWalletDuration }}</v-list-item-title>
                             </v-list-item>
                             <v-list-item lines="">
                                 {{ t('checkout-page.instructions-receipt') }}
@@ -38,89 +38,11 @@
 
                 <v-card>
                     <v-card-text>
-                        <ul class="simple-list">
-                            <li class="hover-line-highlight">
-                                <a target="_blank" href="https://www.google.com/maps/dir/44.8703811,10.8166522/vr+metagames/@44.8197379,10.7501583,12z/data=!3m1!4b1!4m9!4m8!1m1!4e1!1m5!1m1!1s0x477ff34644a5efb1:0xc99febe9f2bbf4dc!2m2!1d10.880918!2d44.7793981">
-                                    <font-awesome-icon :icon="['fas', 'location-dot']" />
-                                    {{ contactAddressStreet }}
-                                </a>
-                            </li>
-                            <li class="hover-line-highlight">
-                                <a target="_blank" href="https://www.google.com/maps/dir/44.8703811,10.8166522/vr+metagames/@44.8197379,10.7501583,12z/data=!3m1!4b1!4m9!4m8!1m1!4e1!1m5!1m1!1s0x477ff34644a5efb1:0xc99febe9f2bbf4dc!2m2!1d10.880918!2d44.7793981">
-                                    <font-awesome-icon :icon="['fas', 'city']" />
-                                    {{ contactAddressCity }} ({{ contactAddressProvince }}) {{ contactAddressCap }}
-                                </a>
-                            </li>
-                            <li class="hover-line-highlight">
-                                <a :href="'mailto:' + contactEmail">
-                                    <font-awesome-icon :icon="['fas', 'envelope']" />
-                                    {{ contactEmail }}
-                                </a>
-                            </li>
-                            <li class="hover-line-highlight">
-                                <a :href="'tel:' + contactNumber.replace(' ','')">
-                                    <font-awesome-icon :icon="['fas', 'phone']" />
-                                    {{ contactNumber }}
-                                </a>
-                            </li>
-                        </ul>
-
-                        <div class="text-center mt-10">
-                            <a :href="socialFacebook"
-                               class="button-social-icon mini"
-                               target="_blank"
-                            >
-                            <span class="icon facebook-color">
-                                <font-awesome-icon class="px-3" :icon="['fab', 'facebook-f']" />
-                            </span>
-                            </a>
-                            <a :href="socialInstagram"
-                               class="button-social-icon mini"
-                               target="_blank"
-                            >
-                            <span class="icon instagram-color">
-                                <font-awesome-icon class="px-3" :icon="['fab', 'instagram']" />
-                            </span>
-                            </a>
-                            <a :href="socialTiktok"
-                               class="button-social-icon mini"
-                               target="_blank"
-                            >
-                            <span class="icon tiktok-color">
-                                <font-awesome-icon class="px-3" :icon="['fab', 'tiktok']" />
-                            </span>
-                            </a>
-                            <a :href="socialYoutube"
-                               class="button-social-icon mini"
-                               target="_blank"
-                            >
-                            <span class="icon youtube-color">
-                                <font-awesome-icon class="px-3" :icon="['fab', 'youtube']" />
-                            </span>
-                            </a>
-                            <a :href="'https://wa.me/' + contactNumber.replace(' ','')"
-                               class="button-social-icon mini"
-                               target="_blank"
-                            >
-                            <span class="icon whatsapp-color">
-                                <font-awesome-icon class="px-3" :icon="['fab', 'whatsapp']" />
-                            </span>
-                            </a>
-                            <a :href="'https://t.me/' + contactTelegram"
-                               class="button-social-icon mini"
-                               target="_blank"
-                            >
-                            <span class="icon telegram-color">
-                                <font-awesome-icon class="px-3" :icon="['fab', 'telegram']" />
-                            </span>
-                            </a>
-                        </div>
-
+                        <SocialPanel />
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12" lg="9">
-                <!-- TODO MOBILE -->
+            <v-col cols="12" lg="9" class="checkout-list-section">
                 <v-list class="checkout-list bg-transparent">
                     <v-list-item
                         v-for="schedule in scheduleListCartReadable"
@@ -134,21 +56,19 @@
                             <font-awesome-icon size="xl" class="text-primary" :icon="['fas', 'gamepad']" />
                         </v-list-item-avatar>
 
-                        <div class="theme-icon-text">
+                        <div class="simple-icon-text">
                             <font-awesome-icon :icon="['fas', 'calendar']" />
                             {{ schedule.date }}
                         </div>
 
-                        <div class="theme-icon-text">
+                        <div class="simple-icon-text flex-grow-1">
                             <font-awesome-icon :icon="['fas', 'clock']" />
                             {{ schedule.hourStart }}
                             <font-awesome-icon :icon="['fas', 'arrow-right-long']" />
                             {{ schedule.hourEnd }}
                         </div>
 
-                        <v-spacer></v-spacer>
-
-                        <div class="theme-icon-text text-secondary">
+                        <div class="simple-icon-text text-secondary">
                             <font-awesome-icon :icon="['fas', 'play']" />
                             {{
                                 t('generic.schedule-details-time-count.' + schedule.durationData.mode, {
@@ -157,7 +77,7 @@
                                 })
                             }}
                         </div>
-                        <div class="theme-icon-text">
+                        <div class="simple-icon-text">
                             <font-awesome-icon :icon="['fas', 'coins']" />
                             {{ schedule.cost }} €
                         </div>
@@ -186,9 +106,9 @@
                         </v-list-item-action>
                     </v-list-item>
                 </v-list>
-                <v-row>
+                <v-row class="total-and-payments my-2">
                     <v-col cols="12" lg="6">
-                        <v-card class="pa-5 mt-10">
+                        <v-card class="pa-5">
                             <h1>
                                 METODI DI PAGAMENTO
                                 <br>
@@ -197,7 +117,7 @@
                         </v-card>
                     </v-col>
                     <v-col cols="12" lg="6">
-                        <div class="cart-total-info mt-10">
+                        <div class="cart-total-info">
                             <div class="d-flex justify-space-between align-center">
                                 <span class="label">{{ t('checkout-page.total-hours') }}</span>
                                 <span class="info">{{ scheduleCartDuration }}</span>
@@ -221,7 +141,7 @@
                                 <span class="info">{{ userInfoWalletRemainingDuration }}</span>
                             </div>
                             <hr class="mt-2 mb-2">
-                            <div class="d-flex justify-space-between align-center final-cost">
+                            <div class="d-flex justify-space-between align-center font-size-3">
                                 <span class="label">{{ t('checkout-page.final-cost') }}</span>
                                 <span class="info">{{ scheduleCartFinalCost }} €</span>
                             </div>
@@ -237,17 +157,9 @@
 import { ref, computed, toRefs } from "vue";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
-import {
-    contactAddressStreet,
-    contactAddressCity,
-    contactAddressProvince,
-    contactAddressCap,
-    contactEmail,
-    contactNumber,
-    contactTelegram,
-} from "@/resources/constants";
 
 import UserInfoCard from "@/components/basics/cards/UserInfoCard.vue";
+import SocialPanel from "@/components/generic/panels/SocialPanel.vue";
 
 import type { scheduleMap, scheduleReadableMap } from "@/interfaces";
 
@@ -271,14 +183,6 @@ import {
     faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 
-import {
-    faFacebookF,
-    faInstagram,
-    faTiktok,
-    faYoutube,
-    faWhatsapp,
-    faTelegram,
-} from "@fortawesome/free-brands-svg-icons";
 
 library.add(
     faCalendar,
@@ -295,20 +199,8 @@ library.add(
     faEnvelope,
     faLocationDot,
     faCity,
-    faPhone,
-    faFacebookF,
-    faInstagram,
-    faTiktok,
-    faYoutube,
-    faWhatsapp,
-    faTelegram,
+    faPhone
 );
-
-
-import {
-
-} from "@fortawesome/free-solid-svg-icons";
-
 
 const { state, getters } = useStore();
 const { t } = useI18n();
@@ -403,14 +295,15 @@ const toggleSchedule = (id :string) => {
 </script>
 
 <style lang="scss">
+@import 'src/assets/scss/main/global';
+
 #checkout-page{
     .checkout-list{
         &.v-list{
             padding: 0;
             .v-list-item{
-                display: flex;
                 justify-content: space-between;
-                gap: 2em;
+                gap: 1em;
                 padding: 0.5em 1em;
                 border-bottom: 1px solid rgb(var(--v-theme-on-surface));
 
@@ -421,13 +314,45 @@ const toggleSchedule = (id :string) => {
                 &.disabled{
                     opacity: 0.3;
                 }
+
+                @include media-mobile(){
+                    display: grid;
+                    grid-template-columns: 5fr 1fr;
+                    grid-template-rows: repeat(4, 1fr);
+                    grid-column-gap: 0;
+                    grid-row-gap: 0;
+
+                    & > * {
+                        width: 100%;
+                        &:nth-child(2){
+                            display: none;
+                        }
+                        &:nth-child(3){
+                            grid-area: 1 / 1 / 2 / 2;
+                        }
+                        &:nth-child(4){
+                            grid-area: 2 / 1 / 3 / 2;
+                        }
+                        &:nth-child(5){
+                            grid-area: 3 / 1 / 4 / 2;
+                        }
+                        &:nth-child(6){
+                            grid-area: 4 / 1 / 5 / 2;
+                        }
+                        &:nth-child(7){
+                            grid-area: 1 / 2 / 5 / 3;
+                            flex-direction: column;
+                            border-left: 1px solid rgb(var(--v-theme-on-surface));
+                        }
+                    }
+                }
             }
         }
     }
 
-    .final-cost,
-    .wallet-value{
-        font-size: 1.5em;
+    .checkout-list-section{
+        display: flex;
+        flex-direction: column;
     }
 
     .cart-total-info{
@@ -439,8 +364,35 @@ const toggleSchedule = (id :string) => {
             color: rgb(var(--v-theme-secondary))
         }
         .info{
-            font-size: 1.5em;
+            font-size: 1.2em;
         }
     }
+
+    // ORDER
+    @include media-mobile(){
+        .user-info-section{
+            order: 2;
+        }
+        .checkout-list-section{
+            order: 1;
+        }
+        .checkout-list{
+            order: 2;
+        }
+        .total-and-payments{
+            order: 1;
+            & > * {
+                &:first-child{
+                    order: 2;
+                }
+                &:last-child{
+                    order: 1;
+                }
+            }
+        }
+    }
+
+
+
 }
 </style>

@@ -13,7 +13,7 @@
         </h3>
 
         <a :href="socialFacebook"
-           class="button-social-icon"
+           class="button-brand-icon"
            target="_blank"
         >
             <span class="icon facebook-color">
@@ -21,7 +21,7 @@
             </span>
         </a>
         <a :href="socialInstagram"
-           class="button-social-icon"
+           class="button-brand-icon"
            target="_blank"
         >
             <span class="icon instagram-color">
@@ -29,7 +29,7 @@
             </span>
         </a>
         <a :href="socialTiktok"
-           class="button-social-icon"
+           class="button-brand-icon"
            target="_blank"
         >
             <span class="icon tiktok-color">
@@ -37,7 +37,7 @@
             </span>
         </a>
         <a :href="socialYoutube"
-           class="button-social-icon"
+           class="button-brand-icon"
            target="_blank"
         >
             <span class="icon youtube-color">
@@ -45,7 +45,7 @@
             </span>
         </a>
         <a :href="'https://wa.me/' + contactNumber.replace(' ','')"
-           class="button-social-icon"
+           class="button-brand-icon"
            target="_blank"
         >
             <span class="icon whatsapp-color">
@@ -53,7 +53,7 @@
             </span>
         </a>
         <a :href="'https://t.me/' + contactTelegram"
-           class="button-social-icon"
+           class="button-brand-icon"
            target="_blank"
         >
             <span class="icon telegram-color">

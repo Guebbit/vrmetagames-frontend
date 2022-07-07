@@ -7,8 +7,8 @@
         <template #backgroundShadow>
             <slot name="backgroundShadow"></slot>
         </template>
-        <template #backgroundImage>
-            <slot name="backgroundImage"></slot>
+        <template #background>
+            <slot name="background"></slot>
         </template>
         <template #default>
             <slot>

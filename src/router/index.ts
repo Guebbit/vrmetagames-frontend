@@ -12,6 +12,7 @@ import type {
 } from "vue-router";
 
 import Home from "@/views/Home.vue";
+const Test = () => import("@/views/Test.vue");
 const WorkInProgress = () => import("@/views/WorkInProgress.vue");
 const Play = () => import("@/views/Play.vue");
 const PlayAdvanced = () => import("@/views/PlayAdvanced.vue");
@@ -23,7 +24,7 @@ const ProductDetails = () => import("@/views/Product/ProductDetails.vue");
 const EcommerceManagement = () => import("@/views/Admin/Product/EcommerceManagament.vue");
 const PathNotFound = () => import("@/views/PathNotFound.vue");
 
-import Test from "@/views/Test.vue";
+
 
 async function authenticationCheck(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
     if(!store.getters['user/isAuthenticated']){
@@ -87,10 +88,10 @@ export const routes: Array<RouteRecordRaw> = [
     {
         path: "/games",
         name: "Games",
-        // component: ProductIndex
-        component: WorkInProgress
+        component: ProductIndex
     },
     {
+        // https://www.virtual-room.com/en/mission/time-travel-chapter-1/
         path: "/games/:id",
         name: "GameTarget",
         // component: ProductDetails,

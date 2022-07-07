@@ -71,11 +71,13 @@
                class="ghost-mode"
     >
         <template v-slot:prepend>
-            <img src="http://placekitten.com/100/100"
-                 :alt="$t('generic.name')"
-                 height="64"
-                 width="64"
-            />
+            <router-link :to="{ name: 'Home' }">
+                <img :src="imagesUrl + '/logo/logo.svg'"
+                     :alt="$t('generic.name')"
+                     height="64"
+                     width="64"
+                />
+            </router-link>
         </template>
         <template v-slot:append>
 
@@ -92,7 +94,7 @@
             <InclinedButton
                 v-show="$route.name !== 'Play'"
                 type="light"
-                class="bg-primary"
+                class="bg-primary desktop-only"
                 :to="{ name: 'Play' }"
             >
                 {{ t('generic.play') }}
@@ -150,6 +152,7 @@
 import { computed, onMounted, ref, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { useStore } from "@/store";
+import { imagesUrl } from "@/resources/constants";
 
 import { shyJs, classScroll } from 'guebbit-javascript-library';
 import InclinedButton from "@/components/basics/buttons/InclinedButton.vue";
@@ -157,8 +160,6 @@ import InclinedButton from "@/components/basics/buttons/InclinedButton.vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faBars, faPlay, faCartShopping, faHouse, faShop, faGamepad, faVrCardboard, faRightToBracket, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-
-
 library.add(faBars, faPlay, faCartShopping, faHouse, faShop, faGamepad, faVrCardboard, faRightToBracket, faRightFromBracket)
 
 const { t } = useI18n();
@@ -229,10 +230,10 @@ onMounted(() => {
 @import 'src/assets/scss/main/global';
 
 #main-navigation-bar{
+    transition: background 0.2s, top 0.2s;
     &.ghost-mode{
         background: transparent !important;
         box-shadow: none !important;
-        transition: background 0.3s;
     }
 
     .inclined-button{

@@ -15,14 +15,14 @@
                             <v-list-item-avatar start>
                                 <font-awesome-icon :icon="['fas', 'calendar']" />
                             </v-list-item-avatar>
-                            <v-list-item-title>{{ selectedItemReadable.date || $t('play.select-event-label-date') }}</v-list-item-title>
+                            <v-list-item-title>{{ selectedItemReadable.date || $t('play-page.select-event-label-date') }}</v-list-item-title>
                         </v-list-item>
                         <v-list-item>
                             <v-list-item-avatar start>
                                 <font-awesome-icon :icon="['fas', 'clock']" />
                             </v-list-item-avatar>
                             <v-list-item-title>
-                                {{ selectedItemReadable.hourStart && selectedItemReadable.hourEnd ? selectedItemReadable.hourStart + ' - ' + selectedItemReadable.hourEnd : $t('play.select-event-label-hours') }}
+                                {{ selectedItemReadable.hourStart && selectedItemReadable.hourEnd ? selectedItemReadable.hourStart + ' - ' + selectedItemReadable.hourEnd : $t('play-page.select-event-label-hours') }}
                             </v-list-item-title>
                         </v-list-item>
                         <v-list-item v-show="selectedItemDuration">
@@ -35,7 +35,7 @@
                             <v-list-item-avatar start>
                                 <font-awesome-icon :icon="['fas', 'circle-info']" />
                             </v-list-item-avatar>
-                            <v-list-item-subtitle>{{ $t('play.select-event-label-disclaimer') }}</v-list-item-subtitle>
+                            <v-list-item-subtitle>{{ $t('play-page.select-event-label-disclaimer') }}</v-list-item-subtitle>
                         </v-list-item>
                         <template v-if="userInfo.isAdmin && selectedItemIdentifier">
                             <v-list-item>
@@ -44,7 +44,7 @@
                                     variant="tonal"
                                     @click="fastMode ? (removeItems([selectedItemIdentifier]), selectedItemIdentifier = null) : showConfirmDeleteItemDialog = true"
                                 >
-                                    {{ $t('play.select-event-label-remove-event') }}
+                                    {{ $t('play-page.select-event-label-remove-event') }}
                                 </v-btn>
                             </v-list-item>
                             <v-list-item>
@@ -53,7 +53,7 @@
                                     variant="tonal"
                                     @click="selectedItemIdentifier = null"
                                 >
-                                    {{ $t('play.select-event-label-unselect-event') }}
+                                    {{ $t('play-page.select-event-label-unselect-event') }}
                                 </v-btn>
                             </v-list-item>
                         </template>
@@ -84,7 +84,7 @@
                                 }
                             }"
                         >
-                            {{ $t('play.schedules-advanced-settings') }}
+                            {{ $t('play-page.schedules-advanced-settings') }}
                             <font-awesome-icon class="ml-3" :icon="['fas', 'calendar-day']" />
                         </v-btn>
                         <v-btn
@@ -93,7 +93,7 @@
                             :to="{ name: 'Checkout' }"
                             :disabled="scheduleListCart.length === 0"
                         >
-                            {{ $t('play.schedules-confirm-all') }}
+                            {{ $t('play-page.schedules-confirm-all') }}
                             <font-awesome-icon class="ml-3" :icon="['fas', 'play']" />
                         </v-btn>
                     </div>
@@ -157,7 +157,7 @@
         >
             <v-alert
                 type="error"
-                :title="$t('play.schedule-alert-remove-title')"
+                :title="$t('play-page.schedule-alert-remove-title')"
                 variant="elevated"
             >
                 <v-list
@@ -169,14 +169,14 @@
                         <v-list-item-avatar start>
                             <font-awesome-icon :icon="['fas', 'calendar']" />
                         </v-list-item-avatar>
-                        <v-list-item-title>{{ selectedItemReadable.date || $t('play.select-event-label-date') }}</v-list-item-title>
+                        <v-list-item-title>{{ selectedItemReadable.date || $t('play-page.select-event-label-date') }}</v-list-item-title>
                     </v-list-item>
                     <v-list-item>
                         <v-list-item-avatar start>
                             <font-awesome-icon :icon="['fas', 'clock']" />
                         </v-list-item-avatar>
                         <v-list-item-title>
-                            {{ selectedItemReadable.hourStart && selectedItemReadable.hourEnd ? selectedItemReadable.hourStart + ' - ' + selectedItemReadable.hourEnd : $t('play.select-event-label-hours') }}
+                            {{ selectedItemReadable.hourStart && selectedItemReadable.hourEnd ? selectedItemReadable.hourStart + ' - ' + selectedItemReadable.hourEnd : $t('play-page.select-event-label-hours') }}
                         </v-list-item-title>
                     </v-list-item>
                 </v-list>
@@ -188,14 +188,14 @@
                         variant="outlined"
                         @click="showConfirmDeleteItemDialog = false"
                     >
-                        {{ $t('play.schedule-alert-remove-button-cancel') }}
+                        {{ $t('play-page.schedule-alert-remove-button-cancel') }}
                     </v-btn>
                     <v-btn
                         variant="outlined"
                         @click="removeItems([selectedItemIdentifier]); selectedItemIdentifier = null; showConfirmDeleteItemDialog = false"
 
                     >
-                        {{ $t('play.schedule-alert-remove-button-confirm') }}
+                        {{ $t('play-page.schedule-alert-remove-button-confirm') }}
                     </v-btn>
                 </div>
             </v-alert>

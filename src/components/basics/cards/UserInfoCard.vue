@@ -13,7 +13,7 @@
                 <small v-show="userInfo.lastVisit && userInfo.lastVisit > 0"
                     class="text-medium-emphasis"
                 >
-                    {{ $t('play.schedule-details-last-visit') }}:
+                    {{ $t('play-page.schedule-details-last-visit') }}:
                     <span class="ml-2">{{ formatUIDate(userInfo.lastVisit) }}</span>
                 </small>
             </div>

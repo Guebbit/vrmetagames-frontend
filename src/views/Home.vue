@@ -10,8 +10,7 @@
             <template #default>
                 <v-container>
                     <h1 class="theme-page-title" v-html="t('home-page.landing-title')"></h1>
-                    <h4 class="theme-page-subtitle">{{ t('home-page.landing-subtitle') }}</h4>
-                    <div class="d-flex align-center justify-end">
+                    <div class="d-flex align-center justify-end mt-10">
                         <div class="text-right">
                             <v-btn
                                 block
@@ -32,7 +31,7 @@
                                 {{ t('generic.look-openings') }}
                             </v-btn>
                         </div>
-                        <span class="status-circle"
+                        <span class="status-circle font-size-2 ml-10"
                               :class="{
                                   online: todayIsOpen,
                                   'pulse-mode': todayIsOpen,
@@ -42,7 +41,7 @@
                     </div>
                 </v-container>
             </template>
-            <template #backgroundImage>
+            <template #background>
                 <v-img
                     cover
                     class="panel-background"
@@ -72,7 +71,7 @@
                     :title="t('home-page.landing-presentation-title')"
                     @button:click="() => {}"
                 >
-                    <template #backgroundImage>
+                    <template #background>
                         <video class="panel-background" preload="metadata" playsinline="" muted="" loop="" autoplay="">
                             <source src="https://cdn.virtual-room.com/app/uploads/2018/12/teaser-home-virtualroom.mp4" type="video/mp4">
                         </video>
@@ -82,8 +81,9 @@
                             class="panel-button"
                             size="x-large"
                             :double="themeColors.primary"
+                            :to="{ name: 'Play' }"
                         >
-                            Lorem Ipsum
+                            {{ t('generic.play-now') }}
                             <font-awesome-icon :icon="['fas', 'arrow-right']" />
                         </InclinedButton>
                     </template>
@@ -95,7 +95,7 @@
                             class="px-10 py-15 text-center"
                             centered-bottom
                         >
-                            <template #backgroundImage>
+                            <template #background>
                                 <video class="panel-background" preload="metadata" playsinline="" muted="" loop="" autoplay="">
                                     <source src="https://cdn.virtual-room.com/app/uploads/2018/12/teaser-home-virtualroom.mp4" type="video/mp4">
                                 </video>
@@ -121,7 +121,7 @@
                             class="horizontal-iframe px-10 py-15 text-center"
                             centered-bottom
                         >
-                            <template #backgroundImage>
+                            <template #background>
                                 <div class="panel-background">
                                     <div>
                                         <iframe
@@ -156,7 +156,7 @@
                             class="horizontal-iframe px-10 py-15 text-center"
                             centered-bottom
                         >
-                            <template #backgroundImage>
+                            <template #background>
                                 <div class="panel-background">
                                     <div>
                                         <iframe
@@ -191,7 +191,7 @@
                             class="vertical-iframe px-10 py-15 text-center"
                             centered-bottom
                         >
-                            <template #backgroundImage>
+                            <template #background>
                                 <div class="panel-background">
                                     <div>
                                         <iframe
@@ -247,6 +247,7 @@
         </section>
 
 
+        <!-- TODO
         <section class="theme-section">
             <v-container>
                 <TrapezoidTitle
@@ -281,6 +282,7 @@
                 </div>
             </v-container>
         </section>
+        -->
 
         <section class="theme-section">
             <v-container>
@@ -344,7 +346,7 @@
         <ActionPanel
             :height="'400px'"
         >
-            <template #backgroundImage>
+            <template #background>
                 <div class="panel-background">
                     <div>
                         <iframe
@@ -431,6 +433,50 @@
             </v-lazy>
         </section>
 
+        <section class="theme-section pa-0">
+            <v-lazy
+                v-model="lazyMap"
+                :options="{
+                        threshold: .5
+                    }"
+                transition="fade-transition"
+            >
+                <LeafletMap
+                    :center="[44.7793747, 10.8807905]"
+                    zoom="18"
+                    map="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+                    mapAttribution='<a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+                    :mapOptions="{
+                        maxZoom: 20,
+                        subdomains:['mt0','mt1','mt2','mt3']
+                    }"
+                    :icons="[
+                        {
+                            name: 'logo',
+                            iconUrl: 'https://assets.guebbit.com/vrmetagames/images/logo/logo.png',
+                            iconSize: [40, 50]
+                        }
+                    ]"
+                    :markers="[
+                        {
+                            coordinates: [44.7793747, 10.8807905],
+                            icon: 'logo',
+                            options: { alt: 'Sede Vr Metagames' }
+                        }
+                    ]"
+                />
+            </v-lazy>
+            <v-btn
+                class="google-drive-button"
+                color="secondary"
+                target="_blank"
+                href="https://www.google.com/maps/dir/44.8703811,10.8166522/vr+metagames/@44.8197379,10.7501583,12z/data=!3m1!4b1!4m9!4m8!1m1!4e1!1m5!1m1!1s0x477ff34644a5efb1:0xc99febe9f2bbf4dc!2m2!1d10.880918!2d44.7793981"
+            >
+                {{ t('generic.where-us') }}
+                <font-awesome-icon :icon="['fas', 'location-dot']" />
+            </v-btn>
+        </section>
+
         <Footer
             :primary="themeColors.primary"
             :secondary="themeColors.secondary"
@@ -456,14 +502,15 @@ import OpeningHours from "@/components/basics/cards/OpeningHours.vue";
 
 import SocialPanel from "@/components/landing/SocialPanel.vue";
 import StationList from "@/components/landing/StationList.vue";
+import PricingsPanel from "@/components/landing/PricingsPanel.vue";
+import LeafletMap from "@/components/basics/interfaces/LeafletMap.vue";
 import Footer from "@/components/generic/Footer.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import PricingsPanel from "@/components/landing/PricingsPanel.vue";
+import { faArrowRight, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faArrowRight)
+library.add(faArrowRight, faLocationDot)
 
 const { t } = useI18n();
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
@@ -476,6 +523,7 @@ const lazyGameList = ref(false);
 const lazyStationList = ref(false);
 const lazyPricings = ref(false);
 const lazySocial = ref(false);
+const lazyMap = ref(false);
 const blockquoteCarouselStep = ref(0);
 const quoteList = ref([
     [
@@ -537,20 +585,10 @@ onMounted(() => {
     }
 
     .landing-panel{
-        .status-circle{
-            font-size: 2em;
-            margin: 0 2em;
-        }
         .theme-page-title{
-            font-size: 4rem;
+            font-size: 5rem;
             @include media-desktop(){
                 font-size: 8rem;
-            }
-        }
-        .theme-page-subtitle{
-            font-size: 1.5rem;
-            @include media-desktop(){
-                font-size: 2.5rem;
             }
         }
     }
@@ -569,6 +607,7 @@ onMounted(() => {
     }
 
     .openings-section{
+        overflow: hidden;
         .opening-hours-list{
             max-width: 800px;
             margin: 0 auto;
@@ -594,6 +633,14 @@ onMounted(() => {
                 }
             }
         }
+    }
+
+    .google-drive-button{
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 400;
+        margin: 1em;
     }
 
     .quote-section{

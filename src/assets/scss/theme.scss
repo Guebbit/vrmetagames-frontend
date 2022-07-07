@@ -18,6 +18,11 @@
     }
 }
 
+.theme-section{
+    position: relative;
+    padding: 60px 0;
+}
+
 .theme-app-loading{
     position: fixed;
     width: 100%;
@@ -40,28 +45,15 @@
     right: 24px;
 }
 
-
-.theme-section{
-    padding: 60px 0;
-}
-
 .theme-page-title,
-.theme-section-title{
+.theme-page-subtitle,
+.theme-section-title,
+.theme-section-subtitle{
     line-height: 1;
-    & + .theme-page-subtitle,
-    & + .theme-section-subtitle{
-        margin-top: 1.5em;
-        margin-bottom: 1.5em;
-    }
-}
-
-.theme-section-subtitle,
-.theme-page-subtitle{
-    line-height: 1.5;
 }
 
 .theme-page-title{
-    font-size: 4em;
+    font-size: 3em;
     @include media-desktop() {
         font-size: 5em;
     }
@@ -95,14 +87,5 @@
                 max-width: 800px;
             }
         }
-    }
-}
-
-.theme-icon-text{
-    display: flex;
-    align-items: center;
-    svg{
-        min-width: 1em;
-        padding: 0.5em;
     }
 }

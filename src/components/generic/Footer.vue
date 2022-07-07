@@ -15,7 +15,7 @@
               <hr />
             </div>
             <div class="text-center">
-              <a href="#" class="button-social-icon mini" target="_blank">
+              <a href="#" class="button-brand-icon mini" target="_blank">
                 <span class="icon facebook-color">
                   <font-awesome-icon
                     class="px-3"
@@ -23,7 +23,7 @@
                   />
                 </span>
               </a>
-              <a href="#" class="button-social-icon mini" target="_blank">
+              <a href="#" class="button-brand-icon mini" target="_blank">
                 <span class="icon instagram-color">
                   <font-awesome-icon
                     class="px-3"
@@ -31,12 +31,12 @@
                   />
                 </span>
               </a>
-              <a href="#" class="button-social-icon mini" target="_blank">
+              <a href="#" class="button-brand-icon mini" target="_blank">
                 <span class="icon tiktok-color">
                   <font-awesome-icon class="px-3" :icon="['fab', 'tiktok']" />
                 </span>
               </a>
-              <a href="#" class="button-social-icon mini" target="_blank">
+              <a href="#" class="button-brand-icon mini" target="_blank">
                 <span class="icon youtube-color">
                   <font-awesome-icon class="px-3" :icon="['fab', 'youtube']" />
                 </span>
@@ -102,7 +102,7 @@
                 </li>
             </ul>
             <a :href="'https://wa.me/' + contactNumber.replace(' ','')"
-               class="button-social-icon mini"
+               class="button-brand-icon mini"
                target="_blank"
             >
                 <span class="icon whatsapp-color">
@@ -110,7 +110,7 @@
                 </span>
             </a>
             <a :href="'https://t.me/' + contactTelegram"
-               class="button-social-icon mini"
+               class="button-brand-icon mini"
                target="_blank"
             >
                 <span class="icon telegram-color">

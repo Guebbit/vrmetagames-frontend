@@ -10,17 +10,17 @@
         :height="150"
     >
         <div class="card-main-info">
-            <div class="theme-icon-text">
+            <div class="simple-icon-text">
                 <font-awesome-icon :icon="['fas', 'clock']" />
                 {{ scheduleReadable?.hourStart }}
                 <font-awesome-icon :icon="['fas', 'arrow-right-long']" class="text-white" />
                 {{ scheduleReadable?.hourEnd }}
             </div>
-            <div class="theme-icon-text">
+            <div class="simple-icon-text">
                 <font-awesome-icon :icon="['fas', 'play']" />
                 {{ labelDuration }}
             </div>
-            <div class="theme-icon-text">
+            <div class="simple-icon-text">
                 <font-awesome-icon :icon="['fas', 'coins']" />
                 {{ scheduleReadable?.cost }} €
             </div>

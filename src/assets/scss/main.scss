@@ -1,7 +1,7 @@
 // TODO OPTIMIZE
 @import 'main/global';
 @import "atoms/ButtonParallelogram";
-@import 'guebbit-scss-library/components/atoms/ButtonSocialIcon';
+@import 'guebbit-scss-library/components/atoms/ButtonBrandIcon';
 @import 'guebbit-scss-library/components/atoms/SimpleList';
 @import 'guebbit-scss-library/components/atoms/SimpleBlockquote';
 @import 'guebbit-scss-library/components/atoms/GreatBlockquote';
@@ -14,12 +14,40 @@
 @import 'fixes/elevation';
 
 
-@include guebbit-include-social-colors();
-@include guebbit-include-flex-gap((6, 12, 24));
 
+// TODO guebbit (magari ancora meno di atom?)
+@import 'atoms/SimpleIconText';
+
+
+
+@include guebbit-include-brand-colors;
+@include guebbit-include-font-size((
+        (n2, 0.6em),
+        (n1, 0.8em),
+        (1, 1.2em),
+        (2, 1.5em),
+        (3, 2em),
+));
+@include guebbit-include-flex-gap((
+        (6, 6px),
+        (12, 12px),
+        (24, 24px),
+));
 
 .hero-panel-content{
     padding: 24px;
+}
+
+
+@include media-mobile(){
+    .desktop-only{
+        display: none !important;
+    }
+}
+@include media-desktop(){
+    .mobile-only{
+        display: none !important;
+    }
 }
 
 .button-parallelogram{
@@ -91,7 +119,7 @@
 }
 
 
-.button-social-icon{
+.button-brand-icon{
     .icon{
         &.primary-color{
             color: rgb(var(--v-theme-primary));
@@ -128,3 +156,4 @@
         }
     }
 }
+

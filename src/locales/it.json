@@ -8,6 +8,7 @@
     "opening-hours": "Orari",
     "about-us": "Su di noi",
     "where-us": "Dove siamo",
+    "back-home": "Torna alla Home",
     "contacts": "Contatti",
     "user": "Utente",
     "closed": "Chiuso",
@@ -17,9 +18,16 @@
     "login": "Login",
     "logout": "Logout",
     "look-openings": "Guarda gli orari",
+    "work-in-progress": "Lavori in corso",
     "half-hour": "mezz'ora",
     "one-hour": "1 ora",
     "ten-hours":  "10 ore",
+    "genre": "Genere",
+    "family-friendly": "Per famiglie",
+    "singleplayer": "Singolo",
+    "multiplayer": "Multigiocatore",
+    "online": "Online",
+    "offline": "Offline",
     "schedule-details-time-count": [
       "Tempo non valido",
       "Nessun tempo",
@@ -45,10 +53,21 @@
       "twitter:card": "summary"
     }
   },
+  "errors": {
+    "error-404-title": "Pagina non trovata"
+  },
+  "games": {
+    "genre-action": "Azione",
+    "genre-sport": "Sport",
+    "genre-adventure": "Avventura",
+    "genre-rhythm": "Ritmo",
+    "genre-puzzle": "Puzzle",
+    "genre-shooter": "Sparatutto",
+    "genre-party-game": "Party Game"
+  },
   "home-page": {
     "landing-title": "VR Room <br> Carpi",
-    "landing-subtitle": "E-Carpi è la prima ASD di Carpi che si occupa di E-Sports riconosciuta dal CONI",
-    "landing-presentation-title": "E-Carpi ASD vi presenta <br> VR MetaGames",
+    "landing-presentation-title": "E-Carpi, prima ASD di Carpi di E-Sports riconosciuta dal CONI",
     "landing-presentation-text-1": "Scopri il MetaVerso",
     "landing-presentation-button-1": "Su di noi",
     "landing-presentation-text-2": "Vivi la realtà virtuale",
@@ -96,7 +115,7 @@
     "footer-content-1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     "footer-content-2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
   },
-  "play": {
+  "play-page": {
     "schedule-details-last-visit": "Ultima visita",
     "schedule-form-button-play-now": "Gioca subito!",
     "schedule-form-button-new": "Inserisci evento",

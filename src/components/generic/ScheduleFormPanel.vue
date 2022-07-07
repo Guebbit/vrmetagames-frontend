@@ -19,11 +19,11 @@
                     group
                 >
                     <v-btn :value="true">
-                        {{ $t('play.schedule-form-mode-fast') }}
+                        {{ $t('play-page.schedule-form-mode-fast') }}
                     </v-btn>
 
                     <v-btn :value="false">
-                        {{ $t('play.schedule-form-mode-slow') }}
+                        {{ $t('play-page.schedule-form-mode-slow') }}
                     </v-btn>
                 </v-btn-toggle>
 
@@ -75,7 +75,7 @@
                                 :color="formScheduleAvailability.length > 0 ? 'danger' : 'success'"
                             >
                                 <font-awesome-icon class="mr-2" :icon="formScheduleAvailability.length > 0 ? ['fas', 'stop'] : ['fas', 'play']" />
-                                {{ formScheduleAvailability.length > 0 ? $t('play.schedule-form-' + formScheduleAvailability[0]) : $t('play.schedule-form-available') }}
+                                {{ formScheduleAvailability.length > 0 ? $t('play-page.schedule-form-' + formScheduleAvailability[0]) : $t('play-page.schedule-form-available') }}
                             </v-chip>
                         </v-col>
                     </v-row>
@@ -86,7 +86,7 @@
                         hide-details="auto"
                     >
                         <template #label>
-                            <span v-html="$t('play.select-event-form-rules')"></span>
+                            <span v-html="$t('play-page.select-event-form-rules')"></span>
                         </template>
                     </v-checkbox>
                 </v-card-text>
@@ -98,14 +98,14 @@
                     @click="formConfirmButton"
                 >
                     {{
-                        !form.rules ? $t('play.schedule-form-button-rules') :
-                            formScheduleAvailability.includes('max-reached') ? $t('play.schedule-form-button-business-full') :
-                                formScheduleAvailability.includes('closed') ? $t('play.schedule-form-button-business-closed') :
-                                    formScheduleAvailability.length > 0 ? $t('play.schedule-form-button-business-unavailable') :
-                                        !formIsValid ? $t('play.schedule-form-button-invalid') :
-                                            scheduleId ? $t('play.schedule-form-button-edit') :
-                                                fastMode ? $t('play.schedule-form-button-play-now') :
-                                                    $t('play.schedule-form-button-new')
+                        !form.rules ? $t('play-page.schedule-form-button-rules') :
+                            formScheduleAvailability.includes('max-reached') ? $t('play-page.schedule-form-button-business-full') :
+                                formScheduleAvailability.includes('closed') ? $t('play-page.schedule-form-button-business-closed') :
+                                    formScheduleAvailability.length > 0 ? $t('play-page.schedule-form-button-business-unavailable') :
+                                        !formIsValid ? $t('play-page.schedule-form-button-invalid') :
+                                            scheduleId ? $t('play-page.schedule-form-button-edit') :
+                                                fastMode ? $t('play-page.schedule-form-button-play-now') :
+                                                    $t('play-page.schedule-form-button-new')
                     }}
                     <font-awesome-icon :icon="(!formIsValid || formScheduleAvailability.length > 0) ? ['fas', 'ban'] : fastMode ? ['fas', 'play'] : ['fas', 'plus']" />
                 </v-btn>
