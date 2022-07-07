@@ -1,6 +1,8 @@
 <template>
     <figure class="image-hover-up-card">
-        <img :src="image" />
+        <slot>
+            <img :src="image" />
+        </slot>
         <figcaption v-show="text">{{ text }}</figcaption>
     </figure>
 </template>
@@ -25,7 +27,7 @@ defineProps({
 // WARNING: fix width or it will wobble
 
 $image-hover-up-card-height: 400px !default;
-$image-hover-up-card-height-mobile: $image-hover-up-card-height !default;
+$image-hover-up-card-height-mobile: 250px !default;
 $image-hover-up-card-reflex: #fff !default;
 $image-hover-up-card-shadow: #000 !default;
 $image-hover-up-card-mobile-threshold: 600px !default;
@@ -89,7 +91,7 @@ $image-hover-up-card-transition-duration: 0.4s !default;
         }
     }
 
-    @media (min-width: $image-hover-up-card-mobile-threshold){
+    @media (max-width: $image-hover-up-card-mobile-threshold){
         height: $image-hover-up-card-height-mobile;
     }
 }

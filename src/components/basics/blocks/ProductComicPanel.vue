@@ -10,14 +10,18 @@
             '--product-comic-panel-secondary': secondary,
         }"
     >
+        <!-- TODO background2 => background || backgroundMedia -->
+        <template #background >
+            <slot name="background2" />
+        </template>
         <div>
-            <slot name="background">
-                <v-img
+            <slot name="image">
+                <!-- TODO -->
+                <img
                     class="panel-image"
                     :src="image"
                     :alt="'title'"
                     :title="'title + subtitle'"
-                    contain
                     style="width: 200px; height: 200px;"
                 />
             </slot>
@@ -130,14 +134,14 @@ $product-comic-panel-mobile-threshold: 900px !default;
 
     &.hero-panel{
         .panel-shadow{
-            opacity: 0.9;
+            opacity: 1;
             background: linear-gradient(to bottom,
                 $product-comic-panel-shadow,
                 rgba($product-comic-panel-shadow, 0.7),
                 rgba($product-comic-panel-shadow, 0.5),
                 rgba($product-comic-panel-shadow, 0.7),
                 $product-comic-panel-shadow
-            ) !important;
+            );
         }
 
         .panel-background{
@@ -187,6 +191,9 @@ $product-comic-panel-mobile-threshold: 900px !default;
 
                 @media (max-width: $product-comic-panel-mobile-threshold){
                     flex-direction: column;
+                    & > * {
+                        width: 100%;
+                    }
                 }
             }
         }
