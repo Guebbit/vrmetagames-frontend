@@ -1,6 +1,7 @@
 // TODO OPTIMIZE
 @import 'main/global';
-@import "atoms/ButtonParallelogram";
+@import '_transitions';
+@import 'atoms/ButtonParallelogram';
 @import 'guebbit-scss-library/components/atoms/ButtonBrandIcon';
 @import 'guebbit-scss-library/components/atoms/SimpleList';
 @import 'guebbit-scss-library/components/atoms/SimpleBlockquote';
@@ -8,9 +9,9 @@
 @import 'guebbit-scss-library/components/atoms/HoverLineHighlight';
 @import 'guebbit-scss-library/components/atoms/StatusCircle';
 @import "guebbit-scss-library/components/molecules/TypographyPanel";
-@import "fixes/SwiperJSHelper";
+@import 'fixes/SwiperJSHelper';
 // TODO TEMPORARY: hope that vuetify make this easily modifiable
-@import "fixes/VuetifyBetaFixes";
+@import 'fixes/VuetifyBetaFixes';
 @import 'fixes/elevation';
 
 
@@ -156,4 +157,3 @@
         }
     }
 }
-

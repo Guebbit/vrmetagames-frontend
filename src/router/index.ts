@@ -94,8 +94,7 @@ export const routes: Array<RouteRecordRaw> = [
         // https://www.virtual-room.com/en/mission/time-travel-chapter-1/
         path: "/games/:id",
         name: "GameTarget",
-        // component: ProductDetails,
-        component: WorkInProgress,
+        component: ProductDetails,
         props: true
     },
 

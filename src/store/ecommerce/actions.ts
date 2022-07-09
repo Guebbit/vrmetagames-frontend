@@ -146,7 +146,8 @@ const mockServerStations = [
         capacity: 1
     }
 ];
-// TODO C:\Users\guerz\Lavoro\Temporary\drive-download-20220407T203652Z-001\games
+
+// TODO SLUG / ID?
 const mockServerGames = [
     {
         id: "item-1",
@@ -161,6 +162,7 @@ const mockServerGames = [
             "Lightsabers"
         ],
         image: imagesUrl + 'games/beat-saber.jpg',
+        imageThumbnail: imagesUrl + 'games/thumbnails/beat-saber.jpg',
         coverFront: imagesUrl + 'games/beat-saber-cover.jpg',
         coverFrontThumbnail: imagesUrl + 'games/thumbnails/beat-saber-cover.jpg',
         coverSpine: imagesUrl + 'games/beat-saber-spine.jpg',
@@ -345,8 +347,11 @@ const mockServerGames = [
             "PVP"
         ],
         image: imagesUrl + 'games/walkabout-mini-golf.jpg',
+        imageThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf.jpg',
         coverFront: imagesUrl + 'games/walkabout-mini-golf-cover.jpg',
+        coverFrontThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-cover.jpg',
         coverSpine: imagesUrl + 'games/walkabout-mini-golf-spine.jpg',
+        coverSpineThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-spine.jpg',
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         flagFamilyFriendly: true,
@@ -361,7 +366,8 @@ const mockServerGames = [
         tags: [
             "Open World"
         ],
-        image: imagesUrl + 'games/zenith-the-last-city.webp',
+        image: imagesUrl + 'games/zenith-the-last-city.jpg',
+        imageThumbnail: imagesUrl + 'games/thumbnails/zenith-the-last-city.jpg',
         coverFront: imagesUrl + 'games/zenith-the-last-city-cover.jpg',
         coverFrontThumbnail: imagesUrl + 'games/thumbnails/zenith-the-last-city-cover.jpg',
         coverSpine: imagesUrl + 'games/zenith-the-last-city-spine.jpg',

@@ -338,7 +338,7 @@ export default defineComponent({
                 selectConstraint: 'businessHours',
                 eventConstraint: 'businessHours',
                 // defaultTimedEventDuration: "01:00:00",   // NOT WORKING
-                longPressDelay: 0,                          // integer, time user must hold touch before drag\select WARNING: 0 because scroll is never needed https://fullcalendar.io/docs/touch
+                // longPressDelay: 0,                       // integer, time user must hold touch before drag\select WARNING: 0 ONLY if scroll can never happen https://fullcalendar.io/docs/touch
                 editable: this.admin,                       // boolean, events can be dragged and resized
                 eventResourceEditable: this.admin,          // same, but with resources
                 selectable: true,                           // boolean, select on calendar

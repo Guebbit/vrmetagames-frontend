@@ -3,7 +3,11 @@
         <slot>
             <img :src="image" />
         </slot>
-        <figcaption v-show="text">{{ text }}</figcaption>
+        <figcaption
+            class="card-overlay"
+            v-show="text"
+            v-html="text"
+        />
     </figure>
 </template>
 
@@ -59,7 +63,7 @@ $image-hover-up-card-transition-duration: 0.4s !default;
             opacity $image-hover-up-card-transition-duration;
     }
 
-    figcaption{
+    .card-overlay {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -76,6 +80,7 @@ $image-hover-up-card-transition-duration: 0.4s !default;
         object-fit: cover;
     }
 
+    &.active,
     &:hover {
         box-shadow: 0 8px 16px 3px rgba($image-hover-up-card-shadow,0.6);
         transform: translateY(-3px) scale(1.05) rotateX(15deg);
@@ -86,7 +91,7 @@ $image-hover-up-card-transition-duration: 0.4s !default;
             opacity: 0.15;
         }
 
-        figcaption {
+        .card-overlay  {
             transform: none;
         }
     }

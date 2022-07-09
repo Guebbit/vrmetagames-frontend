@@ -44,7 +44,7 @@
                             </v-list-item-avatar>
                             <v-list-item-subtitle>{{ $t('play-page.select-event-label-disclaimer') }}</v-list-item-subtitle>
                         </v-list-item>
-                        <template v-if="userInfo.isAdmin && selectedItemIdentifier">
+                        <template v-if="isAuthenticated && userInfo.isAdmin && selectedItemIdentifier">
                             <v-list-item>
                                 <v-btn
                                     block
@@ -80,8 +80,9 @@
                     />
                 </v-col>
                 <v-col cols="12" lg="9">
+                    <!-- TODO hide mobile -->
                     <Calendar
-                        :admin          = "userInfo.isAdmin"
+                        :admin          = "isAuthenticated && userInfo.isAdmin"
                         :events         = "scheduleDetailedList"
                         :resources      = "resources"
                         :businessHours  = "businessHoursFullcalendar"
@@ -314,7 +315,7 @@ import apiControllerPageList from "@/resources/mixins/apiControllerPageList";
 import Calendar from "@/components/play/Calendar.vue";
 import EventContentCard from "@/components/play/FAEventContentCard.vue";
 import EventCard from "@/components/play/EventCard.vue";
-import ScheduleFormCard from "@/components/generic/ScheduleFormCard.vue";
+import ScheduleFormCard from "@/components/generic/forms/ScheduleFormCard.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -391,6 +392,9 @@ export default defineComponent({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             scheduleEditableTime: ({ ecommerce: { scheduleEditableTime } }: any) => scheduleEditableTime,
         }),
+        ...mapGetters('user', [
+            'isAuthenticated'
+        ]),
         ...mapGetters('ecommerce', [
             'scheduleDetailedList',
             'scheduleReadable',

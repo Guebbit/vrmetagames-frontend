@@ -13,7 +13,7 @@
                         {{ t('errors.error-404-title') }}
                     </h1>
                     <div class="alert-panel">
-                        <SocialPanel />
+                        <BusinessContactsPanel />
                         <InclinedButton
                             class="panel-button mt-10"
                             size="x-large"
@@ -41,7 +41,7 @@ import { useI18n } from "vue-i18n";
 import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
 import InclinedButton from "@/components/basics/buttons/InclinedButton.vue";
 import { useTheme } from "vuetify";
-import SocialPanel from "@/components/generic/panels/SocialPanel.vue";
+import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsPanel.vue";
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();

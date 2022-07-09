@@ -1,6 +1,6 @@
 <template>
     <Panel
-        class="social-panel"
+        class="social-panel text-center"
         height="400px"
         shadow="#000"
         :shadow-opacity="0.95"

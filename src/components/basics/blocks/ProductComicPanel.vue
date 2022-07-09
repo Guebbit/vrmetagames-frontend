@@ -1,8 +1,8 @@
 <template>
+    <!-- TODO generico, rimuovere vuetify -->
     <Panel
         class="product-comic-panel"
         v-bind="$props"
-        height="70vh"
         centered
         :backgroundImage="backgroundImage"
         :style="{
@@ -130,7 +130,6 @@ $product-comic-panel-mobile-threshold: 900px !default;
 
 .product-comic-panel{
     overflow: hidden;
-    padding: 60px 0;
 
     &.hero-panel{
         .panel-shadow{
@@ -191,6 +190,8 @@ $product-comic-panel-mobile-threshold: 900px !default;
 
                 @media (max-width: $product-comic-panel-mobile-threshold){
                     flex-direction: column;
+                    gap: 24px;
+                    padding: 0 24px;
                     & > * {
                         width: 100%;
                     }

@@ -1,5 +1,5 @@
 <template>
-    <ul class="simple-list">
+    <ul class="simple-list mx-auto">
         <li class="hover-line-highlight">
             <a target="_blank" href="https://www.google.com/maps/dir/44.8703811,10.8166522/vr+metagames/@44.8197379,10.7501583,12z/data=!3m1!4b1!4m9!4m8!1m1!4e1!1m5!1m1!1s0x477ff34644a5efb1:0xc99febe9f2bbf4dc!2m2!1d10.880918!2d44.7793981">
                 <font-awesome-icon :icon="['fas', 'location-dot']" />

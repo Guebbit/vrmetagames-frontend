@@ -102,6 +102,8 @@ const onSlideChange = () => {
 </script>
 
 <style lang="scss">
+@import 'src/assets/scss/main/global';
+
 .swiper.game-scrollbar{
     padding: 24px 0;
 
@@ -133,7 +135,7 @@ const onSlideChange = () => {
             opacity: 0;
             transition: opacity 0.4s;
             background: rgba(var(--v-theme-primary), 0.3);
-            box-shadow: 0 0 60px rgba(var(--v-theme-secondary), 0.4), 0 11px 15px -7px rgba(var(--v-theme-secondary), 0.2), 0 24px 38px 3px rgba(var(--v-theme-secondary), 0.14), 0 9px 46px 8px rgba(var(--v-theme-secondary), 0.12) !important;
+            @include boxShadowSecondary;
             border-radius: 12px;
         }
         &:hover{

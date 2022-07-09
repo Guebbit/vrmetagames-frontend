@@ -109,15 +109,16 @@
                 :key="'game-panel-' + game.id"
                 :primary="themeColors.secondary"
                 :secondary="themeColors.primary"
-                price="10"
-                currency="€"
+                height="70vh"
             >
                 <template #background2 >
                     <v-img
                         cover
                         class="panel-background"
-                        :lazy-src="game.coverFrontThumbnail"
-                        :src="game.coverFront"
+                        :lazy-src="game.imageThumbnail"
+                        :src="game.image"
+                        height="100%"
+                        width="100%"
                     >
                         <template #placeholder>
                             <v-row
@@ -140,23 +141,27 @@
                         <v-img
                             :lazy-src="game.coverFrontThumbnail"
                             :src="game.coverFront"
+                            height="100%"
+                            width="100%"
                         />
                     </ImageHoverUpCard>
                 </template>
                 <template #content>
+                    <div class="categories-wrapper">
+                        <v-btn
+                            v-for="(category, i) in game.categories"
+                            :key="'category-title-' + i"
+                            class="mx-2"
+                            variant="flat"
+                            color="primary"
+                        >
+                            {{ t('games.genre-' + category) }}
+                        </v-btn>
+                    </div>
+
                     <!-- TODO stations -->
                     <h3 class="panel-title">{{ game.title }}</h3>
                     <h4 class="panel-subtitle">{{ game.author }}</h4>
-                    <div class="panel-chips">
-                        <v-chip
-                            v-for="(badge, i) in game.categories"
-                            :key="'badge-' + i"
-                            class="ma-2"
-                            text-color="white"
-                        >
-                            {{ t('games.genre-' + badge) }}
-                        </v-chip>
-                    </div>
                     <div class="panel-chips">
                         <v-chip
                             v-for="(badge, i) in game.tags"
@@ -244,29 +249,35 @@
             </ProductComicPanel>
         </div>
 
-        <v-row v-show="flagVisualizationMasonry === 0"
-               class="game-list-masonry"
-               justify="center"
-        >
-            <v-col v-for="game in gameListFiltered"
-                 :key="'game-wrapper-' + game.id"
-                 cols="6" md="4" lg="2" xl="1"
+        <v-container v-show="flagVisualizationMasonry === 0">
+            <v-row
+                class="game-list-masonry"
+                justify="center"
             >
-                <BookCard
-                    :key="'game-' + game.id"
-                    ratio="4.25/6.87"
-                    rotation="2"
-                    :image="game.coverFront"
-                    :spine="game.coverSpine"
-                    @click="$router.push({
-                        name: 'GameTarget',
-                        params: {
-                            id: game.id
-                        }
-                    })"
-                />
-            </v-col>
-        </v-row>
+                <v-col v-for="game in gameListFiltered"
+                       :key="'game-wrapper-' + game.id"
+                       cols="6" md="4" lg="3" xl="2"
+                >
+                    <ImageHoverUpCard
+                        :key="'game-' + game.id"
+                        :image="game.coverFront"
+                        @click="$router.push({
+                            name: 'GameTarget',
+                            params: {
+                                id: game.id
+                            }
+                        })"
+                    >
+                        <v-img
+                            :lazy-src="game.coverFrontThumbnail"
+                            :src="game.coverFront"
+                            height="100%"
+                            width="100%"
+                        />
+                    </ImageHoverUpCard>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -283,7 +294,6 @@ import { useI18n } from "vue-i18n";
 import type { gameMap } from "@/interfaces";
 import ProductComicPanel from "@/components/basics/blocks/ProductComicPanel.vue";
 import ImageHoverUpCard from "@/components/basics/cards/ImageHoverUpCard.vue";
-import BookCard from "guebbit-vue-library/src/components/cards/BookCard.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -304,7 +314,7 @@ const searchText = ref('');
 const flagFamilySafe = ref();
 const flagOfflineMultiplayer = ref();
 const flagOnlineMultiplayer = ref();
-const flagVisualizationMasonry = ref();
+const flagVisualizationMasonry = ref(0);
 
 // flags transposed in array of strings for better filter
 const flagBooleanList = computed<Array<keyof gameMap>>(() => {
@@ -450,6 +460,7 @@ const selectedCategoryList = computed<string[]>(() => {
         */
 
         .product-comic-panel{
+            padding: 60px 0;
             /*
             .panel-shadow {
                 opacity: 1;
@@ -463,6 +474,12 @@ const selectedCategoryList = computed<string[]>(() => {
             }
             */
 
+            .categories-wrapper{
+                position: absolute;
+                top: -2em;
+                right: 0;
+            }
+
             .v-chip{
                 background: rgb(var(--v-theme-primary));
             }
@@ -474,17 +491,26 @@ const selectedCategoryList = computed<string[]>(() => {
                 font-size: 0.9em;
                 margin-top: 24px;
                 .icon-text-resources{
-                    margin: 0 12px;
+                    margin: 12px;
                     color: rgb(var(--v-theme-on-surface));
                     .icon{
                         color: inherit;
                     }
                 }
+                @include media-mobile(){
+                    text-align: center;
+                }
             }
         }
     }
     .game-list-masonry{
-        //
+        .image-hover-up-card{
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+            &:hover{
+                @include boxShadowSecondary;
+            }
+        }
     }
 }
 </style>

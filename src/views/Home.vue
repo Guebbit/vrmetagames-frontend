@@ -574,7 +574,7 @@ onMounted(() => {
 
 
 <style lang="scss">
-@import 'src/assets/scss/main/global';
+@import '@/assets/scss/main/global';
 
 #HomePage{
     .theme-section{

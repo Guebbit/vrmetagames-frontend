@@ -8,6 +8,10 @@
             :size="100"
         ></v-progress-circular>
         <v-container fluid>
+            <h1>
+                Fast mode = togliere "conferma tutti gli eventi", "inserisci evento", modifica evento, etc"
+                Compra direttamente, apri una modale con già la richiesta di pagamento (bottone per andare al "play avanzato" o al checkout)
+            </h1>
             <v-row>
                 <v-col cols="12" lg="3">
                     <v-list class="schedule-info-card">
@@ -37,7 +41,7 @@
                             </v-list-item-avatar>
                             <v-list-item-subtitle>{{ $t('play-page.select-event-label-disclaimer') }}</v-list-item-subtitle>
                         </v-list-item>
-                        <template v-if="userInfo.isAdmin && selectedItemIdentifier">
+                        <template v-if="isAuthenticated && userInfo.isAdmin && selectedItemIdentifier">
                             <v-list-item>
                                 <v-btn
                                     block
@@ -283,7 +287,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 
 import apiControllerPageList from "@/resources/mixins/apiControllerPageList";
 import EventCard from "@/components/play/EventCard.vue";
-import ScheduleFormPanel from "@/components/generic/ScheduleFormPanel.vue";
+import ScheduleFormPanel from "@/components/generic/forms/ScheduleFormPanel.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -332,6 +336,9 @@ export default defineComponent({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             userInfo: ({ user: { userInfo } }: any) => userInfo,
         }),
+        ...mapGetters('user', [
+            'isAuthenticated'
+        ]),
         ...mapGetters('ecommerce', [
             'scheduleReadable',
             'checkScheduleIsEditable',

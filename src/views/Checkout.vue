@@ -38,7 +38,7 @@
 
                 <v-card>
                     <v-card-text>
-                        <SocialPanel />
+                        <BusinessContactsPanel />
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -159,7 +159,7 @@ import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
 
 import UserInfoCard from "@/components/basics/cards/UserInfoCard.vue";
-import SocialPanel from "@/components/generic/panels/SocialPanel.vue";
+import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsPanel.vue";
 
 import type { scheduleMap, scheduleReadableMap } from "@/interfaces";
 

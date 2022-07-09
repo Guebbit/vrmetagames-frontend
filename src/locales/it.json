@@ -16,6 +16,7 @@
     "cancel": "Cancella",
     "info": "Info",
     "search": "Cerca",
+    "edit": "Modifica",
     "login": "Login",
     "logout": "Logout",
     "more-info": "Più informazioni",
@@ -155,6 +156,9 @@
     "total-wallet": "Ore nel wallet",
     "total-wallet-remaining": "Wallet rimanente",
     "final-cost": "Costo finale"
+  },
+  "product-page": {
+    "edit-product": "Modifica prodotto"
   },
   "schedule-card": {
     "online-chip": "online",
