@@ -1,5 +1,5 @@
 import type { ActionContext } from "vuex";
-import type { stateUserMap, stateRootMap } from "@/interfaces";
+import type { stateUserMap, stateRootMap, loginFormMap, registrationFormMap } from "@/interfaces";
 
 const mockUserInfo = {
     id: 'user1',
@@ -89,10 +89,12 @@ export default {
     /**
      *
      * @param {Function} commit
-     * @param {dispatch} commit
+     * @param {Function} dispatch
+     * @param {Object} form
      * @return {Promise}
      */
-    async userLogin({ commit, dispatch }: ActionContext<stateUserMap, stateRootMap>) :Promise<void> {
+    async userRegistration({ commit, dispatch }: ActionContext<stateUserMap, stateRootMap>, form :registrationFormMap) :Promise<void> {
+        console.log("REGISTERED", form);
         return Promise.resolve().then(() => {
             commit("setAuthenticationTokens", {
                 jwt: '1234'
@@ -103,6 +105,24 @@ export default {
         .catch(() => dispatch("main/handleServerError", "getStations ERROR", { root: true }));
     },
 
+    /**
+     *
+     * @param {Function} commit
+     * @param {Function} dispatch
+     * @param {string} user
+     * @param {string} password
+     * @return {Promise}
+     */
+    async userLogin({ commit, dispatch }: ActionContext<stateUserMap, stateRootMap>, { user, password } :loginFormMap) :Promise<void> {
+        console.log("LOGIN", user, password)
+        return Promise.resolve().then(() => {
+            commit("setAuthenticationTokens", {
+                jwt: '1234'
+            });
+            return dispatch("main/initApp", undefined, { root: true });
+        })
+        .catch(() => dispatch("main/handleServerError", "getStations ERROR", { root: true }));
+    },
 
     /**
      *
@@ -111,6 +131,44 @@ export default {
     userLogout({ commit }: ActionContext<stateUserMap, stateRootMap>) {
         // reset tokens
         commit("setAuthenticationTokens");
+    },
+
+    /**
+     * Check if username is already used or not
+     * WARNING: must be debounced (can't do here because it would not return the value)
+     *
+     * @param {Function} dispatch
+     * @param {string} check
+     * @return {Promise}
+     */
+    async checkUsername({ dispatch }: ActionContext<stateUserMap, stateRootMap>, check :string) :Promise<boolean> {
+        return Promise.resolve()
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                dispatch("main/handleServerError", "getStations ERROR", { root: true });
+                return false;
+            });
+    },
+
+    /**
+     * Check if email is already used or not
+     * WARNING: must be debounced (can't do here because it would not return the value)
+     *
+     * @param {Function} dispatch
+     * @param {string} check
+     * @return {Promise}
+     */
+    async checkEmail({ dispatch }: ActionContext<stateUserMap, stateRootMap>, check :string) :Promise<boolean> {
+        return Promise.resolve()
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                dispatch("main/handleServerError", "getStations ERROR", { root: true });
+                return false;
+            });
     },
 
     /**

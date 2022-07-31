@@ -34,6 +34,18 @@ export interface disclaimerMap {
     dismissable :boolean
 }
 
+export interface loginFormMap {
+    user :string
+    password :string
+}
+
+export interface registrationFormMap {
+    username :string
+    email :string
+    password :string
+    repeatPassword :string
+}
+
 export interface scheduleFormMap {
     id? :string
     date?: string

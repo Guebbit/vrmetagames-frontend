@@ -5,16 +5,15 @@ export default {
         ['9.00', '23.30'],
         [], // lunedì riposo
         ['10.00', '24.00'],
-        // ['10.00', '24.00'],
         ['12.00', '20.00'],
         ['10.00', '24.00'],
         ['10.00', '24.00'],
-        ['10.00', '24.00']
+        ['10.00', '12.00']
     ],
     // ignore hours and open or close (special occasions)
     forceClose: false,  // TODO GRAPHIC & USE
     forceOpen: false,   // TODO GRAPHIC & USE
-    // generic
+    // generic TODO rimuovere?
     modals: {
         login: false,
         play: false

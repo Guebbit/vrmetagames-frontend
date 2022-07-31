@@ -1,14 +1,32 @@
 import { createVuetify } from "vuetify";
 import { themeColors } from  "@/resources/constants";
-import '@mdi/font/css/materialdesignicons.css';
+import { aliases, fa } from 'vuetify/iconsets/fa-svg';
 
+// TODO find a way https://stackoverflow.com/questions/72246949/vuetify-3-custom-icon-sets
+// import { aliases, custom } from './vuetify-custom-set'
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   icons: {
-    // TODO REMOVE
-    iconfont: 'mdi', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
+    defaultSet: 'fa',
+    aliases: {
+      ...aliases,
+      checkboxOff: 'square'
+    },
+    sets: {
+      fa,
+    },
   },
+  // TODO find a way
+  /*
+  icons: {
+    defaultSet: 'custom',
+    aliases,
+    sets: {
+      custom,
+    },
+  },
+  */
   theme: {
     defaultTheme: "dark",
     themes: {

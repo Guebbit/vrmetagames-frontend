@@ -1,24 +1,24 @@
 // VUETIFY WAITING FIX
-.v-row{
+.v-row {
     @include media-mobile(){
         margin: 0;
     }
 }
 .page-menu-padding{
-    padding-top: 88px; // 64 + 24
+    padding-top: 88px !important; // 64 + 24
 }
 
-.vuetify-icon-button{
+.vuetify-button-icon{
     .v-btn__content{
+        display: block;
         width: 100%;
         svg{
             float: right;
         }
     }
 }
-.vuetify-icon-button-between{
+.vuetify-button-icon-between{
     .v-btn__content{
-        display: flex;
         justify-content: space-between;
         width: 100%;
     }

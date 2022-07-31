@@ -587,6 +587,7 @@ onMounted(() => {
     .landing-panel{
         .theme-page-title{
             font-size: 5rem;
+            margin-bottom: 1em;
             @include media-desktop(){
                 font-size: 8rem;
             }

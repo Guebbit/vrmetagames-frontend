@@ -2,6 +2,7 @@
 @import 'main/global';
 @import '_transitions';
 @import 'atoms/ButtonParallelogram';
+@import 'atoms/AnimationLoadingAlexWarnesRotatingSquares';
 @import 'guebbit-scss-library/components/atoms/ButtonBrandIcon';
 @import 'guebbit-scss-library/components/atoms/SimpleList';
 @import 'guebbit-scss-library/components/atoms/SimpleBlockquote';
@@ -15,13 +16,47 @@
 @import 'fixes/elevation';
 
 
-
 // TODO guebbit (magari ancora meno di atom?)
 @import 'atoms/SimpleIconText';
 
 
-
 @include guebbit-include-brand-colors;
+
+
+.cursor-pointer{
+    cursor: pointer;
+}
+
+
+.light-color {
+    color: #ffffff !important;
+
+    &::after,
+    &::before {
+        background: #ffffff !important;
+    }
+
+    &:hover {
+        color: #121212 !important;
+        background: #ffffff !important;
+    }
+}
+
+.dark-color {
+    color: #121212 !important;
+
+    &::after,
+    &::before {
+        color: #ffffff !important;
+        background: #121212 !important;
+    }
+
+    &:hover {
+        color: inherit !important;
+        background: #121212 !important;
+    }
+}
+
 @include guebbit-include-font-size((
         (n2, 0.6em),
         (n1, 0.8em),

@@ -8,8 +8,12 @@
     "opening-hours": "Orari",
     "about-us": "Su di noi",
     "where-us": "Dove siamo",
+    "home": "Home",
     "back-home": "Torna alla Home",
     "contacts": "Contatti",
+    "games": "Giochi",
+    "stations": "Postazioni",
+    "profile": "Profilo",
     "user": "Utente",
     "closed": "Chiuso",
     "confirm": "Conferma",
@@ -159,6 +163,61 @@
   },
   "product-page": {
     "edit-product": "Modifica prodotto"
+  },
+  "authentication-page": {
+    "signup": "Autenticati",
+    "signin": "Registrati",
+    "signin-explanation": "Autenticati per poter utilizzare subito i servizi della VR Room",
+    "signup-explanation": "Registrati in pochi passi, riceverai una mail con la tessera dell'associazione gratuitamente!",
+    "signin-request": "Hai già un account?",
+    "signup-request": "Non hai un account?"
+  },
+  "authentication-form": {
+    "info": {
+      "username-typing": "Scrivi il tuo nickname o soprannome",
+      "authentication-typing": "Username o email"
+    },
+    "values": {
+      "authentication": "Autenticazione",
+      "username": "Username",
+      "firstname": "Nome",
+      "lastname": "Cognome",
+      "password": "Password",
+      "password-repeat": "Ripeti password",
+      "email": "Email",
+      "phone": "Telefono",
+      "birthday": "Anno di nascita"
+    },
+    "errors": {
+      "authentication-required": "Inserisci l'username o la tua email di iscrizione",
+      "username-required": "Username mancante",
+      "username-already-used": "Username già in uso",
+      "firstname-required": "Nome mancante",
+      "lastname-required": "Cognome mancante",
+      "password-required": "Password mancante",
+      "password-repeat-required": "Deve essere uguale alla password",
+      "email-required": "Email mancante",
+      "email-invalid": "Email non valida",
+      "email-already-used": "Email già in uso",
+      "phone-required": "Telefono mancante",
+      "birthday-required": "Anno di nascita necessario",
+      "birthday-invalid": "Anno di nascita non valido",
+      "birthday-too-early": "Troppo giovane!",
+      "terms-required": "Accetta le condizioni"
+    },
+    "password-strong": {
+      "required": "Password mancante",
+      "min-number": "La password deve contenere almeno 8 caratteri",
+      "need-uppercase": "La password deve contenere almeno una lettera maiuscola",
+      "need-lowercase": "La password deve contenere almeno una lettera minuscola",
+      "need-digit": "La password deve contenere almeno un numero",
+      "need-special-char": "La password deve contenere almeno un carattere speciale"
+    },
+    "switch-to-signin": "Autenticati",
+    "switch-to-signup": "Registrati",
+    "submit-signin": "Entra!",
+    "submit-signup": "Iscriviti",
+    "forgot-password": "Password dimenticata"
   },
   "schedule-card": {
     "online-chip": "online",

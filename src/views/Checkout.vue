@@ -151,6 +151,11 @@
             </v-col>
         </v-row>
     </v-container>
+
+	<Footer
+		:primary="themeColors.primary"
+		:secondary="themeColors.secondary"
+	/>
 </template>
 
 <script setup lang="ts">
@@ -160,7 +165,7 @@ import { useI18n } from "vue-i18n";
 
 import UserInfoCard from "@/components/basics/cards/UserInfoCard.vue";
 import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsPanel.vue";
-
+import Footer from "@/components/generic/Footer.vue";
 import type { scheduleMap, scheduleReadableMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -182,6 +187,7 @@ import {
     faCity,
     faPhone,
 } from "@fortawesome/free-solid-svg-icons";
+import { useTheme } from "vuetify";
 
 
 library.add(
@@ -204,6 +210,7 @@ library.add(
 
 const { state, getters } = useStore();
 const { t } = useI18n();
+const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 
 /**
  * List of schedules

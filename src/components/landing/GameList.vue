@@ -1,51 +1,50 @@
 <template>
     <swiper
+		ref="swiperRef"
         class="game-scrollbar slides-per-view-auto"
         :class="{
             'with-controls': controls
         }"
         :modules="modules"
-        :scrollbar="{ draggable: true }"
-        :autoplay="AutoplaySettings"
+        :scrollbar="{
+			draggable: true
+		}"
+        :autoplay="{
+			delay: 3000,
+			disableOnInteraction: true
+		}"
         :slidesPerView="'auto'"
-        @swiper="onSwiper"
-        @slideChange="onSlideChange"
+
+		@mouseover="onSwiperHoverIn"
+		@mouseleave="onSwiperHoverOut"
+        @swiper="onSwiperInit"
+        @slideChange="onSwiperSlideChange"
     >
         <swiper-slide
             v-for="item in gamesList"
             :key="'slide-' + item.id"
         >
-            <div class="book-card-wrapper">
+            <div class="book-card-wrapper"
+				@click="$router.push({
+					name: 'GameTarget',
+					params: {
+						id: item.id
+					}
+				})"
+			>
                 <BookCard
                     :key="'game-' + item.id"
                     ratio="4.25/6.87"
                     rotation="2"
                     :image="item.coverFront"
                     :spine="item.coverSpine"
-                    @click="$router.push({
-                        name: 'GameTarget',
-                        params: {
-                            id: item.id
-                        }
-                    })"
                 />
-                <div v-if="controls"
-                     class="card-actions"
+                <div v-show="controls"
+                     class="card-actions d-flex justify-center align-center flex-column"
                 >
-                    <v-btn
-                        color="secondary"
-                        size="large"
-                        elevation="12"
-                    >
-                        PLAY
-                    </v-btn>
-                    <v-btn
-                        color="primary"
-                        size="large"
-                        elevation="12"
-                    >
-                        INFO
-                    </v-btn>
+					<v-btn variant="text" icon>
+						<font-awesome-icon :icon="['fas', 'play']" size="4x" />
+					</v-btn>
                 </div>
             </div>
         </swiper-slide>
@@ -53,27 +52,34 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs, defineProps } from "vue";
+// https://swiperjs.com/vue#use-swiper
+// https://swiperjs.com/swiper-api
+
+import { computed, ref, toRefs, defineProps } from "vue";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
 
-import { Autoplay, Scrollbar } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/vue';
 import BookCard from "guebbit-vue-library/src/components/cards/BookCard.vue";
-
 import type { gameMap } from '@/interfaces';
 
+import { Autoplay, Scrollbar } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faPlay, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+
+library.add(faPlay, faCircleInfo);
+
+
 const { t } = useI18n();
-const {
-    state
-} = useStore();
+const { state } = useStore();
 
 const props = defineProps({
-    // TODO
     controls: {
         type: Boolean,
         default: () => {
-            return false;
+            return true;
         }
     }
 });
@@ -86,16 +92,28 @@ const modules = [
     Autoplay,
     Scrollbar
 ];
-const autoplaySettings = {
-    delay: 3000,
-    disableOnInteraction: false
+
+const swiperInstance = ref<typeof Swiper | null>(null);
+
+const onSwiperInit = (instance :typeof Swiper) => {
+    console.log("gamelist swiper", instance);
+	swiperInstance.value = instance;
+	swiperInstance.value.autoplay.pause()
 };
 
-const onSwiper = (swiper :typeof Swiper) => {
-    console.log("gamelist swiper", swiper);
+const onSwiperHoverIn = () => {
+	if(!swiperInstance.value)
+		return;
+	// swiperInstance.value.autoplay.pause()
+};
+const onSwiperHoverOut = () => {
+	if(!swiperInstance.value)
+		return;
+	// swiperInstance.value.autoplay.run()
 };
 
-const onSlideChange = () => {
+
+const onSwiperSlideChange = () => {
     console.log('slide change');
 };
 
@@ -121,9 +139,11 @@ const onSlideChange = () => {
     }
 
     .book-card-wrapper {
-        position: relative;
+		position: relative;
         cursor: pointer;
-        &:after{
+
+		/*
+        &:before{
             content: '';
             position: absolute;
             top: 50%;
@@ -139,35 +159,41 @@ const onSlideChange = () => {
             border-radius: 12px;
         }
         &:hover{
-            &:after{
+            &:before{
                 opacity: 1;
             }
         }
+        */
     }
 
     &.with-controls{
         .book-card-wrapper{
-            position: relative;
-            .book-card {
-                transition: opacity 0.4s;
-                &:hover{
-                    opacity: 0.7;
-                    & + .card-actions {
-                        bottom: 24px;
-                        opacity: 1;
-                    }
-                }
-            }
-            .card-actions {
-                display: flex;
-                justify-content: space-around;
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                opacity: 0;
-                transition: opacity 0.4s, bottom 0.4s;
-            }
+			.book-card{
+				transition: opacity 0.4s;
+			}
+			.card-actions {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				height: 100%;
+				width: 100%;
+				opacity: 0;
+				transition: opacity 0.4s, bottom 0.4s;
+
+				svg{
+					padding: 1em;
+					background: radial-gradient(circle, rgba(#000,1) 0%, rgba(#000,0.7) 30%, rgba(#000,0) 70%);
+				}
+			}
+			&:hover{
+				.book-card{
+					opacity: 0.25;
+				}
+				.card-actions {
+					bottom: 24px;
+					opacity: 1;
+				}
+			}
         }
     }
 }

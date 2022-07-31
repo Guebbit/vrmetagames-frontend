@@ -1,8 +1,10 @@
 import { i18n } from "@/plugins/i18n"
 const { t } = i18n.global;
+import { isEmail } from "guebbit-javascript-library";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import vuetifyColors from "vuetify/lib/util/colors";
+import * as yup from 'yup';
 
 export const baseUrl = 'https://www.vrmetagames.it/'
 export const assetsUrl = 'https://assets.guebbit.com/vrmetagames/';
@@ -22,7 +24,6 @@ export const socialFacebook = "#";
 export const socialInstagram = "#";
 export const socialTiktok = "#";
 export const socialYoutube = "#";
-
 
 export const dayNames = [
     t('main.days.0'),
@@ -103,18 +104,31 @@ export const randomColorList = [
 // "on-surface" sarebbe automatico, ma posso customizzarlo
 export const themeColors = {
     primary: "#0086ff",
-    'primary-darken-1': "#0078e5",
-    'primary-darken-2': "#006bcc",
-    'primary-lighten-1': "#1992ff",
-    'primary-lighten-2': "#329eff",
+    'primary-darken-1': "#006bcc",
+    'primary-darken-2': "#005099",
+    'primary-darken-3': "#003566",
+    'primary-darken-4': "#001A33",
+    'primary-darken-5': "#000D19",
+    'primary-lighten-1': "#339EFF",
+    'primary-lighten-2': "#66B6FF",
+    'primary-lighten-3': "#99CEFF",
+    'primary-lighten-4': "#CCE6FF",
+    'primary-lighten-5': "#E5F2FF",
     'on-primary': "#ffffff",
     secondary: "#ff8a23",
-    'secondary-darken-1': "#e57c1f",
-    'secondary-darken-2': "#cc6e1c",
-    'secondary-lighten-1': "#ff9538",
-    'secondary-lighten-2': "#ffa14e",
+    'secondary-darken-1': "#CC6E1C",
+    'secondary-darken-2': "#995215",
+    'secondary-darken-3': "#66370E",
+    'secondary-darken-4': "#331B07",
+    'secondary-darken-5': "#190D03",
+    'secondary-lighten-1': "#FFA14F",
+    'secondary-lighten-2': "#FFB87B",
+    'secondary-lighten-3': "#FFD0A7",
+    'secondary-lighten-4': "#FFE7D3",
+    'secondary-lighten-5': "#FFF3E9",
     'on-secondary': "#ffffff",
     background: "#212121",
+    'on-background': "#ffffff",
     surface: "#2e2e2e",
     'on-surface': "#ffffff",
     info: "#2196F3",
@@ -123,10 +137,45 @@ export const themeColors = {
     warning: "#FB8C00",
 };
 
-
+/**
+ * Single formRules schema
+ */
 export const formRules = {
-    required: (value :string) => !!value || 'Required.',
-    min: (value :string) => value.length >= 8 || 'Min 8 characters',    // TODO test sostituire 8 con X
-    emailMatch: () => (`The email and password you entered don't match`),
-    rulesCheckbox: (value :string) => !!value || 'You must agree to continue!',
+    required: yup
+        .string()
+        .typeError('invalid')
+        .required('required')
+        .trim()
+        .min(1, 'required'),
+    requiredCheck: yup
+        .boolean()
+        .typeError('required')
+        .required('required')
+        .oneOf([true], 'required'),
+    email: yup
+        .string()
+        .typeError('invalid')
+        .email('invalid')
+        .required('required'),
+    password: yup
+        .string()
+        .typeError('invalid')
+        .required('required')
+        // The password length must be greater than or equal to 8
+        .min(8, 'min-number')
+        // The password must contain one or more uppercase characters
+        .matches(/(?=.*[A-Z])/, 'need-uppercase')
+        // The password must contain one or more lowercase characters
+        .matches(/(?=.*[a-z])/, 'need-lowercase')
+        // The password must contain one or more numeric values
+        .matches(/(?=.*[0-9])/, 'need-digit')
+        // The password must contain one or more special characters
+        // eslint-disable-next-line no-useless-escape
+        .matches(/(?=.*[!@#$%^&ç*\-_=+{}\[\]();:,<.>°§'"])/, 'need-special-char'),
+    passwordConfirm: yup
+        .string()
+        .typeError('invalid')
+        .required('required')
+        // check that is the same as "password"
+        .oneOf([yup.ref('password')], 'password-must-match'),
 };

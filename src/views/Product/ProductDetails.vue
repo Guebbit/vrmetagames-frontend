@@ -180,6 +180,10 @@
             </v-card>
         </v-dialog>
     </div>
+	<Footer
+		:primary="themeColors.primary"
+		:secondary="themeColors.secondary"
+	/>
 </template>
 
 <script setup lang="ts">
@@ -192,7 +196,7 @@ import useItemDetails from "@/resources/composables/useItemDetails";
 import ProductComicPanel from "@/components/basics/blocks/ProductComicPanel.vue";
 import ImageHoverUpCard from "@/components/basics/cards/ImageHoverUpCard.vue";
 import ProductFormPanel from "@/components/generic/forms/ProductFormPanel.vue";
-
+import Footer from "@/components/generic/Footer.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

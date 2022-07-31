@@ -279,6 +279,11 @@
             </v-row>
         </v-container>
     </div>
+
+	<Footer
+		:primary="themeColors.primary"
+		:secondary="themeColors.secondary"
+	/>
 </template>
 
 <script setup lang="ts">
@@ -290,10 +295,10 @@ import { useTheme } from "vuetify";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
 
-
 import type { gameMap } from "@/interfaces";
 import ProductComicPanel from "@/components/basics/blocks/ProductComicPanel.vue";
 import ImageHoverUpCard from "@/components/basics/cards/ImageHoverUpCard.vue";
+import Footer from "@/components/generic/Footer.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

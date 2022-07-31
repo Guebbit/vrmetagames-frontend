@@ -68,7 +68,7 @@ export interface gameMap {
     flagFamilyFriendly :boolean
     // età minima
     // difficoltà
-    // durata consigliata
+    // durata minima
 }
 
 

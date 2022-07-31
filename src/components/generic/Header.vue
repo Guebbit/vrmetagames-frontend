@@ -21,7 +21,6 @@
                 v-for="menu in menuList"
                 v-show="menu.authentication == null || (menu.authentication && isAuthenticated || !menu.authentication && !isAuthenticated)"
                 :key="'desktop-navigation-' + menu.label"
-                class="button-parallelogram"
                 :class="menu.class"
                 min-height="60"
                 :to="menu.route"
@@ -37,14 +36,13 @@
             </v-list-item>
         </v-list>
 
-
         <template v-slot:prepend>
             <v-btn
                 v-show="!isAuthenticated"
                 block
-                class="display-flex justify-space-between"
+                class="vuetify-button-icon-between"
                 size="x-large"
-                @click="commit('main/toggleModal', ['login', true])"
+				:to="{ name: 'Login' }"
             >
                 {{ t('generic.login') }}
                 <font-awesome-icon :icon="['fas', 'right-to-bracket']" />
@@ -56,7 +54,7 @@
             <v-btn
                 v-show="isAuthenticated"
                 block
-                class="display-flex justify-space-between"
+                class="vuetify-button-icon-between"
                 size="x-large"
                 @click="dispatch('user/userLogout')"
             >
@@ -85,16 +83,17 @@
                 v-show="!isAuthenticated"
                 type="light"
                 class="bg-secondary login-button"
-                @click="commit('main/toggleModal', ['login', true])"
+				:to="{ name: 'Login' }"
             >
                 {{ t('generic.login') }}
                 <font-awesome-icon :icon="['fas', 'right-to-bracket']" />
             </InclinedButton>
 
             <InclinedButton
+                variant="tonal"
                 v-show="$route.name !== 'Play'"
                 type="light"
-                class="bg-primary desktop-only"
+                class="desktop-only"
                 :to="{ name: 'Play' }"
             >
                 {{ t('generic.play') }}
@@ -117,16 +116,16 @@
 
             <v-btn
                 class="button-toggle-drawer"
-                variant="outlined"
-                size="large"
+                size="x-large"
                 color="secondary"
                 icon
                 @click="mobileMenuDrawer = !mobileMenuDrawer"
             >
-                <font-awesome-icon :icon="['fas', 'bars']" />
+                <font-awesome-icon size="xl" :icon="['fas', 'bars']" />
             </v-btn>
         </template>
 
+        <!--
         <v-list-item
             v-for="menu in menuList"
             v-show="menu.authentication == null || (menu.authentication && isAuthenticated || !menu.authentication && !isAuthenticated)"
@@ -145,6 +144,7 @@
                 {{ menu.label }}
             </v-list-item-title>
         </v-list-item>
+        -->
     </v-app-bar>
 </template>
 
@@ -174,31 +174,35 @@ const mobileMenuDrawer = ref(false);
 const mainNavigation = ref<{ $el: HTMLElement | null }>();
 const menuList = ref([
     {
-        label: 'Home',
+        label: t('generic.home'),
         route: { name: 'Home' },
-        icon: ['fas', 'house'],
+        icon: ['fas', 'home'],
     },
+    /*
     {
-        label: 'About',
+        label: t('generic.about-us'),
         route: { path: 'About' },
         icon: ['fas', 'shop'],
     },
+    */
     {
-        label: 'Games',
+        label: t('generic.games'),
         route: { name: 'Games' },
         icon: ['fas', 'gamepad'],
     },
+    /*
     {
-        label: 'Stations',
+        label: t('generic.stations'),
         route: { name: 'Stations' },
         icon: ['fas', 'vr-cardboard'],
     },
+    */
     {
-        label: 'Profile',
+        label: t('generic.profile'),
         route: { name: 'Profile' },
         icon: ['fas', 'vr-cardboard'],
         authentication: true
-    },
+    }
 ]);
 
 const { userInfo } = toRefs(state.user);
@@ -217,11 +221,13 @@ onMounted(() => {
     shyJs(mainNavigation.value?.$el,{
         threshold: 400
     });
+    /*
     classScroll(mainNavigation.value?.$el, [{
         class: "ghost-mode",
         scroll: 0,
         remove: true
     }])
+    */
 });
 
 </script>
@@ -231,10 +237,6 @@ onMounted(() => {
 
 #main-navigation-bar{
     transition: background 0.2s, top 0.2s;
-    &.ghost-mode{
-        background: transparent !important;
-        box-shadow: none !important;
-    }
 
     .inclined-button{
         margin-top: 0;
@@ -250,6 +252,11 @@ onMounted(() => {
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    &.ghost-mode{
+        background: transparent !important;
+        box-shadow: none !important;
     }
 
     @include media-desktop() {

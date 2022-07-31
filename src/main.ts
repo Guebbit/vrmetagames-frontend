@@ -13,11 +13,23 @@ import 'swiper/css';
 import 'swiper/css/scrollbar';
 import 'swiper/css/autoplay';
 
+// FA icons instead of MDI (2,5 MB of space freed)
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { fas } from '@fortawesome/free-solid-svg-icons';
+
+// Include needed icons
+library.add(fas)
+//
 loadFonts();
+
 
 createApp(App)
     .use(router)
     .use(store, key)
     .use(vuetify)
     .use(i18n)
+    // global components
+    .component('font-awesome-icon', FontAwesomeIcon)
+    // final mount
     .mount("#app");

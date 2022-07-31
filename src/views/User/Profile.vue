@@ -232,10 +232,15 @@
             </v-row>
         </v-container>
     </div>
+	<Footer
+		:primary="themeColors.primary"
+		:secondary="themeColors.secondary"
+	/>
 </template>
 
 <script setup lang="ts">
 import { useTheme } from "vuetify";
+import Footer from "@/components/generic/Footer.vue";
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 </script>

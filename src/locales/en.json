@@ -1,0 +1,12 @@
+{
+  "authentication-form": {
+    "password-strong": {
+      "required": "Password required",
+      "min-number": "The password length must be greater than or equal to 8",
+      "need-uppercase": "The password must contain one or more uppercase characters",
+      "need-lowercase": "The password must contain one or more lowercase characters",
+      "need-digit": "The password must contain one or more numeric values",
+      "need-special-char": "The password must contain one or more special characters"
+    }
+  }
+}

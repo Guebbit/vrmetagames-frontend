@@ -1,6 +1,6 @@
 <template>
     <div id="work-in-progress-page" class="theme-page full-page">
-        <Panel class="theme-panel landing-panel"
+        <Panel class="theme-panel"
                shadow="#000000"
                :shadow-opacity="0.9"
                centered

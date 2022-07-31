@@ -99,17 +99,29 @@ export const routes: Array<RouteRecordRaw> = [
     },
 
     {
-        path: "/login",
+        path: "/signin",
         name: "Login",
         component: UserAuthentication,
+        props:{
+            mode: 'login'
+        }
     },
 
     {
-        path: "/registration",
+        path: "/signin/retrieve-password",
+        name: "PasswordRetrieve",
+        component: UserAuthentication,
+        props:{
+            mode: 'password-retrieve'
+        }
+    },
+
+    {
+        path: "/signup",
         name: "Registration",
         component: UserAuthentication,
         props:{
-            registrationMode: true
+            mode: 'registration'
         }
     },
 
