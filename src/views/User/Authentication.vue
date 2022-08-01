@@ -385,17 +385,6 @@ const props = defineProps({
 });
 
 
-/**
- * Form UI rules
- */
-const authenticationFormUIRules = {
-	VTextField: {
-		// variant: 'outlined',
-		hideDetails: 'auto'
-	},
-};
-
-
 
 /**
  * All form values are stored here
@@ -543,6 +532,23 @@ const formSubmit = () => {
 	else if(props.mode === 'password-retrieve')
 		console.log("TODO")
 }
+
+
+
+
+
+
+
+/**
+ * Form UI rules
+ */
+const authenticationFormUIRules = {
+	VTextField: {
+		// variant: 'outlined',
+		hideDetails: 'auto'
+	},
+};
+
 </script>
 
 <style lang="scss">

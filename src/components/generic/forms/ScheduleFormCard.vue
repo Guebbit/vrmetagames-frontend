@@ -1,5 +1,13 @@
+<!--
+EASY FORM
+
+data: < oggi >
+durata: 1,2,3+ ore
+fascia oraria: mattina, primo pomeriggio, tardo pomeriggio, sera
+-->
+
 <template>
-    <v-defaults-provider :defaults="defaultsEventData">
+    <v-defaults-provider :defaults="eventFormUIRules">
         <v-form
             ref="formEl"
             v-model="formIsValid"
@@ -31,7 +39,6 @@
                     <v-row>
                         <!-- TODO aggiungere orari\giorni limite alle rules? -->
                         <v-col cols="12">
-                            <!-- TODO VUETIFY FIX :rules="[formRules.required]" -->
                             <v-text-field
                                 :value="formatInputTypeDate(form.date, 'YYYY-MM-DD', timeFormatDate)"
                                 @input="({target:{value}}) => form.date = formatInputTypeDate(value, timeFormatDate, 'YYYY-MM-DD')"
@@ -45,7 +52,6 @@
                                 v-model="form.hourStart"
                                 @input="({target:{value}}) => form.hourStart = formatInputTypeTime(value)"
                                 type="time"
-                                :rules="[formRules.required]"
                                 label="Start"
                                 :step="scheduleTimeStep / 1000"
                                 hide-details="auto"
@@ -57,7 +63,6 @@
                                 v-model="form.hourEnd"
                                 @input="({target:{value}}) => form.hourEnd = formatInputTypeTime(value)"
                                 type="time"
-                                :rules="[formRules.required]"
                                 label="End"
                                 :step="scheduleTimeStep / 1000"
                                 hide-details="auto"
@@ -84,7 +89,6 @@
                     <v-checkbox
                         v-model="form.rules"
                         class="text-secondary"
-                        :rules="[formRules.rulesCheckbox]"
                         hide-details="auto"
                     >
                         <template #label>
@@ -97,7 +101,7 @@
                     block
                     color="secondary"
                     size="large"
-                    @click="formConfirmButton"
+                    @click="emit('button:confirm')"
                 >
                     {{
                         !form.rules ? $t('play-page.schedule-form-button-rules') :
@@ -116,12 +120,14 @@
     </v-defaults-provider>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { defineProps, defineEmits } from "vue";
 import { useTheme } from "vuetify";
-import useFormScheduleStructure from "@/resources/composables/useFormScheduleStructure";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+
+import useFormScheduleStructure from "@/resources/composables/useFormScheduleStructure";
+
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -130,65 +136,65 @@ import { faPlus, faBan, faPlay, faStop, faClock } from "@fortawesome/free-solid-
 library.add(faPlus, faBan, faPlay, faStop, faClock);
 dayjs.extend(customParseFormat);
 
-export default defineComponent({
-    name: "ScheduleFormCard",
+const emit = defineEmits([
+	'button:confirm',
+]);
 
-    components: {
-        FontAwesomeIcon
-    },
+const props = defineProps({
+	scheduleId: {
+		type: String,
+		required: false
+	},
+	showSpeedModeTab: {
+		type: Boolean,
+		default: () => {
+			return true;
+		}
+	},
+	defaultFastMode: {
+		type: Boolean,
+		default: () => {
+			return true;
+		}
+	},
+	defaultFormTimeStep: {
+		type: Number,
+		default: () => {
+			return 1
+		}
+	},
+})
 
-    props: {
-        scheduleId: {
-            type: String,
-            required: false
-        },
-        showSpeedModeTab: {
-            type: Boolean,
-            default: () => {
-                return true;
-            }
-        },
-        defaultFastMode: {
-            type: Boolean,
-            default: () => {
-                return true;
-            }
-        },
-        defaultFormTimeStep: {
-            type: Number,
-            default: () => {
-                return 1
-            }
-        },
-    },
 
-    setup(props, { emit }){
-        const { global: { current: { value: { colors: themeColors } } } } = useTheme();
+const { global: { current: { value: { colors: themeColors } } } } = useTheme();
+const {
+	formIsValid,
+	form,
+	scheduleTimeStep,
+	formScheduleAvailability,
+	selectedFormDuration,
+	formatInputTypeDate,
+	formatInputTypeTime,
+	timeFormatDate,
+} = useFormScheduleStructure(props);
 
-        return {
-            themeColors,
-            ...useFormScheduleStructure(props, emit)
-        };
-    },
-
-    data: () => {
-        return {
-            defaultsEventData: {
-                global: {
-                    // variant: 'outlined',
-                },
-                VCard: {
-                    // color: 'secondary',
-                },
-                VTextField: {
-                    color: 'secondary',
-                    variant: 'outlined'
-                }
-            }
-        }
-    },
-});
+/**
+ *
+ */
+const eventFormUIRules = {
+	global: {
+		// variant: 'outlined',
+	},
+	VCard: {
+		// color: 'secondary',
+	},
+	VTextField: {
+		color: 'secondary',
+		variant: 'outlined'
+	}
+};
 </script>
+
 
 <style lang="scss">
 .schedule-form-card{

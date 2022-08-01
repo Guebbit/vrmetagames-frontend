@@ -4,19 +4,15 @@ import { stateMainMap, stateRootMap } from "@/interfaces";
 export default {
 
     initApp({ dispatch, rootGetters }: ActionContext<stateMainMap, stateRootMap>){
-        const promisesArray = [
-            dispatch('ecommerce/getStations', undefined, { root: true }),
-            dispatch('ecommerce/getGames', undefined, { root: true }),
-            dispatch('ecommerce/getUsers', undefined, { root: true }),
-            dispatch('ecommerce/getSchedules', undefined, { root: true }),
-        ];
-        // authenticated only data
-        if(rootGetters['user/isAuthenticated']){
-            promisesArray.push(
-                dispatch('user/getUserInfo', undefined, { root: true })
-            );
-        }
-        return Promise.all(promisesArray);
+        // first authenticate user
+        dispatch('user/getUserInfo', undefined, { root: true })
+            // then download all info from server
+            .finally(() => Promise.all([
+                dispatch('ecommerce/getStations', undefined, { root: true }),
+                dispatch('ecommerce/getGames', undefined, { root: true }),
+                dispatch('ecommerce/getUsers', undefined, { root: true }),
+                dispatch('ecommerce/getSchedules', undefined, { root: true }),
+            ]))
     },
 
     /**

@@ -49,7 +49,7 @@
                                 <v-btn
                                     block
                                     variant="tonal"
-                                    @click="fastMode ? (removeItems([selectedItemIdentifier]), selectedItemIdentifier = null) : showConfirmDeleteItemDialog = true"
+                                    @click="fastMode ? (scheduleRemove([selectedItemIdentifier]), selectedItemIdentifier = null) : showConfirmDeleteItemDialog = true"
                                 >
                                     {{ $t('play-page.select-event-label-remove-event') }}
                                 </v-btn>
@@ -72,46 +72,18 @@
                         :defaultFastMode="false"
                         :defaultFormTimeStep="preloadSteps || 2"
 
-                        @schedule:add = "scheduleHandleAdd"
-                        @schedule:confirm = "scheduleHandleConfirm"
-                        @schedule:edit = "scheduleHandleEdit"
-                        @schedule:remove = "removeItems([selectedItemIdentifier]); selectedItemIdentifier = null"
-                        @schedule:reset = "selectedItemIdentifier = null"
+						@button:confirm="formSubmit"
                     />
                 </v-col>
                 <v-col cols="12" lg="9">
                     <!-- TODO hide mobile -->
-                    <Calendar
-                        :admin          = "isAuthenticated && userInfo.isAdmin"
-                        :events         = "scheduleDetailedList"
-                        :resources      = "resources"
-                        :businessHours  = "businessHoursFullcalendar"
-                        :primary        = "themeColors.primary"
-                        :secondary      = "themeColors.secondary"
-                        :background     = "themeColors.surface"
-                        :text           = "themeColors['on-surface']"
-                        :eventsPerDay   = "totalStations['global'] || 0"
-                        :slotDuration   = "scheduleTimeStep"
-                        :handleAllow    = "fullcalendarHandleEventAllow"
+                    <ScheduleCalendar
+						:admin          = "isAuthenticated && userInfo.isAdmin"
 
-                        @event:click    = "selectItem"
-                        @event:create   = "(event) => scheduleHandleAdd(fullcalendarEventApiTranslate(event))"
-                        @event:changed  = "({ event }) => scheduleHandleEdit(fullcalendarEventApiTranslate(event))"
-                        @event:limit-reached = "fullcalendarLimitReached"
-                    >
-                        <template v-slot:eventContent="{timeText, isMirror, event}">
-                            <EventContentCard
-                                v-if="event.display !== 'background'"
-                                :time="timeText"
-                                :start="event.start"
-                                :end="event.end"
-                                :isMirror="isMirror"
-
-                                :username="event.extendedProps?.user?.username"
-                                :image="event.extendedProps?.user?.avatar || defaultUserAvatar"
-                            />
-                        </template>
-                    </Calendar>
+						@event:click    = "selectItem"
+						@event:create   = "scheduleAdd"
+						@event:changed  = "scheduleEdit"
+					/>
                 </v-col>
             </v-row>
 
@@ -171,7 +143,7 @@
                             :showConfirmButton="false"
 
                             @button:confirm="scheduleHandleConfirm(id)"
-                            @button:cancel="fastMode ? (removeItems([selectedItemIdentifier]), selectedItemIdentifier = null) : showConfirmDeleteItemDialog = true"
+                            @button:cancel="fastMode ? (scheduleRemove([selectedItemIdentifier]), selectedItemIdentifier = null) : showConfirmDeleteItemDialog = true"
                         />
                     </v-col>
                 </v-row>
@@ -220,7 +192,7 @@
                     </v-btn>
                     <v-btn
                         variant="outlined"
-                        @click="removeItems([selectedItemIdentifier]); selectedItemIdentifier = null; showConfirmDeleteItemDialog = false"
+                        @click="scheduleRemove([selectedItemIdentifier]); selectedItemIdentifier = null; showConfirmDeleteItemDialog = false"
 
                     >
                         {{ $t('play-page.schedule-alert-remove-button-confirm') }}
@@ -228,388 +200,277 @@
                 </div>
             </v-alert>
         </v-dialog>
-
     </div>
+	<Footer
+		:primary="themeColors.primary"
+		:secondary="themeColors.secondary"
+	/>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { ref, computed, defineProps, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "vuetify";
+import { useStore } from "@/store";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import vuetifyColors from "vuetify/lib/util/colors";
 import UserInfoCard from "@/components/basics/cards/UserInfoCard.vue";
-
-const { global: { current: { value: { colors: themeColors } } } } = useTheme();
-const { t } = useI18n();
-
-const statusListLegenda = computed<string[][]>(() => {
-    return [
-        [
-            undefined,
-            'check',
-            vuetifyColors.red.base,
-            t('schedule-card.offline-chip') as string,
-            t('schedule-card.offline-explanation') as string,
-        ],
-        [
-            'outlined',
-            'check',
-            vuetifyColors.green.base,
-            t('schedule-card.online-chip') as string,
-            t('schedule-card.online-explanation') as string,
-        ],
-        [
-            undefined,
-            'check',
-            themeColors.secondary,
-            t('schedule-card.confirmed-chip') as string,
-            t('schedule-card.confirmed-explanation') as string,
-        ],
-        [
-            undefined,
-            'check',
-            vuetifyColors.shades.white,
-            t('schedule-card.not-confirmed-chip') as string,
-            t('schedule-card.not-confirmed-explanation') as string,
-        ],
-        [
-            'outlined',
-            'check',
-            vuetifyColors.red.base,
-            t('schedule-card.canceled-chip') as string,
-            t('schedule-card.canceled-explanation') as string,
-        ],
-        [
-            undefined,
-            'check',
-            themeColors.primary,
-            t('schedule-card.paid-chip') as string,
-            t('schedule-card.paid-explanation') as string,
-        ],
-        [
-            'outlined',
-            'check',
-            vuetifyColors.yellow.darken1,
-            t('schedule-card.unsaved-chip') as string,
-            t('schedule-card.unsaved-explanation') as string,
-        ],
-    ];
-});
-</script>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import { mapActions, mapGetters, mapState } from "vuex";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-
-import {
-    defaultUserAvatar,
-    timeFormatDate,
-    timeFormatHours
-} from "@/resources/constants";
-import apiControllerPageList from "@/resources/mixins/apiControllerPageList";
-import Calendar from "@/components/play/Calendar.vue";
-import EventContentCard from "@/components/play/FAEventContentCard.vue";
 import EventCard from "@/components/play/EventCard.vue";
 import ScheduleFormCard from "@/components/generic/forms/ScheduleFormCard.vue";
+import Footer from "@/components/generic/Footer.vue";
+
+
+import type {
+	scheduleInputMap,
+	scheduleMap,
+	scheduleFormMap,
+} from "@/interfaces";
+
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faCalendar, faClock, faPlay, faCheck, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-
-import type {
-    scheduleInputMap,
-    scheduleMap,
-    userMap,
-    stationMap,
-    scheduleFormMap,
-    scheduleReadableMap
-} from "@/interfaces";
-
-import type {
-    DateSpanApi,
-    EventApi
-} from '@fullcalendar/vue3';
-import type {
-    ResourceInput
-} from '@fullcalendar/resource-common';
+import ScheduleCalendar from "@/components/play/ScheduleCalendar.vue";
 
 library.add(faCalendar, faClock, faPlay, faCheck, faCircleInfo);
-dayjs.extend(customParseFormat);
-
-export default defineComponent({
-    name: "PlayPage",
-
-    mixins:[
-        apiControllerPageList
-    ],
-
-    components: {
-        ScheduleFormCard,
-        EventCard,
-        Calendar,
-        EventContentCard,
-        FontAwesomeIcon
-    },
-
-    props: {
-        preloadSteps: {
-            type: Number,
-            required: false
-        },
-    },
-
-    data: () => {
-        return {
-            // LOGIC: Nella pagina "avanzata" non dovrebbe esserci la fastMode, per ora la ignoro
-            fastMode: false,
-            loadingName: 'schedule',
-            // toggles
-            showConfirmDeleteItemDialog: false,
-            //
-            defaultUserAvatar,
-        }
-    },
-
-    computed: {
-        ...mapState({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            businessHours: ({ main: { businessHours } }: any) => businessHours,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            userInfo: ({ user: { userInfo } }: any) => userInfo,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            itemsRecords: ({ ecommerce: { scheduleRecords } }: any) => scheduleRecords,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            users: ({ ecommerce: { users } }: any) => users,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            stations: ({ ecommerce: { stations } }: any) => Object.values(stations),
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            scheduleTimeStep: ({ ecommerce: { scheduleTimeStep } }: any) => scheduleTimeStep,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            scheduleEditableTime: ({ ecommerce: { scheduleEditableTime } }: any) => scheduleEditableTime,
-        }),
-        ...mapGetters('user', [
-            'isAuthenticated'
-        ]),
-        ...mapGetters('ecommerce', [
-            'scheduleDetailedList',
-            'scheduleReadable',
-            'checkScheduleIsEditable',
-            'checkScheduleIsAllowed',
-            'scheduleListOffline',
-            'scheduleListCart',
-            'totalStations',
-        ]),
-
-        resources() :ResourceInput[] {
-            let resourcesArray :ResourceInput[] = [];
-            for(let len = this.stations.length, i = 0; i < len; i++){
-                const { id, label, capacity } = this.stations[i] as stationMap;
-                resourcesArray.push({
-                    id,
-                    title: label,
-                    capacity
-                })
-            }
-            return resourcesArray;
-        },
-
-        /**
-         * Get date, hourStart and hourEnd from selectedItem
-         * and translate them in a human readable way.
-         *
-         * @return {Object}
-         */
-        selectedItemReadable() :scheduleFormMap {
-            if(!this.selectedItem){
-                return {};
-            }
-            let { start, end } = this.selectedItem as scheduleMap;
-            return this.scheduleReadable(start, end);
-        },
-
-        /**
-         * Readable duration
-         *
-         * @return {string}
-         */
-        selectedItemDuration() :string {
-            if(!this.selectedItem){
-                return '';
-            }
-            const { start, end } = this.selectedItem as scheduleMap;
-            const { durationData: { mode, hours, minutes } } = this.scheduleReadable(start, end);
-            return this.$t('generic.schedule-details-time-count.' + mode, {
-                hours,
-                minutes
-            });
-        },
-
-        /**
-         * Business hours translated for Fullcalendar
-         */
-        businessHoursFullcalendar(){
-            const businessHoursArray = [];
-            for(let i = this.businessHours.length; i--; ){
-                if(this.businessHours[i].length > 0){
-                    businessHoursArray.push({
-                        daysOfWeek: [i],
-                        startTime: this.businessHours[i][0].replace('.', ':'),
-                        endTime: this.businessHours[i][1].replace('.', ':'),
-                    })
-                }
-            }
-            return businessHoursArray;
-        },
-    },
-
-    methods: {
-        ...mapActions('ecommerce', {
-            getItems: 'getSchedules',
-            removeItems: 'removeSchedules'
-        }),
-        ...mapActions('ecommerce', [
-            'addSchedule',
-            'editSchedule'
-        ]),
 
 
-        /**
-         * handleAllow function of FullCalendar
-         *
-         * @param {Object} dropInfo
-         * @param {Object} draggedEvent
-         * @return {boolean}
-         */
-        fullcalendarHandleEventAllow(dropInfo :DateSpanApi, draggedEvent: EventApi | null) :boolean {
-            const { start, end, resource: { id :resourceId } = {} } = dropInfo;
-            const { id } = draggedEvent || {};
-            const errorArray :string[] = [];
-            // if the user can edit the schedule
-            errorArray.push(...this.checkScheduleIsEditable(id));
-            for(let i = errorArray.length; i--; ){
-                // TODO toast OR TODO disclaimer & computed
-                console.error("fullcalendarHandleEventAllow", errorArray[i])
-            }
-            // if the new position is valid
-            errorArray.push(...this.checkScheduleIsAllowed(start.getTime(), end.getTime(), id, resourceId));
-            for(let i = errorArray.length; i--; ){
-                // TODO toast OR TODO disclaimer & computed
-                console.error("fullcalendarHandleEventAllow", errorArray[i])
-            }
-            // approval
-            return errorArray.length === 0;
-        },
+const { global: { current: { value: { colors: themeColors } } } } = useTheme();
+const { t } = useI18n();
+const { state, getters, commit, dispatch } = useStore();
 
-        /**
-         * FullCalendar max limit reached emit
-         *
-         * @param {Date} start
-         * @param {Date} end
-         * @param {string[]} idArray
-         */
-        fullcalendarLimitReached(start :Date, end :Date, idArray :string[]){
-            // TODO toast OR TODO disclaimer & computed
-            console.error("MAX LIMIT REACHED", start, end, idArray)
-        },
 
-        /**
-         * Transform fullcalendar EventApi in scheduleInputMap
-         * Take only start, end and allyday (for now)
-         * TODO take resource or resourceId
-         *
-         * @param {Object} schedule
-         */
-        fullcalendarEventApiTranslate({ id, start, end, allDay } :EventApi) :scheduleInputMap {
-            return {
-                id,
-                start: start ? start.getTime() : 0,
-                end: end ? end.getTime() : 0,
-                allDay
-            };
-        },
-
-        /**
-         * Add Schedule (offline)
-         *
-         * @param {Object} schedule
-         */
-        scheduleHandleAdd(schedule :scheduleInputMap){
-            this.addSchedule(schedule)
-                .then(id => {
-                    if(!id){
-                        throw 'TODO errore sconosciuto';
-                    }
-                    this.selectItem(id);
-                })
-                .catch((errors :string[]) => {
-                    // TODO toast OR TODO disclaimer & computed & REVERT
-                    console.error("scheduleHandleAdd", errors)
-                })
-        },
-
-        /**
-         * Confirm schedule and pay from wallet
-         * if wallet empty: delay confirm and ask for payment (?)
-         *
-         * @param {string} id
-         */
-        scheduleHandleConfirm(id :string){
-            console.log("CCCCCCCCCCCCCONFIRM", id)
-            // TODO confirm multiple?
-        },
-
-        /**
-         * Reset edits
-         *
-         * @param {string} id
-         */
-        scheduleHandleReset(id :string){
-            // TODO creo un elemento temporeaneo quando faccio modifiche offline
-            console.log("RESETTTT", id)
-        },
-
-        /**
-         * Edit schedule (unsaved = true)
-         *
-         * @param {Object} schedule
-         */
-        scheduleHandleEdit(schedule :scheduleInputMap){
-            // WARNING fullcalendarHandleEventAllow checks already done
-            this.editSchedule(schedule).catch((errors: string[]) => {
-                // TODO toast OR TODO disclaimer & computed & REVERT
-                console.error("editSchedule", errors)
-            })
-        },
-
-        /**
-         * Select schedule on fullcalendar
-         *
-         * @param {string} id
-         */
-        selectItem(id :string){
-            if(!id || this.checkScheduleIsEditable(id).length > 0){
-                return;
-            }
-            this.selectedItemIdentifier = id;
-        },
-
-        /**
-         * Confirm schedule and ask for payment
-         *
-         * @param {string} id
-         */
-        removeItem(id :string){
-            this.removeItems([id]);
-            console.log("RRRRRRRRRREMOVE", id)
-        },
-    },
+const props = defineProps({
+	preloadSteps: {
+		type: Number,
+		required: false
+	},
 });
+
+
+const selectedItemIdentifier = ref('');
+// LOGIC: Nella pagina "avanzata" non dovrebbe esserci la fastMode, per ora la ignoro
+const fastMode = ref(false);
+// toggles
+const showConfirmDeleteItemDialog = ref(false);
+
+
+const { businessHours } = toRefs(state.main);
+const { userInfo } = toRefs(state.user);
+const { users, stations, scheduleRecords } = toRefs(state.ecommerce);
+
+
+const isAuthenticated = computed(() => getters['user/isAuthenticated']);
+const scheduleListCart = computed(() => getters['ecommerce/scheduleListCart']);
+
+
+/**
+ * current selected item
+ */
+const selectedItem = computed<scheduleMap | undefined>(() => {
+	if(!Object.prototype.hasOwnProperty.call(scheduleRecords.value, selectedItemIdentifier.value)){
+		return undefined;
+	}
+	return scheduleRecords.value[selectedItemIdentifier.value];
+});
+
+/**
+ * Get date, hourStart and hourEnd from selectedItem
+ * and translate them in a human readable way.
+ *
+ * @return {Object}
+ */
+const selectedItemReadable = computed<scheduleFormMap>(() => {
+	if(!selectedItem.value){
+		return {};
+	}
+	let { start, end } = selectedItem.value as scheduleMap;
+	return getters['ecommerce/scheduleReadable'](start, end);
+});
+
+/**
+ * Readable duration
+ *
+ * @return {string}
+ */
+const selectedItemDuration = computed<string>(() => {
+	if(!selectedItem.value){
+		return '';
+	}
+	const { start, end } = selectedItem.value as scheduleMap;
+	const { durationData: { mode, hours, minutes } } = getters['ecommerce/scheduleReadable'](start, end);
+	return t('generic.schedule-details-time-count.' + mode, {
+		hours,
+		minutes
+	});
+});
+
+
+
+
+
+
+
+function formSubmit () {
+	console.log("SSSSSSSSSSSUBMIT");
+	/*
+	if(!formIsValid.value){
+		console.log("VALIDATIONNNNNNNNN")
+		return;
+	}
+	
+	// modifica o aggiungi uno nuovo
+	if(selectedItemIdentifier){
+		scheduleEdit()
+	}else{
+		scheduleAdd()
+	}
+	
+	// se fastmode = confermalo subito
+	if(fastMode.value){
+		scheduleConfirm()
+	}
+	*/
+}
+
+/**
+ * Add Schedule (offline)
+ *
+ * @param {Object} schedule
+ */
+function scheduleAdd(schedule :scheduleInputMap){
+	console.log("ADDDDDDD", schedule)
+	dispatch('ecommerce/addSchedule', schedule)
+		.then(id => selectItem(id))
+		.catch((errors :string[]) => {
+			// TODO toast OR TODO disclaimer & computed & REVERT
+			console.error("scheduleHandleAdd", errors)
+		})
+}
+
+/**
+ * Edit schedule (unsaved = true)
+ *
+ * @param {Object} schedule
+ */
+function scheduleEdit(schedule :scheduleInputMap){
+	console.log("EDITTTTT", schedule)
+	// WARNING fullcalendarHandleEventAllow checks already done
+	dispatch('ecommerce/editSchedule', schedule)
+		.catch((errors: string[]) => {
+			// TODO toast OR TODO disclaimer & computed & REVERT
+			console.error("editSchedule", errors)
+		})
+}
+
+
+/**
+ * Confirm schedule and pay from wallet
+ * if wallet empty: delay confirm and ask for payment (?)
+ *
+ * @param {string} id
+ */
+function scheduleConfirm(id :string){
+	console.log("CCCCCCCCCCCCCONFIRM", id)
+	// TODO confirm multiple?
+}
+function scheduleHandleConfirm(id :string){
+	console.log("HANDLECCCCCCCCCCCCCONFIRM", id)
+	// TODO confirm multiple?
+}
+
+/**
+ * Confirm schedule and ask for payment
+ *
+ * @param {string} ids
+ */
+function scheduleRemove(ids :string[] = []){
+	console.log("REMOVEEEE", ids)
+	return dispatch('ecommerce/removeSchedules', ids);
+}
+
+/**
+ * Reset edits
+ *
+ * @param {string} id
+ */
+function scheduleHandleReset(id :string){
+	// TODO creo un elemento temporeaneo quando faccio modifiche offline
+	// reset = rimuovo le modifiche offline only
+	console.log("RESETTTT", id)
+}
+
+/**
+ * Select schedule on fullcalendar
+ *
+ * @param {string} id
+ */
+function selectItem(id :string){
+	if(!id || getters['ecommerce/checkScheduleIsEditable'](id).length > 0){
+		return;
+	}
+	selectedItemIdentifier.value = id;
+}
+
+
+
+
+
+const statusListLegenda = [
+	[
+		undefined,
+		'check',
+		vuetifyColors.red.base,
+		t('schedule-card.offline-chip') as string,
+		t('schedule-card.offline-explanation') as string,
+	],
+	[
+		'outlined',
+		'check',
+		vuetifyColors.green.base,
+		t('schedule-card.online-chip') as string,
+		t('schedule-card.online-explanation') as string,
+	],
+	[
+		undefined,
+		'check',
+		themeColors.secondary,
+		t('schedule-card.confirmed-chip') as string,
+		t('schedule-card.confirmed-explanation') as string,
+	],
+	[
+		undefined,
+		'check',
+		vuetifyColors.shades.white,
+		t('schedule-card.not-confirmed-chip') as string,
+		t('schedule-card.not-confirmed-explanation') as string,
+	],
+	[
+		'outlined',
+		'check',
+		vuetifyColors.red.base,
+		t('schedule-card.canceled-chip') as string,
+		t('schedule-card.canceled-explanation') as string,
+	],
+	[
+		undefined,
+		'check',
+		themeColors.primary,
+		t('schedule-card.paid-chip') as string,
+		t('schedule-card.paid-explanation') as string,
+	],
+	[
+		'outlined',
+		'check',
+		vuetifyColors.yellow.darken1,
+		t('schedule-card.unsaved-chip') as string,
+		t('schedule-card.unsaved-explanation') as string,
+	],
+];
 </script>
+
 
 <style lang="scss">
 @import "src/assets/scss/main/global";
