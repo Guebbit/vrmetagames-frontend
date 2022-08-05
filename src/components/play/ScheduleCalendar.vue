@@ -35,18 +35,19 @@
 import { defineProps, defineEmits, computed, toRefs } from "vue";
 import { useStore } from "@/store";
 import { useTheme } from "vuetify";
+import { useI18n } from "vue-i18n";
 import Calendar from "@/components/play/Calendar.vue";
 import EventContentCard from "@/components/play/FAEventContentCard.vue";
-import { defaultUserAvatar } from "@/resources/constants";
+import { defaultUserAvatar, uiFormatDate, uiFormatTime } from "@/resources/constants";
 
-import type { scheduleInputMap, stationMap } from "@/interfaces";
+import type { scheduleInputMap } from "@/interfaces";
 import type { DateSpanApi, EventApi } from "@fullcalendar/vue3";
+import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
 // import type { ResourceInput } from "@fullcalendar/resource-common";
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
-const { state, getters, dispatch } = useStore();
-
-
+const { state, getters, commit } = useStore();
+const { t } = useI18n();
 
 const emit = defineEmits([
 	'event:click',
@@ -54,7 +55,7 @@ const emit = defineEmits([
 	'event:changed',
 ]);
 
-const props = defineProps({
+defineProps({
 	admin: {
 		type: Boolean,
 		default: () => false
@@ -66,10 +67,18 @@ const props = defineProps({
 });
 
 /**
+ * Schedule managing toolbox
+ */
+const {
+	determineScheduleIsEditable,
+	determineScheduleIsAllowed,
+} = useScheduleHelpers(uiFormatDate, uiFormatTime);
+
+/**
  *
  */
 const { businessHours } = toRefs(state.main);
-const { stations, scheduleTimeStep } = toRefs(state.ecommerce);
+const { scheduleTimeStep } = toRefs(state.ecommerce);
 const scheduleDetailedList = computed(() => getters['ecommerce/scheduleDetailedList']);
 
 /**
@@ -110,17 +119,16 @@ function fullcalendarHandleEventAllow(dropInfo :DateSpanApi, draggedEvent: Event
 	const errorArray :string[] = [];
 
 	// if the user can edit the schedule
-	errorArray.push(...getters['ecommerce/checkScheduleIsEditable'](id));
-	for(let i = errorArray.length; i--; ){
-		// TODO toast OR TODO disclaimer & computed
-		console.error("fullcalendarHandleEventAllow", errorArray[i])
-	}
+	errorArray.push(...determineScheduleIsEditable(id));
 	// if the new position is valid
-	errorArray.push(...getters['ecommerce/checkScheduleIsAllowed'](start.getTime(), end.getTime(), id, resourceId));
-	for(let i = errorArray.length; i--; ){
-		// TODO toast OR TODO disclaimer & computed
-		console.error("fullcalendarHandleEventAllow", errorArray[i])
-	}
+	errorArray.push(...determineScheduleIsAllowed(start.getTime(), end.getTime(), id, resourceId));
+	for(let i = errorArray.length; i--; )
+		commit('main/addToast', {
+			variant: 'full',
+			title: 'Error',
+			text: t('calendar.max-limit-reached-' + errorArray[i]),
+			timeout: 3000
+		});
 	// approval
 	return errorArray.length === 0;
 }
@@ -133,8 +141,13 @@ function fullcalendarHandleEventAllow(dropInfo :DateSpanApi, draggedEvent: Event
  * @param {string[]} idArray
  */
 function fullcalendarLimitReached(start :Date, end :Date, idArray :string[]){
-	// TODO toast OR TODO disclaimer & computed
 	console.error("MAX LIMIT REACHED", start, end, idArray)
+	commit('main/addToast', {
+		variant: 'full',
+		title: 'Error',
+		text: t('calendar.max-limit-reached', { start, end }),
+		timeout: 3000
+	});
 }
 
 

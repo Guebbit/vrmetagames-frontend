@@ -71,7 +71,7 @@
         <template v-slot:prepend>
             <router-link :to="{ name: 'Home' }">
                 <img :src="imagesUrl + '/logo/logo.svg'"
-                     :alt="$t('generic.name')"
+                     :alt="t('generic.name')"
                      height="64"
                      width="64"
                 />

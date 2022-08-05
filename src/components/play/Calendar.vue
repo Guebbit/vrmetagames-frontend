@@ -571,7 +571,7 @@ export default defineComponent({
             if(!id || display === 'background'){
                 return;
             }
-            console.log("handleEventClick", id, this.calendarApi.getEventById(id))
+            // console.log("handleEventClick", id, this.calendarApi.getEventById(id))
             this.$emit('event:click', id);
         },
 

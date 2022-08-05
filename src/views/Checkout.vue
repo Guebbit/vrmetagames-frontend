@@ -160,13 +160,16 @@
 
 <script setup lang="ts">
 import { ref, computed, toRefs } from "vue";
+import { useTheme } from "vuetify";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
 
 import UserInfoCard from "@/components/basics/cards/UserInfoCard.vue";
 import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsPanel.vue";
 import Footer from "@/components/generic/Footer.vue";
-import type { scheduleMap, scheduleReadableMap } from "@/interfaces";
+import useScheduleHelpers, { type scheduleReadableMap } from "@/resources/composables/useScheduleHelpers";
+import { uiFormatDate, uiFormatTime } from "@/resources/constants";
+import type { scheduleMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -187,8 +190,6 @@ import {
     faCity,
     faPhone,
 } from "@fortawesome/free-solid-svg-icons";
-import { useTheme } from "vuetify";
-
 
 library.add(
     faCalendar,
@@ -213,6 +214,13 @@ const { t } = useI18n();
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 
 /**
+ * Schedule managing toolbox
+ */
+const {
+	translateScheduleUI,
+} = useScheduleHelpers(uiFormatDate, uiFormatTime);
+
+/**
  * List of schedules
  *
  * @return {object[]}
@@ -228,7 +236,7 @@ const scheduleListCartReadable = computed<scheduleReadableMap[]>(() => {
     for(let i = scheduleListCart.value.length; i--; ){
         const { id, start, end } = scheduleListCart.value[i];
         scheduleArray.push({
-            ...getters['ecommerce/scheduleReadable'](start, end),
+            ...translateScheduleUI(start, end),
             id
         });
     }
@@ -239,7 +247,7 @@ const scheduleListCartReadable = computed<scheduleReadableMap[]>(() => {
  */
 const disabledScheduleIdArray = ref<string[]>([]);
 /**
- * List of id of schedules
+ * List of id of schedules filtered using disabledScheduleIdArray
  */
 const activeScheduleIdArray = computed<string[]>(() => {
     return (scheduleListCart.value).reduce((idArray, { id }) :string[] => {
@@ -259,7 +267,7 @@ const userInfoWalletTimeRemaining = computed(() => userInfoWalletTime.value - sc
 
 // label of wallet duration
 const userInfoWalletDuration = computed<string>(() => {
-    const { durationData: { mode, hours, minutes } } = getters['ecommerce/scheduleReadable'](0, userInfoWalletTime.value);
+    const { durationData: { mode, hours, minutes } } = translateScheduleUI(0, userInfoWalletTime.value);
     return t('generic.schedule-details-time-count.' + mode, {
         hours,
         minutes
@@ -267,7 +275,7 @@ const userInfoWalletDuration = computed<string>(() => {
 });
 // label of wallet remaining AFTER payment
 const userInfoWalletRemainingDuration = computed<string>(() => {
-    const { durationData: { mode, hours, minutes } } = getters['ecommerce/scheduleReadable'](0, Math.max(userInfoWalletTimeRemaining.value, 0));
+    const { durationData: { mode, hours, minutes } } = translateScheduleUI(0, Math.max(userInfoWalletTimeRemaining.value, 0));
     return t('generic.schedule-details-time-count.' + mode, {
         hours,
         minutes
@@ -275,7 +283,7 @@ const userInfoWalletRemainingDuration = computed<string>(() => {
 });
 // label of schedule duration
 const scheduleCartDuration = computed<string>(() => {
-    const { durationData: { mode, hours, minutes } } = getters['ecommerce/scheduleReadable'](0, scheduleCartTotalTime.value);
+    const { durationData: { mode, hours, minutes } } = translateScheduleUI(0, scheduleCartTotalTime.value);
     return t('generic.schedule-details-time-count.' + mode, {
         hours,
         minutes

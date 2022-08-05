@@ -22,11 +22,11 @@ export default {
      * @param {string} message
      */
     async handleServerError({ commit } : ActionContext<stateMainMap, stateRootMap>, message :string): Promise<void> {
-        // TODO
-        console.error("SERVER ERROR", message)
-        commit("addError", {
-            text: message
-            // text, time, type?
+        commit("addToast", {
+            color: 'error',
+            title: 'Server Error',
+            text: message,
+            timeout: 5000
         });
     },
 
@@ -37,11 +37,11 @@ export default {
      * @param {string} message
      */
     async handleLogicalError({ commit } : ActionContext<stateMainMap, stateRootMap>, message :string): Promise<void> {
-        // TODO
-        console.error("LOGICAL ERROR", message)
-        commit("addError", {
-            text: message
-            // text, time, type?
+        commit("addToast", {
+            color: 'error',
+            title: 'Error',
+            text: message,
+            timeout: 5000
         });
     }
 }

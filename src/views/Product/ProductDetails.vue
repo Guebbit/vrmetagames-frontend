@@ -1,7 +1,7 @@
 <template>
     <div id="product-details-page" class="theme-page">
         <ProductComicPanel
-            :key="'game-panel-' + selectedItem.id"
+            :key="'game-panel-' + selectedRecord.id"
             :primary="themeColors.secondary"
             :secondary="themeColors.primary"
             hero
@@ -10,8 +10,8 @@
                 <v-img
                     cover
                     class="panel-background"
-                    :lazy-src="selectedItem.imageThumbnail"
-                    :src="selectedItem.image"
+                    :lazy-src="selectedRecord.imageThumbnail"
+                    :src="selectedRecord.image"
                     height="100%"
                     width="100%"
                 >
@@ -31,11 +31,11 @@
             </template>
             <template #image>
                 <ImageHoverUpCard
-                    :image="selectedItem.coverFront"
+                    :image="selectedRecord.coverFront"
                 >
                     <v-img
-                        :lazy-src="selectedItem.coverFrontThumbnail"
-                        :src="selectedItem.coverFront"
+                        :lazy-src="selectedRecord.coverFrontThumbnail"
+                        :src="selectedRecord.coverFront"
                         height="100%"
                         width="100%"
                     />
@@ -44,7 +44,7 @@
             <template #content>
                 <div class="categories-wrapper">
                     <v-btn
-                        v-for="(category, i) in selectedItem.categories"
+                        v-for="(category, i) in selectedRecord.categories"
                         :key="'category-title-' + i"
                         class="mx-2"
                         variant="flat"
@@ -55,11 +55,11 @@
                 </div>
 
                 <!-- TODO stations -->
-                <h3 class="panel-title">{{ selectedItem.title }}</h3>
-                <h4 class="panel-subtitle">{{ selectedItem.author }}</h4>
+                <h3 class="panel-title">{{ selectedRecord.title }}</h3>
+                <h4 class="panel-subtitle">{{ selectedRecord.author }}</h4>
                 <div class="panel-chips">
                     <v-chip
-                        v-for="(badge, i) in selectedItem.tags"
+                        v-for="(badge, i) in selectedRecord.tags"
                         :key="'badge-' + i"
                         class="ma-2"
                         text-color="white"
@@ -79,16 +79,16 @@
                         </span>
                         <small>Età minima consigliata</small>
                     </span>
-                    <span v-show="selectedItem.maxPlayersOffline > 1"
+                    <span v-show="selectedRecord.maxPlayersOffline > 1"
                           class="icon-text-resources"
                     >
                         <span class="icon">
-                            {{ selectedItem.maxPlayersOffline }}
+                            {{ selectedRecord.maxPlayersOffline }}
                             <font-awesome-icon :icon="['fas', 'users']" />
                         </span>
                         <small>{{ t('generic.multiplayer') }}</small>
                     </span>
-                    <span v-show="selectedItem.maxPlayersOnline > 1"
+                    <span v-show="selectedRecord.maxPlayersOnline > 1"
                           class="icon-text-resources"
                     >
                         <span class="icon">
@@ -96,7 +96,7 @@
                         </span>
                         <small>{{ t('generic.multiplayer') }} {{ t('generic.online') }}</small>
                     </span>
-                    <span v-show="selectedItem.maxPlayersOffline <= 1 && selectedItem.maxPlayersOnline <= 1"
+                    <span v-show="selectedRecord.maxPlayersOffline <= 1 && selectedRecord.maxPlayersOnline <= 1"
                           class="icon-text-resources"
                     >
                         <span class="icon">
@@ -104,7 +104,7 @@
                         </span>
                         <small>{{ t('generic.singleplayer-2') }}</small>
                     </span>
-                    <span v-show="selectedItem.flagFamilyFriendly"
+                    <span v-show="selectedRecord.flagFamilyFriendly"
                           class="icon-text-resources"
                     >
                         <span class="icon">
@@ -117,7 +117,7 @@
             <template #actions>
                 <div class="panel-actions text-right mt-10">
                     <v-btn
-                        v-show="isAuthenticated && userInfo.isAdmin"
+                        v-show="isAuthenticated && isAdmin"
                         class="ma-2"
                         @click="showProductEditDialog = true"
                     >
@@ -198,6 +198,8 @@ import ImageHoverUpCard from "@/components/basics/cards/ImageHoverUpCard.vue";
 import ProductFormPanel from "@/components/generic/forms/ProductFormPanel.vue";
 import Footer from "@/components/generic/Footer.vue";
 
+import type { gameMap } from "@/interfaces";
+
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faFloppyDisk, faXmark, faEdit, faUser, faUsers, faGlobe, faPeopleRoof, faIdCard, faArrowRight  } from "@fortawesome/free-solid-svg-icons";
@@ -210,7 +212,6 @@ const {
     getters,
     dispatch
 } = useStore();
-const { userInfo } = toRefs(state.user);
 const { games } = toRefs(state.ecommerce);
 
 const props = defineProps({
@@ -222,15 +223,14 @@ const props = defineProps({
 
 const showProductEditDialog = ref(false);
 
-
 const {
-    selectedItem,
-    loading,
-    isAuthenticated,
-    isAdmin
-} = useItemDetails(
-    props.id,
-    games.value,
+	loading,
+	isAuthenticated,
+	isAdmin,
+	selectedRecord,
+	selectTargetRecord
+} = useItemDetails<gameMap>(
+    games,
     () => {
         return Promise.all([
             dispatch('main/initApp'),
@@ -239,7 +239,8 @@ const {
     }
 );
 
-
+if(props.id)
+	selectTargetRecord(props.id);
 </script>
 
 <style lang="scss">

@@ -15,6 +15,7 @@ export {
 } from './ecommerce';
 
 export {
+    toastMap,
     BusinessHoursMap,
     stateMainMap
 } from './main';

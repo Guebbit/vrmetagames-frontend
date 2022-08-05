@@ -1,15 +1,13 @@
 import dayjs from "dayjs";
 import { arrayColumn, rangeOverlaps, secondsToTime } from "guebbit-javascript-library";
-import { timeFormatDate, timeFormatHours } from "@/resources/constants";
+import { uiFormatDate, uiFormatTime } from "@/resources/constants";
 
 import type { GetterTree } from 'vuex';
 import type {
     stateRootMap,
     stateEcommerceMap,
-    scheduleMap,
-    scheduleReadableMap
+    scheduleMap
 } from "@/interfaces";
-
 
 
 export default {
@@ -107,55 +105,6 @@ export default {
         }
         // list of schedule for fullcalendar
         return fullCalendarScheduleArray;
-    },
-
-    /**
-     * human readable schedule data
-     */
-    scheduleReadable({ scheduleTimeCost, scheduleTimeStep } :stateEcommerceMap) :(start :number, end :number) => scheduleReadableMap {
-        // function
-        return (start = 0, end = 0) :scheduleReadableMap => {
-            // to build a i18n label TODO fare meglio?
-            let mode = 0;
-            const { hoursOnly :hours = 0, minutes = 0 } = secondsToTime(end - start);
-            if(hours === 0 && minutes === 0){
-                mode = 1;
-            }
-            if(hours === 0 && minutes > 0){
-                mode = 2;
-            }
-            if(minutes === 0){
-                if(hours === 1){
-                    mode = 3;
-                }
-                if(hours > 1){
-                    mode = 4;
-                }
-            }else{
-                if(hours === 1){
-                    mode = 5;
-                }
-                if(hours > 1){
-                    mode = 6;
-                }
-            }
-            // calculate the cost
-            const totalSteps = (end - start) / scheduleTimeStep;
-            // const cost = totalSteps < scheduleTimeCost.length ? scheduleTimeCost[totalSteps] : totalSteps * scheduleTimeCost[0];
-            const cost = Object.prototype.hasOwnProperty.call(scheduleTimeCost, totalSteps) ? scheduleTimeCost[totalSteps] : totalSteps * scheduleTimeCost[0];
-            // return human readable schedule info
-            return {
-                date: dayjs(start).format(timeFormatDate),    //(end) MUST be the same
-                hourStart: dayjs(start).format(timeFormatHours),
-                hourEnd: dayjs(end).format(timeFormatHours),
-                cost: cost / 100,
-                durationData: {
-                    mode,
-                    hours,
-                    minutes,
-                }
-            };
-        };
     },
 
     /**
@@ -416,7 +365,7 @@ export default {
      * @param {boolean} isAdmin
      * @return {Function<boolean>}
      */
-    checkScheduleIsEditable: ({ scheduleRecords, scheduleEditableTime }: stateEcommerceMap, getters, { user: { userInfo: { id :currentUserId, isAdmin }}}) :(id: string) => string[] => {
+    determineScheduleIsEditable: ({ scheduleRecords, scheduleEditableTime }: stateEcommerceMap, getters, { user: { userInfo: { id :currentUserId, isAdmin }}}) => {
 
         /**
          * @param {string} id
@@ -428,7 +377,6 @@ export default {
                 errorArray.push('error-404');
             }
             const { start, userId } = scheduleRecords[id];
-
             // Edit schedule only if current user OR it's admin
             if(!isAdmin && currentUserId !== userId){
                 errorArray.push('error-403');
@@ -441,8 +389,22 @@ export default {
             if(!isAdmin && start + scheduleEditableTime >= Date.now()){
                 errorArray.push('error-400-edit-expired');
             }
-
+            // return all errors
             return errorArray;
+        }
+    },
+    /**
+     * Same as above but optimized to be fast. Return boolean and doesn't care about errors
+     */
+    checkScheduleIsEditable: ({ scheduleRecords, scheduleEditableTime }: stateEcommerceMap, getters, { user: { userInfo: { id :currentUserId, isAdmin }}}) => {
+        return (id :string) :boolean => {
+            if(!Object.prototype.hasOwnProperty.call(scheduleRecords, id)){
+                return false;
+            }
+            const { start, userId } = scheduleRecords[id];
+            return !(!isAdmin && currentUserId !== userId ||
+                !isAdmin && start < Date.now() ||
+                !isAdmin && start + scheduleEditableTime >= Date.now());
         }
     },
 
@@ -458,21 +420,18 @@ export default {
      * @param {Object} rootState
      * @param {Object} rootGetters
      */
-    checkScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, totalStations }, rootState, rootGetters) => {
-
+    determineScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, totalStations }, rootState, rootGetters) => {
         /**
          * @param {number} dateFrom
          * @param {number} dateTo
          * @param {string} id - id of event, to filter away while counting (would be counted 2 times)
          * @param {string} checkResourceId
          */
-        return (dateFrom :number, dateTo :number, id ?:string, checkResourceId ?:string) :string[] => {
+        return (dateFrom ?:number, dateTo ?:number, id ?:string, checkResourceId ?:string) :string[] => {
             const errorArray :string[] = [];
-
             // ----- businessHours check -----
-            if(!rootGetters['main/isOpen'](dateFrom) || !rootGetters['main/isOpen'](dateTo)){
+            if(!rootGetters['main/isOpen'](dateFrom) || !rootGetters['main/isOpen'](dateTo))
                 errorArray.push('closed');
-            }
             // ----- schedule limit check -----
             const cappedSlots :string[][] = Object.values(getSchedulesBySlots(dateFrom, dateTo, scheduleTimeStep, checkResourceId));
             if(
@@ -480,34 +439,31 @@ export default {
                     // TODO different stations with different possible games
                     return idArray.length - (id && idArray.includes(id) ? 1 : 0) >= totalStations['global']
                 })
-            ){
+            )
                 errorArray.push('max-reached');
-            }
-
+            // result
             return errorArray;
         }
     },
-
     /**
-     * UNITE checkScheduleIsEditable AND checkScheduleIsAllowed
-     *
-     * @param {Object} state
-     * @param {Function} checkScheduleIsEditable
-     * @param {Function} checkScheduleIsAllowed
+     * Same as above but optimized to be fast. Return boolean and doesn't care about errors
      */
-    checkScheduleIsEditableAndAllowed: (state: stateEcommerceMap, { checkScheduleIsEditable, checkScheduleIsAllowed }) => {
-        /**
-         * @param {string} id
-         */
-        return (id :string, start :number, end :number, resourceId ?:string) :string[] => {
-            return [
-                ...checkScheduleIsEditable(id),
-                ...checkScheduleIsAllowed(start, end, id, resourceId)
-            ]
+    checkScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, totalStations }, rootState, rootGetters) => {
+        return (dateFrom ?:number, dateTo ?:number, id ?:string, checkResourceId ?:string) :boolean => {
+            // ----- businessHours check -----
+            if(!rootGetters['main/isOpen'](dateFrom) || !rootGetters['main/isOpen'](dateTo))
+                return false;
+            // ----- schedule limit check -----
+            const cappedSlots :string[][] = Object.values(getSchedulesBySlots(dateFrom, dateTo, scheduleTimeStep, checkResourceId));
+            return !cappedSlots.some((idArray: string[]) => {
+                // TODO different stations with different possible games
+                return idArray.length - (id && idArray.includes(id) ? 1 : 0) >= totalStations['global']
+            });
         }
     },
 
-    /**
+
+        /**
      * get item or leaf by id of state
      * TODO root getter?
      *

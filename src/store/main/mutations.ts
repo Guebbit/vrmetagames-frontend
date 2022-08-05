@@ -1,15 +1,37 @@
-import type { stateMainMap } from "@/interfaces";
+import { getUUID } from "guebbit-javascript-library";
+import type { stateMainMap, toastMap } from "@/interfaces";
 
 export default {
 
     // ---------------------- TODO core? ----------------------
 
     /**
-     * Add error\toast for a set amount of time
+     * Add and automatically remove toasts (snackbars)
+     *
+     * @param {Object[]} toasts
+     * @param {Object} toast
      */
-    addError() {
-        console.error("ERROR")
-        // text, time, type?
+    addToast({ toasts = [] }: stateMainMap, toast :toastMap) {
+        // unique id to delete it dynamically
+        toast.id = getUUID();
+        // add
+        toasts.push(toast);
+        // remove after timeout (if any)
+        if(toast.timeout && toast.timeout > 0)
+            setTimeout(() => {
+                toasts.splice(toasts.findIndex(({id}) => id === toast.id), 1);
+                // expire time
+            }, toast.timeout)
+    },
+
+    /**
+     * Remove target toast
+     *
+     * @param {Object[]} toasts
+     * @param {string} toastId
+     */
+    removeToast({ toasts = [] }: stateMainMap, toastId :string) {
+        toasts.splice(toasts.findIndex(({id}) => id === toastId), 1);
     },
 
     /**

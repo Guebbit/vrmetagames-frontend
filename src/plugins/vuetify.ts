@@ -27,6 +27,7 @@ export default createVuetify({
     },
   },
   */
+
   theme: {
     defaultTheme: "dark",
     themes: {
@@ -35,7 +36,9 @@ export default createVuetify({
         colors: {
           ...themeColors
         },
-        variables: {}, // BUGFIX: ADD AN EMPTY OBJECT
+        variables: {
+          ['disabled-opacity']: 0.7 // TODO BETA valore fisso .v-btn--disabled.v-btn--variant-elevated
+        }, // BUGFIX: ADD AN EMPTY OBJECT
       },
       light: {
         dark: false,

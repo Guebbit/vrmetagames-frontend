@@ -1,12 +1,10 @@
-import { computed } from "vue";
+import { computed, ref, type Ref, type ComputedRef } from "vue";
 import useItemStructure from "@/resources/composables/useItemStructure";
 
-export default(
-    id :string,
+export default <T>(
+    itemRecords :Ref<Record<string, T>> | ComputedRef<Record<string, T>>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    itemRecords :Record<string, any> = {},
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    loadPromise :any = Promise.resolve()
+    loadPromise :unknown = Promise.resolve()
 ) => {
     const {
         loading,
@@ -14,20 +12,50 @@ export default(
         isAdmin
     } = useItemStructure(loadPromise)
 
-    // const itemList = computed(() => Object.values(itemRecords))
-    // const filteredItemList = computed(() => itemList.value)
+    /**
+     *
+     */
+    const itemList = computed(() => Object.values(itemRecords.value));
 
-    const selectedItem = computed<unknown | undefined>(() => {
-        if(!Object.prototype.hasOwnProperty.call(itemRecords, id)){
+    /**
+     *
+     */
+    const filteredItemList = computed(() => itemList.value);
+
+    /**
+     *
+     */
+    const selectedIdentifier = ref('');
+
+    /**
+     * selected item
+     */
+    const selectedRecord = computed<unknown | undefined>(() => {
+        if(!Object.prototype.hasOwnProperty.call(itemRecords.value, selectedIdentifier.value)){
             return undefined;
         }
-        return itemRecords[id];
+        return itemRecords.value[selectedIdentifier.value];
     })
+
+    /**
+     * Select target item
+     * @param {string} id
+     */
+    const selectTargetRecord = (id :string) => {
+        if(!Object.prototype.hasOwnProperty.call(itemRecords.value, id)){
+            return undefined;
+        }
+        selectedIdentifier.value = id;
+    };
 
     return {
         loading,
         isAuthenticated,
         isAdmin,
-        selectedItem,
+        selectedIdentifier,
+        selectedRecord,
+        selectTargetRecord,
+        itemList,
+        filteredItemList,
     }
 };

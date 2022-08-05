@@ -611,7 +611,7 @@
 							cross
 							@click="commit('main/toggleModal', ['play', true])"
 						>
-							{{ todayIsOpen ? $t("generic.play-now") : $t("generic.book-now") }}
+							{{ todayIsOpen ? t("generic.play-now") : t("generic.book-now") }}
 							<font-awesome-icon :icon="['fas', 'arrow-right']" />
 						</InclinedButton>
 					</div>
@@ -1198,6 +1198,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useTheme } from "vuetify";
+import { useI18n } from "vue-i18n";
 import SimpleUserCard from "@/components/basics/cards/SimpleUserCard.vue";
 import LeafletMap from "@/components/basics/interfaces/LeafletMap.vue";
 import PanoramicCard from "@/components/basics/cards/PanoramicCard.vue";
@@ -1222,11 +1223,12 @@ import ScheduleFormCard from "@/components/play/EventCard.vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import Default from "vuedraggable";
+
 
 library.add(faArrowRight);
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
+const { t } = useI18n();
 const panelSwitchMode = ref(false);
 
 

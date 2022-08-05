@@ -69,6 +69,11 @@ export const routes: Array<RouteRecordRaw> = [
         name: "AboutVr",
         component: WorkInProgress
     },
+    {
+        path: "/regolamento",
+        name: "Rules",
+        component: WorkInProgress
+    },
 
     // ------------ GAMES ------------
 

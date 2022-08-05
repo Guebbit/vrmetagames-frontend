@@ -10,6 +10,7 @@ export {
     stateEcommerceMap,
 
     //main
+    toastMap,
     BusinessHoursMap,
     stateMainMap,
 
@@ -28,12 +29,6 @@ export interface stateRootMap {
     ecommerce: stateEcommerceMap
 }
 
-export interface disclaimerMap {
-    icon :string
-    text :string
-    dismissable :boolean
-}
-
 export interface loginFormMap {
     user :string
     password :string
@@ -45,35 +40,3 @@ export interface registrationFormMap {
     password :string
     repeatPassword :string
 }
-
-export interface scheduleFormMap {
-    id? :string
-    date?: string
-    hourStart?: string
-    hourEnd?: string
-    rules?: boolean
-    temporaryFillFormFlag ?:boolean
-}
-
-export interface scheduleFormMap {
-    id? :string
-    date?: string
-    hourStart?: string
-    hourEnd?: string
-    rules?: boolean
-    temporaryFillFormFlag ?:boolean
-}
-
-export interface scheduleReadableMap {
-    id? :string
-    date?: string
-    hourStart?: string
-    hourEnd?: string
-    cost?: number
-    durationData?: {
-        mode: number
-        hours: number
-        minutes: number
-    }
-}
-

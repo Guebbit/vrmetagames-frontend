@@ -84,46 +84,47 @@
 				<v-col cols="12" md="12" lg="8">
 					<div class="authentication-section">
 						<div class="form-container page-menu-padding">
-							<v-form v-if="mode === 'password-retrieve'">
-								<h1>COMING SOON</h1>
-								<p>Vieni in sede o contattaci telefonicamente</p>
-								<v-btn
-									class="w-100 mt-10"
-									color="primary"
-									:to="{ name: 'Login' }"
-								>
-									Torna indietro
-								</v-btn>
-							</v-form>
-							<!-- Subscribe -->
-							<v-form v-else-if="mode === 'registration'">
-								<h1 class="text-h2 text-center">
-									{{ t('authentication-page.signin') }}
-								</h1>
-								<p class="text-right mb-10">
-									{{ t('authentication-page.signin-request') }}
-									<router-link
-										class="text-decoration-none"
-										:to="{
+							<v-container>
+								<v-form v-if="mode === 'password-retrieve'">
+									<h1>COMING SOON</h1>
+									<p>Vieni in sede o contattaci telefonicamente</p>
+									<v-btn
+										class="w-100 mt-10"
+										color="primary"
+										:to="{ name: 'Login' }"
+									>
+										Torna indietro
+									</v-btn>
+								</v-form>
+								<!-- Subscribe -->
+								<v-form v-else-if="mode === 'registration'">
+									<h1 class="text-h2 text-center">
+										{{ t('authentication-page.signin') }}
+									</h1>
+									<p class="text-right mb-10">
+										{{ t('authentication-page.signin-request') }}
+										<router-link
+											class="text-decoration-none"
+											:to="{
 											name: 'Login'
 										}"
-									>
-										<b class="text-secondary">
-											{{ t('authentication-form.switch-to-signin') }}
-										</b>
-									</router-link>
-								</p>
+										>
+											<b class="text-secondary">
+												{{ t('authentication-form.switch-to-signin') }}
+											</b>
+										</router-link>
+									</p>
 
-								<v-row>
-									<v-col cols="12">
-										<v-text-field
-											v-model="formValues.username"
-											:label="t('authentication-form.values.username')"
-											:placeholder="t('authentication-form.info.username-typing')"
-											:loading="formAsyncUsernameLoading"
+									<v-row>
+										<v-col cols="12">
+											<v-text-field
+												v-model="formValues.username"
+												:label="t('authentication-form.values.username')"
+												:placeholder="t('authentication-form.info.username-typing')"
+												:loading="formAsyncUsernameLoading"
 
-											:errors="formToggleUIErrors ? formErrors.username || !formAsyncUsernameValid : false"
-											:error-messages="
+												:errors="formToggleUIErrors ? formErrors.username || !formAsyncUsernameValid : false"
+												:error-messages="
 												formToggleUIErrors ?
 													formErrors.username ?
 														t('authentication-form.errors.username-' + formErrors.username) :
@@ -132,215 +133,229 @@
 															'' :
 														''
 											"
-										/>
-									</v-col>
-									<v-col cols="12" md="6">
-										<v-text-field
-											v-model="formValues.password"
-											:label="t('authentication-form.values.password')"
-											:type="formToggleShowPassword ? 'text' : 'password'"
-											:errors="formToggleUIErrors ? formErrors.password : false"
-											:error-messages="formToggleUIErrors && formErrors.password ? t('authentication-form.password-strong.' + formErrors.password) : ''"
-										>
-											<template v-slot:append>
-												<v-btn icon
-													variant="text"
-													@click="formToggleShowPassword = !formToggleShowPassword"
-												>
-													<font-awesome-icon :icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
-												</v-btn>
-											</template>
-										</v-text-field>
-									</v-col>
-									<v-col cols="12" md="6">
-										<v-text-field
-											v-model="formValues.passwordConfirm"
-											:label="t('authentication-form.values.password-repeat')"
-											:type="formToggleShowPassword ? 'text' : 'password'"
-											:errors="formToggleUIErrors ? formErrors.passwordConfirm : false"
-											:error-messages="formToggleUIErrors && formErrors.passwordConfirm ? t('authentication-form.errors.password-repeat-' + formErrors.passwordConfirm) : ''"
-										>
-											<template v-slot:append>
-												<v-btn icon
-													variant="text"
-													@click="formToggleShowPassword = !formToggleShowPassword"
-												>
-													<font-awesome-icon :icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
-												</v-btn>
-											</template>
-										</v-text-field>
-									</v-col>
-									<v-col cols="12">
-										<v-text-field
-											v-model="formValues.email"
-											:label="t('authentication-form.values.email')"
-											autocomplete="email"
-											:loading="formAsyncEmailLoading"
-											:errors="formToggleUIErrors ? formErrors.email || !formAsyncEmailValid : false"
-											:error-messages="
-										formToggleUIErrors ?
-											formErrors.email ?
-												t('authentication-form.errors.email-' + formErrors.email) :
-												!formAsyncUsernameValid ?
-													t('authentication-form.errors.email-already-used') :
-													'' :
-												''
-									"
-										/>
-									</v-col>
-									<v-col cols="12" md="6">
-										<!-- autocomplete="name" -->
-										<v-text-field
-											v-model="formValues.firstname"
-											:label="t('authentication-form.values.firstname')"
-											:errors="formToggleUIErrors ? formErrors.firstname : false"
-											:error-messages="formToggleUIErrors && formErrors.firstname ? t('authentication-form.errors.firstname-' + formErrors.firstname) : ''"
-										/>
-									</v-col>
-									<v-col cols="12" md="6">
-										<!-- autocomplete="???" -->
-										<v-text-field
-											v-model="formValues.lastname"
-											:label="t('authentication-form.values.lastname')"
-											:errors="formToggleUIErrors ? formErrors.lastname : false"
-											:error-messages="formToggleUIErrors && formErrors.lastname ? t('authentication-form.errors.lastname-' + formErrors.lastname) : ''"
-										/>
-									</v-col>
-									<v-col cols="12" md="6">
-										<v-text-field
-											v-model="formValues.phone"
-											:label="t('authentication-form.values.phone')"
-											autocomplete="tel"
-											:errors="formToggleUIErrors ? formErrors.phone : false"
-											:error-messages="formToggleUIErrors && formErrors.phone ? t('authentication-form.errors.phone-' + formErrors.phone) : ''"
-										/>
-									</v-col>
-									<v-col cols="12" md="6">
-										<!-- autocomplete="???" -->
-										<v-text-field
-											v-model="formValues.birthday"
-											type="date"
-											:label="t('authentication-form.values.birthday')"
-											:errors="formToggleUIErrors ? formErrors.birthday : false"
-											:error-messages="formToggleUIErrors && formErrors.birthday ? t('authentication-form.errors.birthday-' + formErrors.birthday) : ''"
-										/>
-									</v-col>
-									<v-col cols="12">
-										<v-checkbox
-											v-model="formValues.terms"
-											class="text-secondary"
-											:errors="formToggleUIErrors ? formErrors.terms : false"
-											:error-messages="formToggleUIErrors && formErrors.terms ? t('authentication-form.errors.terms-' + formErrors.terms) : ''"
-										>
-											<template #label>
-												<span v-html="$t('play-page.select-event-form-rules')"></span>
-											</template>
-										</v-checkbox>
-									</v-col>
-								</v-row>
+											/>
+										</v-col>
+										<v-col cols="12" md="6">
+											<v-text-field
+												v-model="formValues.password"
+												:label="t('authentication-form.values.password')"
+												:type="formToggleShowPassword ? 'text' : 'password'"
+												:errors="formToggleUIErrors ? formErrors.password : false"
+												:error-messages="formToggleUIErrors && formErrors.password ? t('authentication-form.password-strong.' + formErrors.password) : ''"
+											>
+												<template v-slot:append>
+													<v-btn icon
+														variant="text"
+														@click="formToggleShowPassword = !formToggleShowPassword"
+													>
+														<font-awesome-icon :icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
+													</v-btn>
+												</template>
+											</v-text-field>
+										</v-col>
+										<v-col cols="12" md="6">
+											<v-text-field
+												v-model="formValues.passwordConfirm"
+												:label="t('authentication-form.values.passwordConfirm')"
+												:type="formToggleShowPassword ? 'text' : 'password'"
+												:errors="formToggleUIErrors ? formErrors.passwordConfirm : false"
+												:error-messages="formToggleUIErrors && formErrors.passwordConfirm ? t('authentication-form.errors.passwordConfirm-' + formErrors.passwordConfirm) : ''"
+											>
+												<template v-slot:append>
+													<v-btn icon
+														variant="text"
+														@click="formToggleShowPassword = !formToggleShowPassword"
+													>
+														<font-awesome-icon :icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
+													</v-btn>
+												</template>
+											</v-text-field>
+										</v-col>
+										<v-col cols="12">
+											<v-text-field
+												v-model="formValues.email"
+												:label="t('authentication-form.values.email')"
+												autocomplete="email"
+												:loading="formAsyncEmailLoading"
+												:errors="formToggleUIErrors ? formErrors.email || !formAsyncEmailValid : false"
+												:error-messages="
+												formToggleUIErrors ?
+													formErrors.email ?
+														t('authentication-form.errors.email-' + formErrors.email) :
+														!formAsyncUsernameValid ?
+															t('authentication-form.errors.email-already-used') :
+															'' :
+														''
+											"
+											/>
+										</v-col>
+										<v-col cols="12" md="6">
+											<!-- autocomplete="name" -->
+											<v-text-field
+												v-model="formValues.firstname"
+												:label="t('authentication-form.values.firstname')"
+												:errors="formToggleUIErrors ? formErrors.firstname : false"
+												:error-messages="formToggleUIErrors && formErrors.firstname ? t('authentication-form.errors.firstname-' + formErrors.firstname) : ''"
+											/>
+										</v-col>
+										<v-col cols="12" md="6">
+											<!-- autocomplete="???" -->
+											<v-text-field
+												v-model="formValues.lastname"
+												:label="t('authentication-form.values.lastname')"
+												:errors="formToggleUIErrors ? formErrors.lastname : false"
+												:error-messages="formToggleUIErrors && formErrors.lastname ? t('authentication-form.errors.lastname-' + formErrors.lastname) : ''"
+											/>
+										</v-col>
+										<v-col cols="12" md="6">
+											<v-text-field
+												v-model="formValues.phone"
+												:label="t('authentication-form.values.phone')"
+												autocomplete="tel"
+												:errors="formToggleUIErrors ? formErrors.phone : false"
+												:error-messages="formToggleUIErrors && formErrors.phone ? t('authentication-form.errors.phone-' + formErrors.phone) : ''"
+											/>
+										</v-col>
+										<v-col cols="12" md="6">
+											<!-- autocomplete="???" -->
+											<v-text-field
+												v-model="formValues.birthday"
+												type="date"
+												:label="t('authentication-form.values.birthday')"
+												:errors="formToggleUIErrors ? formErrors.birthday : false"
+												:error-messages="formToggleUIErrors && formErrors.birthday ? t('authentication-form.errors.birthday-' + formErrors.birthday) : ''"
+											/>
+										</v-col>
+										<v-col cols="12">
+											<v-checkbox
+												v-model="formValues.terms"
+												class="text-secondary"
+												:errors="formToggleUIErrors ? formErrors.terms : false"
+												:error-messages="formToggleUIErrors && formErrors.terms ? t('authentication-form.errors.terms-' + formErrors.terms) : ''"
+											>
+												<template #label>
+													<span v-html="t('play-page.select-event-form-rules')"></span>
+												</template>
+											</v-checkbox>
+										</v-col>
+									</v-row>
 
-								<v-list
-									v-show="formPasswordErrors.length > 0 && !formPasswordErrors.includes('required')"
-									class="password-lacking-list bg-transparent mb-5"
-									density="compact"
-								>
-									<v-list-item
-										v-for="(label, rule) in formPasswordRules"
-										:key="'rule-' + rule"
+									<v-list
+										v-show="formPasswordErrors.length > 0 && !formPasswordErrors.includes('required')"
+										class="password-lacking-list bg-transparent mb-5"
+										density="compact"
 									>
-										{{ label }}
-										<template v-slot:prepend>
-											<font-awesome-icon
-												class="mr-5"
-												:style="{
+										<v-list-item
+											v-for="(label, rule) in formPasswordRules"
+											:key="'rule-' + rule"
+										>
+											{{ label }}
+											<template v-slot:prepend>
+												<font-awesome-icon
+													class="mr-5"
+													:style="{
 											color: formPasswordErrors.includes(rule) ? themeColors.error : themeColors.success
 										}"
-												:icon="formPasswordErrors.includes(rule) ?
+													:icon="formPasswordErrors.includes(rule) ?
 											['fas', 'triangle-exclamation'] :
 											['fas', 'circle-check']"
-											/>
-										</template>
-									</v-list-item>
-								</v-list>
-
-								<v-btn
-									class="w-100"
-									color="secondary"
-									@click="formSubmit"
-								>
-									{{ t('authentication-form.submit-signup') }}
-								</v-btn>
-							</v-form>
-							<!-- Authentication -->
-							<v-form v-else>
-								<h1 class="text-h2 text-center">
-									{{ t('authentication-page.signup') }}
-								</h1>
-								<p class="text-right mb-10">
-									{{ t('authentication-page.signup-request') }}
-									<router-link
-										class="text-decoration-none"
-										:to="{
-											name: 'Registration'
-										}"
-									>
-										<b class="text-secondary">
-											{{ t('authentication-form.switch-to-signup') }}
-										</b>
-									</router-link>
-								</p>
-
-								<v-row>
-									<v-col cols="12">
-										<v-text-field
-											v-model="formValues.authentication"
-											:label="t('authentication-form.values.authentication')"
-											:placeholder="t('authentication-form.info.authentication-typing')"
-
-											:errors="formToggleUIErrors ? formErrors.authentication : false"
-											:error-messages="formToggleUIErrors && formErrors.authentication ? t('authentication-form.errors.authentication-' + formErrors.authentication) : ''"
-										/>
-									</v-col>
-
-									<v-col cols="12">
-										<v-text-field
-											v-model="formValues.password"
-											:label="t('authentication-form.values.password')"
-											:type="formToggleShowPassword ? 'text' : 'password'"
-											:errors="formToggleUIErrors ? formErrors.password : false"
-											:error-messages="formToggleUIErrors && formErrors.password ? t('authentication-form.errors.password-' + formErrors.password) : ''"
-										>
-											<template v-slot:append-inner>
-												<font-awesome-icon
-													class="v-icon v-icon--size-default v-icon--start cursor-pointer"
-													:icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']"
-													@click="formToggleShowPassword = !formToggleShowPassword"
 												/>
 											</template>
-										</v-text-field>
-									</v-col>
-								</v-row>
+										</v-list-item>
+									</v-list>
 
-								<div class="d-flex justify-end align-end flex-column mt-5" style="gap: 1em">
 									<v-btn
 										class="w-100"
 										color="secondary"
 										@click="formSubmit"
 									>
-										{{ t('authentication-form.submit-signin') }}
+										{{ t('authentication-form.submit-signup') }}
 									</v-btn>
-									<v-btn
-										size="x-small"
-										variant="plain"
-										:to="{
+								</v-form>
+								<!-- Authentication -->
+								<v-form v-else>
+									<h1 class="text-h2 text-center">
+										{{ t('authentication-page.signup') }}
+									</h1>
+									<p class="text-right mb-10">
+										{{ t('authentication-page.signup-request') }}
+										<router-link
+											class="text-decoration-none"
+											:to="{
+											name: 'Registration'
+										}"
+										>
+											<b class="text-secondary">
+												{{ t('authentication-form.switch-to-signup') }}
+											</b>
+										</router-link>
+									</p>
+
+									<v-row>
+										<v-col cols="12">
+											<v-text-field
+												v-model="formValues.authentication"
+												:label="t('authentication-form.values.authentication')"
+												:placeholder="t('authentication-form.info.authentication-typing')"
+
+												:errors="formToggleUIErrors ? formErrors.authentication : false"
+												:error-messages="formToggleUIErrors && formErrors.authentication ? t('authentication-form.errors.authentication-' + formErrors.authentication) : ''"
+											/>
+										</v-col>
+
+										<v-col cols="12">
+											<v-text-field
+												v-model="formValues.password"
+												:label="t('authentication-form.values.password')"
+												:type="formToggleShowPassword ? 'text' : 'password'"
+												:errors="formToggleUIErrors ? formErrors.password : false"
+												:error-messages="formToggleUIErrors && formErrors.password ? t('authentication-form.errors.password-' + formErrors.password) : ''"
+											>
+												<template v-slot:append-inner>
+													<font-awesome-icon
+														class="v-icon v-icon--size-default v-icon--start cursor-pointer"
+														:icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']"
+														@click="formToggleShowPassword = !formToggleShowPassword"
+													/>
+												</template>
+											</v-text-field>
+										</v-col>
+									</v-row>
+
+									<div class="d-flex justify-end align-end flex-column mt-5" style="gap: 1em">
+										<v-btn
+											class="w-100"
+											color="secondary"
+											@click="formSubmit"
+										>
+											{{ t('authentication-form.submit-signin') }}
+										</v-btn>
+										<v-btn
+											size="x-small"
+											variant="plain"
+											:to="{
 											name: 'PasswordRetrieve'
 										}"
+										>
+											{{ t('authentication-form.forgot-password') }}
+										</v-btn>
+									</div>
+								</v-form>
+								<!--
+								<div v-show="formToggleUIErrors && formErrorsList.length > 0"
+									class="form-errors"
+								>
+									<v-alert
+										v-for="(error, index) in formErrorsList"
+										:key="'error-' + index"
+										type="error"
+										class="my-2"
 									>
-										{{ t('authentication-form.forgot-password') }}
-									</v-btn>
+										{{ t('authentication-form.errors.' + error) }}
+									</v-alert>
 								</div>
-
-							</v-form>
+								-->
+							</v-container>
 						</div>
 					</div>
 				</v-col>
@@ -410,7 +425,7 @@ const formToggleUIErrors = ref(false);
  * YUP schema used with vee-validate
  */
 // registration
-const formSchemaRegistration = yup.object({
+const formRegistrationSchema = yup.object({
 	username: formRules.required,
 	firstname: formRules.required,
 	lastname: formRules.required,
@@ -426,7 +441,7 @@ const formSchemaRegistration = yup.object({
 	terms: formRules.requiredCheck,
 });
 // authentication
-const formSchemaAuthentication = yup.object({
+const formAuthenticationSchema = yup.object({
 	authentication: formRules.required,
 	password: formRules.required,
 });
@@ -437,8 +452,8 @@ const formSchemaAuthentication = yup.object({
  */
 const { meta :formMeta, errors :formErrors, setValues, validate } = useForm({
 	validationSchema:
-		props.mode === 'registration' ? formSchemaRegistration :
-			props.mode === 'login' ? formSchemaAuthentication :
+		props.mode === 'registration' ? formRegistrationSchema :
+			props.mode === 'login' ? formAuthenticationSchema :
 				props.mode === 'password-retrieve' ? {} : {}
 });
 
@@ -449,7 +464,6 @@ watch(formValues, async (val) => {
 	setValues(val);
 	await validate();
 }, { deep: true });
-
 
 
 
@@ -483,8 +497,6 @@ const formPasswordRules = {
 	'need-special-char': t('authentication-form.password-strong.need-special-char'),
 };
 
-
-
 /**
  * Online checks for username and email to be unique
  * Online checks starts only if offline checks about username and email are clear
@@ -505,7 +517,21 @@ const {
 	computed(() => formErrors.value.email ? undefined : formValues.value.email)
 );
 
-
+/**
+ * Form errors made list
+ */
+const formErrorsList = computed<string[]>(() => {
+	const errorList :string[] = [];
+	// regular
+	for(const key in formErrors.value)
+		errorList.push(key + '-' + formErrors.value[key]);
+	// async
+	if(!formAsyncUsernameValid.value && !formErrors.value.username)
+		errorList.push('username-already-used');
+	if(!formAsyncEmailValid.value && !formErrors.value.email)
+		errorList.push('email-already-used');
+	return errorList;
+});
 
 /**
  * Submit form, do page action
@@ -530,12 +556,9 @@ const formSubmit = () => {
 			password: formValues.value.password
 		});
 	else if(props.mode === 'password-retrieve')
+		// TODO password-retrieve
 		console.log("TODO")
 }
-
-
-
-
 
 
 
@@ -547,8 +570,10 @@ const authenticationFormUIRules = {
 		// variant: 'outlined',
 		hideDetails: 'auto'
 	},
+	VCheckbox: {
+		hideDetails: 'auto'
+	}
 };
-
 </script>
 
 <style lang="scss">
@@ -575,7 +600,7 @@ const authenticationFormUIRules = {
 			@include guebbit-builder-scrollbar(4px, rgb(var(--v-theme-primary)));
 		}
 
-		.v-form{
+		.v-container{
 			flex-grow: 1;
 			margin: 0 auto;
 			max-width: 600px;

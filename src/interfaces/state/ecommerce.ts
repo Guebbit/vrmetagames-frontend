@@ -17,8 +17,8 @@
 export interface scheduleInputMap {
     start: number
     end: number
-    allDay: boolean
-    id? :string
+    allDay?: boolean
+    id?: string
     resourceId?: string
 }
 

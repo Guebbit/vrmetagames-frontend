@@ -604,19 +604,19 @@ export default {
      * to be saved and\or confirmed later
      *
      * @param {Function} commit
-     * @param {Function} checkScheduleIsAllowed
+     * @param {Function} determineScheduleIsAllowed
      * @param {string} id
      * @param {boolean} isAdmin
      * @param {Object} scheduleData
      */
-    async addSchedule({ commit, getters: { checkScheduleIsAllowed }, rootState: { user: { userInfo: { id, isAdmin }}}}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :Promise<string> {
+    async addSchedule({ commit, getters: { determineScheduleIsAllowed }, rootState: { user: { userInfo: { id, isAdmin }}}}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :Promise<string> {
         // If NOT admin, user can make decisions only for himself
         if(!isAdmin && scheduleData.userId !== id){
             return Promise.reject(['error-403']);
         }
 
         // if schedule is not allowed in that timeframe
-        const errorArray = checkScheduleIsAllowed(scheduleData.start, scheduleData.end, scheduleData.id, scheduleData.resourceId);
+        const errorArray = determineScheduleIsAllowed(scheduleData.start, scheduleData.end, scheduleData.id, scheduleData.resourceId);
         if(errorArray.length > 0){
             return Promise.reject(errorArray);
         }
@@ -647,7 +647,7 @@ export default {
      * @param {Function} getItem
      * @param {Object} scheduleData
      */
-    async editSchedule({ commit, getters: { getItem, checkScheduleIsEditable, checkScheduleIsAllowed }}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :Promise<void> {
+    async editSchedule({ commit, getters: { getItem, determineScheduleIsEditable, determineScheduleIsAllowed }}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :Promise<void> {
         const { id, start, end, resourceId } = scheduleData;
         const oldScheduleData = getItem('scheduleRecords', id);
         // if not found (shouldn't happen)
@@ -655,12 +655,12 @@ export default {
             return Promise.reject(['error-404']);
         }
         // CHECK if user can edit target schedule
-        const errorEditableArray = checkScheduleIsEditable(id);
+        const errorEditableArray = determineScheduleIsEditable(id);
         if(errorEditableArray.length > 0){
             return Promise.reject(errorEditableArray);
         }
         // CHECK if the edited schedule is allowed in the new timeslots
-        const errorAllowedArray = checkScheduleIsAllowed(start, end, id, resourceId);
+        const errorAllowedArray = determineScheduleIsAllowed(start, end, id, resourceId);
         if(errorAllowedArray.length > 0){
             return Promise.reject(errorAllowedArray);
         }
@@ -730,7 +730,6 @@ export default {
                 // TODO Possible logical error and revert needed
                 // TODO controlla se ha senso mettere catch per primo con
                 //   "adderror" che poi casca nel then che fa le sue cose ed eventualmente catch revert
-
                 // TODO LOGICAL ERROR: timeslot unavaible (simultaneous bookings)
                 // dispatch("main/handleLogicalError", "sendSchedules ERROR", { root: true })
             })

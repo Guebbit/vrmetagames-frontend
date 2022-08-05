@@ -28,10 +28,42 @@
 			<div></div>
 		</div>
 
-
 		<!-- Modals -->
         <LoginModal />
         <PlayModal />
+
+		<!-- Toasts -->
+		<div class="app-top-container">
+			<v-alert
+				v-for="{ id, color = 'surface', closable = true, variant, title, text } in toasts"
+				:key="'toast-' + id"
+				class="my-2"
+				:class="{
+					'full': variant === 'full'
+				}"
+				border="start"
+				:color="color"
+				density="compact"
+				prominent
+			>
+				<v-alert-title v-show="title">{{ title }}</v-alert-title>
+				<p v-show="text">{{ text }}</p>
+				<template #prepend>
+					<font-awesome-icon size="xl" :icon="['fas', 'circle-info']" />
+				</template>
+				<template #append>
+					<v-btn
+						v-show="closable"
+						icon
+						variant="text"
+						@click="commit('main/removeToast', id)"
+					>
+						<font-awesome-icon :icon="['fas', 'xmark']" />
+					</v-btn>
+				</template>
+			</v-alert>
+		</div>
+
     </v-app>
 </template>
 
@@ -42,13 +74,18 @@ import MainNavigation from "@/components/generic/Header.vue";
 import LoginModal from "@/components/generic/modals/LoginModal.vue";
 import PlayModal from "@/components/generic/modals/PlayModal.vue";
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faXmark, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+library.add(faXmark, faCircleInfo);
+
 const {
     state,
 	commit,
     dispatch
 } = useStore();
 
-const { loading } = toRefs(state.main);
+const { loading, toasts } = toRefs(state.main);
 
 commit('main/startLoading', 'main');
 dispatch('main/initApp').finally(() => commit('main/stopLoading', 'main'));
@@ -61,6 +98,18 @@ dispatch('main/initApp').finally(() => commit('main/stopLoading', 'main'));
 html {
 	// vuetify scroll-right fix
 	overflow-y: auto !important;
+}
+
+.app-top-container{
+	position: fixed;
+	top: 0;
+	right: 0;
+	z-index: 1005;
+	padding: 12px;
+
+	.v-alert{
+		max-width: 600px;
+	}
 }
 </style>
 

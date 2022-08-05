@@ -15,70 +15,65 @@
                 }"
             >
                 <span class="label">
-                    {{ $t('main.days.' + (day - 1) )}}
+                    {{ t('main.days.' + (day - 1) )}}
                 </span>
                 <span class="hours">
-                    {{ list[day-1] && list[day-1].length > 0 ? list[day-1][0] + ' - ' + list[day-1][1] : $t('generic.closed') }}
+                    {{ list[day-1] && list[day-1].length > 0 ? list[day-1][0] + ' - ' + list[day-1][1] : t('generic.closed') }}
                 </span>
             </li>
         </ul>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { defineProps, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import type { PropType } from 'vue'
 import type { BusinessHoursMap } from "@/interfaces";
 
-export default defineComponent({
-    name: "OpeningHours",
+const { t } = useI18n();
 
-    props: {
-        list: {
-            type: Array as PropType<BusinessHoursMap>,
-            default: () => {
-                return [];
-            }
-        },
-        open: {
-            type: Boolean,
-            default: () => {
-                return false;
-            }
-        },
+const props = defineProps({
+	list: {
+		type: Array as PropType<BusinessHoursMap>,
+		default: () => {
+			return [];
+		}
+	},
+	open: {
+		type: Boolean,
+		default: () => {
+			return false;
+		}
+	},
 
-        color: {
-            type: String,
-            default: () => {
-                return '#FFFFFF';
-            }
-        },
-        colorClosed: {
-            type: String,
-            default: () => {
-                return '#FFFFFF';
-            }
-        },
-        text: {
-            type: String,
-            default: () => {
-                return '#000000';
-            }
-        },
-        background: {
-            type: String,
-            default: () => {
-                return 'transparent';
-            }
-        },
-    },
-
-    computed:{
-        today(){
-            return new Date().getDay();
-        },
-    }
+	color: {
+		type: String,
+		default: () => {
+			return '#FFFFFF';
+		}
+	},
+	colorClosed: {
+		type: String,
+		default: () => {
+			return '#FFFFFF';
+		}
+	},
+	text: {
+		type: String,
+		default: () => {
+			return '#000000';
+		}
+	},
+	background: {
+		type: String,
+		default: () => {
+			return 'transparent';
+		}
+	}
 });
+
+const today = computed(() => new Date().getDay());
 </script>
 
 <style lang="scss">

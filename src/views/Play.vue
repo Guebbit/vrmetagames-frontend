@@ -12,14 +12,17 @@
 					<h1>
 						Fast mode = togliere "conferma tutti gli eventi", "inserisci evento", modifica evento, etc"
 						Compra direttamente, apri una modale con già la richiesta di pagamento (bottone per andare al "play avanzato" o al checkout)
+
+						No insert/edit/events. Confirm event directly with the inserted data
+						No checkout: direct modal payment
+					</h1>
+					<h1>
+						Replicare il form PlayAdvanced in modo discorsivo (sempre i 3 input, ma più bottoni e con del dialogo),
+						con anche in automatico la "formazione" del checkout e la card con l'evento finale.
+						<br>
+						clicca conferma = subito pagamento e conferma evento
 					</h1>
 					<!-- ScheduleFormCard -->
-					<ScheduleFormPanel
-						fast
-						:defaultFormTimeStep="preloadSteps || 2"
-
-						@schedule:confirm = "scheduleHandleConfirm"
-					/>
 					<div class="d-flex justify-end align-items-center flex-gap-24 mt-10">
 						<v-btn
 							variant="outlined"
@@ -69,7 +72,6 @@ import { useTheme } from "vuetify";
 
 import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
 import ScheduleFormCard from "@/components/generic/forms/ScheduleFormCard.vue";
-import ScheduleFormPanel from "@/components/generic/forms/ScheduleFormPanel.vue";
 import Footer from "@/components/generic/Footer.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -77,11 +79,8 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faCalendar, faClock, faPlay, faCalendarDay, faCheck, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 import type {
-	scheduleInputMap,
-	scheduleMap,
-	scheduleFormMap,
+	scheduleInputMap
 } from "@/interfaces";
-import { mapActions, mapGetters } from "vuex";
 
 
 library.add(faCalendar, faClock, faPlay, faCalendarDay, faCheck, faCircleInfo);

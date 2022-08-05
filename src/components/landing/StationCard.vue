@@ -46,7 +46,7 @@
                        class="border-secondary"
                        elevation="12"
                 >
-                    {{ $t( available ? 'generic.play-now' : 'generic.book-now') }}
+                    {{ t( available ? 'generic.play-now' : 'generic.book-now') }}
                 </v-btn>
             </div>
         </v-card>
@@ -59,9 +59,12 @@
 
 import { defineComponent } from "vue";
 import { secondsToTime } from "guebbit-javascript-library";
+import { useI18n } from "vue-i18n";
 import dayjs from 'dayjs';
 
 import ImageHoverCard from "@/components/basics/cards/ImageHoverCard.vue";
+
+const { t } = useI18n();
 
 export default defineComponent({
     name: "StationCard",

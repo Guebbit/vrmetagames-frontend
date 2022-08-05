@@ -1,142 +1,143 @@
-import {
-    ref,
-    computed,
-    watch,
-    onMounted,
-    toRefs
-} from "vue";
-import { useStore } from "@/store";
-import { useI18n } from "vue-i18n";
-import useTimeHelpers from "./useTimeHelpers";
-
-import { timeToSeconds } from "guebbit-javascript-library";
-import { formRules, timeFormatDate, timeFormatHours } from "@/resources/constants";
-import dayjs from "dayjs";
+import { watch, ref, computed } from "vue";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
+import dayjs, { type ManipulateType } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { timeToSeconds } from "guebbit-javascript-library";
+import { formRules } from "@/resources/constants";
+import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
 
-import type { scheduleFormMap, scheduleInputMap, scheduleMap } from "@/interfaces";
-import useScheduleStructure from "@/resources/composables/useScheduleStructure";
-import useFormBetweenDates from "@/resources/composables/useFormBetweenDates";
-
-export interface useFormSchedulePropsMap {
-    scheduleId ?:string,
-    showSpeedModeTab :boolean,
-    defaultFastMode :boolean,
-    defaultFormTimeStep :number
-}
 
 dayjs.extend(customParseFormat);
 
-export default (props: useFormSchedulePropsMap) => {
-    const { state, getters } = useStore();
-    const { t } = useI18n();
+export interface scheduleFormHelperMap {
+    duration: number
+    timeframe: string
+}
 
+export interface scheduleFormMap {
+    date?: string
+    hourStart?: string
+    hourEnd?: string
+    terms?: boolean
+}
 
-    // TODO formValues
-    const form = ref<scheduleFormMap>({
-        date: undefined,
-        hourStart: undefined,
-        hourEnd: undefined,
-        rules: false,
-        temporaryFillFormFlag: false            // TODO TEMPORARY - trova una soluzione più bella
-    });
+export interface scheduleFormOptions {
+    admin?: boolean
+    stepTime?: number
+    stepSlot?: number
+    dateFormat?: string
+    timeFormat?: string
+}
+
+export default ({
+        admin = false,
+        stepTime = 1800000,
+        stepSlot = 2,
+        dateFormat = 'YYYY-MM-DD',
+        timeFormat = 'HH:mm:ss'
+    } :scheduleFormOptions) => {
 
     /**
      *
      */
     const {
-        translateToDate,
-        formatInputTypeDate,
-        formatInputTypeTime
-    } = useTimeHelpers(timeFormatDate + ' ' + timeFormatHours);
-
-    /**
-     *
-     */
-    const {
+        formToTime,
+        timeToForm,
         getFirstTimeAvailable,
-    } = useScheduleStructure();
+        getScheduleTimeFromDuration
+    } = useScheduleHelpers(dateFormat, timeFormat);
 
+    /**
+     * Form values
+     */
+    const formValues = ref<scheduleFormMap>({});
+
+    /**
+     * Vee-validate validation
+     */
+    const formScheduleAdminSchema = yup.object({
+        date: formRules.requiredStringDate,
+        hourStart: formRules.required
+            .notOneOf([yup.ref('hourEnd')], 'must-not-match'),
+        hourEnd: formRules.required
+            .notOneOf([yup.ref('hourStart')], 'must-not-match'),
+    });
+    const formScheduleUserSchema = formScheduleAdminSchema
+        .concat(
+            yup.object({
+                terms: formRules.requiredCheck
+            })
+        ).test('time-travel', 'time-travel',
+            ({ date, hourStart, hourEnd }) => {
+                // user cannot set a date in the past
+                const [ start ] = formToTime(date, hourStart, hourEnd);
+                // if false = error
+                return new Date().setMinutes(0, 0, 0) <= start;
+            });
+    // type formScheduleUserSchemaType = yup.InferType<typeof formScheduleUserSchema>;
+    /**
+     * Vee-validate validation toolbox
+     * Different schema if on authentication or registration
+     */
+    const { errors :formErrors, meta: formMeta, setValues, validate } = useForm({
+        validationSchema: admin ? formScheduleAdminSchema : formScheduleUserSchema
+    });
+    // shortcut validation flag
+    const formIsValid = computed(() => formMeta.value.valid);
+
+    /**
+     * Form errors made list
+     */
+    const formErrorsList = computed<string[]>(() => {
+        const errorList :string[] = [];
+        // regula
+        for(const key in formErrors.value)
+            errorList.push(key + '-' + formErrors.value[key]);
+        return errorList;
+    });
+
+    /**
+     * Vee-validate reactive validation
+     */
+    watch(formValues, async (val) => {
+        setValues(val);
+        await validate();
+    }, { deep: true });
 
     /**
      *
+     * @param {string} direction
+     * @param {number} amount
+     * @param {string} unit
      */
-    const formTimeStep = computed(() => scheduleTimeStep.value * props.defaultFormTimeStep);
-
-    /**
-     *
-     */
-    const {
-        translatedHourEnd,
-        formValuesDateStart,
-        formValuesDateEnd
-    } = useFormBetweenDates(
-        computed(() => form.value.date),
-        computed(() => form.value.hourStart),
-        computed(() => form.value.hourEnd)
-    );
-
-
-    // --------- DATA ---------
-
-    const formIsValid = ref(true);
-    const { scheduleRecords, scheduleTimeStep } = toRefs(state.ecommerce);
-
-    /**
-     *
-     */
-    const selectedSchedule = computed<scheduleMap | undefined>(() => {
-        if(!props.scheduleId || !Object.prototype.hasOwnProperty.call(scheduleRecords.value, props.scheduleId)){
-            return undefined;
+    const formValueGo = (direction: "forward" | "back" | "now", amount = 0, unit :ManipulateType = 'day') => {
+        if(direction === 'now'){
+            formValues.value = {
+                ...formValues.value,
+                date: dayjs().format(dateFormat),
+            };
         }
-        return scheduleRecords.value[props.scheduleId]
-    });
-
-    /**
-     * Form schedule is on a valid time?
-     */
-    const formScheduleAvailability = computed<string[]>(() => getters['ecommerce/checkScheduleIsAllowed'](formValuesDateStart.value.getTime(), formValuesDateEnd.value.getTime()));
-
-    /**
-     * Readable duration
-     *
-     * @return {string}
-     */
-    const selectedFormDuration = computed<string>(() => {
-        const { durationData: { mode = 0, hours = 0, minutes = 0 } = {} } = getters['ecommerce/scheduleReadable'](formValuesDateStart.value.getTime(), formValuesDateEnd.value.getTime());
-        return t('generic.schedule-details-time-count.' + mode, {
-            hours,
-            minutes
-        });
-    });
-
-
-    // --------- METHODS ---------
-
-
-    /**
-     * Put hourStart behind hourEnd of 1 hour if the hours are not valid
-     * Not valid = "start" is after "end"
-     * Edit the one who was not edited by the user
-     *
-     * TODO adapt to businessHours
-     *
-     * @param {boolean} hourEndWasEdited
-     */
-    const resetFormHours = (hourEndWasEdited = false) :void => {
-        console.log("2222222222", form.value.hourStart, translatedHourEnd.value)
-        const start = timeToSeconds(form.value.hourStart);
-        const end = timeToSeconds(translatedHourEnd.value);
-        // not valid, reset
-        console.log("333333333333333333333333", start, end, start >= end)
-        if(start >= end){
-            if(!hourEndWasEdited){
-                form.value.hourEnd = dayjs(formValuesDateStart.value.getTime() + formTimeStep.value).format(timeFormatHours);
-            }else{
-                form.value.hourStart = dayjs(formValuesDateEnd.value.getTime() - formTimeStep.value).format(timeFormatHours);
-            }
+        if(direction === 'forward'){
+            const [ start, end ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
+            formValues.value = {
+                ...formValues.value,
+                date: dayjs(start).add(amount, unit).format(dateFormat),
+                hourStart: dayjs(start).add(amount, unit).format(timeFormat),
+                hourEnd: dayjs(end).add(amount, unit).format(timeFormat),
+            };
+        }
+        if(direction === 'back'){
+            const [ start, end ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
+            formValues.value = {
+                ...formValues.value,
+                date: dayjs(start).subtract(amount, unit).format(dateFormat),
+                hourStart: dayjs(start).subtract(amount, unit).format(timeFormat),
+                hourEnd: dayjs(end).subtract(amount, unit).format(timeFormat),
+            };
         }
     };
+
 
     /**
      * Fill form with selected dates
@@ -152,116 +153,149 @@ export default (props: useFormSchedulePropsMap) => {
         // if END is empty => put today + double timeStep (1 hour) as standard starting value
         if(!end){
             // 1 hour later
-            end = start + formTimeStep.value;
+            end = start + (stepTime * stepSlot);
         }
         // all times must be divided in "steps" (30 min steps)
-        start = Math.round(start / scheduleTimeStep.value) * scheduleTimeStep.value;
-        end = Math.round(end / scheduleTimeStep.value) * scheduleTimeStep.value;
-
-        const {
-            dateObject,
-            hourStartObject,
-            hourEndObject
-        } = getFirstTimeAvailable(start, end, formTimeStep.value);
-
+        start = Math.round(start / stepTime) * stepTime;
+        end = Math.round(end / stepTime) * stepTime;
+        // get the first time available in this hours (end - start = requested duration)
+        const [ newStart, newEnd ] = getScheduleTimeFromDuration(start, end - start);
         // fill the form with the new data
-        form.value = {
-            date: dateObject.format(timeFormatDate),
-            hourStart: hourStartObject.format(timeFormatHours),
-            hourEnd: hourEndObject.format(timeFormatHours),
-            rules: form.value.rules,
-            temporaryFillFormFlag: !form.value.temporaryFillFormFlag
+        formValues.value = {
+            ...timeToForm(newStart, newEnd),
+            terms: formValues.value.terms
         };
-        // console.log("FORMFILLED", form.value.date, form.value.hourStart, form.value.hourEnd)
-        // to make visible errors and warnings
-
-        // TODO VALIDATE
-        console.log("VALIDATE")
     };
 
-
-
-
-
-
-
-
-
-
-
-
     /**
-     * A deep watcher can't see exactly what changed in the object.
-     * The solution is to watch a shallow copied object
+     * Automatically resolve/correct form validation
      */
-    const watcherHelperForm = computed(() => {
-        return {
-            ...form.value,
-            scheduleId: props.scheduleId
+    const resolveFormSystemErrors = () => {
+        const [ start, end ] = getScheduleTimeFromDuration();
+        // new pure form
+        const formFabric = {
+            ...timeToForm(start, end)
         };
+        // old form clone
+        const newForm = {
+            ...formValues.value,
+        };
+        // correction
+        if(formErrors.value.date)
+            newForm.date = formFabric.date;
+        if(formErrors.value.hourStart)
+            newForm.hourStart = formFabric.hourStart;
+        if(formErrors.value.hourEnd)
+            newForm.hourEnd = formFabric.hourEnd;
+        // saving
+        formValues.value = {
+            ...newForm,
+        };
+    };
+    /**
+     * Automatically resolve logic/scheduling errors if possible,
+     * like finding better hours if closed or maxed out
+     */
+    const resolveFormLogicErrors = () => {
+        const [ start, end ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
+        const [ newStart, newEnd ] = getFirstTimeAvailable(start, end, stepTime);
+        if(start !== newStart || end !== newEnd)
+        formValues.value = {
+            ...formValues.value,
+            ...timeToForm(newStart, newEnd)
+        };
+    };
+    const resolveFormErrors = () => {
+        resolveFormSystemErrors();
+        resolveFormLogicErrors();
+    }
+
+
+    watch([() => formValues.value.hourStart, () => formValues.value.hourEnd], ([newHourStart, newHourEnd], [oldHourStart, oldHourEnd]) => {
+        // valid hours, no need to intervene
+        if(timeToSeconds(formValues.value.hourStart) < timeToSeconds(formValues.value.hourEnd === '00:00' ? '24:00' : formValues.value.hourEnd))
+            return;
+        const [ start, end ] = formToTime(formValues.value.date, newHourStart, newHourEnd);
+        // if hours changed and are now invalid
+        // start changed
+        if(newHourStart !== oldHourStart)
+            formValues.value.hourEnd = dayjs(start + stepTime).format(timeFormat);
+        // end changed
+        if(newHourEnd !== oldHourEnd)
+            formValues.value.hourStart = dayjs(end - stepTime).format(timeFormat);
+
+
     });
 
     /**
-     * Check if an existent event was changed
+     *  Form buttons to simplify
      */
-    watch(watcherHelperForm, (newData, oldData) => {
-        console.log("11111111111111111111111")
-        const { scheduleId :newScheduleId, date: newDate, hourEnd: newHourEnd, hourStart: newHourStart, temporaryFillFormFlag: newFlag } = newData;
-        const { scheduleId :oldScheduleId, date: oldDate, hourEnd: oldHourEnd, hourStart: oldHourStart, temporaryFillFormFlag: oldFlag } = oldData;
-        // TODO TEMPORARY FIX, se i flag sono diversi allora è stato attivato fillForm e quindi è stato richiamato 2 volte il watcher
-        if(newFlag !== oldFlag){
-            return;
+    const formHelper = ref<scheduleFormHelperMap>({
+        duration: 0,
+        timeframe: ''
+    });
+    /**
+     * formHelper interact with formValues
+     * - Timeframe is a shortcut for certain start-end hours of the day
+     * - Duration is the step to add to start (must add milliseconds)
+     */
+    watch(() => formHelper.value.timeframe, (val) => {
+        const [ start ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
+        console.log("VVVVVV", getScheduleTimeFromDuration(start, formHelper.value.duration))
+        switch (val) {
+            case "morning":
+                break;
+            case "afternoon":
+                break;
+            case "evening":
+                break;
         }
-        // if hours changed
-        if(newHourStart !== oldHourStart || newHourEnd !== oldHourEnd){
-            resetFormHours(newHourEnd !== oldHourEnd)
+    });
+    watch(() => formHelper.value.duration, (val) => {
+        const [ start ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
+        formValues.value = {
+            ...formValues.value,
+            ...timeToForm(start, start + val * 1000),
         }
-        // schedule not selected, nothing to edit
-        if(!selectedSchedule.value){
-            return;
+    });
+    /**
+     * Mirror formValues changes in formHelper
+     * - If hour change, check the new difference, remove the milliseconds, and you have the duration
+     */
+    watch([() => formValues.value.hourStart, () => formValues.value.hourEnd], ([newHourStart, newHourEnd], [oldHourStart, oldHourEnd]) => {
+        const [ start, end ] = formToTime(formValues.value.date, newHourStart, newHourEnd);
+        formHelper.value = {
+            ...formHelper.value,
+            duration: (end - start) / 1000
         }
-        // if all undefined then it's the initialization
-        if(!oldDate && !oldHourEnd && !oldHourStart){
-            return;
-        }
-        // if the identifier changed, then it's a different event being loaded
-        if(newScheduleId !== oldScheduleId){
-            return;
-        }
-        // if all is the same, then it changed a non-consequential parameter
-        if(newDate === oldDate && newHourEnd === oldHourEnd && newHourStart === oldHourStart){
-            return;
-        }
-        // Changes are valid, emit
-        // editSchedule();
-        console.log("EEEEEEEEEEDIT SCHEDULE")
-    }, { deep: true });
-
-    watch(() => props.scheduleId, () => {
-        const { start, end } = selectedSchedule.value || {};
-        fillForm(start, end);
     });
 
-    onMounted(() => {
-        fillForm();
-    });
+    /*
+    console.clear();
+    console.log("------------------------------------------------------------------------------------------------------------------------------------")
+    // getFirstTimeAvailable TEST
+    // const startingdate
+    const testDate = 1659513600000; // mercoledì alle 10 di mattina (apertura: dalle 12 alle 19) || Date.now()
+    const [ testStart, testEnd ] = getFirstTimeAvailable(
+        testDate,   // startingdate
+        testDate + (28800000 + 3600000) // startingdate + 8+1 ore
+    );
+    console.log("STARTTT", new Date(testStart).toUTCString())
+    console.log("ENDDDD", new Date(testEnd).toUTCString())
+    console.log("________________________________________________________________________________")
+    block
+    */
 
     // expose managed state as return value
     return {
+        formValues,
+        formErrors,
+        formErrorsList,
+        formMeta,
         formIsValid,
-        form,
-        scheduleRecords,
-        scheduleTimeStep,
-        translatedHourEnd,
-        selectedSchedule,
-        formScheduleAvailability,
-        selectedFormDuration,
-        resetFormHours,
+        formHelper,
         fillForm,
-        formatInputTypeDate,
-        formatInputTypeTime,
-        formRules,
-        timeFormatDate,
-        timeFormatHours
+        formValueGo,
+        resolveFormErrors
     }
 }

@@ -13,11 +13,13 @@ export default {
     // ignore hours and open or close (special occasions)
     forceClose: false,  // TODO GRAPHIC & USE
     forceOpen: false,   // TODO GRAPHIC & USE
-    // generic TODO rimuovere?
+    // modals TODO rimuovere?
     modals: {
         login: false,
         play: false
     },
+    // toasts object list (will push and unshift automatically)
+    toasts: [],
     // on loading list
     loading: [],
     // already loaded list

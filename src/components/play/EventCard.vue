@@ -54,7 +54,7 @@
                     @click="emit('button:cancel')"
                 >
                     {{ t('generic.cancel') }}
-                    <font-awesome-icon :icon="['fas', 'xmark']" />
+                    <font-awesome-icon class="ml-3" :icon="['fas', 'xmark']" />
                 </v-btn>
             </div>
         </div>
@@ -63,24 +63,28 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits, computed } from 'vue';
-import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import vuetifyColors from "vuetify/lib/util/colors";
 import { useTheme } from 'vuetify'
 import EventLongCard from "@/components/basics/cards/EventLongCard.vue";
-import type { scheduleMap, scheduleReadableMap } from "@/interfaces";
+import useScheduleHelpers, { type scheduleReadableMap } from "@/resources/composables/useScheduleHelpers";
+import type { scheduleMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faCalendar, faArrowRightLong, faClock, faPlay, faCoins, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+
 library.add(faCalendar, faArrowRightLong, faClock, faPlay, faCoins, faCheck, faXmark);
 
-const { getters } = useStore();
 const { t } = useI18n();
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 
+const emit = defineEmits([
+	'button:confirm',
+	'button:cancel'
+]);
 
 const props = defineProps({
     id: {
@@ -95,6 +99,14 @@ const props = defineProps({
         type: String,
         required: false
     },
+	dateFormat: {
+		type: String,
+		default: () => 'YYYY-MM-DD'
+	},
+	timeFormat: {
+		type: String,
+		default: () => 'HH:mm:ss'
+	},
     showConfirmButton: {
         type: Boolean,
         default: () => {
@@ -109,20 +121,26 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits([
-    'button:confirm',
-    'button:cancel'
-]);
+/**
+ * Schedule managing toolbox
+ */
+const {
+	getSchedule,
+	translateScheduleUI
+} = useScheduleHelpers(props.dateFormat, props.timeFormat);
 
-const schedule = computed<scheduleMap>(() => getters['ecommerce/getItem']("scheduleRecords", props.id));
-
+/**
+ * @return {Object}
+ */
+const schedule = computed<scheduleMap | undefined>(() => getSchedule(props.id));
 const scheduleReadable = computed<scheduleReadableMap>(() => {
-    return getters['ecommerce/scheduleReadable'](schedule.value.start, schedule.value.end);
+	const { start, end } = schedule.value || {};
+	return translateScheduleUI(start, end);
 });
 
 const statusList = computed<string[][]>(() => {
     const arrayIconLabels :string[][] = [];
-    const { online = true, confirmed = false, canceled = false, unsaved = false, paid = false } = schedule.value;
+    const { online = true, confirmed = false, canceled = false, unsaved = false, paid = false } = schedule.value || {};
     // if(!online)
     //     arrayIconLabels.push([undefined, 'check', vuetifyColors.red.base, t('schedule-card.offline-chip') as string]);
     if(online)

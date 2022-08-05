@@ -2,7 +2,6 @@ import { useStore } from "@/store";
 import { computed, onBeforeMount, toRefs } from "vue";
 import { getUUID } from "guebbit-javascript-library";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default (loadPromise :any) => {
   const {
     state,
@@ -17,8 +16,15 @@ export default (loadPromise :any) => {
 
   // const resourceHandleSuccess = () => {};
   // const resourceHandleError = () => {};
+
+  /**
+   *
+   */
   const isAuthenticated = computed<boolean>(() => getters['user/isAuthenticated']);
 
+  /**
+   *
+   */
   const loadingItems = computed(() => loading.value.includes(loadingName));
 
   /**

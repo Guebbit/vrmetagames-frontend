@@ -10,8 +10,8 @@ export const baseUrl = 'https://www.vrmetagames.it/'
 export const assetsUrl = 'https://assets.guebbit.com/vrmetagames/';
 export const imagesUrl = assetsUrl + 'images/';
 export const defaultUserAvatar = assetsUrl + 'images/logo/logo.jpg';
-export const timeFormatDate = 'DD/MM/YYYY';
-export const timeFormatHours = 'HH:mm';
+export const uiFormatDate = 'DD/MM/YYYY';
+export const uiFormatTime = 'HH:mm';
 export const contactAddressStreet = "Via C. Catellani 1/D";
 export const contactAddressCity = "Carpi";
 export const contactAddressProvince = "MO";
@@ -131,6 +131,8 @@ export const themeColors = {
     'on-background': "#ffffff",
     surface: "#2e2e2e",
     'on-surface': "#ffffff",
+    'surface-variant': "#2e2e2e",   // TODO BETA not working?
+    'on-surface-variant': "#ffffff",
     info: "#2196F3",
     success: "#4CAF50",
     error: "#F44336", // "#B00020",
@@ -147,11 +149,24 @@ export const formRules = {
         .required('required')
         .trim()
         .min(1, 'required'),
+    requiredNumber: yup
+        .number()
+        .typeError('invalid')
+        .required('required'),
     requiredCheck: yup
         .boolean()
         .typeError('required')
         .required('required')
         .oneOf([true], 'required'),
+    requiredDate: yup
+        .date()
+        .typeError('invalid')
+        .required('required'),
+    requiredStringDate: yup
+        .string()
+        .typeError('invalid')
+        .required('required')
+        .test('not-invalid-date', 'invalid', (val) => val !== 'Invalid Date'),
     email: yup
         .string()
         .typeError('invalid')

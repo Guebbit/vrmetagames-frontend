@@ -2,15 +2,15 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
-export default (composableDateFormat = 'YYYY-MM-DD HH:mm:ss') => {
+export default (fromDatetime = 'YYYY-MM-DD HH:mm:ss', toDatetime = 'YYYY-MM-DD HH:mm:ss') => {
 
     /**
-     * Default translation
+     * Easy conversion from string to date
      *
      * @param {string} stringDate
      * @param {string} dateTimeFormat
      */
-    const translateToDate = (stringDate :string, dateTimeFormat = composableDateFormat) :Date | null => {
+    const translateToDate = (stringDate = '', dateTimeFormat = fromDatetime) :Date | null => {
         const dayObject = dayjs(stringDate, dateTimeFormat);
         if(!dayObject.isValid()){
             return null;
@@ -18,7 +18,6 @@ export default (composableDateFormat = 'YYYY-MM-DD HH:mm:ss') => {
         return dayObject.toDate();
     };
 
-    
     /**
      * input type="date" accept only YYYY-MM-DD format, even if it shows another format,
      * so it needs to be translated.
@@ -28,9 +27,8 @@ export default (composableDateFormat = 'YYYY-MM-DD HH:mm:ss') => {
      * @param {string} formatFrom - format
      * @return {string}
      */
-    const formatInputTypeDate = (value :string, formatTo = composableDateFormat, formatFrom = composableDateFormat) :string => {
-        return dayjs(value, formatFrom).format(formatTo);
-    };
+    const formatInputTypeDate = (value :string, formatTo = fromDatetime, formatFrom = toDatetime) :string =>
+        dayjs(value, formatFrom).format(formatTo);
 
     /**
      * input type="time" has a stepper that is ignored in the dropdown (so its unreliable)
@@ -53,9 +51,8 @@ export default (composableDateFormat = 'YYYY-MM-DD HH:mm:ss') => {
      * @param {string} formatTo - format
      * @return {string}
      */
-    const formatUIDate = (timestamp :number, formatTo = composableDateFormat) :string => {
-        return dayjs(timestamp).format(formatTo);
-    };
+    const formatUIDate = (timestamp :number, formatTo = fromDatetime) :string =>
+        dayjs(timestamp).format(formatTo);
 
     return {
         translateToDate,

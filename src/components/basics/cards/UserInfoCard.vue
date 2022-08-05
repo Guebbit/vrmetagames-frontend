@@ -13,7 +13,7 @@
                 <small v-show="userInfo.lastVisit && userInfo.lastVisit > 0"
                     class="text-medium-emphasis"
                 >
-                    {{ $t('play-page.schedule-details-last-visit') }}:
+                    {{ t('play-page.schedule-details-last-visit') }}:
                     <span class="ml-2">{{ formatUIDate(userInfo.lastVisit) }}</span>
                 </small>
             </div>
@@ -37,7 +37,7 @@ import { computed, toRefs, defineProps } from "vue";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
 import useTimeHelpers from "@/resources/composables/useTimeHelpers";
-import { defaultUserAvatar, timeFormatDate, timeFormatHours } from "@/resources/constants";
+import { defaultUserAvatar, uiFormatDate, uiFormatTime } from "@/resources/constants";
 
 import type { userMap } from "@/interfaces";
 
@@ -62,7 +62,7 @@ const props = defineProps({
     },
 });
 
-const { formatUIDate } = useTimeHelpers(timeFormatDate + ' ' + timeFormatHours);
+const { formatUIDate } = useTimeHelpers(uiFormatDate + ' ' + uiFormatTime);
 
 const { userInfo: currentUserInfo } = toRefs(state.user);
 const { users } = toRefs(state.ecommerce);
