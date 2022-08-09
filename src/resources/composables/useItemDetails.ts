@@ -1,61 +1,82 @@
 import { computed, ref, type Ref, type ComputedRef } from "vue";
 import useItemStructure from "@/resources/composables/useItemStructure";
 
-export default <T>(
+export interface itemDetailsSettingsMap {
+    defaultLoading?: boolean,
+    userIdParam?: string
+}
+
+export default <T = unknown>(
     itemRecords :Ref<Record<string, T>> | ComputedRef<Record<string, T>>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    loadPromise :unknown = Promise.resolve()
+    loadPromise :Promise<unknown | unknown[]> = Promise.resolve(),
+    settings :itemDetailsSettingsMap = {}
 ) => {
+    /**
+     * Base
+     */
     const {
         loading,
+        userInfo,
+        isAdmin,
         isAuthenticated,
-        isAdmin
-    } = useItemStructure(loadPromise)
+    } = useItemStructure(
+        loadPromise,
+        settings
+    )
+
+    /**
+     * Settings
+     */
+    const {
+        userIdParam = 'userId'
+    } = settings;
+
 
     /**
      *
      */
-    const itemList = computed(() => Object.values(itemRecords.value));
+    const selectedIdentifier = ref<string | undefined>();
 
     /**
      *
+     * @param id
      */
-    const filteredItemList = computed(() => itemList.value);
-
-    /**
-     *
-     */
-    const selectedIdentifier = ref('');
-
-    /**
-     * selected item
-     */
-    const selectedRecord = computed<unknown | undefined>(() => {
-        if(!Object.prototype.hasOwnProperty.call(itemRecords.value, selectedIdentifier.value)){
-            return undefined;
-        }
-        return itemRecords.value[selectedIdentifier.value];
-    })
+    const getRecord = (id :string) :T | undefined =>
+        (!Object.prototype.hasOwnProperty.call(itemRecords.value, id)) ? undefined : itemRecords.value[id];
 
     /**
      * Select target item
      * @param {string} id
      */
-    const selectTargetRecord = (id :string) => {
-        if(!Object.prototype.hasOwnProperty.call(itemRecords.value, id)){
-            return undefined;
-        }
-        selectedIdentifier.value = id;
-    };
+    const selectTargetRecord = (id ?:string) =>
+        selectedIdentifier.value = (!id || !Object.prototype.hasOwnProperty.call(itemRecords.value, id)) ? undefined : id;
+
+    /**
+     * selected item
+     */
+    const selectedRecord = computed<T | undefined>(() =>
+        selectedIdentifier.value ? getRecord(selectedIdentifier.value) : undefined
+    );
+
+    /**
+     * [UI]
+     * Permission for user to see all the record's data
+     *  - user is authenticated admin
+     *  - user ia authenticated owner/related
+     */
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const selectedRecordPermission = computed<boolean>(() => isAuthenticated ? (isAdmin ? true : (selectedRecord.value && selectedRecord.value[userIdParam] as string) === userInfo.value.id) : false)
 
     return {
         loading,
-        isAuthenticated,
+        userInfo,
         isAdmin,
+        isAuthenticated,
+        getRecord,
+        selectTargetRecord,
         selectedIdentifier,
         selectedRecord,
-        selectTargetRecord,
-        itemList,
-        filteredItemList,
+        selectedRecordPermission
     }
 };

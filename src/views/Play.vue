@@ -9,6 +9,8 @@
 		>
 			<template #default>
 				<v-container class="text-center">
+					<h1 style="color:red">{{id}}</h1>
+					<h1>all'entrata di Play, CHECK e se l'evento selezionato non è più disponibile, mandare messaggio</h1>
 					<h1>
 						Fast mode = togliere "conferma tutti gli eventi", "inserisci evento", modifica evento, etc"
 						Compra direttamente, apri una modale con già la richiesta di pagamento (bottone per andare al "play avanzato" o al checkout)
@@ -35,7 +37,7 @@
                             }"
 						>
 							{{ $t('play-page.schedules-advanced-settings') }}
-							<font-awesome-icon class="ml-3" :icon="['fas', 'calendar-day']" />
+							<font-awesome-icon class="ml-3" :icon="['fas', 'gears']" />
 						</v-btn>
 						<v-btn
 							color="secondary"
@@ -76,14 +78,14 @@ import Footer from "@/components/generic/Footer.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faCalendar, faClock, faPlay, faCalendarDay, faCheck, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faClock, faPlay, faCalendarDay, faCheck, faCircleInfo, faGears } from "@fortawesome/free-solid-svg-icons";
 
 import type {
 	scheduleInputMap
 } from "@/interfaces";
 
 
-library.add(faCalendar, faClock, faPlay, faCalendarDay, faCheck, faCircleInfo);
+library.add(faCalendar, faClock, faPlay, faCalendarDay, faCheck, faCircleInfo, faGears);
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();
@@ -92,6 +94,11 @@ const { getters, dispatch } = useStore();
 
 
 defineProps({
+	id: {
+		type: String,
+		// required: false
+		default: () => 'itemxxxx'	//TODO
+	},
 	/**
 	 * [UX] Set the default number of steps in the form
 	 */

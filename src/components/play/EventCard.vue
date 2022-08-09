@@ -29,32 +29,42 @@
         <div class="card-chips-and-actions">
             <div class="card-chips">
                 <v-chip
-                    v-for="([ variant, icon, color, label ], index) in statusList"
+                    v-for="({ variant, icon, color, title }, index) in statusList"
                     :key="'schedule-chip-' + index"
                     :color="color"
                     :variant="variant"
                 >
                     <font-awesome-icon :icon="['fas', icon]" class="mr-2" />
-                    {{ label }}
+                    {{ title }}
                 </v-chip>
             </div>
 
-            <div class="card-actions">
+            <div class="card-actions d-flex">
                 <v-btn
-                    v-show="showConfirmButton"
-                    :color="secondary || themeColors.primary"
-                    @click="emit('button:confirm')"
+                    v-show="showConfirmButton && !schedule.expired"
+					variant="elevated"
+                    :color="secondary || themeColors.secondary"
+                    @click="emit('button:click:confirm')"
                 >
                     {{ t('generic.confirm') }}
-                    <font-awesome-icon :icon="['fas', 'check']" />
+                    <font-awesome-icon class="ml-3" :icon="['fas', 'check']" />
                 </v-btn>
+				<v-btn
+					v-show="showRenewButton && schedule.expired"
+					variant="outlined"
+					:color="primary || themeColors.primary"
+					@click="emit('button:click:renew')"
+				>
+					{{ t('generic.renew') }}
+					<font-awesome-icon class="ml-3" :icon="['fas', 'refresh']" />
+				</v-btn>
                 <v-btn
                     v-show="showCancelButton"
                     variant="outlined"
-                    @click="emit('button:cancel')"
+                    @click="emit('button:click:cancel')"
                 >
                     {{ t('generic.cancel') }}
-                    <font-awesome-icon class="ml-3" :icon="['fas', 'xmark']" />
+                    <font-awesome-icon class="ml-3" :icon="['fas', 'trash-can']" />
                 </v-btn>
             </div>
         </div>
@@ -62,28 +72,27 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, computed } from 'vue';
+import { defineProps, defineEmits, computed } from "vue";
 import { useI18n } from "vue-i18n";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import vuetifyColors from "vuetify/lib/util/colors";
-import { useTheme } from 'vuetify'
+import { useTheme } from "vuetify";
+import { scheduleStates, type scheduleStatesMap } from "@/resources/constants";
 import EventLongCard from "@/components/basics/cards/EventLongCard.vue";
 import useScheduleHelpers, { type scheduleReadableMap } from "@/resources/composables/useScheduleHelpers";
 import type { scheduleMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faCalendar, faArrowRightLong, faClock, faPlay, faCoins, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faArrowRightLong, faClock, faPlay, faCoins, faCheck, faRefresh, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faCalendar, faArrowRightLong, faClock, faPlay, faCoins, faCheck, faXmark);
+library.add(faCalendar, faArrowRightLong, faClock, faPlay, faCoins, faCheck, faRefresh, faTrashCan);
 
 const { t } = useI18n();
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 
 const emit = defineEmits([
-	'button:confirm',
-	'button:cancel'
+	'button:click:confirm',
+	'button:click:cancel',
+	'button:click:renew'
 ]);
 
 const props = defineProps({
@@ -109,16 +118,16 @@ const props = defineProps({
 	},
     showConfirmButton: {
         type: Boolean,
-        default: () => {
-            return true;
-        }
+        default: () => true
     },
     showCancelButton: {
         type: Boolean,
-        default: () => {
-            return true;
-        }
-    }
+        default: () => true
+    },
+	showRenewButton: {
+		type: Boolean,
+		default: () => true
+	}
 });
 
 /**
@@ -138,25 +147,60 @@ const scheduleReadable = computed<scheduleReadableMap>(() => {
 	return translateScheduleUI(start, end);
 });
 
-const statusList = computed<string[][]>(() => {
-    const arrayIconLabels :string[][] = [];
-    const { online = true, confirmed = false, canceled = false, unsaved = false, paid = false } = schedule.value || {};
-    // if(!online)
-    //     arrayIconLabels.push([undefined, 'check', vuetifyColors.red.base, t('schedule-card.offline-chip') as string]);
-    if(online)
-        arrayIconLabels.push(['outlined', 'check', vuetifyColors.green.base, t('schedule-card.online-chip') as string]);
-    if(confirmed)
-        arrayIconLabels.push([undefined, 'check', themeColors.secondary, t('schedule-card.confirmed-chip') as string]);
-    if(!confirmed)
-        arrayIconLabels.push([undefined, 'check', vuetifyColors.shades.white, t('schedule-card.not-confirmed-chip') as string]);
-    if(canceled)
-        arrayIconLabels.push(['outlined', 'check', vuetifyColors.red.base, t('schedule-card.canceled-chip') as string]);
-    if(paid)
-        arrayIconLabels.push([undefined, 'check', themeColors.primary, t('schedule-card.paid-chip') as string]);
-    // for UX\UI only I consider unsaved and offline the same
-    if(unsaved || !online)
-        arrayIconLabels.push(['outlined', 'check', vuetifyColors.yellow.darken1, t('schedule-card.unsaved-chip') as string]);
-    return arrayIconLabels;
+const statusList = computed<scheduleStatesMap[]>(() => {
+    const statusArray :scheduleStatesMap[] = [];
+    const { online = true, confirmed = false, canceled = false, unsaved = false, paid = false, expired = false } = schedule.value || {};
+	/*
+	if(!online)
+		statusArray.push({
+			...scheduleStates.offline,
+			title: t(scheduleStates.offline.title),
+			description: t(scheduleStates.offline.description)
+		});
+	*/
+	if(online)
+		statusArray.push({
+			...scheduleStates.online,
+			title: t(scheduleStates.online.title),
+			description: t(scheduleStates.online.description)
+		});
+	if(confirmed)
+		statusArray.push({
+			...scheduleStates.confirmed,
+			title: t(scheduleStates.confirmed.title),
+			description: t(scheduleStates.confirmed.description)
+		});
+	if(!confirmed)
+		statusArray.push({
+			...scheduleStates.notConfirmed,
+			title: t(scheduleStates.notConfirmed.title),
+			description: t(scheduleStates.notConfirmed.description)
+		});
+	if(canceled)
+		statusArray.push({
+			...scheduleStates.canceled,
+			title: t(scheduleStates.canceled.title),
+			description: t(scheduleStates.canceled.description)
+		});
+	if(paid)
+		statusArray.push({
+			...scheduleStates.paid,
+			title: t(scheduleStates.paid.title),
+			description: t(scheduleStates.paid.description)
+		});
+	if(expired)
+		statusArray.push({
+			...scheduleStates.expired,
+			title: t(scheduleStates.expired.title),
+			description: t(scheduleStates.expired.description)
+		});
+	if(unsaved || !online)
+		statusArray.push({
+			...scheduleStates.unsaved,
+			title: t(scheduleStates.unsaved.title),
+			description: t(scheduleStates.unsaved.description)
+		});
+    return statusArray;
 });
 
 const labelDuration = computed<string>(() => {

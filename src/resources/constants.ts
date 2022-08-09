@@ -1,6 +1,5 @@
 import { i18n } from "@/plugins/i18n"
 const { t } = i18n.global;
-import { isEmail } from "guebbit-javascript-library";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import vuetifyColors from "vuetify/lib/util/colors";
@@ -102,6 +101,7 @@ export const randomColorList = [
 ];
 
 // "on-surface" sarebbe automatico, ma posso customizzarlo
+// https://www.color-hex.com/color/0086ff
 export const themeColors = {
     primary: "#0086ff",
     'primary-darken-1': "#006bcc",
@@ -114,7 +114,7 @@ export const themeColors = {
     'primary-lighten-3': "#99CEFF",
     'primary-lighten-4': "#CCE6FF",
     'primary-lighten-5': "#E5F2FF",
-    'on-primary': "#ffffff",
+    'on-primary': vuetifyColors.shades.white,
     secondary: "#ff8a23",
     'secondary-darken-1': "#CC6E1C",
     'secondary-darken-2': "#995215",
@@ -126,18 +126,86 @@ export const themeColors = {
     'secondary-lighten-3': "#FFD0A7",
     'secondary-lighten-4': "#FFE7D3",
     'secondary-lighten-5': "#FFF3E9",
-    'on-secondary': "#ffffff",
-    background: "#212121",
-    'on-background': "#ffffff",
-    surface: "#2e2e2e",
-    'on-surface': "#ffffff",
-    'surface-variant': "#2e2e2e",   // TODO BETA not working?
-    'on-surface-variant': "#ffffff",
-    info: "#2196F3",
-    success: "#4CAF50",
-    error: "#F44336", // "#B00020",
-    warning: "#FB8C00",
+    'on-secondary': vuetifyColors.shades.white,
+    background: vuetifyColors.grey.darken4,
+    'on-background': vuetifyColors.shades.white,
+    surface: "#2e2e2e",   // more dark than vuetifyColors.grey.darken3 but less than vuetifyColors.grey.darken4
+    'on-surface': vuetifyColors.shades.white,
+    'surface-variant': vuetifyColors.grey.darken3,   // TODO BETA not working?
+    'on-surface-variant': vuetifyColors.shades.white,
+    info: "#003566", // primary-darken-3
+    success: vuetifyColors.green.darken3,
+    error: vuetifyColors.red.darken1,    // B00020
+    warning: vuetifyColors.yellow.darken4,
 };
+
+
+export interface scheduleStatesMap {
+    variant?: string,
+    icon: string,
+    color: string,
+    title: string,
+    description: string,
+}
+
+export const scheduleStates :Record<string,scheduleStatesMap> = {
+    offline: {
+        variant: undefined,
+        icon: 'check',
+        color: vuetifyColors.red.base,
+        title: 'schedule-card.offline-chip',
+        description: 'schedule-card.offline-explanation',
+    },
+    online: {
+        variant: 'outlined',
+        icon: 'check',
+        color: vuetifyColors.green.base,
+        title: 'schedule-card.online-chip',
+        description: 'schedule-card.online-explanation',
+    },
+    confirmed: {
+        variant: undefined,
+        icon: 'check',
+        color: themeColors.secondary,
+        title: 'schedule-card.confirmed-chip',
+        description: 'schedule-card.confirmed-explanation',
+    },
+    notConfirmed: {
+        variant: undefined,
+        icon: 'check',
+        color: vuetifyColors.shades.white,
+        title: 'schedule-card.not-confirmed-chip',
+        description: 'schedule-card.not-confirmed-explanation',
+    },
+    canceled: {
+        variant: 'outlined',
+        icon: 'check',
+        color: vuetifyColors.red.base,
+        title: 'schedule-card.canceled-chip',
+        description: 'schedule-card.canceled-explanation',
+    },
+    paid: {
+        variant: undefined,
+        icon: 'check',
+        color: themeColors.primary,
+        title: 'schedule-card.paid-chip',
+        description: 'schedule-card.paid-explanation',
+    },
+    unsaved: {
+        variant: 'outlined',
+        icon: 'check',
+        color: vuetifyColors.yellow.darken1,
+        title: 'schedule-card.unsaved-chip',
+        description: 'schedule-card.unsaved-explanation',
+    },
+    expired: {
+        variant: undefined,
+        icon: 'check',
+        color: vuetifyColors.red.base,
+        title: 'schedule-card.expired-chip',
+        description: 'schedule-card.expired-explanation',
+    }
+}
 
 /**
  * Single formRules schema

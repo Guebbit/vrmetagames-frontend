@@ -6,17 +6,19 @@
 	>
 		<v-alert
 			@update:modelValue="value => emit('update:modelValue', value)"
-			type="error"
-			variant="elevated"
+			color="surface"
 			border="start"
-			:title="t('dialog-delete-schedule.title')"
+			:title="t('dialog-renew-schedule.title')"
 			closable
 		>
 			<template #close>
 				<font-awesome-icon class="ml-3" :icon="['fas', 'xmark']" />
 			</template>
 
-			<p class="my-3">{{ t('dialog-delete-schedule.description') }}</p>
+			<p class="my-3">{{ schedule?.paid ? t('dialog-renew-schedule.description-paid') : t('dialog-renew-schedule.description-not-paid') }}</p>
+			<hr />
+			<p class="my-3">Questa funzione è ancora in fase di progettazione, contattaci e gestiremo la cosa manualmente</p>
+			<hr />
 			<v-list
 				class="bg-transparent flex-grow-1"
 				density="compact"
@@ -52,14 +54,14 @@
 					variant="tonal"
 					@click="emit('button:click:cancel')"
 				>
-					{{ t('dialog-delete-schedule.button-cancel') }}
+					{{ t('dialog-renew-schedule.button-cancel') }}
 				</v-btn>
 				<v-btn
 					variant="outlined"
+					disabled
 					@click="emit('button:click:confirm')"
 				>
-					{{ t('dialog-delete-schedule.button-confirm') }}
-					<font-awesome-icon class="ml-3" :icon="['fas', 'check']" />
+					{{ t('dialog-renew-schedule.button-confirm') }}
 				</v-btn>
 			</div>
 		</v-alert>
@@ -74,9 +76,9 @@ import type { scheduleMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faXmark, faCalendar, faClock, faEnvelope, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faCalendar, faClock, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faXmark, faCalendar, faClock, faEnvelope, faCheck);
+library.add(faXmark, faCalendar, faClock, faEnvelope);
 
 const { t } = useI18n();
 

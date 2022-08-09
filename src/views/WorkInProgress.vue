@@ -28,7 +28,7 @@
                 </v-container>
             </template>
             <template #background>
-                <video class="panel-background" async="" autoplay="" loop="" muted="" poster="">
+                <video class="panel-background" autoplay="" loop="" muted="" poster="">
                     <source src="https://mangabeats.it/public/video/videogames/mix.mp4" type="video/mp4">
                 </video>
             </template>

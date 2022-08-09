@@ -41,6 +41,7 @@
 </template>
 
 <script lang="ts">
+// TODO remake in <script SETUP>
 import { defineComponent, PropType } from "vue";
 import {
     hexToRGB,
@@ -86,6 +87,7 @@ import type {
 } from '@fullcalendar/interaction';
 import type {
     ResourceInput,
+	ResourceApi,
 } from '@fullcalendar/resource-common';
 
 export default defineComponent({
@@ -103,13 +105,16 @@ export default defineComponent({
                 return [];
             }
         },
-
         resources: {
             type: Array as PropType<ResourceInput[]>,
             default: () => {
                 return [];
             }
         },
+		modes: {
+			type: Array as PropType<string[]>,
+			default: () => []	// dayGridMonth,timeGridWeek,timeGridDay,resourceTimeGridDay
+		},
 
         // SETTINGS
         // 
@@ -149,18 +154,9 @@ export default defineComponent({
                 return false;
             }
         },
-        // TODO to quickly create or edit events
-        fastMode: {
+        disableNativeApi: {
             type: Boolean,
-            default: () => {
-                return false;
-            }
-        },
-        enableNativeApi: {
-            type: Boolean,
-            default: () => {
-                return false;
-            }
+            default: () => false
         },
 
         // COLORS
@@ -211,7 +207,7 @@ export default defineComponent({
         },
 
         handleEventChange: {
-            type: Function as PropType<(arg: EventChangeArg) => void>,
+            type: Function as PropType<(arg: EventChangeArg & { resources?: ResourceApi[] }) => void>,
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             default: () => {},
         },
@@ -303,7 +299,7 @@ export default defineComponent({
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridDay' // 'dayGridMonth,timeGridWeek,timeGridDay,resourceTimeGridDay'
+					right: this.modes.join(",")
                 },
                 views: {
                     resourceTimeline: {
@@ -361,7 +357,7 @@ export default defineComponent({
                 eventRemove: this.handleEventRemove,
                 eventChange: this._handleEventChange,
                 eventDrop: this._handleEventDrop,
-                eventResize: this._handleEventResize
+                eventResize: this._handleEventResize,
             }
         }
     },
@@ -380,7 +376,7 @@ export default defineComponent({
             }
             // remove
             this.$emit('event:remove', id);
-            if(this.enableNativeApi){
+            if(!this.disableNativeApi){
                 event.remove();
             }
         },
@@ -448,7 +444,7 @@ export default defineComponent({
                         }
                         // if limit reached, emit and return
                         const [ start, end ] = key.split("_");
-                        this.$emit('event:limit-reached', start, end, cappedSlots[key]);
+                        this.$emit('event:limit-reached', new Date(parseInt(start)), new Date(parseInt(end)), cappedSlots[key]);
                         return;
                     }
                 }
@@ -460,11 +456,15 @@ export default defineComponent({
                 start,
                 end,
                 allDay,
-                resourceId,
+				resourceId,
             };
             // create
-            this.$emit('event:create', event);
-            if(this.enableNativeApi){
+            this.$emit('event:create', {
+				...event,
+				// resourceId array because it can shared through resources (not in this creation phase)
+				resourceId: resourceId ? [resourceId] : [],
+			});
+            if(!this.disableNativeApi){
                 this.calendarApi.addEvent(event)
             }
             // last inserted event
@@ -509,9 +509,7 @@ export default defineComponent({
                     // need to get the related resource
                     const resourcesArray = this.calendarApi.getEventById(id)?.getResources() || [];
                     // there can be many, just check if one exist
-                    if(!resourcesArray.some(({ id }) => {
-                        return resourceId === id;
-                    })){
+                    if(!resourcesArray.some((resource) => resource && resourceId === resource.id)){
                         // if no resourceId match, it's not on the requested resource
                         return false;
                     }
@@ -617,7 +615,8 @@ export default defineComponent({
          * @return {boolean} => true = allowed, false = not allowed
          */
         _handleAllow(dropInfo :DateSpanApi, draggedEvent: EventApi | null) {
-            return this.handleAllow(dropInfo, draggedEvent);
+			// const { start, end, allDay, resource: { id :resourceId, extendedProps: { capacity = -1 } = {} } = {} } = dropInfo;
+			return this.handleAllow(dropInfo, draggedEvent);
         },
 
         /**
@@ -654,8 +653,10 @@ export default defineComponent({
          * @param changeInfo
          */
         _handleEventChange({ oldEvent, event, relatedEvents, revert } :EventChangeArg) {
-            this.$emit('event:changed', { oldEvent, event, relatedEvents, revert });
-            return this.handleEventChange({ oldEvent, event, relatedEvents, revert });
+			const resources = this.calendarApi.getEventById(event.id)?.getResources();
+			// console.log("_handleEventChange", { oldEvent, event, relatedEvents, revert, resource })
+            this.$emit('event:changed', { oldEvent, event, relatedEvents, resources, revert });
+            return this.handleEventChange({ oldEvent, event, relatedEvents, resources, revert });
         },
 
         /**

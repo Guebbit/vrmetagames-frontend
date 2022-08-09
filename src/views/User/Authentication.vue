@@ -254,11 +254,11 @@
 												<font-awesome-icon
 													class="mr-5"
 													:style="{
-											color: formPasswordErrors.includes(rule) ? themeColors.error : themeColors.success
-										}"
+														color: formPasswordErrors.includes(rule) ? themeColors.error : themeColors.success
+													}"
 													:icon="formPasswordErrors.includes(rule) ?
-											['fas', 'triangle-exclamation'] :
-											['fas', 'circle-check']"
+														['fas', 'triangle-exclamation'] :
+														['fas', 'circle-check']"
 												/>
 											</template>
 										</v-list-item>

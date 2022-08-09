@@ -46,10 +46,14 @@ export default {
      * @param {Object} scheduleData
      */
     setSchedule({ scheduleRecords, scheduleArchive }: stateEcommerceMap, scheduleData: scheduleMap) {
+        // if it's not canceled and it's not confirmed or paid, check the date. It can be expired
+        if(!scheduleData.canceled && (!scheduleData.confirmed || !scheduleData.paid))
+            scheduleData.expired = scheduleData.start < Date.now();
         // if we are creating an "unsaved" edits, for restoring and compare reasons, we create a clone
         if(scheduleData.unsaved){
             scheduleArchive[scheduleData.id] = scheduleRecords[scheduleData.id];
         }
+        // saving data
         scheduleRecords[scheduleData.id] = scheduleData;
     },
 

@@ -10,7 +10,7 @@ const mockUserInfo = {
     phone: "+39 123 4567",
     birthdate: 1649620712000,
     description: "lorem ipsum blablabla cose a caso",
-    wallet: 95,
+    wallet: 6,
     lastVisit: 1653050140000,
     isAdmin: true,  // TODO false test
 };
@@ -36,14 +36,13 @@ const mockPaymentMethods = [
 const mockPaymentRecords = [
     {
         id: 'item-1',
-        type: '',
-        code: 'XXXXXXXXX',
         time: 1649620712000,
         total: 50,
         currency: '€'
     },
     {
         id: 'item-2',
+        methodId: 'paypal1',
         type: 'paypal',
         code: '645675496',
         time: 1649620712000,
@@ -52,6 +51,7 @@ const mockPaymentRecords = [
     },
     {
         id: 'item-3',
+        methodId: 'mastercard1',
         type: 'credit-card',
         code: '645674965',
         time: 1649620712000,
@@ -60,6 +60,7 @@ const mockPaymentRecords = [
     },
     {
         id: 'item-4',
+        methodId: 'mastercard1',
         type: 'credit-card',
         code: '1050017AS',
         time: 1649620712000,
@@ -68,14 +69,13 @@ const mockPaymentRecords = [
     },
     {
         id: 'item-5',
-        type: '',
-        code: 'XXXXXXXXX',
         time: 1649620712000,
         total: 50,
         currency: '€'
     },
     {
         id: 'item-6',
+        methodId: 'paypal1',
         type: 'paypal',
         code: '345364853',
         time: 1649620712000,

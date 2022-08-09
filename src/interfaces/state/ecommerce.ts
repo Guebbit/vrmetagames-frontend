@@ -15,11 +15,11 @@
  *  - true: a previously ONLINE schedule that has been removed (not from database)
  */
 export interface scheduleInputMap {
+    id?: string
+    resourceId?: string[]
     start: number
     end: number
     allDay?: boolean
-    id?: string
-    resourceId?: string
 }
 
 export interface scheduleMap extends scheduleInputMap {
@@ -30,6 +30,7 @@ export interface scheduleMap extends scheduleInputMap {
     unsaved: boolean     // WARNING: FE only
     canceled: boolean
     paid: boolean
+    expired: boolean    // WARNING: FE only (checks through date, offline & online)
 }
 
 export interface userMap {

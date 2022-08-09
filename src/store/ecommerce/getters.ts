@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
-import { arrayColumn, rangeOverlaps, secondsToTime } from "guebbit-javascript-library";
-import { uiFormatDate, uiFormatTime } from "@/resources/constants";
+import { arrayColumn, rangeOverlaps } from "guebbit-javascript-library";
 
 import type { GetterTree } from 'vuex';
 import type {
@@ -298,17 +297,16 @@ export default {
         /**
          * @param {number} dateFrom
          * @param {number} dateTo
-         * @param {string} checkResourceId
+         * @param {string[]} resourceIdArray
          */
-        return (dateFrom :number, dateTo :number, checkResourceId ?:string) => {
+        return (dateFrom :number, dateTo :number, resourceIdArray :string[] = []) => {
             let scheduleList = Object.values(scheduleRecords);
             // if a resource was specified, I check only the schedules of that same resource
-            if(checkResourceId){
+            if(resourceIdArray.length > 0){
                 scheduleList = scheduleList.filter(({ resourceId } :scheduleMap) => {
-                    return checkResourceId === resourceId;
+                    return resourceId && resourceIdArray.some(r=> resourceId.indexOf(r) >= 0);
                 })
             }
-
             // main filter 
             return scheduleList.filter(({ start, end } :scheduleMap) => {
                 // if null, take today (should never happen, but typescript have warnings)
@@ -326,16 +324,16 @@ export default {
      * @param {number} scheduleTimeStep
      * @param {Function} getSchedulesByTime
      */
-    getSchedulesBySlots: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesByTime }) :(dateFrom :number, dateTo :number, slotDuration ?:number, checkResourceId ?:string) => Record<string, string[]> => {
+    getSchedulesBySlots: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesByTime }) :(dateFrom :number, dateTo :number, slotDuration ?:number, resourceIdArray ?:string[]) => Record<string, string[]> => {
 
         /**
          * @param {number} dateFrom
          * @param {number} dateTo
          * @param {number} slotDuration - default 30 min
-         * @param {string} checkResourceId
+         * @param {string[]} resourceIdArray
          * @return {boolean}
          */
-        return (dateFrom :number, dateTo :number, slotDuration = scheduleTimeStep, checkResourceId ?:string) :Record<string, string[]> => {
+        return (dateFrom :number, dateTo :number, slotDuration = scheduleTimeStep, resourceIdArray :string[] = []) :Record<string, string[]> => {
             // if even only 1 time slot in higher than eventNumberLimit, it fails
             // from start to end step by step
             let stepperStart = dateFrom;
@@ -343,7 +341,7 @@ export default {
             const cappedSlots :Record<string, string[]> = {};
             // do cycle
             do {
-                cappedSlots[stepperStart + '_' + stepperEnd] = arrayColumn(getSchedulesByTime(stepperStart, stepperEnd, checkResourceId), 'id') as string[];
+                cappedSlots[stepperStart + '_' + stepperEnd] = arrayColumn(getSchedulesByTime(stepperStart, stepperEnd, resourceIdArray), 'id');
                 // next step, until loading reach END
                 stepperStart = stepperStart + slotDuration;
                 stepperEnd = stepperEnd + slotDuration;
@@ -372,10 +370,10 @@ export default {
          * @return {boolean}
          */
         return (id :string) :string[] => {
-            const errorArray :string[] = [];
             if(!Object.prototype.hasOwnProperty.call(scheduleRecords, id)){
-                errorArray.push('error-404');
+                return ['error-404'];
             }
+            const errorArray :string[] = [];
             const { start, userId } = scheduleRecords[id];
             // Edit schedule only if current user OR it's admin
             if(!isAdmin && currentUserId !== userId){
@@ -425,15 +423,15 @@ export default {
          * @param {number} dateFrom
          * @param {number} dateTo
          * @param {string} id - id of event, to filter away while counting (would be counted 2 times)
-         * @param {string} checkResourceId
+         * @param {string[]} resourceIdArray
          */
-        return (dateFrom ?:number, dateTo ?:number, id ?:string, checkResourceId ?:string) :string[] => {
+        return (dateFrom ?:number, dateTo ?:number, id ?:string, resourceIdArray :string[] = []) :string[] => {
             const errorArray :string[] = [];
             // ----- businessHours check -----
             if(!rootGetters['main/isOpen'](dateFrom) || !rootGetters['main/isOpen'](dateTo))
                 errorArray.push('closed');
             // ----- schedule limit check -----
-            const cappedSlots :string[][] = Object.values(getSchedulesBySlots(dateFrom, dateTo, scheduleTimeStep, checkResourceId));
+            const cappedSlots :string[][] = Object.values(getSchedulesBySlots(dateFrom, dateTo, scheduleTimeStep, resourceIdArray));
             if(
                 cappedSlots.some((idArray :string[]) => {
                     // TODO different stations with different possible games
@@ -449,12 +447,12 @@ export default {
      * Same as above but optimized to be fast. Return boolean and doesn't care about errors
      */
     checkScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, totalStations }, rootState, rootGetters) => {
-        return (dateFrom ?:number, dateTo ?:number, id ?:string, checkResourceId ?:string) :boolean => {
+        return (dateFrom ?:number, dateTo ?:number, id ?:string, resourceIdArray :string[] = []) :boolean => {
             // ----- businessHours check -----
             if(!rootGetters['main/isOpen'](dateFrom) || !rootGetters['main/isOpen'](dateTo))
                 return false;
             // ----- schedule limit check -----
-            const cappedSlots :string[][] = Object.values(getSchedulesBySlots(dateFrom, dateTo, scheduleTimeStep, checkResourceId));
+            const cappedSlots :string[][] = Object.values(getSchedulesBySlots(dateFrom, dateTo, scheduleTimeStep, resourceIdArray));
             return !cappedSlots.some((idArray: string[]) => {
                 // TODO different stations with different possible games
                 return idArray.length - (id && idArray.includes(id) ? 1 : 0) >= totalStations['global']

@@ -28,10 +28,6 @@
 			<div></div>
 		</div>
 
-		<!-- Modals -->
-        <LoginModal />
-        <PlayModal />
-
 		<!-- Toasts -->
 		<div class="app-top-container">
 			<v-alert
@@ -71,8 +67,6 @@
 import { toRefs } from "vue";
 import { useStore } from "@/store";
 import MainNavigation from "@/components/generic/Header.vue";
-import LoginModal from "@/components/generic/modals/LoginModal.vue";
-import PlayModal from "@/components/generic/modals/PlayModal.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

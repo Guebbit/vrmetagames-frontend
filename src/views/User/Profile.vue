@@ -58,7 +58,7 @@
         </Panel>
 
         <v-container>
-            <v-defaults-provider :defaults="defaultsUserData">
+            <v-defaults-provider :defaults="profileUserFormUIRules">
                 <v-row class="pb-3">
                     <v-col cols="12" lg="8"></v-col>
                     <v-col cols="12" md="6" offset-md="6" lg="4" offset-lg="8">
@@ -86,7 +86,7 @@
                                 <div class="d-flex justify-space-between align-center flex-wrap">
                                     <div class="d-flex align-center">
                                         <v-avatar size="64" class="me-4">
-                                            <v-img :src="user.avatar" />
+                                            <v-img :src="userInfo.avatar || defaultUserAvatar" />
                                         </v-avatar>
                                         <div>
                                             <h4 class="font-600">{{ form.username }}</h4>
@@ -203,16 +203,19 @@
                                 :cardNumber = "creditCard.cardNumber"
                                 :cardEmail = "creditCard.cardEmail"
                                 :cardExpire = "creditCard.cardExpire"
+
+								@click="selectTargetPaymentMethod(creditCard.id)"
                             />
                         </v-col>
                     </v-row>
                 </v-col>
                 <v-col cols="12" sm="9" md="9" lg="10">
-                    <v-defaults-provider :defaults="defaultsPaymentHistory">
-                        <v-card v-for="item in paymentRecords"
-                                :key="'payment-history-' + item.id"
-                                class="waiting-class-default-provider-2"
-                                to="/order-details"
+                    <v-defaults-provider :defaults="paymentHistoryUIRules">
+                        <v-card
+							v-for="item in paymentRecords"
+							:key="'payment-history-' + item.id"
+							class="waiting-class-default-provider-2"
+							@click="selectTargetPayment(item.id)"
                         >
                             <div class="d-flex justify-space-between align-center">
                                 <font-awesome-icon
@@ -221,40 +224,66 @@
                                     :icon="paymentTypeIcon(item.type)"
                                     :color="paymentTypeColor(item.type)"
                                 />
-                                <h4 class="font-600">{{ item.code }}</h4>
-                                <p>{{ translateDateTime(item.time) }}</p>
-                                <p>{{ item.total }}{{ item.currency }}</p>
-                                <font-awesome-icon class="px-3" :icon="['fas', 'arrow-right']" />
+
+                                <h4 class="font-600 text-left d-none d-sm-block">{{ item.code ? item.code : t('profile-page.payment-local')}}</h4>
+
+								<v-spacer />
+
+								<p class="mr-10 text-secondary">
+									<b>{{ item.total }}{{ item.currency }}</b>
+								</p>
+
+								<p class="text-disabled">{{ formatUIDate(item.time) }}</p>
+                                <font-awesome-icon class="px-5" :icon="['fas', 'arrow-right']" />
                             </div>
                         </v-card>
                     </v-defaults-provider>
                 </v-col>
             </v-row>
         </v-container>
+
+		<DialogInfoPayment
+			:modelValue="!!selectedPaymentId"
+			@update:modelValue="(value) => selectedPaymentId = value"
+			:id="selectedPaymentId"
+			:dateFormat="uiFormatDate"
+			:timeFormat="uiFormatTime"
+
+			@button:click:method="(value) => { selectTargetPaymentMethod(value); selectedPaymentId = false; }"
+		/>
+
+		<DialogInfoPaymentMethod
+			:modelValue="!!selectedPaymentMethodId"
+			@update:modelValue="(value) => selectedPaymentMethodId = value"
+			:id="selectedPaymentMethodId"
+		/>
+
+		<Footer
+			:primary="themeColors.primary"
+			:secondary="themeColors.secondary"
+		/>
     </div>
-	<Footer
-		:primary="themeColors.primary"
-		:secondary="themeColors.secondary"
-	/>
 </template>
 
 <script setup lang="ts">
+import { defineProps, ref, computed, watch, toRefs, onMounted } from "vue";
+import { useStore } from "@/store";
 import { useTheme } from "vuetify";
-import Footer from "@/components/generic/Footer.vue";
+import { useI18n } from "vue-i18n";
+import { useForm } from 'vee-validate';
+import * as yup from "yup";
 
-const { global: { current: { value: { colors: themeColors } } } } = useTheme();
-</script>
-
-<script lang="ts">
-// TODO mixin tipo ACcenture
-// https://vuejs.org/guide/reusability/composables.html#what-is-a-composable
-import { defineComponent } from "vue";
-import { mapState } from "vuex";
-import { formRules } from "@/resources/constants";
-
+import useTimeHelpers from "@/resources/composables/useTimeHelpers";
+import useCheckDataUniqueness from "@/resources/composables/useCheckDataUniqueness";
+import DialogInfoPayment from "@/components/users/DialogInfoPayment.vue";
+import DialogInfoPaymentMethod from "@/components/users/DialogInfoPaymentMethod.vue";
+import useItemDetails from "@/resources/composables/useItemDetails";
 import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
 import TrapezoidTitle from "@/components/basics/typography/TrapezoidTitle.vue";
 import CreditCard from "guebbit-vue-library/src/components/cards/CreditCard.vue";
+import Footer from "@/components/generic/Footer.vue";
+import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsPanel.vue";
+import { formRules, defaultUserAvatar, uiFormatDate, uiFormatTime } from "@/resources/constants";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -263,73 +292,70 @@ import { faCcPaypal } from "@fortawesome/free-brands-svg-icons";
 
 library.add(faPen, faUser, faArrowRight, faCartShopping, faCreditCard, faCoins, faCcPaypal)
 
-export default defineComponent({
-    name: "ProfileIndex",
-    components: {
-        Panel,
-        TrapezoidTitle,
-        CreditCard,
-        FontAwesomeIcon
-    },
-    data: () => {
-        return {
-            form: {
-                name: '',
-                username: '',
-                email: '',
-                phone: '',
-                birthdate: 0,
-                description: ''
-            },
-            formRules,
-            defaultsUserData: {
-                global: {
-                    elevation: 12,
-                },
-                VTextField: {
-                    variant: 'contained'
-                },
-                VTextarea: {
-                    variant: 'contained'
-                },
-                VCard: {
-                    color: 'secondary',
-                    // TODO in attesa che torni a funzionare, uso CSS .waiting-class-default-provider
-                    // className: 'd-flex flex-column text-center align-center justify-center pa-4',
-                    height: '100%',
-                    variant: 'outlined'
-                },
-            },
-            defaultsPaymentHistory: {
-                global: {
-                    elevation: 10,
-                },
-                VCard: {
-                    color: 'light',
-                    width: '100%',
-                    elevation: 12,
-                    variant: 'outlined'
-                },
-            }
-        }
-    },
+const { global: { current: { value: { colors: themeColors } } } } = useTheme();
+const { t } = useI18n();
+const { state, commit, dispatch } = useStore();
 
-    computed: {
-        ...mapState({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            paymentMethods: ({ user: {paymentMethods} } :any) => Object.values(paymentMethods),
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            paymentRecords: ({ user: {paymentRecords} } :any) => Object.values(paymentRecords),
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            user: ({ user: { userInfo } }: any) => userInfo,
-        }),
+const { paymentMethods, paymentRecords, userInfo } = toRefs(state.user);
 
+// TODO form
+const form = {
+	name: '',
+	username: '',
+	email: '',
+	phone: '',
+	birthdate: 0,
+	description: ''
+};
+
+const {
+	formatUIDate,
+} = useTimeHelpers(uiFormatDate + ' ' + uiFormatTime);
+
+const {
+	isAuthenticated,
+	isAdmin,
+	selectedIdentifier :selectedPaymentMethodId,
+	selectTargetRecord: selectTargetPaymentMethod
+} = useItemDetails(paymentMethods);
+
+const {
+	selectedIdentifier :selectedPaymentId,
+	selectTargetRecord: selectTargetPayment
+} = useItemDetails(paymentRecords);
+
+// TODO paymentmethods
+
+
+const paymentTypeIcon = (name :string) => {
+	switch (name) {
+		case 'paypal':
+			return ['fab', 'cc-paypal'];
+		case 'credit-card':
+			return ['fas', 'credit-card'];
+	}
+	return ['fas', 'coins'];
+}
+const paymentTypeColor = (name :string) => {
+	switch (name) {
+		case 'paypal':
+			return '#f0f0f0';
+		case 'credit-card':
+			return '#ffff33';
+	}
+	return themeColors.primary;
+}
+
+
+onMounted(() => {
+	//form = userInfo
+})
+
+
+/*
         birthdateTranslated() {
             return this.translateDate(this.form.birthdate.toString())
         }
-    },
-
-    methods:{
         translateDate(date :string){
             return new Date(date).toLocaleDateString("en-GB", { // you can use undefined as first argument
                 year: "numeric",
@@ -347,31 +373,41 @@ export default defineComponent({
                 second: 'numeric'
             });
         },
-        paymentTypeIcon(name :string){
-            switch (name) {
-                case 'paypal':
-                    return ['fab', 'cc-paypal'];
-                case 'credit-card':
-                    return ['fas', 'credit-card'];
-            }
-            return ['fas', 'coins'];
-        },
-        paymentTypeColor(name :string){
-            switch (name) {
-                case 'paypal':
-                    return '#f0f0f0';
-                case 'credit-card':
-                    return '#ffff33';
-            }
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            return this.themeColors.primary;
-        }
-    },
-    mounted(){
-        this.form = this.user;
-    }
-});
+ */
+
+
+/**
+ * UI
+ */
+const profileUserFormUIRules = {
+	global: {
+		elevation: 12,
+	},
+	VTextField: {
+		variant: 'contained'
+	},
+	VTextarea: {
+		variant: 'contained'
+	},
+	VCard: {
+		color: 'secondary',
+		// TODO in attesa che torni a funzionare, uso CSS .waiting-class-default-provider
+		// className: 'd-flex flex-column text-center align-center justify-center pa-4',
+		height: '100%',
+		variant: 'outlined'
+	},
+};
+const paymentHistoryUIRules = {
+	global: {
+		elevation: 10,
+	},
+	VCard: {
+		color: 'light',
+		width: '100%',
+		elevation: 12,
+		variant: 'outlined'
+	},
+};
 </script>
 
 <style lang="scss">

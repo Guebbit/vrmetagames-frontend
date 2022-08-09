@@ -7,13 +7,7 @@ import { timeToSeconds } from "guebbit-javascript-library";
 import { formRules } from "@/resources/constants";
 import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
 
-
 dayjs.extend(customParseFormat);
-
-export interface scheduleFormHelperMap {
-    duration: number
-    timeframe: string
-}
 
 export interface scheduleFormMap {
     date?: string
@@ -22,7 +16,7 @@ export interface scheduleFormMap {
     terms?: boolean
 }
 
-export interface scheduleFormOptions {
+export interface scheduleFormSettings {
     admin?: boolean
     stepTime?: number
     stepSlot?: number
@@ -36,17 +30,18 @@ export default ({
         stepSlot = 2,
         dateFormat = 'YYYY-MM-DD',
         timeFormat = 'HH:mm:ss'
-    } :scheduleFormOptions) => {
+    } :scheduleFormSettings) => {
 
     /**
-     *
+     * Schedule managing toolbox
      */
     const {
+        getScheduleFirstAvailable,
+        getScheduleTimes,
+        normalizeTime,
         formToTime,
         timeToForm,
-        getFirstTimeAvailable,
-        getScheduleTimeFromDuration
-    } = useScheduleHelpers(dateFormat, timeFormat);
+    } = useScheduleHelpers(dateFormat, timeFormat, stepTime);
 
     /**
      * Form values
@@ -144,25 +139,30 @@ export default ({
      *
      * @param {number} start
      * @param {number} end
+     * @param {string} duration
      */
-    const fillForm = (start ?:number, end ?:number) :void => {
+    const fillForm = (start ?:number, end ?:number, duration = stepTime * stepSlot) :void => {
         // if START is empty => put today
+        if(!start && !end){
+            // get the first time available from now
+            const [ newStart, newEnd ] = getScheduleTimes(Date.now(), duration);
+            start = newStart;
+            end = newEnd;
+        }
+        // Should never happen
         if(!start){
-            start = Date.now();
+            start = normalizeTime(Date.now());
         }
-        // if END is empty => put today + double timeStep (1 hour) as standard starting value
+        // if END is empty => put start + duration as standard starting value, example:  1 hour later
         if(!end){
-            // 1 hour later
-            end = start + (stepTime * stepSlot);
+            end = start + duration;
         }
-        // all times must be divided in "steps" (30 min steps)
-        start = Math.round(start / stepTime) * stepTime;
-        end = Math.round(end / stepTime) * stepTime;
-        // get the first time available in this hours (end - start = requested duration)
-        const [ newStart, newEnd ] = getScheduleTimeFromDuration(start, end - start);
+        // all times must be divided in "steps" (30 min steps) and cut off the remaining milliseconds
+        start = normalizeTime(start);
+        end = normalizeTime(end);
         // fill the form with the new data
         formValues.value = {
-            ...timeToForm(newStart, newEnd),
+            ...timeToForm(start, end),
             terms: formValues.value.terms
         };
     };
@@ -171,7 +171,7 @@ export default ({
      * Automatically resolve/correct form validation
      */
     const resolveFormSystemErrors = () => {
-        const [ start, end ] = getScheduleTimeFromDuration();
+        const [ start, end ] = getScheduleTimes();
         // new pure form
         const formFabric = {
             ...timeToForm(start, end)
@@ -198,7 +198,7 @@ export default ({
      */
     const resolveFormLogicErrors = () => {
         const [ start, end ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
-        const [ newStart, newEnd ] = getFirstTimeAvailable(start, end, stepTime);
+        const [ newStart, newEnd ] = getScheduleFirstAvailable(start, end, undefined, stepTime);
         if(start !== newStart || end !== newEnd)
         formValues.value = {
             ...formValues.value,
@@ -210,7 +210,6 @@ export default ({
         resolveFormLogicErrors();
     }
 
-
     watch([() => formValues.value.hourStart, () => formValues.value.hourEnd], ([newHourStart, newHourEnd], [oldHourStart, oldHourEnd]) => {
         // valid hours, no need to intervene
         if(timeToSeconds(formValues.value.hourStart) < timeToSeconds(formValues.value.hourEnd === '00:00' ? '24:00' : formValues.value.hourEnd))
@@ -219,72 +218,12 @@ export default ({
         // if hours changed and are now invalid
         // start changed
         if(newHourStart !== oldHourStart)
-            formValues.value.hourEnd = dayjs(start + stepTime).format(timeFormat);
+            formValues.value.hourEnd = dayjs(start + stepTime * 2).format(timeFormat);
         // end changed
         if(newHourEnd !== oldHourEnd)
-            formValues.value.hourStart = dayjs(end - stepTime).format(timeFormat);
-
-
+            formValues.value.hourStart = dayjs(end - stepTime * 2).format(timeFormat);
     });
 
-    /**
-     *  Form buttons to simplify
-     */
-    const formHelper = ref<scheduleFormHelperMap>({
-        duration: 0,
-        timeframe: ''
-    });
-    /**
-     * formHelper interact with formValues
-     * - Timeframe is a shortcut for certain start-end hours of the day
-     * - Duration is the step to add to start (must add milliseconds)
-     */
-    watch(() => formHelper.value.timeframe, (val) => {
-        const [ start ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
-        console.log("VVVVVV", getScheduleTimeFromDuration(start, formHelper.value.duration))
-        switch (val) {
-            case "morning":
-                break;
-            case "afternoon":
-                break;
-            case "evening":
-                break;
-        }
-    });
-    watch(() => formHelper.value.duration, (val) => {
-        const [ start ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
-        formValues.value = {
-            ...formValues.value,
-            ...timeToForm(start, start + val * 1000),
-        }
-    });
-    /**
-     * Mirror formValues changes in formHelper
-     * - If hour change, check the new difference, remove the milliseconds, and you have the duration
-     */
-    watch([() => formValues.value.hourStart, () => formValues.value.hourEnd], ([newHourStart, newHourEnd], [oldHourStart, oldHourEnd]) => {
-        const [ start, end ] = formToTime(formValues.value.date, newHourStart, newHourEnd);
-        formHelper.value = {
-            ...formHelper.value,
-            duration: (end - start) / 1000
-        }
-    });
-
-    /*
-    console.clear();
-    console.log("------------------------------------------------------------------------------------------------------------------------------------")
-    // getFirstTimeAvailable TEST
-    // const startingdate
-    const testDate = 1659513600000; // mercoledì alle 10 di mattina (apertura: dalle 12 alle 19) || Date.now()
-    const [ testStart, testEnd ] = getFirstTimeAvailable(
-        testDate,   // startingdate
-        testDate + (28800000 + 3600000) // startingdate + 8+1 ore
-    );
-    console.log("STARTTT", new Date(testStart).toUTCString())
-    console.log("ENDDDD", new Date(testEnd).toUTCString())
-    console.log("________________________________________________________________________________")
-    block
-    */
 
     // expose managed state as return value
     return {
@@ -293,7 +232,6 @@ export default ({
         formErrorsList,
         formMeta,
         formIsValid,
-        formHelper,
         fillForm,
         formValueGo,
         resolveFormErrors

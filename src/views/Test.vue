@@ -609,7 +609,6 @@
 							:background="themeColors.primary"
 							:double="themeColors.secondary"
 							cross
-							@click="commit('main/toggleModal', ['play', true])"
 						>
 							{{ todayIsOpen ? t("generic.play-now") : t("generic.book-now") }}
 							<font-awesome-icon :icon="['fas', 'arrow-right']" />

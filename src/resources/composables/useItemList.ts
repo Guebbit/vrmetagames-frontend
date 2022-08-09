@@ -1,26 +1,44 @@
-import { computed } from "vue";
-import useItemStructure from "@/resources/composables/useItemStructure";
+import { computed, ComputedRef, Ref } from "vue";
 import useItemDetails from "@/resources/composables/useItemDetails";
 
-export default(
+export interface itemListSettingsMap {
+    defaultLoading?: boolean
+}
+
+export default<T>(
     id :string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    itemRecords :Record<string, any> = {},
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    loadPromise :any = Promise.resolve()
+    itemRecords :Ref<Record<string, T>> | ComputedRef<Record<string, T>>,
+    loadPromise :Promise<unknown | unknown[]> = Promise.resolve(),
+    settings :itemListSettingsMap = {}
 ) => {
+    /**
+     * Base
+     */
     const {
         loading,
+        userInfo,
+        isAdmin,
         isAuthenticated,
-        isAdmin
-    } = useItemStructure(loadPromise);
+        selectedRecord
+    } = useItemDetails(
+        itemRecords,
+        loadPromise,
+        settings
+    );
 
-    const {
-        selectedItem
-    } = useItemDetails(id, itemRecords, loadPromise);
+    /**
+     * Settings
+     */
+    // const { } = settings;
 
-    const itemList = computed(() => Object.values(itemRecords))
+    /**
+     *  List of all itemRecords
+     */
+    const itemList = computed(() => Object.values(itemRecords.value));
 
+    /**
+     *  List of all FILTERED itemRecords
+     */
     const filteredItemList = computed(() => {
         // TODO FILTERS
         return itemList.value;
@@ -28,9 +46,10 @@ export default(
 
     return {
         loading,
-        isAuthenticated,
+        userInfo,
         isAdmin,
-        selectedItem,
+        isAuthenticated,
+        selectedRecord,
         itemList,
         filteredItemList
     }

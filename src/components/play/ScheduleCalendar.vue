@@ -1,7 +1,9 @@
 <template>
 	<Calendar
+		:modes			= "['dayGridMonth', 'timeGridWeek']"
 		:admin          = "admin"
 		:events         = "scheduleDetailedList"
+		:resources		= "resources"
 		:businessHours  = "businessHoursFullcalendar"
 		:primary        = "themeColors.primary"
 		:secondary      = "themeColors.secondary"
@@ -10,10 +12,11 @@
 		:eventsPerDay   = "totalStations['global'] || 0"
 		:slotDuration   = "scheduleTimeStep"
 		:handleAllow    = "fullcalendarHandleEventAllow"
+		:disableNativeApi = "true"
 
 		@event:click    = "(id) => emit('event:click', id)"
 		@event:create   = "(event) => emit('event:create', fullcalendarEventApiTranslate(event))"
-		@event:changed  = "({ event }) => emit('event:changed', fullcalendarEventApiTranslate(event))"
+		@event:changed  = "handleChangedEvent"
 		@event:limit-reached = "fullcalendarLimitReached"
 	>
 		<template v-slot:eventContent="{timeText, isMirror, event}">
@@ -38,12 +41,23 @@ import { useTheme } from "vuetify";
 import { useI18n } from "vue-i18n";
 import Calendar from "@/components/play/Calendar.vue";
 import EventContentCard from "@/components/play/FAEventContentCard.vue";
+import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
 import { defaultUserAvatar, uiFormatDate, uiFormatTime } from "@/resources/constants";
 
-import type { scheduleInputMap } from "@/interfaces";
+import type { scheduleInputMap, stationMap } from "@/interfaces";
 import type { DateSpanApi, EventApi } from "@fullcalendar/vue3";
-import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
-// import type { ResourceInput } from "@fullcalendar/resource-common";
+import type { ResourceInput } from "@fullcalendar/resource-common";
+import { EventChangeArg } from "@fullcalendar/vue3";
+import { ResourceApi } from "@fullcalendar/resource-common";
+
+// The fullcalendar EventInput is too generic
+interface EventInput {
+	id?: string
+	resourceId?: string[]
+	start?: Date
+	end?: Date
+	allDay?: boolean
+}
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { state, getters, commit } = useStore();
@@ -70,6 +84,7 @@ defineProps({
  * Schedule managing toolbox
  */
 const {
+	timeToForm,
 	determineScheduleIsEditable,
 	determineScheduleIsAllowed,
 } = useScheduleHelpers(uiFormatDate, uiFormatTime);
@@ -78,7 +93,7 @@ const {
  *
  */
 const { businessHours } = toRefs(state.main);
-const { scheduleTimeStep } = toRefs(state.ecommerce);
+const { stations, scheduleTimeStep } = toRefs(state.ecommerce);
 const scheduleDetailedList = computed(() => getters['ecommerce/scheduleDetailedList']);
 
 /**
@@ -90,7 +105,6 @@ const totalStations = computed(() => getters['ecommerce/totalStations']);
  * FULLCALENDAR RESOURCE MODE
  * Lo sto già facendo in modo custom, sperimentare?
  */
-/*
 const resources = computed<ResourceInput[]>(() => {
 	const stationList = Object.values(stations.value);
 	let resourcesArray :ResourceInput[] = [];
@@ -104,7 +118,29 @@ const resources = computed<ResourceInput[]>(() => {
 	}
 	return resourcesArray;
 });
-*/
+
+/**
+ * Translate and emit the changed event
+ *
+ * @param {Object} event
+ * @param {Object} resources
+ */
+const handleChangedEvent = ({ event, resources } :EventChangeArg & { resources?: ResourceApi[] }) => {
+	let resourceIdArray = [];
+	if(resources)
+		for(let i = resources.length; i--; )
+			resourceIdArray.push(resources[i].id)
+	const { id, start, end, allDay } = event;
+	emit('event:changed',
+		fullcalendarEventApiTranslate({
+			id,
+			start: start ? start : undefined,
+			end: end ? end : undefined,
+			allDay,
+			resourceId: resourceIdArray,
+		})
+	)
+}
 
 /**
  * handleAllow function of FullCalendar
@@ -117,17 +153,17 @@ function fullcalendarHandleEventAllow(dropInfo :DateSpanApi, draggedEvent: Event
 	const { start, end, resource: { id :resourceId } = {} } = dropInfo;
 	const { id } = draggedEvent || {};
 	const errorArray :string[] = [];
-
 	// if the user can edit the schedule
 	errorArray.push(...determineScheduleIsEditable(id));
 	// if the new position is valid
 	errorArray.push(...determineScheduleIsAllowed(start.getTime(), end.getTime(), id, resourceId));
+	// possible errors
 	for(let i = errorArray.length; i--; )
 		commit('main/addToast', {
 			variant: 'full',
 			title: 'Error',
-			text: t('calendar.max-limit-reached-' + errorArray[i]),
-			timeout: 3000
+			text: t('calendar.not-allowed-' + errorArray[i]),
+			timeout: 5000
 		});
 	// approval
 	return errorArray.length === 0;
@@ -141,12 +177,15 @@ function fullcalendarHandleEventAllow(dropInfo :DateSpanApi, draggedEvent: Event
  * @param {string[]} idArray
  */
 function fullcalendarLimitReached(start :Date, end :Date, idArray :string[]){
-	console.error("MAX LIMIT REACHED", start, end, idArray)
+	const { date, hourStart, hourEnd } = timeToForm(start.getTime(), end.getTime());
 	commit('main/addToast', {
 		variant: 'full',
 		title: 'Error',
-		text: t('calendar.max-limit-reached', { start, end }),
-		timeout: 3000
+		text: t('calendar.max-limit-reached', {
+			start: date + ' ' + hourStart,
+			end: date + ' ' + hourEnd
+		}),
+		timeout: 5000
 	});
 }
 
@@ -158,9 +197,10 @@ function fullcalendarLimitReached(start :Date, end :Date, idArray :string[]){
  *
  * @param {Object} schedule
  */
-function fullcalendarEventApiTranslate({ id, start, end, allDay } :EventApi) :scheduleInputMap {
+function fullcalendarEventApiTranslate({ id, resourceId, start, end, allDay } :EventInput) :scheduleInputMap {
 	return {
 		id,
+		resourceId,
 		start: start ? start.getTime() : 0,
 		end: end ? end.getTime() : 0,
 		allDay

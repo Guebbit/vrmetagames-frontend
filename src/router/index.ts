@@ -70,6 +70,11 @@ export const routes: Array<RouteRecordRaw> = [
         component: WorkInProgress
     },
     {
+        path: "/contact-us",
+        name: "Contacts",
+        component: WorkInProgress
+    },
+    {
         path: "/regolamento",
         name: "Rules",
         component: WorkInProgress
@@ -155,6 +160,13 @@ export const routes: Array<RouteRecordRaw> = [
         name: "Profile",
         component: UserProfile,
         beforeEnter: [authenticationCheck],
+    },
+
+    {
+        path: "/play",
+        name: "Play",
+        component: Play,
+        props: true
     },
 
     {

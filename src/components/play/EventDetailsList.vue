@@ -1,10 +1,10 @@
 <template>
 	<v-list class="event-details-list">
 		<span
-			v-show="id"
+			v-show="id && !schedule?.userId"
 			class="status-circle"
 			:class="{
-				'online pulse-mode': scheduleAvailability.length < 1
+				'online pulse-mode': scheduleAvailability
 			}"
 		/>
 		<v-list-item>
@@ -33,7 +33,7 @@
 			</v-list-item-avatar>
 			<v-list-item-title>{{ scheduleDuration }}</v-list-item-title>
 		</v-list-item>
-		<v-list-item v-show="id && scheduleAvailability.length < 1">
+		<v-list-item v-show="id && !schedule?.userId && scheduleAvailability">
 			<v-btn
 				block
 				color="success"
@@ -110,7 +110,7 @@ const props = defineProps({
 const {
 	getSchedule,
 	translateScheduleUI,
-	determineScheduleIsAllowed,
+	checkScheduleIsAllowed,
 } = useScheduleHelpers(props.dateFormat, props.timeFormat);
 
 /**
@@ -141,9 +141,9 @@ const scheduleDuration = computed<string>(() => {
 /**
  * Form schedule is on a valid time?
  */
-const scheduleAvailability = computed<string[]>(() => {
-	const { start, end } = schedule.value || {};
-	return determineScheduleIsAllowed(start, end);
+const scheduleAvailability = computed<boolean>(() => {
+	const { id, start, end } = schedule.value || {};
+	return checkScheduleIsAllowed(start, end, id);
 });
 </script>
 

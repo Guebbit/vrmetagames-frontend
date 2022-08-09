@@ -18,6 +18,7 @@
     "closed": "Chiuso",
     "confirm": "Conferma",
     "cancel": "Cancella",
+    "renew": "Rinnova",
     "today": "Oggi",
     "search": "Cerca",
     "edit": "Modifica",
@@ -136,13 +137,39 @@
     "select-event-label-available": "Disponibile",
     "select-event-label-remove-event": "Rimuovi evento",
     "select-event-label-unselect-event": "Deseleziona evento",
-    "schedule-alert-remove-title": "Vuoi rimuovere la data selezionata?",
-    "schedule-alert-remove-button-confirm": "Conferma",
-    "schedule-alert-remove-button-cancel": "Annulla",
+    "schedules-basic-settings": "Prenotazione regolare",
     "schedules-advanced-settings": "Prenotazione avanzata",
     "schedules-confirm-all": "Conferma tutti gli eventi",
+    "schedule-removed": "Evento del {date} dalle {hourStart} alle {hourEnd} rimosso",
     "button-magic-solution": "Trovami una data!",
-    "resolve-form-errors-called": "Abbiamo trovato il primo orario disponibile con la durata richiesta, hurray!"
+    "resolve-form-errors-called": "Abbiamo trovato il primo orario disponibile con la durata richiesta, hurray!",
+    "resolve-form-changed": "L'orario richiesto non era disponbile, quindi abbiamo trovato la prossima data disponibile più vicina alle richieste",
+    "schedule-onhold-list": "Lista eventi in prenotazione"
+  },
+  "dialog-confirm-schedule": {
+    "title": "Confermare l'evento selezionato?",
+    "description": "Ti porteremo nella pagina di conferma semplificata con già tutte le informazioni pre-selezionate",
+    "button-confirm": "Vai",
+    "button-cancel": "Resta"
+  },
+  "dialog-delete-schedule": {
+    "title": "Rimuovere l'evento?",
+    "description": "La rimozione non sarà reversibile, contattaci se non sei sicurə o vorresti una soluzione alternativa. Le ore già pagate verranno trasferite nel tuo wallet.",
+    "button-confirm": "Conferma",
+    "button-cancel": "Annulla"
+  },
+  "dialog-delete-all-schedule": {
+    "title": "Svuotare il carrello?",
+    "description": "La rimozione non sarà reversibile, contattaci se non sei sicurə o vorresti una soluzione alternativa. Le ore già pagate verranno trasferite nel tuo wallet.",
+    "button-confirm": "Conferma",
+    "button-cancel": "Annulla"
+  },
+  "dialog-renew-schedule": {
+    "title": "Rinnovare l'evento?",
+    "description-paid": "L'evento è scaduto prima che potesse essere confermato, rinnovalo portandolo ad una nuova data, sarà già pronto per la conferma in quanto risulta già pagato. \t Oppure contattaci.",
+    "description-not-paid": "L'evento è scaduto prima che potesse essere confermato, rinnovalo portandolo ad una nuova data. \t Oppure contattaci.",
+    "button-confirm": "Rinnova",
+    "button-cancel": "Annulla"
   },
   "checkout-page": {
     "total-hours": "Totale ore",
@@ -165,15 +192,6 @@
     "signup-explanation": "Registrati in pochi passi, riceverai una mail con la tessera dell'associazione gratuitamente!",
     "signin-request": "Hai già un account?",
     "signup-request": "Non hai un account?"
-  },
-  "calendar": {
-    "max-limit-reached": "Non c'è spazio nelle date da {start} a {end}",
-    "not-allowed-error-closed": "Siamo chiusi in questa data a questo orario",
-    "not-allowed-error-max-reached": "Siamo pieni in questa data a questo orario",
-    "not-allowed-error-error-404": "Evento non trovato",
-    "not-allowed-error-error-403": "Non hai i permessi per effettuare questa azione",
-    "not-allowed-error-error-400-past": "Non puoi modificare eventi nel passato!",
-    "not-allowed-error-error-400-edit-expired": "Siamo spiacenti, è troppo tardi per disdire la prenotazione, contattaci per risolvere il problema"
   },
   "authentication-form": {
     "info": {
@@ -222,6 +240,70 @@
     "submit-signup": "Iscriviti",
     "forgot-password": "Password dimenticata"
   },
+  "profile-page": {
+    "payment-local": "Pagamento alla cassa"
+  },
+  "user-data-form": {
+    "info": {
+      "authentication-typing": "Username o email"
+    },
+    "values": {
+      "firstname": "Nome",
+      "lastname": "Cognome",
+      "password": "Password",
+      "passwordConfirm": "Ripeti password",
+      "email": "Email",
+      "phone": "Telefono",
+      "birthday": "Anno di nascita"
+    },
+    "errors": {
+      "firstname-required": "Nome mancante",
+      "lastname-required": "Cognome mancante",
+      "password-required": "Password mancante",
+      "passwordConfirm-required": "Deve essere uguale alla password",
+      "email-required": "Email mancante",
+      "email-invalid": "Email non valida",
+      "email-already-used": "Email già in uso",
+      "phone-required": "Telefono mancante",
+      "birthday-required": "Anno di nascita necessario",
+      "birthday-invalid": "Anno di nascita non valido",
+      "birthday-too-early": "Troppo giovane!",
+      "terms-required": "Accetta le condizioni"
+    },
+    "password-strong": {
+      "required": "Password mancante",
+      "min-number": "La password deve contenere almeno 8 caratteri",
+      "need-uppercase": "La password deve contenere almeno una lettera maiuscola",
+      "need-lowercase": "La password deve contenere almeno una lettera minuscola",
+      "need-digit": "La password deve contenere almeno un numero",
+      "need-special-char": "La password deve contenere almeno un carattere speciale"
+    },
+    "switch-to-signin": "Autenticati",
+    "switch-to-signup": "Registrati",
+    "submit-signin": "Entra!",
+    "submit-signup": "Iscriviti",
+    "forgot-password": "Password dimenticata"
+  },
+  "dialog-info-payment": {
+    "title": "Informazioni pagamento",
+    "description": "Informazioni sul pagamento effettuato. Se riscontri inesattezze sul pagamento effettuato, contattaci",
+    "button-close": "Chiudi",
+    "button-go-to-method": "Carta utilizzata"
+  },
+  "dialog-info-payment-method": {
+    "title": "Informazioni carta",
+    "description": "Informazioni sul metodo di pagamento utilizzato.",
+    "button-close": "Chiudi"
+  },
+  "calendar": {
+    "max-limit-reached": "Non c'è spazio nelle date da {start} a {end}",
+    "not-allowed-error-closed": "Siamo chiusi in questa data a questo orario",
+    "not-allowed-error-max-reached": "Siamo pieni in questa data a questo orario",
+    "not-allowed-error-404": "Evento non trovato",
+    "not-allowed-error-403": "Non hai i permessi per effettuare questa azione",
+    "not-allowed-error-400-past": "Non puoi modificare eventi nel passato!",
+    "not-allowed-error-400-edit-expired": "Siamo spiacenti, è troppo tardi per disdire la prenotazione, contattaci per risolvere il problema"
+  },
   "schedule-form": {
     "info": {
       "date": "Giorno",
@@ -248,20 +330,22 @@
     }
   },
   "schedule-card": {
-    "online-chip": "online",
+    "online-chip": "Online",
     "online-explanation": "La prenotazione è salvata online",
-    "offline-chip": "offline",
-    "offline-explanation":  "La prenotazione verrà persa alla chiusura se non viene salvata",
-    "confirmed-chip": "confermato",
-    "confirmed-explanation":  "La prenotazione è avvenuta con successo",
-    "not-confirmed-chip": "da confermare",
+    "offline-chip": "Offline",
+    "offline-explanation": "La prenotazione verrà persa alla chiusura se non viene salvata",
+    "confirmed-chip": "Confermato",
+    "confirmed-explanation": "La prenotazione è avvenuta con successo",
+    "not-confirmed-chip": "Da confermare",
     "not-confirmed-explanation":  "La prenotazione è ancora da confermare",
-    "canceled-chip":  "cancellato",
+    "canceled-chip": "Cancellato",
     "canceled-explanation":  "La prenotazione è stata cancellata",
-    "unsaved-chip": "da salvare",
+    "unsaved-chip": "Da salvare",
     "unsaved-explanation":  "La prenotazione è stata modificata ma le modifiche non sono ancora state salvate",
-    "paid-chip":  "pagato",
-    "paid-explanation":  "La prenotazione è stata confermata e pagata"
+    "paid-chip": "Pagato",
+    "paid-explanation": "La prenotazione è stata confermata e pagata",
+    "expired-chip": "Scaduto",
+    "expired-explanation": "Tempo scaduto per prenotare in questa data!"
   },
   "main": {
     "days": [

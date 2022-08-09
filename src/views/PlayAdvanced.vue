@@ -11,7 +11,6 @@
             <h1 class="theme-page-subtitle text-center mt-5 mb-10">{{ t('play-page.calendar-title') }}</h1>
             <v-row>
                 <v-col cols="12" lg="3" class="schedule-form-details">
-
 					<!-- user details -->
                     <UserInfoCard
                         class="mb-4"
@@ -27,15 +26,13 @@
 						:dateFormat="uiFormatDate"
 						:timeFormat="uiFormatTime"
 
-						@button:click:confirm="formConfirm"
-						@button:click:remove="showConfirmDeleteDialog = true"
+						@button:click:confirm="formSubmit"
+						@button:click:remove="showDeleteDialog = true"
 						@button:click:unselect="selectedIdentifier = null"
 					/>
-
 					<!-- form -->
                     <ScheduleFormCard
 						v-model="formValues"
-						v-model:modelHelper="formHelper"
 						:errors="formErrors"
 						:disabled="!formIsValid"
 						:dateFormat="uiFormatDate"
@@ -44,7 +41,8 @@
 						:hideTermsButton="isAdmin"
 						:allowPastSelection="isAdmin"
 
-						@button:confirm:click="formConfirm"
+						@submit="formSubmit"
+						@message:emit="sendMessage(t('play-page.resolve-form-changed'))"
 						@button:click:backward-day="formValueGo('back', 1, 'day')"
 						@button:click:now-day="formValueGo('now')"
 						@button:click:forward-day="formValueGo('forward', 1, 'day')"
@@ -86,26 +84,63 @@
                 </v-col>
             </v-row>
 
-            <div v-show="scheduleListCart.length > 0"
-                class="text-right my-10"
-            >
+            <div class="my-10 d-flex justify-end align-center" style="gap:12px">
+				<v-btn
+					variant="outlined"
+					size="x-large"
+					:to="{
+						name: 'Play'
+					}"
+				>
+					{{ t('play-page.schedules-basic-settings') }}
+					<font-awesome-icon class="ml-5" :icon="['fas', 'gear']" />
+				</v-btn>
                 <v-btn
-					class="vuetify-button-icon"
-					block
                     color="secondary"
                     size="x-large"
+					:disabled="scheduleListCart.length < 1"
                     :to="{
 						name: 'Checkout'
 					}"
                 >
                     {{ t('play-page.schedules-confirm-all') }}
-                    <font-awesome-icon :icon="['fas', 'play']" />
+                    <font-awesome-icon class="ml-5" :icon="['fas', 'play']" />
                 </v-btn>
             </div>
 
-            <div v-show="scheduleListCart.length > 0" class="schedule-list">
-                <h1 class="theme-page-subtitle text-center mt-5 mb-10">Lista eventi in prenotazione</h1>
-
+            <div
+				v-show="scheduleListCart.length > 0"
+				class="schedule-list"
+			>
+				<!-- TODO controlli, riordinamenti, etc -->
+				<v-toolbar
+					class="px-6 mb-5"
+					color="surface"
+					dark
+					prominent
+					dense
+				>
+					<font-awesome-icon class="mr-4" size="xl" :icon="['fas', 'calendar-check']"/>
+					<v-toolbar-title>{{ t('play-page.schedule-onhold-list') }}</v-toolbar-title>
+					<v-spacer></v-spacer>
+					<v-btn icon @click="showDeleteAllDialog = true">
+						<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'trash-can']"/>
+					</v-btn>
+					<!--
+					<v-btn icon>
+						<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-down-1-9']"/>
+					</v-btn>
+					<v-btn icon>
+						<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-up-9-1']"/>
+					</v-btn>
+					<v-btn icon>
+						<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-down-a-z']"/>
+					</v-btn>
+					<v-btn icon>
+						<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-up-z-a']"/>
+					</v-btn>
+					-->
+				</v-toolbar>
                 <v-row>
                     <v-col cols="12" lg="3">
                         <v-list
@@ -113,17 +148,18 @@
                             variant="text"
                         >
                             <v-list-item
-                                v-for="([ variant, icon, color, label, message ], index) in statusListLegenda"
+                                v-for="({ variant, icon, color, title, description }, index) in statusListLegenda"
                                 :key="'schedule-chip-' + index"
                             >
                                 <v-chip
                                     :color="color"
                                     :variant="variant"
+									size="small"
                                 >
-                                    <font-awesome-icon :icon="['fas', icon]" class="mr-2" />
-                                    {{ label }}
+                                    <font-awesome-icon class="mr-2" :icon="['fas', icon]"/>
+                                    {{ title }}
                                 </v-chip>
-                                <p class="explanation">{{ message }}</p>
+                                <p class="explanation">{{ description }}</p>
                             </v-list-item>
                         </v-list>
                     </v-col>
@@ -134,13 +170,13 @@
 							class="cursor-pointer"
                             :key="'event-onhold-' + id"
                             :id="id"
-                            :showConfirmButton="false"
 							:dateFormat="uiFormatDate"
 							:timeFormat="uiFormatTime"
 
 							@click="scheduleSelect(id)"
-                            @button:confirm="scheduleHandleConfirm(id)"
-                            @button:cancel="showConfirmDeleteDialog = true"
+                            @button:click:confirm="showConfirmDialog = true"
+                            @button:click:cancel="showDeleteDialog = true"
+							@button:click:renew="showRenewDialog = true"
                         />
                     </v-col>
                 </v-row>
@@ -148,14 +184,42 @@
             </div>
         </v-container>
 
+		<DialogConfirmItem
+			v-model="showConfirmDialog"
+
+			@button:click:confirm="router.push({
+				name: 'Play',
+				params: {
+					id: selectedIdentifier
+				}
+			})"
+			@button:click:cancel="showConfirmDialog = false"
+		/>
+
 		<DialogDeleteItem
-			v-model="showConfirmDeleteDialog"
+			v-model="showDeleteDialog"
 			:id="selectedIdentifier"
 			:dateFormat="uiFormatDate"
 			:timeFormat="uiFormatTime"
 
-			@button:click:confirm="scheduleRemove([selectedIdentifier]); selectedIdentifier = null; showConfirmDeleteDialog = false"
-			@button:click:cancel="showConfirmDeleteDialog = false"
+			@button:click:confirm="scheduleRemove([selectedIdentifier]); selectedIdentifier = null; showDeleteDialog = false"
+			@button:click:cancel="showDeleteDialog = false"
+		/>
+
+		<DialogRenewItem
+			v-model="showRenewDialog"
+			:id="selectedIdentifier"
+			:dateFormat="uiFormatDate"
+			:timeFormat="uiFormatTime"
+
+			@button:click:cancel="showRenewDialog = false"
+		/>
+
+		<DialogDeleteAll
+			v-model="showDeleteAllDialog"
+
+			@button:click:confirm="scheduleRemoveAll();showDeleteAllDialog = false;"
+			@button:click:cancel="showDeleteAllDialog = false"
 		/>
     </div>
 	<Footer
@@ -164,15 +228,16 @@
 	/>
 </template>
 
+
+
+
 <script setup lang="ts">
 import { defineProps, ref, computed, toRefs, watch, onMounted } from "vue";
-import { useI18n } from "vue-i18n";
+import { useRouter } from 'vue-router'
 import { useTheme } from "vuetify";
+import { useI18n } from "vue-i18n";
 import { useStore } from "@/store";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import vuetifyColors from "vuetify/lib/util/colors";
 import UserInfoCard from "@/components/basics/cards/UserInfoCard.vue";
 import EventCard from "@/components/play/EventCard.vue";
 import ScheduleFormCard from "@/components/generic/forms/ScheduleFormCard.vue";
@@ -184,11 +249,14 @@ import useItemDetails from "@/resources/composables/useItemDetails";
 import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
 import EventDetailsList from "@/components/play/EventDetailsList.vue";
 import DialogDeleteItem from "@/components/play/DialogDeleteItem.vue";
-import { uiFormatDate, uiFormatTime } from "@/resources/constants";
+import DialogRenewItem from "@/components/play/DialogRenewItem.vue";
+import DialogDeleteAll from "@/components/play/DialogDeleteAll.vue";
+import DialogConfirmItem from "@/components/play/DialogConfirmItem.vue";
+import { uiFormatDate, uiFormatTime, scheduleStates } from "@/resources/constants";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faCalendar, faClock, faPlay, faCheck, faCircleInfo, faHatWizard } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faCalendarCheck, faClock, faPlay, faCheck, faCircleInfo, faHatWizard, faGear, faTrashCan, faArrowDown19, faArrowUp91, faArrowDownAZ, faArrowUpZA } from "@fortawesome/free-solid-svg-icons";
 
 import type {
 	scheduleInputMap,
@@ -197,11 +265,12 @@ import type {
 
 
 
-library.add(faCalendar, faClock, faPlay, faCheck, faCircleInfo, faHatWizard);
+library.add(faCalendar, faCalendarCheck, faClock, faPlay, faCheck, faCircleInfo, faHatWizard, faGear, faTrashCan, faArrowDown19, faArrowUp91, faArrowDownAZ, faArrowUpZA);
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();
 const { state, getters, commit, dispatch } = useStore();
+const router = useRouter();
 
 const { scheduleRecords, scheduleTimeStep } = toRefs(state.ecommerce);
 
@@ -219,16 +288,18 @@ const {
 	loading,
 	isAuthenticated,
 	isAdmin,
+	getRecord,
 	selectedIdentifier,
 	selectedRecord,
 	selectTargetRecord
 } = useItemDetails(
 	scheduleRecords,
-	() => {
-		return Promise.all([
-			dispatch('main/initApp'),
-			dispatch('ecommerce/getSchedules')
-		]);
+	Promise.all([
+		dispatch('main/initApp'),
+		dispatch('ecommerce/getSchedules')
+	]),
+	{
+		defaultLoading: false
 	}
 );
 
@@ -236,6 +307,7 @@ const {
  * Schedule managing toolbox
  */
 const {
+	timeToForm,
 	formToTime,
 	checkScheduleIsEditable,
 	determineScheduleIsAllowed,
@@ -245,7 +317,6 @@ const {
  * Schedule form toolbox
  */
 const {
-	formHelper,
 	formValues,
 	formErrors,
 	formErrorsList: formErrorsListOriginal,
@@ -287,7 +358,7 @@ const scheduleAvailability = computed<string[]>(() => {
  * @param {string} id
  */
 function scheduleSelect(id :string){
-	if(checkScheduleIsEditable(id))
+	if(!checkScheduleIsEditable(id))
 		return;
 	// select item
 	selectTargetRecord(id);
@@ -310,16 +381,18 @@ const formErrorsList = computed<string[]>(() => {
 });
 
 
+const sendMessage = (message :string) =>
+	commit('main/addToast', {
+		title: t('generic.info'),
+		text: message,
+		timeout: 7000
+	});
 
 /**
  * Call "resolveFormErrors" and inform the user via toast
  */
 const handleResolveFormErrors = () => {
-	commit('main/addToast', {
-		title: t('generic.info'),
-		text: t('play-page.resolve-form-errors-called'),
-		timeout: 7000
-	});
+	sendMessage(t('play-page.resolve-form-errors-called'));
 	resolveFormErrors();
 };
 
@@ -327,8 +400,10 @@ const handleResolveFormErrors = () => {
 /**
  * Toggles
  */
-const showConfirmDeleteDialog = ref(false);
-
+const showConfirmDialog = ref(false);
+const showDeleteDialog = ref(false);
+const showRenewDialog = ref(false);
+const showDeleteAllDialog = ref(false);
 
 /**
  * Check if an existent event was changed/edited
@@ -364,29 +439,37 @@ watch(computed(() => { return {...formValues.value, scheduleId: selectedIdentifi
 }, { deep: true });
 
 
-
-
-
-
-function formConfirm () {
-	console.log("SSSSSSSSSSSUBMIT");
-
+/**
+ * Form Submit.
+ * Events will be added\edited ready to be confirmed later
+ */
+function formSubmit () {
 	if(!formIsValid.value){
-		const formErrors = [];
+		// form is not valid for some reason, print the errors:
 		for(let i = formErrorsList.value.length; i--; )
-			formErrors.push(t('schedule-form.errors.' + formErrorsList.value[i]));
-		scheduleHandleErrors(formErrors);
+			commit('main/addToast', {
+				title: t('generic.error'),
+				text: t('schedule-form.errors.' + formErrorsList.value[i]),
+				timeout: 5000
+			});
 		return;
 	}
-
-	// TODO  (ricorda che in play c'è la fast mode)
-	/*
-	if(selectedIdentifier){
-		scheduleEdit()
-	}else{
-		scheduleAdd()
+	// translate form data
+	const [ start, end ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
+	// scheduleAdd & scheduleEdit are based on a custom Fullcalendar object, that I must recreate:
+	const scheduleInfo :scheduleInputMap = {
+		start,
+		end,
+		allDay: false,		// TODO for now it's useless
+		resourceId: []		// TODO in the future: resources pick in form
 	}
-	*/
+	if(selectedIdentifier)
+		scheduleEdit({
+			...scheduleInfo,
+			id: selectedIdentifier.value
+		})
+	else
+		scheduleAdd(scheduleInfo);
 }
 
 
@@ -401,7 +484,7 @@ function scheduleHandleErrors(errors :string[]){
 		commit('main/addToast', {
 			title: t('generic.error'),
 			text: errors[i],
-			timeout: 3000
+			timeout: 5000
 		});
 }
 
@@ -411,7 +494,6 @@ function scheduleHandleErrors(errors :string[]){
  * @param {Object} schedule
  */
 function scheduleAdd(schedule :scheduleInputMap){
-	console.log("ADDDDDDD", schedule)
 	return dispatch('ecommerce/addSchedule', schedule)
 		.then(id => scheduleSelect(id))
 		.catch(scheduleHandleErrors)
@@ -423,26 +505,8 @@ function scheduleAdd(schedule :scheduleInputMap){
  * @param {Object} schedule
  */
 function scheduleEdit(schedule :scheduleInputMap){
-	console.log("EDITTTTT", schedule)
-	// WARNING fullcalendarHandleEventAllow checks already done
 	return dispatch('ecommerce/editSchedule', schedule)
 		.catch(scheduleHandleErrors)
-}
-
-
-/**
- * Confirm schedule and pay from wallet
- * if wallet empty: delay confirm and ask for payment (?)
- *
- * @param {string} id
- */
-function scheduleConfirm(id :string){
-	console.log("CCCCCCCCCCCCCONFIRM", id)
-	// TODO confirm multiple?
-}
-function scheduleHandleConfirm(id :string){
-	console.log("HANDLECCCCCCCCCCCCCONFIRM", id)
-	// TODO confirm multiple?
 }
 
 /**
@@ -451,68 +515,57 @@ function scheduleHandleConfirm(id :string){
  * @param {string} ids
  */
 function scheduleRemove(ids :string[] = []){
-	console.log("REMOVEEEE", ids)
+	for(let i = ids.length; i--; ){
+		// get schedule data
+		const { start, end } = getRecord(ids[i]) as scheduleMap || {};
+		// translate
+		const { date, hourStart, hourEnd } = timeToForm(start, end);
+		// send message
+		sendMessage(t('play-page.schedule-removed', {
+			date,
+			hourStart,
+			hourEnd
+		}));
+	}
 	return dispatch('ecommerce/removeSchedules', ids)
 		.catch(scheduleHandleErrors);
 }
 
+function scheduleRemoveAll(){
+	const idArray :string[] = [];
+	for(let i = scheduleListCart.value.length; i--; ){
+		idArray.push(scheduleListCart.value[i].id);
+		// get schedule data
+		const { start, end } = scheduleListCart.value[i];
+		// translate
+		const { date, hourStart, hourEnd } = timeToForm(start, end);
+		// send message
+		sendMessage(t('play-page.schedule-removed', {
+			date,
+			hourStart,
+			hourEnd
+		}));
+	}
+	return dispatch('ecommerce/removeSchedules', idArray)
+		.catch(scheduleHandleErrors);
+}
 
 /**
  * UI
  */
 const scheduleListCart = computed(() => getters['ecommerce/scheduleListCart']);
 
-const statusListLegenda = [
-	[
-		undefined,
-		'check',
-		vuetifyColors.red.base,
-		t('schedule-card.offline-chip') as string,
-		t('schedule-card.offline-explanation') as string,
-	],
-	[
-		'outlined',
-		'check',
-		vuetifyColors.green.base,
-		t('schedule-card.online-chip') as string,
-		t('schedule-card.online-explanation') as string,
-	],
-	[
-		undefined,
-		'check',
-		themeColors.secondary,
-		t('schedule-card.confirmed-chip') as string,
-		t('schedule-card.confirmed-explanation') as string,
-	],
-	[
-		undefined,
-		'check',
-		vuetifyColors.shades.white,
-		t('schedule-card.not-confirmed-chip') as string,
-		t('schedule-card.not-confirmed-explanation') as string,
-	],
-	[
-		'outlined',
-		'check',
-		vuetifyColors.red.base,
-		t('schedule-card.canceled-chip') as string,
-		t('schedule-card.canceled-explanation') as string,
-	],
-	[
-		undefined,
-		'check',
-		themeColors.primary,
-		t('schedule-card.paid-chip') as string,
-		t('schedule-card.paid-explanation') as string,
-	],
-	[
-		'outlined',
-		'check',
-		vuetifyColors.yellow.darken1,
-		t('schedule-card.unsaved-chip') as string,
-		t('schedule-card.unsaved-explanation') as string,
-	],
-];
+/**
+ *
+ */
+const statusListLegendaRaw = Object.values(scheduleStates);
+const statusListLegenda = [];
+for(let i = statusListLegendaRaw.length; i--; )
+	statusListLegenda.push({
+		...statusListLegendaRaw[i],
+		title: t(statusListLegendaRaw[i].title),
+		description: t(statusListLegendaRaw[i].description)
+	})
 </script>
 
 
@@ -521,6 +574,9 @@ const statusListLegenda = [
 
 #play-advanced-page {
     .schedule-form-details{
+		display: flex;
+		flex-direction: column;
+
         .schedule-form-header {
             margin-bottom: 1.5em;
         }
@@ -542,13 +598,26 @@ const statusListLegenda = [
                 cursor: pointer;
             }
         }
+
+		@include media-mobile(){
+			.schedule-user-card{
+				order: 3;
+			}
+			.event-details-list{
+				margin-top: 24px;
+				order: 2;
+			}
+			.schedule-form{
+				order: 1;
+			}
+		}
     }
 
     .schedule-legend{
         .explanation{
             flex-shrink: 99;
             margin-left: 1.5em;
-            font-size: 0.8em;
+            font-size: 0.7em;
         }
     }
 }

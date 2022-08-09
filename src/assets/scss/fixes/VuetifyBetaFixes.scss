@@ -25,6 +25,14 @@
     }
 }
 
+// o la X prende una fetta considerevole della dialog
+.v-alert{
+    .v-alert__close{
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}
 
 .v-overlay{
     .v-overlay__scrim{

@@ -10,6 +10,7 @@ export interface paymentMethodMap {
 
 export interface paymentMap {
     id: string
+    methodId: string
     type: string
     code: string
     time: number

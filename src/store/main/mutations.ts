@@ -35,17 +35,6 @@ export default {
     },
 
     /**
-     * Open/Close modal
-     *
-     * @param {Object} modals
-     * @param {string} name
-     * @param {boolean | null} value - if null = toggle
-     */
-    toggleModal({ modals }: stateMainMap, [name = '', value = null]: [string, boolean | null]) {
-        modals[name] = value == null ? !value : value;
-    },
-
-    /**
      * segnalo che un loading è finito
      *
      * @param {Object} loading

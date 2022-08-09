@@ -13,7 +13,6 @@ export interface stateMainMap {
     businessHours: BusinessHoursMap
     forceClose: boolean
     forceOpen: boolean
-    modals: Record<string, boolean>
     toasts: toastMap[]
     loading :string[]
     loaded :string[]

@@ -536,52 +536,50 @@ export default {
                 return Promise.resolve();
         }
 
-        // TODO TEMPORARY
+
+
+
+        // TODO TEMPORARY PRENOTAZIONE
         commit('setSchedule', {
             id: "itemxxxx",
-            start: 1655640000000,
-            end: 1655647200000,
+            start: 1660239000000,
+            end: 1660239000000,
             userId: "user4",
             online: false,
             confirmed: false,
             canceled: false,
             unsaved: false,
-            paid: false
+            paid: false,
+            expired: false
         });
-        // TODO TEMPORARY
         commit('setSchedule', {
             id: "itemyyyy",
-            start: 1655640000000,
-            end: 1655649000000,
+            start: 1671354000000,
+            end: 1671382800000,
             userId: "user4",
             online: false,
             confirmed: false,
             canceled: false,
             unsaved: false,
-            paid: false
+            paid: false,
+            expired: true
         })
-        commit('setSchedule', {
-            id: "itemzzz",
-            start: 1655640000000,
-            end: 1655649000000,
-            userId: "user4",
-            online: false,
-            confirmed: false,
-            canceled: false,
-            unsaved: false,
-            paid: false
-        });
         commit('setSchedule', {
             id: "itemwwww",
-            start: 1655640000000,
-            end: 1655649000000,
+            start: 1671051600000,
+            end: 1671058800000,
             userId: "user4",
             online: false,
             confirmed: false,
             canceled: false,
             unsaved: false,
-            paid: false
-        })
+            paid: false,
+            expired: false
+        });
+        // TODO TEMPORARY PRENOTAZIONE
+
+
+
 
         // TODO filteredIdArray or generic
         return Promise.resolve()
@@ -590,7 +588,8 @@ export default {
                     commit("setSchedule", {
                         ...mockServerSchedule[i],
                         online: true,
-                        unsaved: false
+                        unsaved: false,
+                        expired: false
                     });
                     commit("main/setLastUpdate", ['scheduleRecords', mockServerSchedule[i].id], { root: true });
                 }
@@ -761,6 +760,9 @@ export default {
         }
         return Promise.resolve(scheduleArray)
             .then(() => {
+                // TODO Le ore\soldi degli eventi già confermati\pagati verranno automaticamente aggiunte al wallet
+                //  Lo farà il server, restituirà l'ammontare (no istant offline)
+
                 // TODO Possible logical error and revert needed
                 // TODO controlla se ha senso mettere catch per primo con
                 //   "adderror" che poi casca nel then che fa le sue cose ed eventualmente catch revert

@@ -2,7 +2,14 @@ import { useStore } from "@/store";
 import { computed, onBeforeMount, toRefs } from "vue";
 import { getUUID } from "guebbit-javascript-library";
 
-export default (loadPromise :any) => {
+export interface itemStructureSettingsMap {
+  defaultLoading?: boolean
+}
+
+export default (
+    loadPromise :Promise<unknown | unknown[]> = Promise.resolve(),
+    settings :itemStructureSettingsMap = {}
+) => {
   const {
     state,
     getters,
@@ -14,8 +21,12 @@ export default (loadPromise :any) => {
 
   const loadingName = getUUID();
 
-  // const resourceHandleSuccess = () => {};
-  // const resourceHandleError = () => {};
+  /**
+   * Settings
+   */
+  const {
+    defaultLoading = true
+  } = settings;
 
   /**
    *
@@ -27,16 +38,21 @@ export default (loadPromise :any) => {
    */
   const loadingItems = computed(() => loading.value.includes(loadingName));
 
+  // const resourceHandleSuccess = () => {};
+  // const resourceHandleError = () => {};
+
   /**
    * Load items required (or single target item?)
    */
   const loadItems = () => {
-    commit('main/startLoading', loadingName);
-    loadPromise()
+    if(defaultLoading)
+      commit('main/startLoading', loadingName);
+    loadPromise
         // .then(resourceHandleSuccess)
         // .catch(resourceHandleError)
         .finally(() => {
-          commit('main/stopLoading', loadingName);
+          if(defaultLoading)
+            commit('main/stopLoading', loadingName);
         });
   };
 
@@ -46,7 +62,8 @@ export default (loadPromise :any) => {
 
   return {
     loading: loadingItems,
+    userInfo,
+    isAdmin: userInfo.value.isAdmin,
     isAuthenticated,
-    isAdmin: userInfo.value.isAdmin
   };
 };
