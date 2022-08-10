@@ -19,17 +19,16 @@ export interface paymentMap {
 }
 
 export interface currentUserMap {
-    id: string
-    avatar: string
-    username: string
-    name: string
-    email: string
-    phone: string
-    birthdate: number
-    description: string
-    wallet :number
-    lastVisit: number
-    isAdmin: boolean
+    id?: string
+    avatar?: string
+    username?: string
+    firstname?: string
+    lastname?: string
+    email?: string
+    phone?: string
+    birthday?: number
+    wallet?: number
+    isAdmin?: boolean
 }
 
 export interface stateUserMap {

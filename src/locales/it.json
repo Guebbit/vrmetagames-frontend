@@ -196,7 +196,8 @@
   "authentication-form": {
     "info": {
       "username-typing": "Scrivi il tuo nickname o soprannome",
-      "authentication-typing": "Username o email"
+      "authentication-typing": "Username o email",
+      "terms": "Accetta le <b><a href=\"/regolamento\" target=\"_blank\" class=\"text-decoration-none text-secondary\">condizioni</a></b>"
     },
     "values": {
       "authentication": "Autenticazione",

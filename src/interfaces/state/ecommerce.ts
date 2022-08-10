@@ -1,3 +1,4 @@
+import type { currentUserMap } from "@/interfaces";
 /**
  * SCHEDULE TYPES:
  *
@@ -33,15 +34,9 @@ export interface scheduleMap extends scheduleInputMap {
     expired: boolean    // WARNING: FE only (checks through date, offline & online)
 }
 
-export interface userMap {
-    id: string;
-    avatar: string;
-    username: string;
-    lastVisit: number;
+export interface userMap extends currentUserMap {
     // color assigned to user in current session (fullcalendar event color)
-    color?: string;
-    // admin options
-    wallet?: number;
+    color?: string
 }
 
 export interface stationMap {

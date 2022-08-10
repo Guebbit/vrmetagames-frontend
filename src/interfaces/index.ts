@@ -1,4 +1,5 @@
 // https://gist.github.com/soerenmartius/ad62ad59b991c99983a4e495bf6acb04
+import type { ComputedRef, Ref, WritableComputedRef } from "vue";
 
 export {
     // ecommerce
@@ -30,13 +31,20 @@ export interface stateRootMap {
 }
 
 export interface loginFormMap {
-    user :string
-    password :string
+    authentication ?:string
+    password ?:string
 }
 
-export interface registrationFormMap {
-    username :string
-    email :string
-    password :string
-    repeatPassword :string
+export interface userInfoFormMap {
+    username?: string,
+    firstname?: string,
+    lastname?: string,
+    password?: string,
+    passwordConfirm?: string,
+    email?: string,
+    phone?: string,
+    birthday?: number,
+    terms?: boolean,
 }
+
+export type AnyRef<T> = Ref<T> | ComputedRef<T> | WritableComputedRef<T>;

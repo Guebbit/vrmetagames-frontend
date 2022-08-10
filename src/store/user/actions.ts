@@ -1,19 +1,20 @@
 import type { ActionContext } from "vuex";
-import type { stateUserMap, stateRootMap, loginFormMap, registrationFormMap } from "@/interfaces";
+import type { stateUserMap, stateRootMap, loginFormMap, userInfoFormMap } from "@/interfaces";
 
 const mockUserInfo = {
     id: 'user1',
     avatar: "https://randomuser.me/api/portraits/women/85.jpg",
     username: "UsernameTonio",
-    name: "Tonio Cartonio",
+    firstname: "Tonio",
+    lastname: "Cartonio",
     email: "tonio.cartonio@gmail.com",
     phone: "+39 123 4567",
     birthdate: 1649620712000,
-    description: "lorem ipsum blablabla cose a caso",
     wallet: 6,
     lastVisit: 1653050140000,
     isAdmin: true,  // TODO false test
 };
+
 const mockPaymentMethods = [
     {
         id: "paypal1",
@@ -93,8 +94,8 @@ export default {
      * @param {Object} form
      * @return {Promise}
      */
-    async userRegistration({ commit, dispatch }: ActionContext<stateUserMap, stateRootMap>, form :registrationFormMap) :Promise<void> {
-        console.log("REGISTERED", form);
+    async userRegistration({ commit, dispatch }: ActionContext<stateUserMap, stateRootMap>, form :userInfoFormMap) :Promise<void> {
+        console.log("REGISTER", form);
         return Promise.resolve().then(() => {
             commit("setAuthenticationTokens", {
                 jwt: '1234'
@@ -113,8 +114,8 @@ export default {
      * @param {string} password
      * @return {Promise}
      */
-    async userLogin({ commit, dispatch }: ActionContext<stateUserMap, stateRootMap>, { user, password } :loginFormMap) :Promise<void> {
-        console.log("LOGIN", user, password)
+    async userLogin({ commit, dispatch }: ActionContext<stateUserMap, stateRootMap>, { authentication, password } :loginFormMap) :Promise<void> {
+        console.log("LOGIN", authentication, password)
         return Promise.resolve().then(() => {
             commit("setAuthenticationTokens", {
                 jwt: '1234'

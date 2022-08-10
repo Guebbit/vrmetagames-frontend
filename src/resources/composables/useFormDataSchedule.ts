@@ -1,11 +1,10 @@
 import { watch, ref, computed } from "vue";
-import { useForm } from "vee-validate";
+import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
+import useFormStructure, { formRules } from "@/resources/composables/useFormStructure";
 import * as yup from "yup";
 import dayjs, { type ManipulateType } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { timeToSeconds } from "guebbit-javascript-library";
-import { formRules } from "@/resources/constants";
-import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
 
 dayjs.extend(customParseFormat);
 
@@ -71,34 +70,16 @@ export default ({
                 return new Date().setMinutes(0, 0, 0) <= start;
             });
     // type formScheduleUserSchemaType = yup.InferType<typeof formScheduleUserSchema>;
-    /**
-     * Vee-validate validation toolbox
-     * Different schema if on authentication or registration
-     */
-    const { errors :formErrors, meta: formMeta, setValues, validate } = useForm({
-        validationSchema: admin ? formScheduleAdminSchema : formScheduleUserSchema
-    });
-    // shortcut validation flag
-    const formIsValid = computed(() => formMeta.value.valid);
 
-    /**
-     * Form errors made list
-     */
-    const formErrorsList = computed<string[]>(() => {
-        const errorList :string[] = [];
-        // regula
-        for(const key in formErrors.value)
-            errorList.push(key + '-' + formErrors.value[key]);
-        return errorList;
-    });
-
-    /**
-     * Vee-validate reactive validation
-     */
-    watch(formValues, async (val) => {
-        setValues(val);
-        await validate();
-    }, { deep: true });
+    const {
+        formErrors,
+        formErrorsList,
+        formMeta,
+        formIsValid,
+    } = useFormStructure(
+        formValues,
+        computed(() => admin ? formScheduleAdminSchema : formScheduleUserSchema)
+    );
 
     /**
      *

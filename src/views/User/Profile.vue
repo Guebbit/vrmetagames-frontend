@@ -89,7 +89,7 @@
                                             <v-img :src="userInfo.avatar || defaultUserAvatar" />
                                         </v-avatar>
                                         <div>
-                                            <h4 class="font-600">{{ form.username }}</h4>
+                                            <h4 class="font-600">{{ formValues.username }}</h4>
                                             <p class="mb-0 grey--text text--darken-1">Qualcosa boh</p>
                                         </div>
                                     </div>
@@ -136,53 +136,163 @@
                     </v-col>
                     <v-col cols="12">
                         <v-card class="user-form" color="primary">
-                            <v-row>
-                                <v-col cols="12" sm="6" lg="4">
-                                    <v-text-field
-                                        v-model="form.name"
-                                        label="Nome"
-                                    />
-                                </v-col>
-                                <v-col cols="12" sm="6" lg="4">
-                                    <v-text-field
-                                        v-model="form.username"
-                                        :rules="[formRules.required]"
-                                        label="Username"
-                                        readonly
-                                    />
-                                </v-col>
-                                <v-col cols="12" sm="6" lg="4">
-                                    <v-text-field
-                                        v-model="form.email"
-                                        :rules="[formRules.email]"
-                                        label="Email"
-                                        class="text-primary"
-                                    />
-                                </v-col>
-                                <v-col cols="12" sm="6" lg="4">
-                                    <v-text-field
-                                        v-model="form.phone"
-                                        label="Telefono"
-                                        class="text-primary"
-                                    />
-                                </v-col>
-                                <v-col cols="12" sm="6" lg="4">
-                                    <!-- v-model="form.birthdate" -->
-                                    <v-text-field
-                                        v-model="birthdateTranslated"
-                                        :rules="[formRules.required]"
-                                        label="Data di nascita"
-                                        class="text-primary"
-                                        readonly
-                                    />
-                                </v-col>
-                                <v-col cols="12">
-                                    <v-textarea
-                                        v-model="form.description"
-                                        label="Dicci qualcosa di te"
-                                    ></v-textarea>
-                                </v-col>
-                            </v-row>
+							<v-form>
+								<v-row>
+									<v-col cols="12">
+										<v-text-field
+											v-model="formValues.username"
+											:label="t('authentication-formValues.values.username')"
+											:placeholder="t('authentication-formValues.info.username-typing')"
+											:loading="formAsyncUsernameLoading"
+
+											:errors="formToggleUIErrors ? formErrors.username || !formAsyncUsernameValid : false"
+											:error-messages="
+												formToggleUIErrors ?
+													formErrors.username ?
+														t('authentication-formValues.errors.username-' + formErrors.username) :
+														!formAsyncUsernameValid ?
+															t('authentication-formValues.errors.username-already-used') :
+															'' :
+														''
+											"
+										/>
+									</v-col>
+									<v-col cols="12" md="6">
+										<v-text-field
+											v-model="formValues.password"
+											:label="t('authentication-formValues.values.password')"
+											:type="formToggleShowPassword ? 'text' : 'password'"
+											:errors="formToggleUIErrors ? formErrors.password : false"
+											:error-messages="formToggleUIErrors && formErrors.password ? t('authentication-formValues.password-strong.' + formErrors.password) : ''"
+										>
+											<template v-slot:append>
+												<v-btn icon
+													variant="text"
+													@click="formToggleShowPassword = !formToggleShowPassword"
+												>
+													<font-awesome-icon :icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
+												</v-btn>
+											</template>
+										</v-text-field>
+									</v-col>
+									<v-col cols="12" md="6">
+										<v-text-field
+											v-model="formValues.passwordConfirm"
+											:label="t('authentication-formValues.values.passwordConfirm')"
+											:type="formToggleShowPassword ? 'text' : 'password'"
+											:errors="formToggleUIErrors ? formErrors.passwordConfirm : false"
+											:error-messages="formToggleUIErrors && formErrors.passwordConfirm ? t('authentication-formValues.errors.passwordConfirm-' + formErrors.passwordConfirm) : ''"
+										>
+											<template v-slot:append>
+												<v-btn icon
+													variant="text"
+													@click="formToggleShowPassword = !formToggleShowPassword"
+												>
+													<font-awesome-icon :icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
+												</v-btn>
+											</template>
+										</v-text-field>
+									</v-col>
+									<v-col cols="12">
+										<v-text-field
+											v-model="formValues.email"
+											:label="t('authentication-formValues.values.email')"
+											autocomplete="email"
+											:loading="formAsyncEmailLoading"
+											:errors="formToggleUIErrors ? formErrors.email || !formAsyncEmailValid : false"
+											:error-messages="
+												formToggleUIErrors ?
+													formErrors.email ?
+														t('authentication-formValues.errors.email-' + formErrors.email) :
+														!formAsyncEmailValid ?
+															t('authentication-formValues.errors.email-already-used') :
+															'' :
+														''
+											"
+										/>
+									</v-col>
+									<v-col cols="12" md="6">
+										<!-- autocomplete="name" -->
+										<v-text-field
+											v-model="formValues.firstname"
+											:label="t('authentication-formValues.values.firstname')"
+											:errors="formToggleUIErrors ? formErrors.firstname : false"
+											:error-messages="formToggleUIErrors && formErrors.firstname ? t('authentication-formValues.errors.firstname-' + formErrors.firstname) : ''"
+										/>
+									</v-col>
+									<v-col cols="12" md="6">
+										<!-- autocomplete="???" -->
+										<v-text-field
+											v-model="formValues.lastname"
+											:label="t('authentication-formValues.values.lastname')"
+											:errors="formToggleUIErrors ? formErrors.lastname : false"
+											:error-messages="formToggleUIErrors && formErrors.lastname ? t('authentication-formValues.errors.lastname-' + formErrors.lastname) : ''"
+										/>
+									</v-col>
+									<v-col cols="12" md="6">
+										<v-text-field
+											v-model="formValues.phone"
+											:label="t('authentication-formValues.values.phone')"
+											autocomplete="tel"
+											:errors="formToggleUIErrors ? formErrors.phone : false"
+											:error-messages="formToggleUIErrors && formErrors.phone ? t('authentication-formValues.errors.phone-' + formErrors.phone) : ''"
+										/>
+									</v-col>
+									<v-col cols="12" md="6">
+										<!-- autocomplete="???" -->
+										<v-text-field
+											v-model="formValues.birthday"
+											type="date"
+											:label="t('authentication-formValues.values.birthday')"
+											:errors="formToggleUIErrors ? formErrors.birthday : false"
+											:error-messages="formToggleUIErrors && formErrors.birthday ? t('authentication-formValues.errors.birthday-' + formErrors.birthday) : ''"
+										/>
+									</v-col>
+									<v-col cols="12">
+										<v-checkbox
+											v-model="formValues.terms"
+											class="text-secondary"
+											:errors="formToggleUIErrors ? formErrors.terms : false"
+											:error-messages="formToggleUIErrors && formErrors.terms ? t('authentication-formValues.errors.terms-' + formErrors.terms) : ''"
+										>
+											<template #label>
+												<span v-html="t('authentication-formValues.info.terms')"></span>
+											</template>
+										</v-checkbox>
+									</v-col>
+								</v-row>
+								<v-list
+									v-show="formPasswordErrors.length > 0 && !formPasswordErrors.includes('required')"
+									class="password-lacking-list bg-transparent mb-5"
+									density="compact"
+								>
+									<v-list-item
+										v-for="(label, rule) in formPasswordRules"
+										:key="'rule-' + rule"
+									>
+										{{ label }}
+										<template v-slot:prepend>
+											<font-awesome-icon
+												class="mr-5"
+												:style="{
+														color: formPasswordErrors.includes(rule) ? themeColors.error : themeColors.success
+													}"
+												:icon="formPasswordErrors.includes(rule) ?
+														['fas', 'triangle-exclamation'] :
+														['fas', 'circle-check']"
+											/>
+										</template>
+									</v-list-item>
+								</v-list>
+
+								<v-btn
+									class="w-100"
+									color="secondary"
+									@click="formSubmit"
+								>
+									{{ t('authentication-formValues.submit-signup') }}
+								</v-btn>
+							</v-form>
                         </v-card>
                     </v-col>
                 </v-row>
@@ -283,12 +393,15 @@ import TrapezoidTitle from "@/components/basics/typography/TrapezoidTitle.vue";
 import CreditCard from "guebbit-vue-library/src/components/cards/CreditCard.vue";
 import Footer from "@/components/generic/Footer.vue";
 import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsPanel.vue";
-import { formRules, defaultUserAvatar, uiFormatDate, uiFormatTime } from "@/resources/constants";
+import { defaultUserAvatar, uiFormatDate, uiFormatTime } from "@/resources/constants";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faPen, faUser, faArrowRight, faCartShopping, faCreditCard, faCoins } from "@fortawesome/free-solid-svg-icons";
 import { faCcPaypal } from "@fortawesome/free-brands-svg-icons";
+import useFormDataUser from "@/resources/composables/useFormDataUser";
+import type { userInfoFormMap } from "@/interfaces";
+import { formRules } from "@/resources/composables/useFormStructure";
 
 library.add(faPen, faUser, faArrowRight, faCartShopping, faCreditCard, faCoins, faCcPaypal)
 
@@ -298,15 +411,46 @@ const { state, commit, dispatch } = useStore();
 
 const { paymentMethods, paymentRecords, userInfo } = toRefs(state.user);
 
-// TODO form
-const form = {
-	name: '',
-	username: '',
-	email: '',
-	phone: '',
-	birthdate: 0,
-	description: ''
-};
+
+const formValues = ref<userInfoFormMap>({});
+
+// registration
+const formUserInfoSchema = yup.object({
+	username: formRules.required,
+	firstname: formRules.required,
+	lastname: formRules.required,
+	password: formRules.password,
+	passwordConfirm: formRules.passwordConfirm,
+	email: formRules.email,
+	phone: formRules.required,
+	birthday: yup.date()
+		.typeError('invalid')
+		// minimo 6 anni TODO ASK
+		.test('DOB', 'too-early', (date) => !date ? false : new Date().getFullYear() - date.getFullYear() >= 6)
+		.required('required'),
+	terms: formRules.requiredCheck,
+});
+
+const {
+	formErrors,
+	// formErrorsList,
+	formIsValid :formIsValidOriginal,
+	formToggleUIErrors,
+	formValidate,
+	formAsyncUsernameValid,
+	formAsyncUsernameLoading,
+	formAsyncEmailValid,
+	formAsyncEmailLoading,
+	formPasswordErrors,
+	formPasswordRules,
+	formToggleShowPassword
+} = useFormDataUser<userInfoFormMap>(
+	formValues,
+	formUserInfoSchema,
+	true,
+	true
+);
+
 
 const {
 	formatUIDate,
@@ -348,13 +492,23 @@ const paymentTypeColor = (name :string) => {
 
 
 onMounted(() => {
-	//form = userInfo
+	formValues.value = {
+		username: userInfo.value.username,
+		firstname: userInfo.value.firstname,
+		lastname: userInfo.value.lastname,
+		password: '',
+		passwordConfirm: '',
+		email: userInfo.value.email,
+		phone: userInfo.value.phone,
+		birthday: userInfo.value.birthday,
+		terms: false
+	}
 })
 
 
 /*
         birthdateTranslated() {
-            return this.translateDate(this.form.birthdate.toString())
+            return this.translateDate(this.formValues.birthdate.toString())
         }
         translateDate(date :string){
             return new Date(date).toLocaleDateString("en-GB", { // you can use undefined as first argument
@@ -384,10 +538,11 @@ const profileUserFormUIRules = {
 		elevation: 12,
 	},
 	VTextField: {
-		variant: 'contained'
+		variant: 'solo',
+		hideDetails: 'auto'
 	},
-	VTextarea: {
-		variant: 'contained'
+	VCheckbox: {
+		hideDetails: 'auto'
 	},
 	VCard: {
 		color: 'secondary',

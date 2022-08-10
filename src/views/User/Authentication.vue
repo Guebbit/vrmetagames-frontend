@@ -182,7 +182,7 @@
 												formToggleUIErrors ?
 													formErrors.email ?
 														t('authentication-form.errors.email-' + formErrors.email) :
-														!formAsyncUsernameValid ?
+														!formAsyncEmailValid ?
 															t('authentication-form.errors.email-already-used') :
 															'' :
 														''
@@ -234,7 +234,7 @@
 												:error-messages="formToggleUIErrors && formErrors.terms ? t('authentication-form.errors.terms-' + formErrors.terms) : ''"
 											>
 												<template #label>
-													<span v-html="t('play-page.select-event-form-rules')"></span>
+													<span v-html="t('authentication-form.info.terms')"></span>
 												</template>
 											</v-checkbox>
 										</v-col>
@@ -365,28 +365,28 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, computed, watch, toRefs } from "vue";
+import { defineProps, ref, computed, watch } from "vue";
 import { useStore } from "@/store";
 import { useTheme } from "vuetify";
 import { useI18n } from "vue-i18n";
-import { useForm } from 'vee-validate';
 import * as yup from "yup";
 
-import useCheckDataUniqueness from "@/resources/composables/useCheckDataUniqueness";
-
+import { formRules } from "@/resources/composables/useFormStructure";
 import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
 import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsPanel.vue";
-import { formRules, imagesUrl } from "@/resources/constants";
+import { imagesUrl } from "@/resources/constants";
+import type { loginFormMap, userInfoFormMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faEye, faEyeSlash, faCircleCheck, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import useFormDataUser from "@/resources/composables/useFormDataUser";
+
 library.add(faEye, faEyeSlash, faCircleCheck, faTriangleExclamation);
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();
-const { state, commit, dispatch } = useStore();
-const { loading } = toRefs(state.main);
+const { commit, dispatch } = useStore();
 
 const props = defineProps({
 	/**
@@ -399,33 +399,12 @@ const props = defineProps({
 	},
 });
 
-
-
-/**
- * All form values are stored here
- */
-const formValues = ref<Record<string,unknown>>({});
-
-/**
- * Toggle if form password is censored or visible
- */
-const formToggleShowPassword = ref(false);
-
-/**
- * Hide UI errors, to show only after trying submit
- * TODO show errors on blur?
- */
-const formToggleUIErrors = ref(false);
-
-
-
-
 /**
  * Offline schema to validate reactively on user inputs
  * YUP schema used with vee-validate
  */
 // registration
-const formRegistrationSchema = yup.object({
+const formUserInfoSchema = yup.object({
 	username: formRules.required,
 	firstname: formRules.required,
 	lastname: formRules.required,
@@ -440,98 +419,77 @@ const formRegistrationSchema = yup.object({
 		.required('required'),
 	terms: formRules.requiredCheck,
 });
+// type formUserInfoSchemaType = yup.InferType<typeof formUserInfoSchema>;
 // authentication
 const formAuthenticationSchema = yup.object({
 	authentication: formRules.required,
 	password: formRules.required,
 });
-
-/**
- * Vee-validate validation toolbox
- * Different schema if on authentication or registration
- */
-const { meta :formMeta, errors :formErrors, setValues, validate } = useForm({
-	validationSchema:
-		props.mode === 'registration' ? formRegistrationSchema :
-			props.mode === 'login' ? formAuthenticationSchema :
-				props.mode === 'password-retrieve' ? {} : {}
+// type formAuthenticationSchemaType = yup.InferType<typeof formAuthenticationSchema>;
+const formPasswordRetrieveSchema = yup.object({
+	email: formRules.email
 });
+// type formPasswordRetrieveSchemaType = yup.InferType<typeof formPasswordRetrieveSchema>;
 
 /**
- * Vee-validate reactive validation
+ * All form values are stored here
  */
-watch(formValues, async (val) => {
-	setValues(val);
-	await validate();
-}, { deep: true });
+const formValues = ref<loginFormMap | userInfoFormMap>({});
+const enableAsyncValidation = computed(() => props.mode === 'registration');
 
-
+const {
+	formErrors,
+	// formErrorsList,
+	formIsValid :formIsValidOriginal,
+	formToggleUIErrors,
+	formValidate,
+	formAsyncUsernameValid,
+	formAsyncUsernameLoading,
+	formAsyncEmailValid,
+	formAsyncEmailLoading,
+	formPasswordErrors,
+	formPasswordRules,
+	formToggleShowPassword
+} = useFormDataUser<loginFormMap | userInfoFormMap>(
+	formValues,
+	computed(() =>
+		props.mode === 'registration' ? formUserInfoSchema :
+			props.mode === 'login' ? formAuthenticationSchema :
+				props.mode === 'password-retrieve' ? formPasswordRetrieveSchema : yup.object()
+	),
+	enableAsyncValidation,
+	enableAsyncValidation
+);
 
 /**
- * To check in real time which characteristics the password is lacking
- * and to list them in the UI
+ * Reset form
+ * Need to reset the validation too.
  */
-const formPasswordErrors = ref<string[]>([]);
-const formPasswordValidate = async () =>
-	formRules.password.validate(formValues.value.password, { abortEarly: false })
-		.then(() => formPasswordErrors.value = [])
-		.catch(({ inner }) => {
-			const errors :string[] = [];
-			for(let i = inner.length; i--; )
-				errors.push(...inner[i].errors);
-			formPasswordErrors.value = errors;
-		});
-formPasswordValidate();
-watch(() => formValues.value.password, async () => formPasswordValidate());
-
-/**
- * Password needed characteristics
- * paired with rule as key and message as value
- * to link errors and UI
- */
-const formPasswordRules = {
-	'min-number': t('authentication-form.password-strong.min-number'),
-	'need-uppercase': t('authentication-form.password-strong.need-uppercase'),
-	'need-lowercase': t('authentication-form.password-strong.need-lowercase'),
-	'need-digit': t('authentication-form.password-strong.need-digit'),
-	'need-special-char': t('authentication-form.password-strong.need-special-char'),
+const formReset = () => {
+	// TODO reset with initial values? Put in useFormStructure? (error: can't change constant)
+	formValues.value = {};
+	formToggleUIErrors.value = false;
+	formValidate();
 };
 
 /**
- * Online checks for username and email to be unique
- * Online checks starts only if offline checks about username and email are clear
- * Reactive with user edits
+ * When Mode change, need to reset then validate (to reset the validation)
  */
-const {
-	valid: formAsyncUsernameValid,
-	loading: formAsyncUsernameLoading,
-} = useCheckDataUniqueness(
-	'user/checkUsername',
-	computed(() => formErrors.value.username ? undefined : formValues.value.username)
-);
-const {
-	valid: formAsyncEmailValid,
-	loading: formAsyncEmailLoading,
-} = useCheckDataUniqueness(
-	'user/checkEmail',
-	computed(() => formErrors.value.email ? undefined : formValues.value.email)
-);
+watch(() => props.mode, () => formReset())
 
 /**
- * Form errors made list
+ * Extended formIsValid
  */
-const formErrorsList = computed<string[]>(() => {
-	const errorList :string[] = [];
-	// regular
-	for(const key in formErrors.value)
-		errorList.push(key + '-' + formErrors.value[key]);
-	// async
-	if(!formAsyncUsernameValid.value && !formErrors.value.username)
-		errorList.push('username-already-used');
-	if(!formAsyncEmailValid.value && !formErrors.value.email)
-		errorList.push('email-already-used');
-	return errorList;
-});
+const formIsValid = computed(() =>
+	formIsValidOriginal.value && (
+		(
+			props.mode === 'registration' &&
+			formAsyncUsernameValid.value &&
+			formAsyncEmailValid.value
+		) ||
+		props.mode !== 'registration'
+	)
+);
 
 /**
  * Submit form, do page action
@@ -543,24 +501,31 @@ const formSubmit = () => {
 	// set errors to visible
 	formToggleUIErrors.value = true;
 	// errors check
-	if(!formMeta.value.valid || !formAsyncUsernameValid.value || !formAsyncEmailValid.value)
+	if(!formIsValid.value)
 		return;
-	// proceed with registration
-	if(props.mode === 'registration')
-		// registration with all form data
-		dispatch('user/userRegistration', formValues);
-	else if(props.mode === 'login')
-		// authentication with only username and password
-		dispatch('user/userLogin', {
-			user: formValues.value.username,
-			password: formValues.value.password
-		});
-	else if(props.mode === 'password-retrieve')
-		// TODO password-retrieve
-		console.log("TODO")
+	// submit
+	(
+		props.mode === 'registration' ?
+			dispatch('user/userRegistration', formValues.value) :
+			props.mode === 'login' ?
+				dispatch('user/userLogin', {
+					authentication: (formValues.value as loginFormMap).authentication,
+					password: (formValues.value as loginFormMap).password
+				}) :
+				props.mode === 'password-retrieve' ?
+					// TODO password-retrieve
+					dispatch('user/userRetrievePassword') :
+					Promise.resolve()
+	).catch((errors = []) => {
+		for(let i = errors.length; i--; )
+			commit("addToast", {
+				color: 'error',
+				title: 'Error',
+				text: errors[i],
+				timeout: 5000
+			});
+	})
 }
-
-
 
 /**
  * Form UI rules
@@ -587,6 +552,7 @@ const authenticationFormUIRules = {
 	.authentication-section{
 		position: relative;
 		height: 100%;
+		min-height: 100vh;
 
 		.form-container{
 			position: absolute;
