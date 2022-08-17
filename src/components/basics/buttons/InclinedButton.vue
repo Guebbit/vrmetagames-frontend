@@ -92,6 +92,7 @@ export default defineComponent({
         &:before{
             content: "";
             position: absolute;
+			right: -5%;
             top: 10%;
             width: 110%;
             height: 110%;

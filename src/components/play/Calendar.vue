@@ -48,7 +48,7 @@ import {
     timeToSeconds,
     getUUID,
     rangeOverlaps,
-    arrayColumn
+	arrayColumns
 } from "guebbit-javascript-library";
 
 // https://fullcalendar.io/docs#main
@@ -399,7 +399,7 @@ export default defineComponent({
             do {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                cappedSlots[stepperStart.getTime() + '_' + stepperEnd.getTime()] = arrayColumn(this.getEventsByTime(stepperStart, stepperEnd, resourceId), 'id') as string[];
+                cappedSlots[stepperStart.getTime() + '_' + stepperEnd.getTime()] = arrayColumns(this.getEventsByTime(stepperStart, stepperEnd, resourceId), 'id') as string[];
                 // next step, until loading reach END
                 stepperStart = new Date(stepperStart.getTime() + this.slotDuration);
                 stepperEnd = new Date(stepperEnd.getTime() + this.slotDuration);

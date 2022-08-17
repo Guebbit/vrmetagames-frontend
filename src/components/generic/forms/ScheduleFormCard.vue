@@ -50,7 +50,6 @@
 							/>
 							<!-- TODO purtroppo .test() mi restituisce key vuota, da fare ricerche -->
 						</v-col>
-
 						<v-col cols="12" v-show="!hideFormButtons">
 							<v-btn-toggle
 								:modelValue="formValuesTimeframe"
@@ -159,13 +158,12 @@ import { useTheme } from "vuetify";
 import { useI18n } from "vue-i18n";
 import useTimeHelpers from "@/resources/composables/useTimeHelpers";
 import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
-import type { scheduleFormMap } from "@/resources/composables/useFormScheduleStructure";
+import type { scheduleFormMap } from "@/resources/composables/useFormDataSchedule";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faPlus, faBan, faPlay, faStop, faClock, faChevronRight, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 library.add(faPlus, faBan, faPlay, faStop, faClock, faChevronRight, faChevronLeft);
-
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();

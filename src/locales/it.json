@@ -15,9 +15,11 @@
     "stations": "Postazioni",
     "profile": "Profilo",
     "user": "Utente",
+    "admin":  "Amministratore",
     "closed": "Chiuso",
     "confirm": "Conferma",
     "cancel": "Cancella",
+    "go-back": "Indietro",
     "renew": "Rinnova",
     "today": "Oggi",
     "search": "Cerca",
@@ -34,7 +36,10 @@
     "family-friendly": "Per famiglie",
     "singleplayer": "Singolo",
     "singleplayer-2": "Giocatore singolo",
-    "multiplayer": "Multigiocatore",
+    "duration": "Durata",
+    "difficulty": "Difficoltà",
+    "motion-sickness": "Motion sickness",
+    "multiplayer": "Multi",
     "online": "Online",
     "offline": "Offline",
     "warning": "Avvertenza",
@@ -124,8 +129,7 @@
     "price-card-2-list-1": "Condivisione della postazione per il doppio del tempo rispetto al normale.",
     "price-card-2-list-2": "Possibilità di partite più lunghe o di testare diversi giochi",
     "price-card-2-button": "Prenota",
-    "footer-content-1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "footer-content-2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    "footer-content-1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
   },
   "play-page": {
     "calendar-title": "Calendario avanzato",
@@ -144,7 +148,9 @@
     "button-magic-solution": "Trovami una data!",
     "resolve-form-errors-called": "Abbiamo trovato il primo orario disponibile con la durata richiesta, hurray!",
     "resolve-form-changed": "L'orario richiesto non era disponbile, quindi abbiamo trovato la prossima data disponibile più vicina alle richieste",
-    "schedule-onhold-list": "Lista eventi in prenotazione"
+    "schedule-cart-list": "Lista eventi nel carrello",
+    "schedule-incoming-list": "Lista eventi in arrivo",
+    "schedule-list-empty": "Nessun evento presente"
   },
   "dialog-confirm-schedule": {
     "title": "Confermare l'evento selezionato?",
@@ -172,18 +178,42 @@
     "button-cancel": "Annulla"
   },
   "checkout-page": {
+    "add-hours": "Aggiungi ore al wallet",
     "total-hours": "Totale ore",
     "total-cost": "Totale costo",
     "total-cost-discount": "Totale sconto",
-    "instructions-receipt": "Puoi stampare la ricevuta, ma non c'è bisogno di mostrarla in cassa, la prenotazione risulterà già pagata",
-    "instructions-receipt-button": "Stampa la ricevuta",
     "instructions-forgot": "[INFO DA INSERIRE] Cosa fare quando un utente si dimentica e non viene quando ha già pagato",
+    "wallet-empty": "Wallet vuoto",
     "total-wallet": "Ore nel wallet",
     "total-wallet-remaining": "Wallet rimanente",
-    "final-cost": "Costo finale"
+    "final-cost": "Costo finale",
+    "disabled-schedules-warning": "Gli eventi disabilitati non verranno conteggiati nell'acquisto e verranno rimossi a transazione conclusa.",
+    "prices-description-1": "I prezzi speciali si applicano ciclicamente.",
+    "prices-description-2": "Quindi acquistando 40 ore si otterrà 2 volte il prezzo speciale da 20 ore."
   },
   "product-page": {
     "edit-product": "Modifica prodotto"
+  },
+  "product-list-page": {
+    "filter-title": "Titolo",
+    "filter-minAge": "Età minima",
+    "filter-duration": "Tempo di gioco",
+    "filter-maxPlayersOffline": "Numero giocatori",
+    "motion-sickness-indifferent": "Qualsiasi motion sickness",
+    "motion-sickness-low": "Bassa motion sickness",
+    "motion-sickness-high": "Alta motion sickness",
+    "difficulty-indifferent": "Qualsiasi difficoltà",
+    "difficulty-low": "Difficoltà bassa",
+    "difficulty-high": "Difficoltà alta",
+    "duration-indifferent": "Durata qualsiasi",
+    "duration-low": "Meno di 30 min",
+    "duration-medium": "Dai 30 ai 60 min",
+    "duration-high": "Più di 60 min",
+    "minAge-indifferent": "6+",
+    "minAge-low": "10+",
+    "minAge-medium": "14+",
+    "minAge-high": "18+",
+    "minAge-warning": "Età minima"
   },
   "authentication-page": {
     "signup": "Autenticati",
@@ -227,14 +257,6 @@
       "birthday-too-early": "Troppo giovane!",
       "terms-required": "Accetta le condizioni"
     },
-    "password-strong": {
-      "required": "Password mancante",
-      "min-number": "La password deve contenere almeno 8 caratteri",
-      "need-uppercase": "La password deve contenere almeno una lettera maiuscola",
-      "need-lowercase": "La password deve contenere almeno una lettera minuscola",
-      "need-digit": "La password deve contenere almeno un numero",
-      "need-special-char": "La password deve contenere almeno un carattere speciale"
-    },
     "switch-to-signin": "Autenticati",
     "switch-to-signup": "Registrati",
     "submit-signin": "Entra!",
@@ -242,13 +264,22 @@
     "forgot-password": "Password dimenticata"
   },
   "profile-page": {
-    "payment-local": "Pagamento alla cassa"
+    "title": "Profilo",
+    "payment-local": "Pagamento alla cassa",
+    "hide-password-section": "Non cambiare la password",
+    "show-password-section": "Cambia la password",
+    "total-hours-wallet": "Ore nel wallet",
+    "total-hours-played": "Totale ore giocate",
+    "schedule-user-list": "Storico eventi utente",
+    "schedule-list-empty": "Nessun evento presente"
   },
   "user-data-form": {
     "info": {
-      "authentication-typing": "Username o email"
+      "username-typing": "Scrivi il tuo nuovo username",
+      "terms": "Accetta le <b><a href=\"/regolamento\" target=\"_blank\" class=\"text-decoration-none text-secondary\">condizioni</a></b>"
     },
     "values": {
+      "username": "Username",
       "firstname": "Nome",
       "lastname": "Cognome",
       "password": "Password",
@@ -271,19 +302,16 @@
       "birthday-too-early": "Troppo giovane!",
       "terms-required": "Accetta le condizioni"
     },
-    "password-strong": {
-      "required": "Password mancante",
-      "min-number": "La password deve contenere almeno 8 caratteri",
-      "need-uppercase": "La password deve contenere almeno una lettera maiuscola",
-      "need-lowercase": "La password deve contenere almeno una lettera minuscola",
-      "need-digit": "La password deve contenere almeno un numero",
-      "need-special-char": "La password deve contenere almeno un carattere speciale"
-    },
     "switch-to-signin": "Autenticati",
     "switch-to-signup": "Registrati",
     "submit-signin": "Entra!",
     "submit-signup": "Iscriviti",
     "forgot-password": "Password dimenticata"
+  },
+  "dialog-add-wallet": {
+    "title": "Gestione wallet",
+    "description": "Aggiungi ore al tuo wallet, tramite buono regalo, codice promozionale o pagamento anticipato, così potrai giocare direttamente senza preoccupazioni",
+    "button-close": "Chiudi"
   },
   "dialog-info-payment": {
     "title": "Informazioni pagamento",
@@ -331,6 +359,8 @@
     }
   },
   "schedule-card": {
+    "cancel": "Annulla",
+    "remove": "Rimuovi",
     "online-chip": "Online",
     "online-explanation": "La prenotazione è salvata online",
     "offline-chip": "Offline",
@@ -345,8 +375,18 @@
     "unsaved-explanation":  "La prenotazione è stata modificata ma le modifiche non sono ancora state salvate",
     "paid-chip": "Pagato",
     "paid-explanation": "La prenotazione è stata confermata e pagata",
+    "imminent-chip": "Imminente",
+    "imminent-explanation": "L'orario della prenotazione è vicino!",
     "expired-chip": "Scaduto",
     "expired-explanation": "Tempo scaduto per prenotare in questa data!"
+  },
+  "form-password-strong": {
+    "required": "Password mancante",
+    "min-number": "La password deve contenere almeno 8 caratteri",
+    "need-uppercase": "La password deve contenere almeno una lettera maiuscola",
+    "need-lowercase": "La password deve contenere almeno una lettera minuscola",
+    "need-digit": "La password deve contenere almeno un numero",
+    "need-special-char": "La password deve contenere almeno un carattere speciale"
   },
   "main": {
     "days": [

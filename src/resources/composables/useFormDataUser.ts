@@ -61,9 +61,11 @@ export default <T>(
      * Check that the password respect various rules
      */
     const {
+        formPasswordValid,
         formPasswordErrors,
-        formPasswordRules
-    } = useCheckDataPassword(formValues.value.password);
+        formPasswordRules,
+        formPasswordValidate
+    } = useCheckDataPassword(() => formValues.value.password);
     // toggle show/hide password
     const formToggleShowPassword = ref(false);
 
@@ -93,8 +95,10 @@ export default <T>(
         formAsyncUsernameLoading,
         formAsyncEmailValid,
         formAsyncEmailLoading,
+        formPasswordValid,
         formPasswordErrors,
         formPasswordRules,
+        formPasswordValidate,
         formToggleShowPassword
     }
 }

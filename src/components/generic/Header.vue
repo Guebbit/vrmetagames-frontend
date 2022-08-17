@@ -97,12 +97,11 @@
                 :to="{ name: 'Play' }"
             >
                 {{ t('generic.play') }}
-                <font-awesome-icon class="ml-2" :icon="['fas', 'play']" />
+                <font-awesome-icon class="ml-3" :icon="['fas', 'play']" />
             </InclinedButton>
 
             <v-btn
                 v-show="scheduleTotal > 0"
-                stacked
                 :to="{ name: 'Checkout' }"
             >
                 {{ scheduleCartTotalCostDiscounted }}€
@@ -110,7 +109,7 @@
                     :content="scheduleTotal"
                     color="secondary"
                 >
-                    <font-awesome-icon size="2x" :icon="['fas', 'cart-shopping']" />
+                    <font-awesome-icon size="2x" class="ml-3" :icon="['fas', 'cart-shopping']" />
                 </v-badge>
             </v-btn>
 
@@ -208,7 +207,7 @@ const menuList = ref([
 const { userInfo } = toRefs(state.user);
 
 const isAuthenticated = computed<boolean>(() => getters['user/isAuthenticated']);
-const scheduleTotal = computed<number>(() => getters['ecommerce/scheduleListCart'].length);
+const scheduleTotal = computed<number>(() => getters['ecommerce/scheduleListCartUser'].length);
 const scheduleCartTotalCostDiscounted = computed<number>(() => getters['ecommerce/scheduleCartTotalCostDiscounted']);
 
 

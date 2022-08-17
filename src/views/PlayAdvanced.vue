@@ -98,7 +98,7 @@
                 <v-btn
                     color="secondary"
                     size="x-large"
-					:disabled="scheduleListCart.length < 1"
+					:disabled="scheduleListCartUser.length < 1"
                     :to="{
 						name: 'Checkout'
 					}"
@@ -108,80 +108,127 @@
                 </v-btn>
             </div>
 
-            <div
-				v-show="scheduleListCart.length > 0"
-				class="schedule-list"
-			>
-				<!-- TODO controlli, riordinamenti, etc -->
-				<v-toolbar
-					class="px-6 mb-5"
-					color="surface"
-					dark
-					prominent
-					dense
-				>
-					<font-awesome-icon class="mr-4" size="xl" :icon="['fas', 'calendar-check']"/>
-					<v-toolbar-title>{{ t('play-page.schedule-onhold-list') }}</v-toolbar-title>
-					<v-spacer></v-spacer>
-					<v-btn icon @click="showDeleteAllDialog = true">
-						<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'trash-can']"/>
-					</v-btn>
-					<!--
-					<v-btn icon>
-						<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-down-1-9']"/>
-					</v-btn>
-					<v-btn icon>
-						<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-up-9-1']"/>
-					</v-btn>
-					<v-btn icon>
-						<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-down-a-z']"/>
-					</v-btn>
-					<v-btn icon>
-						<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-up-z-a']"/>
-					</v-btn>
-					-->
-				</v-toolbar>
-                <v-row>
-                    <v-col cols="12" lg="3">
-                        <v-list
-                            class="schedule-legend bg-transparent"
-                            variant="text"
-                        >
-                            <v-list-item
-                                v-for="({ variant, icon, color, title, description }, index) in statusListLegenda"
-                                :key="'schedule-chip-' + index"
-                            >
-                                <v-chip
-                                    :color="color"
-                                    :variant="variant"
-									size="small"
-                                >
-                                    <font-awesome-icon class="mr-2" :icon="['fas', icon]"/>
-                                    {{ title }}
-                                </v-chip>
-                                <p class="explanation">{{ description }}</p>
-                            </v-list-item>
-                        </v-list>
-                    </v-col>
-                    <v-col cols="12" lg="9">
-						<!-- TODO lista con scheduleListOffline e possibilità di resettare le modifiche effettuate -->
-                        <EventCard
-                            v-for="{ id } in scheduleListCart"
-							class="cursor-pointer"
-                            :key="'event-onhold-' + id"
-                            :id="id"
-							:dateFormat="uiFormatDate"
-							:timeFormat="uiFormatTime"
+			<!-- TODO lista con scheduleListOffline e possibilità di resettare le modifiche effettuate -->
 
-							@click="scheduleSelect(id)"
-                            @button:click:confirm="showConfirmDialog = true"
-                            @button:click:cancel="showDeleteDialog = true"
-							@button:click:renew="showRenewDialog = true"
-                        />
-                    </v-col>
-                </v-row>
+            <v-row>
+				<v-col cols="12" lg="9">
+					<div class="schedule-list">
+						<!-- TODO controlli, riordinamenti, etc -->
+						<v-toolbar
+							class="px-6 mb-5"
+							color="surface"
+							dark
+							prominent
+							dense
+						>
+							<font-awesome-icon class="mr-4" size="xl" :icon="['fas', 'cart-arrow-down']"/>
+							<v-toolbar-title>{{ t('play-page.schedule-cart-list') }}</v-toolbar-title>
+							<v-spacer></v-spacer>
+							<v-btn icon @click="showDeleteAllDialog = true">
+								<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'trash-can']"/>
+							</v-btn>
+							<!--
+							<v-btn icon>
+								<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-down-1-9']"/>
+							</v-btn>
+							<v-btn icon>
+								<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-up-9-1']"/>
+							</v-btn>
+							<v-btn icon>
+								<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-down-a-z']"/>
+							</v-btn>
+							<v-btn icon>
+								<font-awesome-icon class="mx-2" size="lg" :icon="['fas', 'arrow-up-z-a']"/>
+							</v-btn>
+							-->
+						</v-toolbar>
+						<div class="mb-5 text-center" v-show="scheduleListCartUser.length < 1">
+							<h3 class="simple-icon-text d-inline-flex">
+								<font-awesome-icon :icon="['fas', 'circle-info']" />
+								{{ t('play-page.schedule-list-empty') }}
+							</h3>
+						</div>
+						<v-row v-show="scheduleListCartUser.length > 0">
+							<v-col cols="12">
+								<EventCard
+									v-for="{ id } in scheduleListCartUser"
+									class="cursor-pointer"
+									:key="'event-onhold-' + id"
+									:id="id"
+									:admin="isAdmin"
+									:dateFormat="uiFormatDate"
+									:timeFormat="uiFormatTime"
 
-            </div>
+									@click="scheduleSelect(id)"
+									@button:click:confirm="showConfirmDialog = true"
+									@button:click:cancel="showDeleteDialog = true"
+									@button:click:renew="showRenewDialog = true"
+								/>
+							</v-col>
+						</v-row>
+					</div>
+					<div class="schedule-list">
+						<!-- TODO controlli, riordinamenti, etc -->
+						<v-toolbar
+							class="px-6 mb-5"
+							color="surface"
+							dark
+							prominent
+							dense
+						>
+							<font-awesome-icon class="mr-4" size="xl" :icon="['fas', 'calendar-check']"/>
+							<v-toolbar-title>{{ t('play-page.schedule-incoming-list') }}</v-toolbar-title>
+							<v-spacer></v-spacer>
+						</v-toolbar>
+						<div class="mb-5 text-center" v-show="scheduleListIncomingUser.length < 1">
+							<h3 class="simple-icon-text d-inline-flex">
+								<font-awesome-icon :icon="['fas', 'circle-info']" />
+								{{ t('play-page.schedule-list-empty') }}
+							</h3>
+						</div>
+						<v-row v-show="scheduleListIncomingUser.length > 0">
+							<v-col cols="12">
+								<EventCard
+									v-for="{ id } in scheduleListIncomingUser"
+									class="cursor-pointer"
+									:key="'event-onhold-' + id"
+									:id="id"
+									:admin="isAdmin"
+									:dateFormat="uiFormatDate"
+									:timeFormat="uiFormatTime"
+
+									@click="scheduleSelect(id)"
+									@button:click:confirm="showConfirmDialog = true"
+									@button:click:cancel="showDeleteDialog = true"
+									@button:click:renew="showRenewDialog = true"
+								/>
+							</v-col>
+						</v-row>
+					</div>
+				</v-col>
+				<v-col cols="12" lg="3">
+					<v-list
+						class="schedule-legend bg-transparent"
+						variant="text"
+					>
+						<v-list-item
+							v-for="({ variant, icon, color, title, description }, index) in statusListLegenda"
+							:key="'schedule-chip-' + index"
+							class="mb-2"
+						>
+							<v-chip
+								:color="color"
+								:variant="variant"
+								size="small"
+							>
+								<font-awesome-icon class="mr-3" :icon="['fas', icon]"/>
+								{{ title }}
+							</v-chip>
+							<p class="explanation ml-4 mt-2">{{ description }}</p>
+						</v-list-item>
+					</v-list>
+				</v-col>
+			</v-row>
         </v-container>
 
 		<DialogConfirmItem
@@ -239,12 +286,12 @@ import { useI18n } from "vue-i18n";
 import { useStore } from "@/store";
 
 import UserInfoCard from "@/components/basics/cards/UserInfoCard.vue";
-import EventCard from "@/components/play/EventCard.vue";
+import EventCard from "@/components/generic/cards/EventCard.vue";
 import ScheduleFormCard from "@/components/generic/forms/ScheduleFormCard.vue";
 import ScheduleCalendar from "@/components/play/ScheduleCalendar.vue";
 import Footer from "@/components/generic/Footer.vue";
 
-import useFormScheduleStructure from "@/resources/composables/useFormScheduleStructure";
+import useFormDataSchedule from "@/resources/composables/useFormDataSchedule";
 import useItemDetails from "@/resources/composables/useItemDetails";
 import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
 import EventDetailsList from "@/components/play/EventDetailsList.vue";
@@ -256,7 +303,7 @@ import { uiFormatDate, uiFormatTime, scheduleStates } from "@/resources/constant
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faCalendar, faCalendarCheck, faClock, faPlay, faCheck, faCircleInfo, faHatWizard, faGear, faTrashCan, faArrowDown19, faArrowUp91, faArrowDownAZ, faArrowUpZA } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faCalendarCheck, faClock, faPlay, faCheck, faCircleInfo, faCartArrowDown, faHatWizard, faGear, faTrashCan, faArrowDown19, faArrowUp91, faArrowDownAZ, faArrowUpZA } from "@fortawesome/free-solid-svg-icons";
 
 import type {
 	scheduleInputMap,
@@ -265,7 +312,9 @@ import type {
 
 
 
-library.add(faCalendar, faCalendarCheck, faClock, faPlay, faCheck, faCircleInfo, faHatWizard, faGear, faTrashCan, faArrowDown19, faArrowUp91, faArrowDownAZ, faArrowUpZA);
+
+
+library.add(faCalendar, faCalendarCheck, faClock, faPlay, faCheck, faCircleInfo, faCartArrowDown, faHatWizard, faGear, faTrashCan, faArrowDown19, faArrowUp91, faArrowDownAZ, faArrowUpZA);
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();
@@ -324,7 +373,7 @@ const {
 	fillForm,
 	formValueGo,
 	resolveFormErrors
-} = useFormScheduleStructure({
+} = useFormDataSchedule({
 	admin: isAdmin,
 	stepTime: scheduleTimeStep.value,
 	stepSlot: props.preloadSteps || 2,
@@ -533,10 +582,10 @@ function scheduleRemove(ids :string[] = []){
 
 function scheduleRemoveAll(){
 	const idArray :string[] = [];
-	for(let i = scheduleListCart.value.length; i--; ){
-		idArray.push(scheduleListCart.value[i].id);
+	for(let i = scheduleListCartUser.value.length; i--; ){
+		idArray.push(scheduleListCartUser.value[i].id);
 		// get schedule data
-		const { start, end } = scheduleListCart.value[i];
+		const { start, end } = scheduleListCartUser.value[i];
 		// translate
 		const { date, hourStart, hourEnd } = timeToForm(start, end);
 		// send message
@@ -551,12 +600,17 @@ function scheduleRemoveAll(){
 }
 
 /**
- * UI
+ * [UI] List of schedules
+ *  - In the cart
+ *  - Incoming
  */
-const scheduleListCart = computed(() => getters['ecommerce/scheduleListCart']);
+const scheduleListCartUser = computed(() => getters['ecommerce/scheduleListCartUser']);
+const scheduleListIncomingUser = computed(() => getters['ecommerce/scheduleListIncomingUser']);
+
 
 /**
- *
+ * Legenda of the different statuses of schedule
+ * (no computed because it's the translation of a constant)
  */
 const statusListLegendaRaw = Object.values(scheduleStates);
 const statusListLegenda = [];
@@ -616,7 +670,6 @@ for(let i = statusListLegendaRaw.length; i--; )
     .schedule-legend{
         .explanation{
             flex-shrink: 99;
-            margin-left: 1.5em;
             font-size: 0.7em;
         }
     }

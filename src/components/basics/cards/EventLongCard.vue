@@ -161,7 +161,9 @@ export default defineComponent({
         dateMonthLabel() :string {
             return this.dateObject.toLocaleString('default', { month: 'short' });
         },
-                
+
+		// TODO remove\"portare fuori" i bottoni socials e rendere più generico
+		// 		(magari creare un componente "ancora più base")
         socialList() :(string | undefined)[][] {
             return [
                 ['facebook', 'facebook-f', this.facebook],

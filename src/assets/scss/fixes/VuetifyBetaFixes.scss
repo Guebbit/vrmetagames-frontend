@@ -44,4 +44,23 @@
 // .v-list-item-avatar--start
 // .waiting-class-default-provider
 
+.v-input{
+    .v-field{
+        &.v-field--has-label{
+            .v-field__prepend-inner,
+            .v-field__append-inner,
+            .v-field__clearable{
+                align-items: center;
+                padding-top: 0;
+            }
+        }
+    }
+    &.v-custom-field--has-label{
+        .v-input__prepend,
+        .v-input__append{
+            align-items: center;
+            padding-top: 0;
+        }
+    }
+}
 

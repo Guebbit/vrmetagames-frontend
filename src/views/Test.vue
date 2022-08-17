@@ -1217,7 +1217,7 @@ import SlideOpenTripleCard from "@/components/basics/cards/SlideOpenTripleCard.v
 import ImageHoverCard from "@/components/basics/cards/ImageHoverCard.vue";
 import HyperplexedCard from "@/components/basics/cards/HyperplexedCard.vue";
 import EventLongCard from "@/components/basics/cards/EventLongCard.vue";
-import ScheduleFormCard from "@/components/play/EventCard.vue";
+import ScheduleFormCard from "@/components/generic/cards/EventCard.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

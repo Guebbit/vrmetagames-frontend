@@ -136,7 +136,7 @@ export const themeColors = {
     info: "#003566", // primary-darken-3
     success: vuetifyColors.green.darken3,
     error: vuetifyColors.red.darken1,    // B00020
-    warning: vuetifyColors.yellow.darken4,
+    warning: vuetifyColors.yellow.darken2,
 };
 
 
@@ -197,6 +197,13 @@ export const scheduleStates :Record<string,scheduleStatesMap> = {
         color: vuetifyColors.yellow.darken1,
         title: 'schedule-card.unsaved-chip',
         description: 'schedule-card.unsaved-explanation',
+    },
+    imminent: {
+        variant: 'outlined',
+        icon: 'check',
+        color: themeColors.secondary,
+        title: 'schedule-card.imminent-chip',
+        description: 'schedule-card.imminent-explanation',
     },
     expired: {
         variant: undefined,

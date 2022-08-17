@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { arrayColumn, rangeOverlaps } from "guebbit-javascript-library";
+import { arrayColumns, rangeOverlaps } from "guebbit-javascript-library";
 
 import type { GetterTree } from 'vuex';
 import type {
@@ -10,6 +10,22 @@ import type {
 
 
 export default {
+
+    /**
+     * Time for schedules to be automatically editable/removable without asking permission to administrator
+     *
+     * @param {number} scheduleTimeStep - milliseconds
+     * @param {number} scheduleEditableSteps - steps
+     */
+    scheduleEditableTime: ({ scheduleTimeStep, scheduleEditableSteps } :stateEcommerceMap) => scheduleTimeStep * scheduleEditableSteps,
+
+    /**
+     * Time for schedules to be counted as "imminent" (UI only for now)
+     *
+     * @param {number} scheduleTimeStep - milliseconds
+     * @param {number} scheduleEditableSteps - steps
+     */
+    scheduleImminentTime: ({ scheduleTimeStep, scheduleImminentSteps } :stateEcommerceMap) => scheduleTimeStep * scheduleImminentSteps,
 
     /**
      * Schedule list with FE only elaborated data
@@ -107,68 +123,78 @@ export default {
     },
 
     /**
-     * Get list of OFFLINE OR UNSAVED schedules
-     *
-     * @param {Object} scheduleRecords
-     */
-    scheduleListOffline: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] => {
-        return Object.values(scheduleRecords).filter(({ online = true, unsaved = false }) => {
-            return !online || unsaved;
-        });
-    },
-
-    /**
-     * Get list of ONHOLD (NOT CONFIRMED) schedules
-     * Can be ONLINE or OFFLINE
-     *
-     * @param {Object} scheduleRecords
-     */
-    scheduleListCart: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] => {
-        return Object.values(scheduleRecords).filter(({ confirmed = true }) => {
-            return !confirmed;
-        });
-    },
-
-
-    /**
-     * TODO funzione con ID dato
+     * Schedule owned by user
      *
      * @param {BusinessHoursMap} businessHours
      * @param {Object} getters
      * @param {string} currentUserId
      */
+    scheduleListUserOwned: ({ scheduleRecords }: stateEcommerceMap, getters, { user: { userInfo: { id :currentUserId}}}) :scheduleMap[] =>
+        Object.values(scheduleRecords).filter(({ userId }) => userId === currentUserId),
     /*
-    scheduleUserList: ({ scheduleRecords }: stateEcommerceMap, getters, { user: { userInfo: { id :currentUserId}}}) :string[] => {
-        const userOwnedEvents :string[] = [];
-        Object.values(scheduleRecords).reduce((reducer, { id, userId }) => {
-            if (userId === currentUserId) {
-                userOwnedEvents.push(id);
-            }
-            return reducer;
-        }, [] as string[]);
-
-        return userOwnedEvents;
-    },
+    const userOwnedEvents :scheduleMap[] = [];
+    Object.values(scheduleRecords).reduce((reducer, item) => {
+        if (item.userId === currentUserId)
+            userOwnedEvents.push(item);
+        return reducer;
+    }, [] as scheduleMap[]);
+    return userOwnedEvents;
     */
 
 
     /**
-     * REAL cart COST
-     * AFTER base discounts (many step special pack discounts)
+     * Get list of OFFLINE OR UNSAVED schedules
      *
-     * @param {object} state
-     * @param {object[]} scheduleListCart
-     * @param {Function} getScheduleTotalCostDiscounted
-     * @return {number}
+     * @param {Object} scheduleRecords
      */
-    scheduleCartTotalCostDiscounted(state :stateEcommerceMap, { scheduleListCart, getScheduleTotalCostDiscounted }) :number {
-        return getScheduleTotalCostDiscounted(
-            (scheduleListCart as scheduleMap[]).reduce((idArray, { id }) => {
-                idArray.push(id)
-                return idArray;
-            }, [] as string[])
-        ) / 100
-    },
+    /*
+    scheduleListOffline: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] => 
+        Object.values(scheduleRecords).filter(({ online = true, unsaved = false }) => !online || unsaved
+    ),
+    */
+
+    /**
+     * For ALL users
+     * Get list of ONHOLD (NOT CONFIRMED NOR PAID) schedules
+     * (confirmed can be awaiting payment, paid MUST be confirmed)
+     * Can be ONLINE or OFFLINE
+     *
+     * Must use scheduleListCartTotal because userId can be undefined and scheduleListUserOwned would filter it out
+     *
+     * @param {Object} scheduleRecords
+     */
+    scheduleListCartTotal: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] =>
+        Object.values(scheduleRecords).filter(({ confirmed = true, paid = true } :scheduleMap) => !confirmed && !paid),
+
+
+    /**
+     * Same as above, but for CURRENT user
+     * Must use scheduleListCartTotal because userId can be undefined and scheduleListUserOwned would filter it out
+     *
+     * @param {Object} context
+     * @param {Object[]} scheduleListCartTotal
+     * @param {string} currentUserId
+     */
+    scheduleListCartUser: (context: stateEcommerceMap, { scheduleListCartTotal }, { user: { userInfo: { id :currentUserId}}}) :scheduleMap[] =>
+        scheduleListCartTotal.filter(({ id, userId } :scheduleMap) => !userId || currentUserId === userId),
+
+    /**
+     * Get list of FUTURE schedules
+     * They MUST be PAID (therefore confirmed) because otherwise they are in the cart (scheduleListCartUser)
+     *
+     * @param {Object} context
+     * @param {Object[]} scheduleListUserOwned
+     */
+    scheduleListIncomingUser: (context: stateEcommerceMap, { scheduleListUserOwned }) :scheduleMap[] =>
+        scheduleListUserOwned.filter(({ paid = true, start } :scheduleMap) => paid && start > Date.now()), // && confirmed),
+
+    /**
+     * Same as above, but for ALL users
+     *
+     * @param {Object} scheduleRecords
+     */
+    scheduleListIncomingTotal: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] =>
+        Object.values(scheduleRecords).filter(({ paid = true, start } :scheduleMap) => paid && start > Date.now()), // && confirmed),
 
 
     /**
@@ -190,97 +216,37 @@ export default {
         return stationTypes;
     },
 
-
     /**
-     * Sum the TIME of selected schedules
-     *
-     * @param {Object} scheduleRecords
-     * @return {boolean}
-     */
-    getScheduleTotalTime: ({ scheduleRecords }: stateEcommerceMap) :(idArray :string[]) => number => {
-        /**
-         * @param {string[]} idArray - schedule id array
-         * @return {number}
-         */
-        return (idArray :string[] = []) :number => {
-            // no items = 0 time
-            if(idArray.length === 0){
-                return 0;
-            }
-            return Object.values(scheduleRecords).reduce((total, { id, start, end }) :number => {
-                return idArray.includes(id) ? total + (end - start) : total;
-            }, 0);
-        }
-    },
-
-    /**
-     * Sum the STEPS of selected schedules
-     *
-     * @param {number} scheduleTimeStep
-     * @param {Function} getScheduleTotalTime
-     * @return {boolean}
-     */
-    getScheduleTotalSteps: ({ scheduleTimeStep }: stateEcommerceMap, { getScheduleTotalTime }) :(idArray :string[]) => number => {
-        /**
-         * @param {string[]} idArray - schedule id array
-         * @return {number}
-         */
-        return (idArray :string[] = []) :number => getScheduleTotalTime(idArray) / scheduleTimeStep;
-    },
-
-    /**
-     * Sum the COST of selected schedules
-     *
-     * @param {number} scheduleTimeCost
-     * @param {Function} getScheduleTotalSteps
-     */
-    getScheduleTotalCost: ({ scheduleTimeCost }: stateEcommerceMap, { getScheduleTotalSteps }) :(idArray :string[]) => number => {
-        /**
-         * @param {string[]} idArray - schedule id array
-         * @return {number} - total steps * default time cost per step
-         */
-        return (idArray :string[] = []) :number => getScheduleTotalSteps(idArray) * scheduleTimeCost[0];
-    },
-
-
-    /**
-     * Sum the COST of selected schedules
+     * Calculate the step cost, applying every offer and discount
      * WARNING: Discount applied BEFORE the user wallet subtraction. That means that wallet fill discounts are DIFFERENT and SEPARATED
      *
      * @param {number} scheduleTimeCost
-     * @param {Function} getScheduleTotalSteps
      */
-    getScheduleTotalCostDiscounted: ({ scheduleTimeCost }: stateEcommerceMap, { getScheduleTotalSteps }) :(idArray :string[]) => number => {
+    getStepCost: ({ scheduleTimeCost }: stateEcommerceMap) :(steps :number) => number => {
         /**
-         * @param {string[]} idArray - schedule id array
-         * @return {number}
+         * @param {number} steps - number of steps
+         * @return {number} cost of all steps (discounts applied)
          */
-        return (idArray :string[] = []) :number => {
+        return (steps = 0) :number => {
             let totalCost = 0;
-            // no items = 0 cost
-            if(idArray.length === 0){
-                return 0;
-            }
             // for every discounted amount
-            const leftoverSteps = Object.keys(scheduleTimeCost).reduce((total, step) :number => {
-                const stepInt = parseInt(step);
+            const leftoverSteps = Object.keys(scheduleTimeCost).reduce((total, stepString) :number => {
+                const step = parseInt(stepString);
                 // how many times the discounted amount is present in the total of steps
-                const stepDiscounted = Math.floor(total / stepInt);
+                const stepDiscounted = Math.floor(total / step);
                 // if step = 0 then it's the default (and obviously can't be used in a division)
-                if(stepInt > 0 && stepDiscounted > 0){
+                if(step > 0 && stepDiscounted > 0){
                     // add the total discounted cost
-                    totalCost += stepDiscounted * scheduleTimeCost[stepInt];
+                    totalCost += stepDiscounted * scheduleTimeCost[step];
                     // remove the quantity of steps that got discounted
-                    return total % stepInt;
+                    return total % step;
                 }
                 // in the end, only the non-discountable amount of steps will remain
                 return total;
                 // total steps:
-            }, getScheduleTotalSteps(idArray));
+            }, steps);
             // remaining steps with standard price
-            totalCost += leftoverSteps * scheduleTimeCost[0]
-            // discounted total
-            return totalCost;
+            return totalCost + (leftoverSteps * scheduleTimeCost[0]);
         }
     },
 
@@ -341,7 +307,7 @@ export default {
             const cappedSlots :Record<string, string[]> = {};
             // do cycle
             do {
-                cappedSlots[stepperStart + '_' + stepperEnd] = arrayColumn(getSchedulesByTime(stepperStart, stepperEnd, resourceIdArray), 'id');
+                cappedSlots[stepperStart + '_' + stepperEnd] = arrayColumns(getSchedulesByTime(stepperStart, stepperEnd, resourceIdArray), 'id');
                 // next step, until loading reach END
                 stepperStart = stepperStart + slotDuration;
                 stepperEnd = stepperEnd + slotDuration;
@@ -358,12 +324,11 @@ export default {
      *
      * @param {Object} scheduleRecords
      * @param {number} scheduleEditableTime
-     * @param {Object} getters
      * @param {string} currentUserId
      * @param {boolean} isAdmin
      * @return {Function<boolean>}
      */
-    determineScheduleIsEditable: ({ scheduleRecords, scheduleEditableTime }: stateEcommerceMap, getters, { user: { userInfo: { id :currentUserId, isAdmin }}}) => {
+    determineScheduleIsEditable: ({ scheduleRecords }: stateEcommerceMap, { scheduleEditableTime }, { user: { userInfo: { id :currentUserId, isAdmin }}}) => {
 
         /**
          * @param {string} id
@@ -391,10 +356,17 @@ export default {
             return errorArray;
         }
     },
+
     /**
      * Same as above but optimized to be fast. Return boolean and doesn't care about errors
+     *
+     * @param {Object} scheduleRecords
+     * @param {number} scheduleEditableTime
+     * @param {string} currentUserId
+     * @param {boolean} isAdmin
+     * @return {Function<boolean>}
      */
-    checkScheduleIsEditable: ({ scheduleRecords, scheduleEditableTime }: stateEcommerceMap, getters, { user: { userInfo: { id :currentUserId, isAdmin }}}) => {
+    checkScheduleIsEditable: ({ scheduleRecords }: stateEcommerceMap, { scheduleEditableTime }, { user: { userInfo: { id :currentUserId, isAdmin }}}) => {
         return (id :string) :boolean => {
             if(!Object.prototype.hasOwnProperty.call(scheduleRecords, id)){
                 return false;

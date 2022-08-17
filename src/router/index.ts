@@ -145,7 +145,6 @@ export const routes: Array<RouteRecordRaw> = [
         }
     },
 
-
     {
         path: "/checkout",
         name: "Checkout",
@@ -160,13 +159,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: "Profile",
         component: UserProfile,
         beforeEnter: [authenticationCheck],
-    },
-
-    {
-        path: "/play",
-        name: "Play",
-        component: Play,
-        props: true
     },
 
     {
@@ -192,6 +184,15 @@ export const routes: Array<RouteRecordRaw> = [
         component: EcommerceManagement,
         beforeEnter: [authenticationCheck],
     },
+
+    {
+        path: "/profile/:id",
+        name: "ProfileTarget",
+        component: UserProfile,
+        beforeEnter: [authenticationCheck],
+        props: true
+    },
+
 
     // ------------ ERRORS ------------
 

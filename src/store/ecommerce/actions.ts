@@ -97,14 +97,29 @@ const mockServerSchedule = [
         resourceId: "item2",
         confirmed: true,
         paid: true,
+    },
+    {
+        id: "item12",
+        start: 1671051600000,
+        end: 1671058800000,
+        userId: "user1",
+        confirmed: true,
+        paid: true,
     }
 ];
 const mockServerUsers = [
     {
-        id: "user1",
+        id: 'user1',
         avatar: "https://randomuser.me/api/portraits/women/85.jpg",
         username: "UsernameTonio",
-        lastVisit: 1652385600000
+        firstname: "Tonio",
+        lastname: "Cartonio",
+        email: "tonio.cartonio@gmail.com",
+        phone: "+39 123 4567",
+        birthday: 681775200000,
+        wallet: 6,
+        lastVisit: 1653050140000,
+        isAdmin: true,  // TODO false test
     },
     {
         id: "user2",
@@ -150,6 +165,96 @@ const mockServerStations = [
 // TODO SLUG / ID?
 const mockServerGames = [
     {
+        id: "item-12",
+        title: "Walkabout Mini Golf",
+        author: "Mighty Coconut",
+        description: "",
+        categories: ["sport"],
+        stations: ["Oculus"],
+        tags: [
+            "Golf",
+            "PVP"
+        ],
+        image: imagesUrl + 'games/walkabout-mini-golf.jpg',
+        imageThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf.jpg',
+        coverFront: imagesUrl + 'games/walkabout-mini-golf-cover.jpg',
+        coverFrontThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-cover.jpg',
+        coverSpine: imagesUrl + 'games/walkabout-mini-golf-spine.jpg',
+        coverSpineThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-spine.jpg',
+        maxPlayersOffline: 1,
+        maxPlayersOnline: 2,
+        familyFriendly: true,
+    },
+    {
+        id: "item-2",
+        title: "Acron: Attack of the Squirrels!",
+        author: "Resolution Games",
+        description: "",
+        categories: ["party-game", "action"],
+        stations: ["Oculus"],
+        tags: [
+            "PVP",
+            "COOP"
+        ],
+        image: imagesUrl + 'games/acron-attack-of-the-squirrels.jpg',
+        coverFront: imagesUrl + 'games/acron-attack-of-the-squirrels-cover.jpg',
+        coverSpine: imagesUrl + 'games/acron-attack-of-the-squirrels-spine.jpg',
+        maxPlayersOffline: 8,
+        maxPlayersOnline: 8,
+        familyFriendly: true,
+        motionSickness: 1,
+        difficulty: 4,      // true: 1
+        duration: 900000,   // 15 min
+        minAge: 6,
+    },
+    {
+        id: "item-4",
+        title: "Blaston Spectator",
+        author: "Resolution Games",
+        description: "",
+        categories: ["shooter"],
+        stations: ["Oculus"],
+        tags: [
+            "PVP"
+        ],
+        image: imagesUrl + 'games/blaston.jpg',
+        coverFront: imagesUrl + 'games/blaston-cover.jpg',
+        coverSpine: imagesUrl + 'games/blaston-spine.jpg',
+        maxPlayersOffline: 1,
+        maxPlayersOnline: 2,
+        familyFriendly: true,
+    },
+    {
+        id: "item-5",
+        title: "Echo Arena",
+        author: "",
+        description: "",
+        categories: ["sport"],
+        stations: ["Oculus"],
+        tags: [],
+        image: imagesUrl + 'games/echo-arena.jpg',
+        coverFront: imagesUrl + 'games/echo-arena-cover.jpg',
+        coverSpine: imagesUrl + 'games/echo-arena-spine.jpg',
+        maxPlayersOffline: 1,
+        maxPlayersOnline: 2,
+        familyFriendly: true,
+    },
+    {
+        id: "item-3",
+        title: "Angry Birds VR: Isle of Pigs",
+        author: "Resolution Games",
+        description: "",
+        categories: ["puzzle"],
+        stations: ["Oculus"],
+        tags: [],
+        image: imagesUrl + 'games/angry-birds-isle-of-pigs.jpg',
+        coverFront: imagesUrl + 'games/angry-birds-isle-of-pigs-cover.jpg',
+        coverSpine: imagesUrl + 'games/angry-birds-isle-of-pigs-spine.jpg',
+        maxPlayersOffline: 1,
+        maxPlayersOnline: 0,
+        familyFriendly: true,
+    },
+    {
         id: "item-1",
         title: "Beat Saber",
         author: "Beat Games",
@@ -169,72 +274,7 @@ const mockServerGames = [
         coverSpineThumbnail: imagesUrl + 'games/thumbnails/beat-saber-spine.jpg',
         maxPlayersOffline: 1,
         maxPlayersOnline: 0,
-        flagFamilyFriendly: true,
-    },
-    {
-        id: "item-2",
-        title: "Acron: Attack of the Squirrels!",
-        author: "Resolution Games",
-        description: "",
-        categories: ["party-game", "action"],
-        stations: ["Oculus"],
-        tags: [
-            "PVP",
-            "COOP"
-        ],
-        image: imagesUrl + 'games/acron-attack-of-the-squirrels.jpg',
-        coverFront: imagesUrl + 'games/acron-attack-of-the-squirrels-cover.jpg',
-        coverSpine: imagesUrl + 'games/acron-attack-of-the-squirrels-spine.jpg',
-        maxPlayersOffline: 8,
-        maxPlayersOnline: 0,
-        flagFamilyFriendly: true,
-    },
-    {
-        id: "item-3",
-        title: "Angry Birds VR: Isle of Pigs",
-        author: "Resolution Games",
-        description: "",
-        categories: ["puzzle"],
-        stations: ["Oculus"],
-        tags: [],
-        image: imagesUrl + 'games/angry-birds-isle-of-pigs.jpg',
-        coverFront: imagesUrl + 'games/angry-birds-isle-of-pigs-cover.jpg',
-        coverSpine: imagesUrl + 'games/angry-birds-isle-of-pigs-spine.jpg',
-        maxPlayersOffline: 1,
-        maxPlayersOnline: 0,
-        flagFamilyFriendly: true,
-    },
-    {
-        id: "item-4",
-        title: "Blaston Spectator",
-        author: "Resolution Games",
-        description: "",
-        categories: ["shooter"],
-        stations: ["Oculus"],
-        tags: [
-            "PVP"
-        ],
-        image: imagesUrl + 'games/blaston.jpg',
-        coverFront: imagesUrl + 'games/blaston-cover.jpg',
-        coverSpine: imagesUrl + 'games/blaston-spine.jpg',
-        maxPlayersOffline: 1,
-        maxPlayersOnline: 2,
-        flagFamilyFriendly: true,
-    },
-    {
-        id: "item-5",
-        title: "Echo Arena",
-        author: "",
-        description: "",
-        categories: ["sport"],
-        stations: ["Oculus"],
-        tags: [],
-        image: imagesUrl + 'games/echo-arena.jpg',
-        coverFront: imagesUrl + 'games/echo-arena-cover.jpg',
-        coverSpine: imagesUrl + 'games/echo-arena-spine.jpg',
-        maxPlayersOffline: 1,
-        maxPlayersOnline: 2,
-        flagFamilyFriendly: true,
+        familyFriendly: true,
     },
     {
         id: "item-6",
@@ -249,7 +289,7 @@ const mockServerGames = [
         coverSpine: imagesUrl + 'games/locodojo-spine.jpg',
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
-        flagFamilyFriendly: true,
+        familyFriendly: true,
     },
     {
         id: "item-7",
@@ -264,7 +304,7 @@ const mockServerGames = [
         coverSpine: imagesUrl + 'games/nock-spine.jpg',
         maxPlayersOffline: 1,
         maxPlayersOnline: 0,
-        flagFamilyFriendly: true,
+        familyFriendly: true,
     },
     {
         id: "item-8",
@@ -282,7 +322,7 @@ const mockServerGames = [
         coverSpine: imagesUrl + 'games/population-one-spine.jpg',
         maxPlayersOffline: 1,
         maxPlayersOnline: 24,
-        flagFamilyFriendly: false,
+        familyFriendly: false,
     },
     {
         id: "item-9",
@@ -297,7 +337,7 @@ const mockServerGames = [
         coverSpine: imagesUrl + 'games/puzzle-bobble-vacation-odyssey-spine.jpg',
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
-        flagFamilyFriendly: true,
+        familyFriendly: true,
     },
     {
         id: "item-10",
@@ -314,7 +354,7 @@ const mockServerGames = [
         coverSpine: imagesUrl + 'games/ragnarock-spine.jpg',
         maxPlayersOffline: 1,
         maxPlayersOnline: 0,
-        flagFamilyFriendly: true,
+        familyFriendly: true,
     },
     {
         id: "item-11",
@@ -333,28 +373,7 @@ const mockServerGames = [
         coverSpine: imagesUrl + 'games/the-room-a-dark-matter-spine.jpg',
         maxPlayersOffline: 4,
         maxPlayersOnline: 0,
-        flagFamilyFriendly: false,
-    },
-    {
-        id: "item-12",
-        title: "Walkabout Mini Golf",
-        author: "Mighty Coconut",
-        description: "",
-        categories: ["sport"],
-        stations: ["Oculus"],
-        tags: [
-            "Golf",
-            "PVP"
-        ],
-        image: imagesUrl + 'games/walkabout-mini-golf.jpg',
-        imageThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf.jpg',
-        coverFront: imagesUrl + 'games/walkabout-mini-golf-cover.jpg',
-        coverFrontThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-cover.jpg',
-        coverSpine: imagesUrl + 'games/walkabout-mini-golf-spine.jpg',
-        coverSpineThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-spine.jpg',
-        maxPlayersOffline: 1,
-        maxPlayersOnline: 2,
-        flagFamilyFriendly: true,
+        familyFriendly: false,
     },
     {
         id: "item-13",
@@ -374,7 +393,7 @@ const mockServerGames = [
         coverSpineThumbnail: imagesUrl + 'games/thumbnails/zenith-the-last-city-spine.jpg',
         maxPlayersOffline: 1,
         maxPlayersOnline: 20,
-        flagFamilyFriendly: false,
+        familyFriendly: false,
     },
 ];
 
@@ -502,6 +521,7 @@ export default {
     /**
      * GET schedule list from server and save in central store
      *
+     * @param {number} scheduleImminentTime
      * @param {Function} dispatch
      * @param {Function} commit
      * @param {number} lastUpdate
@@ -510,6 +530,7 @@ export default {
      * @param {string[]} idArray - if empty: getAllRecords mode
      */
     async getSchedules({
+        getters: { scheduleImminentTime },
         dispatch,
         commit,
         rootState: {
@@ -543,8 +564,8 @@ export default {
         commit('setSchedule', {
             id: "itemxxxx",
             start: 1660239000000,
-            end: 1660239000000,
-            userId: "user4",
+            end: 1660242600000,
+            userId: "user1",
             online: false,
             confirmed: false,
             canceled: false,
@@ -556,7 +577,7 @@ export default {
             id: "itemyyyy",
             start: 1671354000000,
             end: 1671382800000,
-            userId: "user4",
+            userId: "user1",
             online: false,
             confirmed: false,
             canceled: false,
@@ -568,7 +589,7 @@ export default {
             id: "itemwwww",
             start: 1671051600000,
             end: 1671058800000,
-            userId: "user4",
+            userId: "user1",
             online: false,
             confirmed: false,
             canceled: false,
@@ -589,7 +610,9 @@ export default {
                         ...mockServerSchedule[i],
                         online: true,
                         unsaved: false,
-                        expired: false
+                        expired: false,
+                        // if schedule is imminent (in action because needed getters access)
+                        imminent: mockServerSchedule[i].start > Date.now() && mockServerSchedule[i].start < Date.now() + scheduleImminentTime,
                     });
                     commit("main/setLastUpdate", ['scheduleRecords', mockServerSchedule[i].id], { root: true });
                 }
@@ -742,40 +765,70 @@ export default {
     },
 
     /**
-     * Send OFFLINE schedules to server and save in central store
+     * REMOVE schedules.
+     * There are no checks about time limit or admin because they are made via UI
+     * and true controls are on server
+     *
+     * The paid steps of removed schedules are added to the user wallet
      *
      * @param {Function} dispatch
      * @param {Function} commit
      * @param {Object} scheduleRecords
+     * @param {number} scheduleTimeStep
+     * @param {string} currentUserId
      * @param {string[]} scheduleIdList
      */
-    async removeSchedules({ dispatch, commit, state: { scheduleRecords } }: ActionContext<stateEcommerceMap, stateRootMap>, scheduleIdList: string[]): Promise<void> {
+    async removeSchedules({ dispatch, commit, state: { scheduleRecords, scheduleTimeStep }, rootState: { user: { userInfo: { id: currentUserId } } } }: ActionContext<stateEcommerceMap, stateRootMap>, scheduleIdList: string[]): Promise<void> {
         // schedule array to be reverted in case of connection error while removing
         const scheduleArray :scheduleMap[] = [];
+        // loop throught schedules to be removed
         for(let i = scheduleIdList.length; i--; ){
             if(scheduleRecords[scheduleIdList[i]]){
                 scheduleArray.push(scheduleRecords[scheduleIdList[i]])
             }
             commit("removeSchedule", scheduleIdList[i]);
         }
+        // if we are deleting a schedule event that was paid, we need to refund the steps/hours spent
+        // server-side calculation (and security) too
+        // wallet array revert in case of error
+        const walletRevertArray :Array<[string, number]> = [];
+        for(let i = scheduleArray.length; i--; ){
+            const { userId, start, end, paid = false } = scheduleArray[i];
+            // step amount refunded
+            const amount = (end - start) / scheduleTimeStep;
+            if(!paid)
+                continue;
+            walletRevertArray.push([userId, amount])
+            // if it's current user
+            if(userId === currentUserId)
+                commit("user/addWallet", amount, { root: true });
+            // or generic user (admin only)
+            commit("addWallet", [ userId, amount ]);
+        }
         return Promise.resolve(scheduleArray)
             .then(() => {
-                // TODO Le ore\soldi degli eventi già confermati\pagati verranno automaticamente aggiunte al wallet
-                //  Lo farà il server, restituirà l'ammontare (no istant offline)
-
                 // TODO Possible logical error and revert needed
                 // TODO controlla se ha senso mettere catch per primo con
                 //   "adderror" che poi casca nel then che fa le sue cose ed eventualmente catch revert
                 // dispatch("main/handleLogicalError", "removeSchedules ERROR", { root: true })
             })
             .catch(() => {
-                // REVERT in case of error
+                // REVERT schedule data in case of error
                 for(let i = scheduleArray.length; i--; ){
                     commit("setSchedule", {
                         ...scheduleArray[i],
                         online: false,
                         confirmed: false // TODO payments
                     });
+                }
+                // REVERT wallet data in case of error
+                for(let i = walletRevertArray.length; i--; ){
+                    const [ userId, amount ] = walletRevertArray[i];
+                    // if it's current user
+                    if(userId === currentUserId)
+                        commit("user/subtractWallet", amount, { root: true });
+                    // or generic user (admin only)
+                    commit("subtractWallet", [ userId, amount ]);
                 }
                 return dispatch("main/handleServerError", "removeSchedules ERROR", { root: true });
             });

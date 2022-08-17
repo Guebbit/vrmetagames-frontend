@@ -31,7 +31,6 @@ export default <T = unknown>(
         userIdParam = 'userId'
     } = settings;
 
-
     /**
      *
      */

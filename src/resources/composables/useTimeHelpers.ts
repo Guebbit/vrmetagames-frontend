@@ -51,7 +51,7 @@ export default (fromDatetime = 'YYYY-MM-DD HH:mm:ss', toDatetime = 'YYYY-MM-DD H
      * @param {string} formatTo - format
      * @return {string}
      */
-    const formatUIDate = (timestamp :number, formatTo = fromDatetime) :string =>
+    const formatUIDate = (timestamp ?:number, formatTo = fromDatetime) :string =>
         dayjs(timestamp).format(formatTo);
 
     return {

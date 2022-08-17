@@ -43,7 +43,7 @@
 							color="secondary"
 							size="x-large"
 							:to="{ name: 'Checkout' }"
-							:disabled="scheduleListCart.length === 0"
+							:disabled="scheduleListCartUser.length === 0"
 						>
 							{{ $t('play-page.schedules-confirm-all') }}
 							<font-awesome-icon class="ml-3" :icon="['fas', 'play']" />
@@ -108,7 +108,7 @@ defineProps({
 	},
 });
 
-const scheduleListCart = computed(() => getters['ecommerce/scheduleListCart']);
+const scheduleListCartUser = computed(() => getters['ecommerce/scheduleListCartUser']);
 
 /**
  * Add Schedule (offline)

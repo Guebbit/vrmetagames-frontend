@@ -179,6 +179,10 @@ defineProps({
 <style lang="scss">
 .business-contacts.simple-list{
 	display: inline-block;
+	svg{
+		font-size: 1em;
+		margin-right: 1em;
+	}
 	&.dark-mode{
 		li{
 			color: #000000;

@@ -3,15 +3,14 @@
     <v-container>
       <v-row justify="center">
         <v-col cols="12" md="6" lg="4" xl="4" class="footer-section">
-          <div class="footer-header">
+          <div class="footer-header mb-0">
             <a href="/" class="logo">
-              <mainLogotype id="temporary-logotype" />
+              <img :src="imagesUrl + 'logo/logotype.svg'" />
             </a>
           </div>
           <div class="footer-content">
             <div class="mx-5">
               <p>{{ t('home-page.footer-content-1') }}</p>
-              <p>{{ t('home-page.footer-content-2') }}</p>
               <hr />
             </div>
             <div class="text-center">
@@ -150,6 +149,7 @@ import { computed, toRefs } from "vue";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "vuetify";
+import { imagesUrl } from "@/resources/constants";
 import {
     contactAddressStreet,
     contactAddressCity,
@@ -163,9 +163,6 @@ import {
     socialTiktok,
     socialYoutube
 } from "@/resources/constants";
-// import mainLogotype from "@/assets/svg/logo/logotype.svg";
-// import guebbitLogo from "@/assets/svg/logo/guebbit-logo-simple.svg";
-import mainLogotype from "@/assets/svg/logo/vuefixed-logotype.vue";
 import guebbitLogo from "@/assets/svg/logo/vuefixed-guebbit-logo-simple.vue";
 import OpeningHours from "@/components/basics/cards/OpeningHours.vue";
 
@@ -263,13 +260,13 @@ $event-footer-mobile-threshold: 600px !default;
             .footer-title{
                 text-align: left;
             }
+			.logo{
+				display: block;
+				margin: 0 auto;
+				max-width: 200px;
+			}
         }
         .footer-content{
-            .logo{
-                height: 100%;
-                width: 60px;
-            }
-
             p{
                 font-size: 1.1em;
                 margin-bottom: 15px;

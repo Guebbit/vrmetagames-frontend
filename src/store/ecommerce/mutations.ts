@@ -5,6 +5,7 @@ import type {
     stationMap,
     gameMap,
 } from "@/interfaces";
+import { stateUserMap } from "@/interfaces";
 
 export default {
 
@@ -15,6 +16,8 @@ export default {
      * @param {Object} stationData
      */
     setStation({ stations }: stateEcommerceMap, stationData: stationMap) {
+        if(!stationData.id)
+            return;
         stations[stationData.id] = stationData;
     },
 
@@ -25,6 +28,8 @@ export default {
      * @param {Object} gameData
      */
     setGame({ games }: stateEcommerceMap, gameData: gameMap) {
+        if(!gameData.id)
+            return;
         games[gameData.id] = gameData;
     },
 
@@ -35,6 +40,8 @@ export default {
      * @param {Object} userData
      */
     setUser({ users }: stateEcommerceMap, userData: userMap) {
+        if(!userData.id)
+            return;
         users[userData.id] = userData;
     },
 
@@ -47,17 +54,15 @@ export default {
      */
     setSchedule({ scheduleRecords, scheduleArchive }: stateEcommerceMap, scheduleData: scheduleMap) {
         // if it's not canceled and it's not confirmed or paid, check the date. It can be expired
-        if(!scheduleData.canceled && (!scheduleData.confirmed || !scheduleData.paid))
-            scheduleData.expired = scheduleData.start < Date.now();
+        scheduleData.expired = scheduleData.start < Date.now();
         // if we are creating an "unsaved" edits, for restoring and compare reasons, we create a clone
-        if(scheduleData.unsaved){
+        if(scheduleData.unsaved)
             scheduleArchive[scheduleData.id] = scheduleRecords[scheduleData.id];
-        }
         // saving data
         scheduleRecords[scheduleData.id] = scheduleData;
     },
 
-    /*
+    /**
      * Remove schedule data
      *
      * @param {Object} scheduleRecords
@@ -67,7 +72,7 @@ export default {
         delete scheduleRecords[id];
     },
 
-    /*
+    /**
      * Remove schedule from archive
      *
      * @param {Object} scheduleArchive
@@ -75,5 +80,30 @@ export default {
      */
     removeScheduleArchive({ scheduleArchive }: stateEcommerceMap, id: string) {
         delete scheduleArchive[id];
+    },
+
+    /**
+     * Add steps amount to target user wallet
+     *
+     * @param scheduleRecords
+     * @param id - user id
+     * @param amount- number of steps to add
+     */
+    addWallet({ users }: stateEcommerceMap, [id, amount = 0]: [string, number]) {
+        if(!Object.prototype.hasOwnProperty.call(users, id))
+            return;
+        users[id].wallet = (users[id].wallet || 0) + amount;
+    },
+
+    /**
+     * Subtract steps amount to target user wallet
+     *
+     * @param {object} userInfo
+     * @param {number} amount - number of steps to add
+     */
+    subtractWallet({ users }: stateEcommerceMap, [id, amount = 0]: [string, number]) {
+        if(!Object.prototype.hasOwnProperty.call(users, id))
+            return;
+        users[id].wallet = (users[id].wallet || 0) - amount;
     },
 };

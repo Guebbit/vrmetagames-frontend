@@ -63,7 +63,7 @@ export default (
   return {
     loading: loadingItems,
     userInfo,
-    isAdmin: userInfo.value.isAdmin,
+    isAdmin: userInfo.value.isAdmin && isAuthenticated.value,
     isAuthenticated,
   };
 };

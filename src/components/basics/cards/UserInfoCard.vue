@@ -14,7 +14,7 @@
                     class="text-medium-emphasis"
                 >
                     {{ t('play-page.schedule-details-last-visit') }}:
-                    <span class="ml-2">{{ formatUIDate(userInfo.lastVisit) }}</span>
+                    <span class="ml-3">{{ formatUIDate(userInfo.lastVisit) }}</span>
                 </small>
             </div>
         </div>
@@ -25,7 +25,7 @@
                    variant="text"
                    color="secondary"
             >
-                <font-awesome-icon class="mr-2" :icon="['fas', 'wallet']" />
+                <font-awesome-icon class="mr-3" :icon="['fas', 'wallet']" />
                 {{ userInfo.wallet }}
             </v-btn>
         </div>

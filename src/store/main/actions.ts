@@ -5,7 +5,7 @@ export default {
 
     initApp({ dispatch, rootGetters }: ActionContext<stateMainMap, stateRootMap>){
         // first authenticate user
-        dispatch('user/getUserInfo', undefined, { root: true })
+        dispatch('user/getCurrentUser', undefined, { root: true })
             // then download all info from server
             .finally(() => Promise.all([
                 dispatch('ecommerce/getStations', undefined, { root: true }),

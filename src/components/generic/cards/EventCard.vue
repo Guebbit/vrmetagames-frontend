@@ -1,13 +1,12 @@
 <template>
     <EventLongCard
-        v-if="schedule"
+		v-if="!mini"
         class="play-event-card"
         :time="schedule.start"
         image="https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png"
         :color="primary || themeColors.secondary"
         :text="themeColors['on-surface']"
         :background="themeColors.surface"
-        :height="150"
     >
         <div class="card-main-info">
             <div class="simple-icon-text">
@@ -26,20 +25,21 @@
             </div>
         </div>
 
-        <div class="card-chips-and-actions">
-            <div class="card-chips">
+        <div class="card-chips-and-actions d-flex justify-space-between align-items-end flex-column flex-gap-24">
+            <div class="card-chips d-flex justify-end">
                 <v-chip
                     v-for="({ variant, icon, color, title }, index) in statusList"
                     :key="'schedule-chip-' + index"
                     :color="color"
                     :variant="variant"
+					size="small"
                 >
-                    <font-awesome-icon :icon="['fas', icon]" class="mr-2" />
+                    <font-awesome-icon :icon="['fas', icon]" class="mr-3" />
                     {{ title }}
                 </v-chip>
             </div>
 
-            <div class="card-actions d-flex">
+            <div class="card-actions d-flex justify-end">
                 <v-btn
                     v-show="showConfirmButton && !schedule.expired"
 					variant="elevated"
@@ -59,16 +59,46 @@
 					<font-awesome-icon class="ml-3" :icon="['fas', 'refresh']" />
 				</v-btn>
                 <v-btn
-                    v-show="showCancelButton"
+                    v-show="showCancelButton && !schedule.expired"
                     variant="outlined"
+					:disabled="schedule.imminent"
                     @click="emit('button:click:cancel')"
                 >
-                    {{ t('generic.cancel') }}
+                    {{ schedule.paid ? t('schedule-card.cancel') : t('schedule-card.remove') }}
                     <font-awesome-icon class="ml-3" :icon="['fas', 'trash-can']" />
                 </v-btn>
             </div>
         </div>
     </EventLongCard>
+
+	<v-card v-else
+		class="w-100 my-2"
+		color="light"
+		elevation="12"
+	>
+		<v-card-text class="d-flex justify-space-between align-center">
+			<div>
+				<font-awesome-icon size="lg" class="text-primary mx-5" :icon="['fas', 'calendar']" />
+				{{ scheduleReadable?.date }}
+				<font-awesome-icon size="lg" class="text-primary mx-5" :icon="['fas', 'clock']" />
+				{{ scheduleReadable?.hourStart }}
+				<font-awesome-icon class="mx-2" :icon="['fas', 'arrow-right-long']" />
+				{{ scheduleReadable?.hourEnd }}
+			</div>
+			<div class="card-chips d-flex justify-end flex-gap-12">
+				<v-chip
+					v-for="({ variant, icon, color, title }, index) in statusList"
+					:key="'schedule-chip-' + index"
+					:color="color"
+					:variant="variant"
+					size="small"
+				>
+					<font-awesome-icon :icon="['fas', icon]" class="mr-3" />
+					{{ title }}
+				</v-chip>
+			</div>
+		</v-card-text>
+	</v-card>
 </template>
 
 <script setup lang="ts">
@@ -127,7 +157,15 @@ const props = defineProps({
 	showRenewButton: {
 		type: Boolean,
 		default: () => true
-	}
+	},
+	admin: {
+		type: Boolean,
+		default: () => false
+	},
+	mini: {
+		type: Boolean,
+		default: () => false
+	},
 });
 
 /**
@@ -147,34 +185,29 @@ const scheduleReadable = computed<scheduleReadableMap>(() => {
 	return translateScheduleUI(start, end);
 });
 
+/**
+ * List of status with icon (TODO), title and description, to list as pills
+ */
 const statusList = computed<scheduleStatesMap[]>(() => {
     const statusArray :scheduleStatesMap[] = [];
-    const { online = true, confirmed = false, canceled = false, unsaved = false, paid = false, expired = false } = schedule.value || {};
-	/*
-	if(!online)
+    const { online = true, confirmed = false, canceled = false, unsaved = false, paid = false, imminent = false, expired = false } = schedule.value || {};
+	if(props.admin && !online)
 		statusArray.push({
 			...scheduleStates.offline,
 			title: t(scheduleStates.offline.title),
 			description: t(scheduleStates.offline.description)
 		});
-	*/
-	if(online)
+	if(props.admin && online)
 		statusArray.push({
 			...scheduleStates.online,
 			title: t(scheduleStates.online.title),
 			description: t(scheduleStates.online.description)
 		});
-	if(confirmed)
+	if(confirmed && !paid)
 		statusArray.push({
 			...scheduleStates.confirmed,
 			title: t(scheduleStates.confirmed.title),
 			description: t(scheduleStates.confirmed.description)
-		});
-	if(!confirmed)
-		statusArray.push({
-			...scheduleStates.notConfirmed,
-			title: t(scheduleStates.notConfirmed.title),
-			description: t(scheduleStates.notConfirmed.description)
 		});
 	if(canceled)
 		statusArray.push({
@@ -188,7 +221,19 @@ const statusList = computed<scheduleStatesMap[]>(() => {
 			title: t(scheduleStates.paid.title),
 			description: t(scheduleStates.paid.description)
 		});
-	if(expired)
+	if(imminent)
+		statusArray.push({
+			...scheduleStates.imminent,
+			title: t(scheduleStates.imminent.title),
+			description: t(scheduleStates.imminent.description)
+		});
+	if(!confirmed && !expired && !canceled)
+		statusArray.push({
+			...scheduleStates.notConfirmed,
+			title: t(scheduleStates.notConfirmed.title),
+			description: t(scheduleStates.notConfirmed.description)
+		});
+	if(expired && !(!paid || !confirmed || !canceled))
 		statusArray.push({
 			...scheduleStates.expired,
 			title: t(scheduleStates.expired.title),
@@ -213,7 +258,7 @@ const labelDuration = computed<string>(() => {
 </script>
 
 <style lang="scss">
-@import 'src/assets/scss/main/global';
+@import '../../../assets/scss/main/global';
 
 .play-event-card {
     .card-content{
@@ -230,11 +275,6 @@ const labelDuration = computed<string>(() => {
         }
     }
     .card-chips-and-actions{
-        display: flex;
-        justify-content: space-between;
-        align-items: end;
-        flex-direction: column;
-        gap: 24px;
         .card-chips{
             .v-chip{
                 margin: 6px;

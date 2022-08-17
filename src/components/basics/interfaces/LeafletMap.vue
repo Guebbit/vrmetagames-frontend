@@ -8,6 +8,8 @@
 </template>
 
 <script setup lang="ts">
+// TODO marker onClick & onHover actions (così da mettere il click "vai nel parcheggio bersaglio")
+
 import { defineProps, ref, computed, onMounted, PropType } from "vue";
 import { getUUID } from "guebbit-javascript-library";
 import "leaflet/dist/leaflet.css";

@@ -31,7 +31,7 @@
                                 {{ t('generic.look-openings') }}
                             </v-btn>
                         </div>
-                        <span class="status-circle font-size-2 ml-10"
+                        <span class="status-circle text-h5 ml-10"
                               :class="{
                                   online: todayIsOpen,
                                   'pulse-mode': todayIsOpen,
@@ -453,8 +453,15 @@
                     :icons="[
                         {
                             name: 'logo',
-                            iconUrl: 'https://assets.guebbit.com/vrmetagames/images/logo/logo.png',
-                            iconSize: [40, 50]
+                            iconUrl: 'https://assets.guebbit.com/vrmetagames/images/pin-logo.png',
+                            iconSize: [40, 50],
+                            className: 'floating-animation'
+                        },
+                        {
+                            name: 'parking-lot',
+                            iconUrl: 'https://assets.guebbit.com/vrmetagames/images/pin-parking-lot.png',
+                            iconSize: [20, 25],
+                            className: 'floating-animation'
                         }
                     ]"
                     :markers="[
@@ -462,6 +469,21 @@
                             coordinates: [44.7793747, 10.8807905],
                             icon: 'logo',
                             options: { alt: 'Sede Vr Metagames' }
+                        },
+                        {
+                            coordinates: [44.7790877,10.8807525],
+                            icon: 'parking-lot',
+                            options: { alt: 'Parcheggio Vr Metagames' }
+                        },
+                        {
+                            coordinates: [44.7807537, 10.8812649],
+                            icon: 'parking-lot',
+                            options: { alt: 'Parcheggio Vr Metagames' }
+                        },
+                        {
+                            coordinates: [44.7786976,10.8817087],
+                            icon: 'parking-lot',
+                            options: { alt: 'Parcheggio Vr Metagames' }
                         }
                     ]"
                 />
@@ -473,7 +495,7 @@
                 href="https://www.google.com/maps/dir/44.8703811,10.8166522/vr+metagames/@44.8197379,10.7501583,12z/data=!3m1!4b1!4m9!4m8!1m1!4e1!1m5!1m1!1s0x477ff34644a5efb1:0xc99febe9f2bbf4dc!2m2!1d10.880918!2d44.7793981"
             >
                 {{ t('generic.where-us') }}
-                <font-awesome-icon :icon="['fas', 'location-dot']" />
+                <font-awesome-icon class="ml-3" :icon="['fas', 'location-dot']" />
             </v-btn>
         </section>
 
@@ -649,5 +671,20 @@ onMounted(() => {
             max-width: 500px;
         }
     }
+
+	/*
+	.floating-animation{
+		animation: floating-animation 1s linear 0s infinite;
+	}
+
+	@keyframes floating-animation {
+		from {
+			transform:translate(0, 0px)
+		}
+		to {
+			transform:translate(0, 15px);
+		}
+	}
+	*/
 }
 </style>

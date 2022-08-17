@@ -1,4 +1,5 @@
 import type { stateUserMap, currentUserMap, paymentMethodMap, paymentMap } from "@/interfaces";
+import { stateEcommerceMap } from "@/interfaces";
 
 export default {
     /**
@@ -39,5 +40,26 @@ export default {
      */
     setPaymentRecord({ paymentRecords }: stateUserMap, paymentRecordData: paymentMap) {
         paymentRecords[paymentRecordData.id] = paymentRecordData;
+    },
+
+
+    /**
+     * Add steps amount to current user wallet
+     *
+     * @param {object} userInfo
+     * @param {number} amount - number of steps to add
+     */
+    addWallet({ userInfo }: stateUserMap, amount = 0) {
+        userInfo.wallet = (userInfo.wallet || 0) + amount;
+    },
+
+    /**
+     * Subtract steps amount to current user wallet
+     *
+     * @param {object} userInfo
+     * @param {number} amount - number of steps to add
+     */
+    subtractWallet({ userInfo }: stateUserMap, amount = 0) {
+        userInfo.wallet = (userInfo.wallet || 0) - amount;
     },
 }

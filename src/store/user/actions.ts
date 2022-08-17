@@ -9,7 +9,7 @@ const mockUserInfo = {
     lastname: "Cartonio",
     email: "tonio.cartonio@gmail.com",
     phone: "+39 123 4567",
-    birthdate: 1649620712000,
+    birthday: 681775200000,
     wallet: 6,
     lastVisit: 1653050140000,
     isAdmin: true,  // TODO false test
@@ -128,6 +128,25 @@ export default {
     /**
      *
      * @param {Function} commit
+     * @param {Function} dispatch
+     * @param {Object} form + id
+     * @return {Promise}
+     */
+    async userEdit({ commit, dispatch }: ActionContext<stateUserMap, stateRootMap>, form :userInfoFormMap & { id: string }) :Promise<void> {
+        console.log("USER EDIT", form.id, form);
+        return Promise.resolve().then(() => {
+            commit("setAuthenticationTokens", {
+                jwt: '1234'
+            });
+            // redo init, with authentication this time (TTL of previous info prevent useless calls)
+            return dispatch("main/initApp", undefined, { root: true });
+        })
+            .catch(() => dispatch("main/handleServerError", "getStations ERROR", { root: true }));
+    },
+
+    /**
+     *
+     * @param {Function} commit
      */
     userLogout({ commit }: ActionContext<stateUserMap, stateRootMap>) {
         // reset tokens
@@ -182,7 +201,7 @@ export default {
      * @param {number} refresh
      * @return {Promise}
      */
-    async getUserInfo({
+    async getCurrentUser({
             dispatch,
             commit,
             rootState: {

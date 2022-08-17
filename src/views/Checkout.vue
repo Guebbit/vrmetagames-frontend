@@ -11,23 +11,10 @@
                     <v-card-text>
                         <v-list>
                             <v-list-item>
-                                <v-list-item-avatar start>
-                                    <font-awesome-icon size="2x" class="text-secondary" :icon="['fas', 'wallet']" />
-                                </v-list-item-avatar>
-                                <v-list-item-title class="font-size-2">{{ userInfoWalletDuration }}</v-list-item-title>
-                            </v-list-item>
-                            <v-list-item lines="">
-                                {{ t('checkout-page.instructions-receipt') }}
-                            </v-list-item>
-                            <v-list-item>
-                                <v-btn
-                                    block
-                                    variant="tonal"
-                                    disabled
-                                >
-                                    {{ t('checkout-page.instructions-receipt-button') }}
-                                    <font-awesome-icon class="ml-3" :icon="['fas', 'print']" />
-                                </v-btn>
+								<p class="simple-icon-text">
+									<font-awesome-icon size="2x" class="text-secondary" :icon="['fas', 'wallet']" />
+									<span class="text-h5">{{ userInfoWalletDuration }}</span>
+								</p>
                             </v-list-item>
                             <v-list-item lines="">
                                 {{ t('checkout-page.instructions-forgot') }}
@@ -35,6 +22,55 @@
                         </v-list>
                     </v-card-text>
                 </v-card>
+
+				<v-card class="mb-4 pricings-card">
+					<v-card-text style="font-size: 1.2em">
+						<v-list>
+							<v-list-item>
+								{{ t('checkout-page.prices-description-1') }}
+							</v-list-item>
+							<v-list-item>
+								{{ t('checkout-page.prices-description-2') }}
+							</v-list-item>
+							<v-list-item class="pricings-list">
+								<p class="my-4">
+									<b class="text-secondary" style="display: inline-block; min-width: 80px">1 ora: </b> <span>10€</span>
+								</p>
+								<p class="my-4">
+									<b class="text-secondary" style="display: inline-block; min-width: 80px">5 ore: </b> <span>40€<small class="ml-3" style="opacity: 0.25;"><s>50€</s></small></span>
+								</p>
+								<p class="my-4">
+									<b class="text-secondary" style="display: inline-block; min-width: 80px">10 ore: </b> <span>50€<small class="ml-3" style="opacity: 0.25;"><s>100€</s></small></span>
+								</p>
+								<!--
+								TODO fare bene
+								<p
+									v-for="(price, steps) in scheduleTimeCost"
+									:key="'price-' - steps"
+								>
+									{{ steps }}: {{ price }}
+								</p>
+								-->
+							</v-list-item>
+							<v-list-item>
+								<p class="mb-4">
+									Non vorresti aggiungere qualche ora al wallet?
+									Ti manca proprio al prossimo sconto per avere ore gratuite
+								</p>
+								<!-- TODO IMPLEMENT -->
+								<v-btn
+									class="vuetify-button-icon"
+									block
+									color="primary"
+									@click="clickFillWalletUntilDiscount"
+								>
+									2 ore e 30 minuti
+									<font-awesome-icon :icon="['fas', 'shopping-cart']" />
+								</v-btn>
+							</v-list-item>
+						</v-list>
+					</v-card-text>
+				</v-card>
 
                 <v-card>
                     <v-card-text>
@@ -45,69 +81,69 @@
             <v-col cols="12" lg="9" class="checkout-list-section">
                 <v-list class="checkout-list bg-transparent">
                     <v-list-item
-                        v-for="schedule in scheduleListCartReadable"
+                        v-for="schedule in scheduleListCartUserReadable"
                         :key="'schedule-list-checkout-' + schedule.id"
                         variant="text"
                         :class="{
                             'disabled': disabledScheduleIdArray.includes(schedule.id)
                         }"
                     >
-                        <v-list-item-avatar start>
-                            <font-awesome-icon size="xl" class="text-primary" :icon="['fas', 'gamepad']" />
-                        </v-list-item-avatar>
+						<span class="schedule-date">
+							<font-awesome-icon size="lg" class="text-primary mx-5" :icon="['fas', 'calendar']" />
+							{{ schedule.date }}
+						</span>
+						<span class="schedule-time">
+							<font-awesome-icon size="lg" class="text-primary mx-5" :icon="['fas', 'clock']" />
+							{{ schedule.hourStart }}
+							<font-awesome-icon class="mx-2" :icon="['fas', 'arrow-right-long']" />
+							{{ schedule.hourEnd }}
+						</span>
+						<span class="schedule-duration">
+							<font-awesome-icon size="lg" class="text-secondary mx-5" :icon="['fas', 'play']" />
+							{{
+								t('generic.schedule-details-time-count.' + schedule.durationData.mode, {
+									hours: schedule.durationData.hours,
+									minutes: schedule.durationData.minutes
+								})
+							}}
+						</span>
+						<span class="schedule-cost">
+							<font-awesome-icon size="lg" class="text-primary mx-5" :icon="['fas', 'coins']" />
+							{{ schedule.cost }} €
+						</span>
 
-                        <div class="simple-icon-text">
-                            <font-awesome-icon :icon="['fas', 'calendar']" />
-                            {{ schedule.date }}
-                        </div>
-
-                        <div class="simple-icon-text flex-grow-1">
-                            <font-awesome-icon :icon="['fas', 'clock']" />
-                            {{ schedule.hourStart }}
-                            <font-awesome-icon :icon="['fas', 'arrow-right-long']" />
-                            {{ schedule.hourEnd }}
-                        </div>
-
-                        <div class="simple-icon-text text-secondary">
-                            <font-awesome-icon :icon="['fas', 'play']" />
-                            {{
-                                t('generic.schedule-details-time-count.' + schedule.durationData.mode, {
-                                    hours: schedule.durationData.hours,
-                                    minutes: schedule.durationData.minutes
-                                })
-                            }}
-                        </div>
-                        <div class="simple-icon-text">
-                            <font-awesome-icon :icon="['fas', 'coins']" />
-                            {{ schedule.cost }} €
-                        </div>
-                        <v-list-item-action>
-                            <v-btn
-                                icon
-                                variant="text"
-                                disabled
-                            >
-                                <font-awesome-icon size="lg" :icon="['fas', 'edit']" />
-                            </v-btn>
-                            <v-btn
-                                icon
-                                variant="text"
-                                disabled
-                            >
-                                <font-awesome-icon size="lg" :icon="['fas', 'circle-info']" />
-                            </v-btn>
-                            <v-btn
-                                icon
-                                variant="text"
-                                @click="toggleSchedule(schedule.id)"
-                            >
-                                <font-awesome-icon :icon="['fas', 'xmark']" />
-                            </v-btn>
-                        </v-list-item-action>
+						<template v-slot:append>
+							<v-list-item-action class="flex-column flex-md-row">
+								<v-btn
+									icon
+									variant="text"
+									disabled
+								>
+									<font-awesome-icon size="lg" :icon="['fas', 'edit']" />
+								</v-btn>
+								<v-btn
+									icon
+									variant="text"
+									@click="toggleSchedule(schedule.id)"
+								>
+									<font-awesome-icon :icon="['fas', 'trash-can']" />
+								</v-btn>
+							</v-list-item-action>
+						</template>
                     </v-list-item>
                 </v-list>
+
+
                 <v-row class="total-and-payments my-2">
                     <v-col cols="12" lg="6">
+						<v-alert
+							v-show="disabledScheduleIdArray.length > 0"
+							class="mb-3"
+							type="warning"
+							variant="outlined"
+						>
+							{{ t('checkout-page.disabled-schedules-warning') }}
+						</v-alert>
                         <v-card class="pa-5">
                             <h1>
                                 METODI DI PAGAMENTO
@@ -118,6 +154,24 @@
                     </v-col>
                     <v-col cols="12" lg="6">
                         <div class="cart-total-info">
+							<div class="d-flex justify-space-between align-center">
+								<span class="label">
+									<small>{{ t('checkout-page.add-hours') }}</small>
+								</span>
+								<span class="info">
+									<v-text-field
+										v-model="stepAdded"
+										class="step-add-input"
+										variant="outlined"
+										type="number"
+										step="1"
+										min="0"
+										density="compact"
+										hide-details
+									/>
+								</span>
+							</div>
+							<hr class="mt-2 mb-2">
                             <div class="d-flex justify-space-between align-center">
                                 <span class="label">{{ t('checkout-page.total-hours') }}</span>
                                 <span class="info">{{ scheduleCartDuration }}</span>
@@ -125,12 +179,12 @@
                             <hr class="mt-2 mb-2">
                             <div class="d-flex justify-space-between align-center">
                                 <span class="label">{{ t('checkout-page.total-cost') }}</span>
-                                <span class="info">{{ scheduleCartTotalCost }} €</span>
+                                <span class="info">{{ scheduleCartTotalCost + stepAddedCost }} €</span>
                             </div>
                             <hr class="mt-2 mb-2">
                             <div class="d-flex justify-space-between align-center">
                                 <span class="label">{{ t('checkout-page.total-cost-discount') }}</span>
-                                <span class="info"> - {{ scheduleCartTotalCost - scheduleCartTotalCostDiscounted }} €</span>
+                                <span class="info"> {{ (scheduleCartTotalCost - scheduleCartTotalCostDiscounted) + (stepAddedCost - stepAddedCostDiscounted) }} €</span>
                             </div>
                             <div class="d-flex justify-space-between align-center">
                                 <span class="label">{{ t('checkout-page.total-wallet') }}</span>
@@ -141,7 +195,7 @@
                                 <span class="info">{{ userInfoWalletRemainingDuration }}</span>
                             </div>
                             <hr class="mt-2 mb-2">
-                            <div class="d-flex justify-space-between align-center font-size-3">
+                            <div class="d-flex justify-space-between align-center text-h4">
                                 <span class="label">{{ t('checkout-page.final-cost') }}</span>
                                 <span class="info">{{ scheduleCartFinalCost }} €</span>
                             </div>
@@ -179,17 +233,16 @@ import {
     faClock,
     faPlay,
     faCoins,
-    faXmark,
-    faGamepad,
-    faCircleInfo,
+    faTrashCan,
     faEdit,
     faWallet,
-    faPrint,
     faEnvelope,
     faLocationDot,
     faCity,
     faPhone,
+	faShoppingCart,
 } from "@fortawesome/free-solid-svg-icons";
+import useCartCalculations from "@/resources/composables/useCartCalculations";
 
 library.add(
     faCalendar,
@@ -197,27 +250,26 @@ library.add(
     faClock,
     faPlay,
     faCoins,
-    faXmark,
-    faGamepad,
-    faCircleInfo,
+    faTrashCan,
     faEdit,
     faWallet,
-    faPrint,
     faEnvelope,
     faLocationDot,
     faCity,
-    faPhone
+    faPhone,
+	faShoppingCart,
 );
 
 const { state, getters } = useStore();
 const { t } = useI18n();
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
+const { userInfo } = toRefs(state.user);
 
 /**
  * Schedule managing toolbox
  */
 const {
-	translateScheduleUI,
+	translateScheduleUI
 } = useScheduleHelpers(uiFormatDate, uiFormatTime);
 
 /**
@@ -225,16 +277,16 @@ const {
  *
  * @return {object[]}
  */
-const scheduleListCart = computed<scheduleMap[]>(() => getters['ecommerce/scheduleListCart']);
+const scheduleListCartUser = computed<scheduleMap[]>(() => getters['ecommerce/scheduleListCartUser']);
 /**
  * List of human readable schedules from Cart
  *
  * @return {object[]}
  */
-const scheduleListCartReadable = computed<scheduleReadableMap[]>(() => {
+const scheduleListCartUserReadable = computed<scheduleReadableMap[]>(() => {
     let scheduleArray :scheduleReadableMap[] = [];
-    for(let i = scheduleListCart.value.length; i--; ){
-        const { id, start, end } = scheduleListCart.value[i];
+    for(let i = scheduleListCartUser.value.length; i--; ){
+        const { id, start, end } = scheduleListCartUser.value[i];
         scheduleArray.push({
             ...translateScheduleUI(start, end),
             id
@@ -250,30 +302,63 @@ const disabledScheduleIdArray = ref<string[]>([]);
  * List of id of schedules filtered using disabledScheduleIdArray
  */
 const activeScheduleIdArray = computed<string[]>(() => {
-    return (scheduleListCart.value).reduce((idArray, { id }) :string[] => {
+    return (scheduleListCartUser.value).reduce((idArray, { id }) :string[] => {
         if(!disabledScheduleIdArray.value.includes(id)){
             idArray.push(id);
         }
         return idArray;
     }, [] as string[]);
 });
+const toggleSchedule = (id :string) => {
+	if(disabledScheduleIdArray.value.includes(id)){
+		disabledScheduleIdArray.value.splice(disabledScheduleIdArray.value.indexOf(id), 1);
+	}else{
+		disabledScheduleIdArray.value.push(id);
+	}
+};
 
+/**
+ * Schedule toolbox and various checkout calculations
+ * @param {string[]} id of schedule's to check
+ */
+const {
+	getNearestDiscountThreshold,
+	scheduleTimeCost,
+	stepAdded,
+	stepAddedCost,
+	stepAddedCostDiscounted,
+	scheduleCartTotalTime,
+	scheduleCartTotalSteps,
+	scheduleCartTotalCost,
+	scheduleCartTotalCostDiscounted,
+	userInfoWalletTime,
+	userInfoWalletTimeRemaining,
+	scheduleCartFinalCost
+} = useCartCalculations(activeScheduleIdArray)
 
-const scheduleCartTotalTime = computed(() => getters['ecommerce/getScheduleTotalTime'](activeScheduleIdArray.value));
-const scheduleCartTotalCost = computed(() => getters['ecommerce/getScheduleTotalCost'](activeScheduleIdArray.value) / 100);
-const scheduleCartTotalCostDiscounted = computed(() => getters['ecommerce/getScheduleTotalCostDiscounted'](activeScheduleIdArray.value) / 100);
-const userInfoWalletTime = computed(() => userInfo.value.wallet * scheduleTimeStep.value);
-const userInfoWalletTimeRemaining = computed(() => userInfoWalletTime.value - scheduleCartTotalTime.value);
+/**
+ * Add hours to the wallet until the next discount
+ */
+function clickFillWalletUntilDiscount(){
+	stepAdded.value += getNearestDiscountThreshold(scheduleCartTotalSteps.value + stepAdded.value * 2);
+}
 
-// label of wallet duration
+/**
+ * label of wallet duration
+ */
 const userInfoWalletDuration = computed<string>(() => {
     const { durationData: { mode, hours, minutes } } = translateScheduleUI(0, userInfoWalletTime.value);
+	if(mode < 2)
+		return t('checkout-page.wallet-empty');
     return t('generic.schedule-details-time-count.' + mode, {
         hours,
         minutes
     });
 });
-// label of wallet remaining AFTER payment
+
+/**
+ * label of wallet remaining AFTER payment
+ */
 const userInfoWalletRemainingDuration = computed<string>(() => {
     const { durationData: { mode, hours, minutes } } = translateScheduleUI(0, Math.max(userInfoWalletTimeRemaining.value, 0));
     return t('generic.schedule-details-time-count.' + mode, {
@@ -281,7 +366,10 @@ const userInfoWalletRemainingDuration = computed<string>(() => {
         minutes
     });
 });
-// label of schedule duration
+
+/**
+ * label of schedule duration
+ */
 const scheduleCartDuration = computed<string>(() => {
     const { durationData: { mode, hours, minutes } } = translateScheduleUI(0, scheduleCartTotalTime.value);
     return t('generic.schedule-details-time-count.' + mode, {
@@ -289,24 +377,6 @@ const scheduleCartDuration = computed<string>(() => {
         minutes
     });
 });
-
-// The wallet is the number of steps already bought, they count as "standard price" because eventual discounts were already made at the wallet insertion
-// real monetary value of wallet steps TODO wallet insertion
-const scheduleCartFinalCost = computed(() => Math.max(scheduleCartTotalCostDiscounted.value - userInfo.value.wallet * (scheduleTimeCost.value[0] / 100), 0));
-
-
-
-const { userInfo } = toRefs(state.user);
-const { scheduleTimeStep, scheduleTimeCost } = toRefs(state.ecommerce);
-
-
-const toggleSchedule = (id :string) => {
-    if(disabledScheduleIdArray.value.includes(id)){
-        disabledScheduleIdArray.value.splice(disabledScheduleIdArray.value.indexOf(id), 1);
-    }else{
-        disabledScheduleIdArray.value.push(id);
-    }
-};
 </script>
 
 <style lang="scss">
@@ -317,9 +387,6 @@ const toggleSchedule = (id :string) => {
         &.v-list{
             padding: 0;
             .v-list-item{
-                justify-content: space-between;
-                gap: 1em;
-                padding: 0.5em 1em;
                 border-bottom: 1px solid rgb(var(--v-theme-on-surface));
 
                 &:first-child{
@@ -330,37 +397,15 @@ const toggleSchedule = (id :string) => {
                     opacity: 0.3;
                 }
 
-                @include media-mobile(){
-                    display: grid;
-                    grid-template-columns: 5fr 1fr;
-                    grid-template-rows: repeat(4, 1fr);
-                    grid-column-gap: 0;
-                    grid-row-gap: 0;
-
-                    & > * {
-                        width: 100%;
-                        &:nth-child(2){
-                            display: none;
-                        }
-                        &:nth-child(3){
-                            grid-area: 1 / 1 / 2 / 2;
-                        }
-                        &:nth-child(4){
-                            grid-area: 2 / 1 / 3 / 2;
-                        }
-                        &:nth-child(5){
-                            grid-area: 3 / 1 / 4 / 2;
-                        }
-                        &:nth-child(6){
-                            grid-area: 4 / 1 / 5 / 2;
-                        }
-                        &:nth-child(7){
-                            grid-area: 1 / 2 / 5 / 3;
-                            flex-direction: column;
-                            border-left: 1px solid rgb(var(--v-theme-on-surface));
-                        }
-                    }
-                }
+				@include media-mobile(){
+					.schedule-date,
+					.schedule-time,
+					.schedule-duration,
+					.schedule-cost{
+						display: block;
+						margin: 12px 0;
+					}
+				}
             }
         }
     }
@@ -369,6 +414,10 @@ const toggleSchedule = (id :string) => {
         display: flex;
         flex-direction: column;
     }
+
+	.step-add-input{
+		max-width: 80px;
+	}
 
     .cart-total-info{
         width: 100%;
@@ -406,8 +455,5 @@ const toggleSchedule = (id :string) => {
             }
         }
     }
-
-
-
 }
 </style>

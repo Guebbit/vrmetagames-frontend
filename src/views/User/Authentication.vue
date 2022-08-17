@@ -141,15 +141,14 @@
 												:label="t('authentication-form.values.password')"
 												:type="formToggleShowPassword ? 'text' : 'password'"
 												:errors="formToggleUIErrors ? formErrors.password : false"
-												:error-messages="formToggleUIErrors && formErrors.password ? t('authentication-form.password-strong.' + formErrors.password) : ''"
+												:error-messages="formToggleUIErrors && formErrors.password ? t('form-password-strong.' + formErrors.password) : ''"
 											>
-												<template v-slot:append>
-													<v-btn icon
-														variant="text"
+												<template v-slot:append-inner>
+													<font-awesome-icon
+														class="v-icon v-icon--size-default v-icon--start cursor-pointer"
+														:icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']"
 														@click="formToggleShowPassword = !formToggleShowPassword"
-													>
-														<font-awesome-icon :icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
-													</v-btn>
+													/>
 												</template>
 											</v-text-field>
 										</v-col>
@@ -161,13 +160,12 @@
 												:errors="formToggleUIErrors ? formErrors.passwordConfirm : false"
 												:error-messages="formToggleUIErrors && formErrors.passwordConfirm ? t('authentication-form.errors.passwordConfirm-' + formErrors.passwordConfirm) : ''"
 											>
-												<template v-slot:append>
-													<v-btn icon
-														variant="text"
+												<template v-slot:append-inner>
+													<font-awesome-icon
+														class="v-icon v-icon--size-default v-icon--start cursor-pointer"
+														:icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']"
 														@click="formToggleShowPassword = !formToggleShowPassword"
-													>
-														<font-awesome-icon :icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
-													</v-btn>
+													/>
 												</template>
 											</v-text-field>
 										</v-col>
@@ -479,6 +477,7 @@ watch(() => props.mode, () => formReset())
 
 /**
  * Extended formIsValid
+ *  - check that username and email are VALID and UNIQUE only if user is registering
  */
 const formIsValid = computed(() =>
 	formIsValidOriginal.value && (

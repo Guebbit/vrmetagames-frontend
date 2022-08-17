@@ -71,14 +71,20 @@
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                     eiusmod tempor incididunt ut labore et dolore magna aliqua
                 </p>
-                <div class="panel-info-icons">
-                    <span class="icon-text-resources">
+
+                <div class="panel-info-icons d-flex justify-center align-center flex-gap-24 flex-wrap">
+
+                    <span
+						v-show="selectedRecord.minAge"
+						class="icon-text-resources"
+					>
                         <span class="icon">
-                            4+
+                            {{ selectedRecord.minAge }}+
                             <font-awesome-icon :icon="['fas', 'id-card']" />
                         </span>
                         <small>Età minima consigliata</small>
                     </span>
+
                     <span v-show="selectedRecord.maxPlayersOffline > 1"
                           class="icon-text-resources"
                     >
@@ -88,14 +94,17 @@
                         </span>
                         <small>{{ t('generic.multiplayer') }}</small>
                     </span>
+
                     <span v-show="selectedRecord.maxPlayersOnline > 1"
                           class="icon-text-resources"
                     >
                         <span class="icon">
+							{{ selectedRecord.maxPlayersOnline }}
                             <font-awesome-icon :icon="['fas', 'globe']" />
                         </span>
                         <small>{{ t('generic.multiplayer') }} {{ t('generic.online') }}</small>
                     </span>
+
                     <span v-show="selectedRecord.maxPlayersOffline <= 1 && selectedRecord.maxPlayersOnline <= 1"
                           class="icon-text-resources"
                     >
@@ -104,7 +113,8 @@
                         </span>
                         <small>{{ t('generic.singleplayer-2') }}</small>
                     </span>
-                    <span v-show="selectedRecord.flagFamilyFriendly"
+
+                    <span v-show="selectedRecord.familyFriendly"
                           class="icon-text-resources"
                     >
                         <span class="icon">
@@ -112,12 +122,64 @@
                         </span>
                         <small>{{ t('generic.family-friendly') }}</small>
                     </span>
+
+					<span v-show="selectedRecord.motionSickness"
+						class="icon-text-resources"
+					>
+                        <span class="icon">
+							{{ selectedRecord.motionSickness }}
+                            <font-awesome-icon
+								:icon="!selectedRecord.motionSickness ?
+									['fas', 'face-smile'] :
+									selectedRecord.motionSickness < 3 ?
+									['fas', 'face-grin-beam'] :
+									['fas', 'face-dizzy']"
+							/>
+                        </span>
+                        <small>{{ t('generic.motion-sickness') }}</small>
+                    </span>
+					<span v-show="selectedRecord.difficulty"
+						class="icon-text-resources"
+					>
+                        <span class="icon">
+							{{ selectedRecord.difficulty }}
+                            <font-awesome-icon
+								:icon="!selectedRecord.difficulty ?
+									['fas', 'face-smile'] :
+									selectedRecord.difficulty < 3 ?
+									['fas', 'face-grin-beam'] :
+									['fas', 'face-dizzy']"
+							/>
+                        </span>
+                        <small>{{ t('generic.difficulty') }}</small>
+                    </span>
+
+					<span v-show="selectedRecord.duration"
+						class="icon-text-resources"
+					>
+                        <span class="icon">
+							{{ selectedRecord.duration / 60000 }}
+                            <font-awesome-icon :icon="['fas', 'clock']" />
+                        </span>
+                        <small>{{ t('generic.duration') }}</small>
+                    </span>
                 </div>
+
             </template>
             <template #actions>
                 <div class="panel-actions text-right mt-10">
+					<v-btn
+						class="ma-2"
+						variant="tonal"
+						@click="$router.push({
+							name: 'Games'
+						})"
+					>
+						<font-awesome-icon class="mr-5" :icon="['fas', 'arrow-left-long']" />
+						{{ t('generic.go-back') }}
+					</v-btn>
                     <v-btn
-                        v-show="isAuthenticated && isAdmin"
+                        v-show="isAdmin"
                         class="ma-2"
                         @click="showProductEditDialog = true"
                     >
@@ -202,8 +264,10 @@ import type { gameMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faFloppyDisk, faXmark, faEdit, faUser, faUsers, faGlobe, faPeopleRoof, faIdCard, faArrowRight  } from "@fortawesome/free-solid-svg-icons";
-library.add(faFloppyDisk, faXmark, faEdit, faUser, faUsers, faGlobe, faPeopleRoof, faIdCard, faArrowRight )
+import { faFloppyDisk, faXmark, faEdit, faUser, faUsers, faGlobe, faPeopleRoof, faIdCard,
+	faArrowRight, faArrowLeftLong, faFaceSmile, faFaceGrinBeam, faFaceDizzy } from "@fortawesome/free-solid-svg-icons";
+library.add(faFloppyDisk, faXmark, faEdit, faUser, faUsers, faGlobe, faPeopleRoof, faIdCard,
+	faArrowRight, faArrowLeftLong, faFaceSmile, faFaceGrinBeam, faFaceDizzy )
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();
@@ -225,18 +289,15 @@ const showProductEditDialog = ref(false);
 
 const {
 	loading,
-	isAuthenticated,
 	isAdmin,
 	selectedRecord,
 	selectTargetRecord
 } = useItemDetails<gameMap>(
     games,
-    () => {
-        return Promise.all([
-            dispatch('main/initApp'),
-            dispatch('ecommerce/getGames')
-        ]);
-    }
+	Promise.all([
+		dispatch('main/initApp'),
+		dispatch('ecommerce/getGames')
+	])
 );
 
 if(props.id)
@@ -268,7 +329,7 @@ if(props.id)
             font-size: 0.9em;
             margin-top: 24px;
             .icon-text-resources{
-                margin: 0 12px;
+				padding: 12px;
                 color: rgb(var(--v-theme-on-surface));
                 .icon{
                     color: inherit;

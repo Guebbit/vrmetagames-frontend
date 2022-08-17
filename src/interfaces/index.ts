@@ -43,7 +43,7 @@ export interface userInfoFormMap {
     passwordConfirm?: string,
     email?: string,
     phone?: string,
-    birthday?: number,
+    birthday?: string,
     terms?: boolean,
 }
 

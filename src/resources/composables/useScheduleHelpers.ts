@@ -27,10 +27,19 @@ export interface scheduleReadableMap extends scheduleTimeReadableMap {
 export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0) => {
     const { state, getters } = useStore();
     const { scheduleRecords, scheduleTimeCost, scheduleTimeStep } = toRefs(state.ecommerce);
-    const { businessHours } = toRefs(state.main);
 
+    /**
+     *
+     */
     if(stepTime === 0)
         stepTime = scheduleTimeStep.value;
+
+    /**
+     *
+     */
+    const scheduleList = computed<scheduleMap[]>(() =>
+        Object.values(scheduleRecords.value)
+    );
 
     /**
      * Time helpers
@@ -40,13 +49,58 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
     } = useTimeHelpers(dateFormat + " " + timeFormat);
 
     /**
-     *  Shortcut
+     *  Shortcuts
      */
+    const getStepCost = getters['ecommerce/getStepCost'];
     const isOpen = getters['main/isOpen'];
     const determineScheduleIsEditable = getters['ecommerce/determineScheduleIsEditable'];
     const checkScheduleIsEditable = getters['ecommerce/checkScheduleIsEditable'];
     const determineScheduleIsAllowed = getters['ecommerce/determineScheduleIsAllowed'];
     const checkScheduleIsAllowed = getters['ecommerce/checkScheduleIsAllowed'];
+
+    /**
+     * Time calculated in "steps", need to remove all unused minutes\seconds\milliseconds
+     * @param {number} time
+     */
+    const normalizeTime = (time :number) => Math.round(time / stepTime) * stepTime;
+
+    /**
+     * FROM string date, hour start and hour end
+     * TO timestamp of start and end
+     * hourEnd 00.00 is considered 24.00 (ambiguity)
+     * hourStart 00.00 is considered 00.00 so no need to translate
+     *
+     * if value not valid, return default form values
+     *
+     * WARNING: date e start are similar but no always the same.
+     *  There could be distortions based on the fact that "date" stems from YYYY-MM-DD and "start" from a HH:mm
+     *
+     * @return {[number, number]}
+     */
+    const formToTime = (date ?:string, start ?:string , end ?:string ) :[number, number] => {
+        const newStart = translateToDate(date + ' ' + start);
+        const newEnd = translateToDate(date + ' ' + (end === '00:00' ? '24:00' : end));
+        if(!newStart || !newEnd)
+            return getScheduleFirstAvailable();
+        return [
+            newStart.getTime(),
+            newEnd.getTime()
+        ];
+    };
+
+    /**
+     * TODO check hourEnd ambiguity 00.00 / 24.00
+     *
+     * @param start
+     * @param end
+     */
+    const timeToForm = (start = 0, end = 0) :scheduleTimeReadableMap => {
+        return {
+            date: dayjs(start).format(dateFormat),    //(end) MUST be the same
+            hourStart: dayjs(start).format(timeFormat),
+            hourEnd: dayjs(end).format(timeFormat),
+        }
+    };
 
     /**
      * Readable schedule
@@ -63,10 +117,28 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
     };
 
     /**
-     * Time calculated in "steps", need to remove all unused minutes\seconds\milliseconds
-     * @param {number} time
+     * Sum the TIME of selected schedules
+     *
+     * @param {string[]} idArray
      */
-    const normalizeTime = (time :number) => Math.round(time / stepTime) * stepTime;
+    function getScheduleTotalTime(idArray :string[]) :number {
+        // no items = 0 time
+        if(idArray.length === 0){
+            return 0;
+        }
+        return scheduleList.value.reduce((total, { id, start, end }) :number => {
+            return idArray.includes(id) ? total + (end - start) : total;
+        }, 0);
+    }
+
+    /**
+     * Sum the STEPS of selected schedules
+     *
+     * @param {string[]} idArray
+     */
+    function getScheduleTotalSteps(idArray :string[]){
+        return getScheduleTotalTime(idArray) / scheduleTimeStep.value;
+    }
 
     /**
      * Get first time available with the chosen conditions:
@@ -151,44 +223,6 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
             newEnd
         ]
     }
-    
-    /**
-     * FROM string date, hour start and hour end
-     * TO timestamp of start and end
-     * hourEnd 00.00 is considered 24.00 (ambiguity)
-     * hourStart 00.00 is considered 00.00 so no need to translate
-     *
-     * if value not valid, return default form values
-     *
-     * WARNING: date e start are similar but no always the same.
-     *  There could be distortions based on the fact that "date" stems from YYYY-MM-DD and "start" from a HH:mm
-     *
-     * @return {[number, number]}
-     */
-    const formToTime = (date ?:string, start ?:string , end ?:string ) :[number, number] => {
-        const newStart = translateToDate(date + ' ' + start);
-        const newEnd = translateToDate(date + ' ' + (end === '00:00' ? '24:00' : end));
-        if(!newStart || !newEnd)
-            return getScheduleFirstAvailable();
-        return [
-            newStart.getTime(),
-            newEnd.getTime()
-        ];
-    };
-
-    /**
-     * TODO check hourEnd ambiguity 00.00 / 24.00
-     *
-     * @param start
-     * @param end
-     */
-    const timeToForm = (start = 0, end = 0) :scheduleTimeReadableMap => {
-        return {
-            date: dayjs(start).format(dateFormat),    //(end) MUST be the same
-            hourStart: dayjs(start).format(timeFormat),
-            hourEnd: dayjs(end).format(timeFormat),
-        }
-    };
 
     /**
      * Get human readable schedule data
@@ -222,7 +256,6 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
         }
         // calculate the cost
         const totalSteps = (end - start) / scheduleTimeStep.value;
-        // const cost = totalSteps < scheduleTimeCost.value.length ? scheduleTimeCost.value[totalSteps] : totalSteps * scheduleTimeCost.value[0];
         const cost = Object.prototype.hasOwnProperty.call(scheduleTimeCost.value, totalSteps) ? scheduleTimeCost.value[totalSteps] : totalSteps * scheduleTimeCost.value[0];
         // return human readable schedule info
         return {
@@ -337,24 +370,57 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
         ];
     };
 
-
+    /**
+     * TODO formula rotta
+     * Add hours to the wallet until the next discount
+     *
+     * @param {number} steps
+     */
+    function getNearestDiscountThreshold(steps = 0){
+        // all the discount step thresholds
+        const stepDiscounts = Object.keys(scheduleTimeCost.value);
+        // if no discount, return 0;
+        if(stepDiscounts.length < 2)
+            return 0;
+        // the nearest discount threshold TODO non è detto che sia il 1°, errore, calcolare
+        const nearestStepDiscount = parseInt(stepDiscounts[1]);
+        // the leftoversteps remained after the last applied discount
+        const leftoverSteps = Object.keys(scheduleTimeCost.value).reduce((total, stepString) :number => {
+            const stepInt = parseInt(stepString);
+            if(stepInt > 0 && Math.floor(total / stepInt) > 0)
+                return total % stepInt;
+            return total;
+        }, steps);
+        // missing steps to nearest discount found
+        const missingSteps = nearestStepDiscount - leftoverSteps;
+        console.log("xxxxxx", steps, nearestStepDiscount, leftoverSteps, missingSteps)
+        // We are arrived, add step
+        if(leftoverSteps === 0)
+            return 2; // TODO 2 step per fare l'ora logicamente, ma programmaticamente?
+        return missingSteps;
+    }
 
     return {
-        getSchedule,
-        getScheduleFirstAvailable,
-        getScheduleTimes,
         normalizeTime,
         timeToForm,
         formToTime,
+        getSchedule,
+        getScheduleTotalTime,
+        getScheduleTotalSteps,
+        getScheduleFirstAvailable,
+        getScheduleTimes,
         translateScheduleUI,
         getTimeframe,
         getTimeframeByHourStart,
         getScheduleTimeframe,
+        scheduleList,
+        getStepCost,
         isOpen,
         determineScheduleIsEditable,
         checkScheduleIsEditable,
         determineScheduleIsAllowed,
         checkScheduleIsAllowed,
         formTimeframeList,
+        getNearestDiscountThreshold,
     }
 };

@@ -9,17 +9,17 @@
 			type="info"
 			variant="elevated"
 			border="start"
-			:title="t('dialog-info-payment-method.title')"
+			:title="t('dialog-add-wallet.title')"
 			closable
 		>
 			<template #close>
 				<font-awesome-icon class="ml-3" :icon="['fas', 'xmark']" />
 			</template>
 
-			<p class="my-3">{{ t('dialog-info-payment-method.description') }}</p>
+			<p class="my-3">{{ t('dialog-add-wallet.description') }}</p>
 
 			<!-- TODO aggiunta + visualizzazione ed eventuale modifica -->
-			<h3>WORK IN PROGRESS: {{ selectedRecord ? 'EDIT' : 'NEW' }}</h3>
+			<h3>WORK IN PROGRESS:</h3>
 
 			<v-divider class="my-4"></v-divider>
 
@@ -35,7 +35,7 @@
 					variant="outlined"
 					@click="emit('update:modelValue', false)"
 				>
-					{{ t('dialog-info-payment-method.button-close') }}
+					{{ t('dialog-add-wallet.button-close') }}
 					<font-awesome-icon class="ml-3" :icon="['fas', 'xmark']" />
 				</v-btn>
 			</div>
@@ -45,11 +45,7 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits, toRefs, watch } from "vue";
-import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
-import useTimeHelpers from "@/resources/composables/useTimeHelpers";
-import useItemDetails from "@/resources/composables/useItemDetails";
-import type { paymentMethodMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -63,24 +59,10 @@ const emit = defineEmits([
 	'update:modelValue'
 ])
 
-const props = defineProps({
+defineProps({
 	modelValue: {
 		type: Boolean,
 		required: false
 	},
-	id: {
-		type: String,
-		required: false
-	},
 });
-
-const { state } = useStore();
-const { paymentMethods } = toRefs(state.user);
-
-const {
-	selectedRecord,
-	selectTargetRecord
-} = useItemDetails<paymentMethodMap>(paymentMethods);
-
-watch(() => props.id, (id ?:string) => selectTargetRecord(id));
 </script>
