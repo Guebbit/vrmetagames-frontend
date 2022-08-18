@@ -3,7 +3,7 @@ import { stateMainMap, stateRootMap } from "@/interfaces";
 
 export default {
 
-    initApp({ dispatch, rootGetters }: ActionContext<stateMainMap, stateRootMap>){
+    initApp({ dispatch }: ActionContext<stateMainMap, stateRootMap>){
         // first authenticate user
         dispatch('user/getCurrentUser', undefined, { root: true })
             // then download all info from server
@@ -17,6 +17,7 @@ export default {
 
     /**
      * handle server error
+     * TODO controlla dove viene richiamato e manda gli errori "veri"
      *
      * @param {Function} commit
      * @param {string} message
@@ -25,21 +26,6 @@ export default {
         commit("addToast", {
             color: 'error',
             title: 'Server Error',
-            text: message,
-            timeout: 5000
-        });
-    },
-
-    /**
-     * handle logical error
-     *
-     * @param {Function} commit
-     * @param {string} message
-     */
-    async handleLogicalError({ commit } : ActionContext<stateMainMap, stateRootMap>, message :string): Promise<void> {
-        commit("addToast", {
-            color: 'error',
-            title: 'Error',
             text: message,
             timeout: 5000
         });

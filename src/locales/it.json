@@ -45,6 +45,16 @@
     "warning": "Avvertenza",
     "error": "Errore",
     "info": "Info",
+    "date": "Giorno",
+    "start": "Inizio",
+    "end": "Fine",
+    "morning": "Mattina",
+    "afternoon": "Pomeriggio",
+    "evening": "Sera",
+    "tomorrow": "Domani",
+    "yesterday": "Ieri",
+    "add": "Aggiungi",
+    "subtract": "Sottrai",
     "schedule-details-time-count": [
       "Tempo non valido",
       "Nessun tempo",
@@ -145,7 +155,7 @@
     "schedules-advanced-settings": "Prenotazione avanzata",
     "schedules-confirm-all": "Conferma tutti gli eventi",
     "schedule-removed": "Evento del {date} dalle {hourStart} alle {hourEnd} rimosso",
-    "button-magic-solution": "Trovami una data!",
+    "button-magic-solution": "Risolvi errori!",
     "resolve-form-errors-called": "Abbiamo trovato il primo orario disponibile con la durata richiesta, hurray!",
     "resolve-form-changed": "L'orario richiesto non era disponbile, quindi abbiamo trovato la prossima data disponibile più vicina alle richieste",
     "schedule-cart-list": "Lista eventi nel carrello",
@@ -154,9 +164,9 @@
   },
   "dialog-confirm-schedule": {
     "title": "Confermare l'evento selezionato?",
-    "description": "Ti porteremo nella pagina di conferma semplificata con già tutte le informazioni pre-selezionate",
-    "button-confirm": "Vai",
-    "button-cancel": "Resta"
+    "description": "Vuoi confermare e pagare l'evento? Se selezioni \"Paga alla cassa\", l'evento verrà considerato confermato anche se non pagato.",
+    "button-confirm": "Conferma e paga",
+    "button-cancel": "Annulla"
   },
   "dialog-delete-schedule": {
     "title": "Rimuovere l'evento?",
@@ -334,14 +344,6 @@
     "not-allowed-error-400-edit-expired": "Siamo spiacenti, è troppo tardi per disdire la prenotazione, contattaci per risolvere il problema"
   },
   "schedule-form": {
-    "info": {
-      "date": "Giorno",
-      "start": "Inizio",
-      "end": "Fine",
-      "morning": "Mattina",
-      "afternoon": "Pomeriggio",
-      "evening": "Sera"
-    },
     "errors": {
       "-time-travel": "Non puoi prenotare nel passato",
       "terms-required": "Accetta le condizioni",

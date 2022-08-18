@@ -42,10 +42,11 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
     );
 
     /**
-     * Time helpers
+     * Time helpers toolbox
      */
     const {
-        translateToDate
+        translateStringToDate,
+        translateMillisecondsToReadable
     } = useTimeHelpers(dateFormat + " " + timeFormat);
 
     /**
@@ -78,8 +79,8 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
      * @return {[number, number]}
      */
     const formToTime = (date ?:string, start ?:string , end ?:string ) :[number, number] => {
-        const newStart = translateToDate(date + ' ' + start);
-        const newEnd = translateToDate(date + ' ' + (end === '00:00' ? '24:00' : end));
+        const newStart = translateStringToDate(date + ' ' + start);
+        const newEnd = translateStringToDate(date + ' ' + (end === '00:00' ? '24:00' : end));
         if(!newStart || !newEnd)
             return getScheduleFirstAvailable();
         return [
@@ -227,33 +228,15 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
     /**
      * Get human readable schedule data
      *
-     * @param start
-     * @param end
+     * @param {number} start
+     * @param {number} end
      */
     const translateScheduleUI = (start = 0, end = 0) :scheduleReadableMap => {
-        let mode = 0;
-        const { hoursOnly :hours = 0, minutes = 0 } = secondsToTime(end - start);
-        if(hours === 0 && minutes === 0){
-            mode = 1;
-        }
-        if(hours === 0 && minutes > 0){
-            mode = 2;
-        }
-        if(minutes === 0){
-            if(hours === 1){
-                mode = 3;
-            }
-            if(hours > 1){
-                mode = 4;
-            }
-        }else{
-            if(hours === 1){
-                mode = 5;
-            }
-            if(hours > 1){
-                mode = 6;
-            }
-        }
+        const {
+            mode,
+            hours,
+            minutes
+        } = translateMillisecondsToReadable(end - start);
         // calculate the cost
         const totalSteps = (end - start) / scheduleTimeStep.value;
         const cost = Object.prototype.hasOwnProperty.call(scheduleTimeCost.value, totalSteps) ? scheduleTimeCost.value[totalSteps] : totalSteps * scheduleTimeCost.value[0];
@@ -279,6 +262,28 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
             evening: '20:00',
         }
     })
+
+
+    /**
+     * Get new start > date pair by the new timeframe
+     *
+     * @param {string} timeframe
+     * @param {number} start
+     * @param {number} end
+     * @param {boolean} changeDay
+     */
+    const setTimeframe = (timeframe :string, start :number, end :number, changeDay = true) :[number, number] => {
+        const [ todayStart, todayEnd ] = getScheduleTimes(Date.now(), end - start)
+        const [ newStart, newEnd ] = changeDay ?
+            // will change date continuously
+            getScheduleTimeframe(timeframe, start, end) :
+            // will stay on the first date available in
+            getScheduleTimeframe(timeframe, todayStart, todayEnd);
+        return [
+            newStart,
+            newEnd
+        ]
+    }
 
     /**
      * Check the starting hour if it fits custom timeframes
@@ -306,6 +311,8 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
         }
         return timeframe;
     };
+
+
     /**
      * Same as above but with hourStart
      * @param {string} start
@@ -410,6 +417,7 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
         getScheduleFirstAvailable,
         getScheduleTimes,
         translateScheduleUI,
+        setTimeframe,
         getTimeframe,
         getTimeframeByHourStart,
         getScheduleTimeframe,

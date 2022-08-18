@@ -16,14 +16,14 @@
 								<v-btn
 									class="flex-grow-1 h-auto"
 									@click="emit('button:click:backward-day')"
-									:disabled="!allowPastSelection && dateIsToday"
+									:disabled="!allowPastSelection && formValuesIsToday"
 								>
 									<font-awesome-icon size="xl" :icon="['fas', 'chevron-left']" />
 								</v-btn>
 								<v-btn
 									class="flex-grow-1 h-auto"
 									:class="{
-										'bg-secondary': dateIsToday
+										'bg-secondary': formValuesIsToday
 									}"
 									@click="emit('button:click:now-day')"
 								>
@@ -43,12 +43,11 @@
 								:modelValue="formatInputTypeDate(modelValueC.date, 'YYYY-MM-DD', dateFormat)"
 								@update:modelValue="value => modelValueC.date = formatInputTypeDate(value, dateFormat, 'YYYY-MM-DD')"
 								type="date"
-								:label="t('schedule-form.info.date')"
-								:errors="errors.date ? errors.date : errors[''] ? errors[''] : false"
+								:label="t('generic.date')"
+								:error="errors.date ? errors.date : errors[''] ? errors[''] : false"
 								:error-messages="errors.date ? t('schedule-form.errors.date-' + errors.date) : errors[''] ? t('schedule-form.errors.-' + errors['']) : ''"
 								class="px-3"
 							/>
-							<!-- TODO purtroppo .test() mi restituisce key vuota, da fare ricerche -->
 						</v-col>
 						<v-col cols="12" v-show="!hideFormButtons">
 							<v-btn-toggle
@@ -63,34 +62,32 @@
 									:value="timeframe"
 									@click="setNewTimeframe(timeframe)"
 								>
-									{{ t('schedule-form.info.' + timeframe) }}
+									{{ t('generic.' + timeframe) }}
 								</v-btn>
 							</v-btn-toggle>
 						</v-col>
 
 						<!-- hours selection -->
                         <v-col cols="6" v-show="!hideFormInputs">
-                            <!-- TODO split in hours && minutes dove minuti è una SELECT 00 o 30? -->
                             <v-text-field
                                 v-model="modelValueC.hourStart"
 								@update:modelValue="value => modelValueC.hourStart = formatInputTypeTime(value)"
                                 type="time"
-                                :label="t('schedule-form.info.start')"
-                                :step="timeStep"
-								:errors="errors.hourStart ? errors.hourStart : false"
+                                :label="t('generic.start')"
+                                :step="timeStep / 1000"
+								:error="errors.hourStart ? errors.hourStart : false"
 								:error-messages="errors.hourStart ? t('schedule-form.errors.hourStart-' + errors.hourStart) : ''"
 								class="pl-3"
                             />
                         </v-col>
                         <v-col cols="6" v-show="!hideFormInputs">
-                            <!-- TODO split in hours && minutes dove minuti è una SELECT 00 o 30? -->
                             <v-text-field
 								v-model="modelValueC.hourEnd"
 								@update:modelValue="value => modelValueC.hourEnd = formatInputTypeTime(value)"
                                 type="time"
-                                :label="t('schedule-form.info.end')"
-                                :step="timeStep"
-								:errors="errors.hourEnd ? errors.hourEnd : false"
+                                :label="t('generic.end')"
+                                :step="timeStep / 1000"
+								:error="errors.hourEnd ? errors.hourEnd : false"
 								:error-messages="errors.hourEnd ? t('schedule-form.errors.hourEnd-' + errors.hourEnd) : ''"
 								class="pr-3"
 							/>
@@ -106,35 +103,36 @@
 								<v-btn
 									v-for="hour in 3"
 									:key="'hour-' + hour"
-									:value="hour * 2 * timeStep * 1000"
-									@click="setDuration(hour * 2 * timeStep * 1000)"
+									:value="hour * timeStep * durationStep"
+									@click="setDuration(hour * timeStep * durationStep)"
 								>
 									{{ hour }}
 									<sub><small>h</small></sub>
 								</v-btn>
 								<v-btn
 									:class="{
-										'v-btn--selected bg-secondary': formValuesDuration >= 8 * timeStep * 1000
+										'v-btn--selected bg-secondary': formValuesDuration >= timeStep * durationStep * 4
 									}"
-									@click="setDuration(8 * timeStep * 1000)"
+									@click="setDuration(timeStep * durationStep * 4)"
 								>
 									4+
 									<sub><small>h</small></sub>
 								</v-btn>
 							</v-btn-toggle>
 						</v-col>
+						<v-col cols="12" v-show="!hideTermsButton">
+							<v-checkbox
+								v-model="modelValueC.terms"
+								class="text-secondary px-3"
+								:error="errors.terms ? errors.terms : false"
+								:error-messages="errors.terms ? t('schedule-form.errors.terms-' + errors.terms) : ''"
+							>
+								<template #label>
+									<span v-html="t('play-page.select-event-form-terms')"></span>
+								</template>
+							</v-checkbox>
+						</v-col>
                     </v-row>
-                    <v-checkbox
-						v-show="!hideTermsButton"
-						v-model="modelValueC.terms"
-                        class="text-secondary px-3"
-						:errors="errors.terms ? errors.terms : false"
-						:error-messages="errors.terms ? t('schedule-form.errors.terms-' + errors.terms) : ''"
-                    >
-                        <template #label>
-                            <span v-html="t('play-page.select-event-form-terms')"></span>
-                        </template>
-                    </v-checkbox>
                 </v-card-text>
 				<v-btn
                     class="card-bottom-action vuetify-button-icon"
@@ -223,15 +221,18 @@ const props = defineProps({
 		type: Number,
 		default: () => 1800000
 	},
+	durationStep: {
+		type: Number,
+		default: () => 1
+	},
 });
 
 /**
  * Time helpers toolbox
  */
 const {
-	translateToDate,
+	translateStringToDate,
 	formatInputTypeDate,
-	formatInputTypeTime
 } = useTimeHelpers(props.dateFormat + ' ' + props.timeFormat);
 
 
@@ -241,8 +242,8 @@ const {
 const {
 	timeToForm,
 	formToTime,
+	setTimeframe,
 	getTimeframe,
-	getScheduleTimeframe,
 	getScheduleTimes
 } = useScheduleHelpers(props.dateFormat, props.timeFormat);
 
@@ -254,67 +255,9 @@ const modelValueC = computed({
 	set: (value) => emit('update:modelValue', value),
 });
 
-
-/**
- * [ start, end ] = formToTime();
- */
-const formStartEndTimestamps = computed<[number, number]>(() => formToTime(modelValueC.value.date, modelValueC.value.hourStart, modelValueC.value.hourEnd))
-
-/**
- * Duration of form (end - start)
- */
-const formValuesDuration = computed(() => formStartEndTimestamps.value[1] - formStartEndTimestamps.value[0]);
-
-/**
- * Timeframe of form
- */
-const formValuesTimeframe = computed(() => getTimeframe(formStartEndTimestamps.value[0]));
-
-/**
- * set duration (fixed start, changing end to meet required duration)
- * @param {number} time
- */
-const setDuration = (time :number) => {
-	const [ newStart, newEnd ] = getScheduleTimes(formStartEndTimestamps.value[0], time);
-	modelValueC.value = {
-		...modelValueC.value,
-		...timeToForm(newStart, newEnd)
-	};
-};
-
-const testChangeDay = true;
-
-/**
- * TODO beta
- * set duration (fixed start, changing end to meet required duration)
- * @param {string} timeframe
- */
-const setNewTimeframe = (timeframe :string) => {
-	if(!modelValueC.value.date || !modelValueC.value.hourEnd)
-		return;
-	const [ todayStart, todayEnd ] = getScheduleTimes(Date.now(), formValuesDuration.value)
-	const [ newStart, newEnd ] = testChangeDay ?
-		// will change date continuously
-		getScheduleTimeframe(timeframe, formStartEndTimestamps.value[0], formStartEndTimestamps.value[1]) :
-		// will stay on the first date available in
-		getScheduleTimeframe(timeframe, todayStart, todayEnd);
-	const newForm = timeToForm(newStart, newEnd);
-	if(newForm.date !== modelValueC.value.date)
-		emit('message:emit', t('play-page.resolve-form-errors-called'))
-	modelValueC.value = {
-		...modelValueC.value,
-		...newForm
-	};
-};
-
-
 /**
  * UI
  */
-// is selected date today?
-const dateIsToday = computed(() =>
-	new Date().setHours(0, 0, 0, 0) === (translateToDate(modelValueC.value?.date, props.dateFormat) || new Date()).setHours(0, 0, 0, 0)
-)
 // default-provider
 const eventFormUIRules = {
 	global: {
@@ -339,6 +282,40 @@ const eventFormUIRules = {
 	VCheckbox: {
 		hideDetails: 'auto'
 	}
+};
+
+/**
+ * TODO Tutti i prossimi si trovano al momento dentro useFormDataSchedule
+ */
+/**
+ * [SHORTCUTS]
+ */
+const formStartEndTimestamps = computed<[number, number]>(() => formToTime(modelValueC.value.date, modelValueC.value.hourStart, modelValueC.value.hourEnd))
+const formValuesDuration = computed(() => formStartEndTimestamps.value[1] - formStartEndTimestamps.value[0]);
+const formValuesTimeframe = computed(() => getTimeframe(formStartEndTimestamps.value[0]));
+const setDuration = (time :number) => {
+	const [ newStart, newEnd ] = getScheduleTimes(formStartEndTimestamps.value[0], time);
+	modelValueC.value = {
+		...modelValueC.value,
+		...timeToForm(newStart, newEnd)
+	};
+};
+const formValuesIsToday = computed(() =>
+	new Date().setHours(0, 0, 0, 0) === (translateStringToDate(modelValueC.value?.date, props.dateFormat) || new Date()).setHours(0, 0, 0, 0)
+)
+const testChangeDay = true;
+const setNewTimeframe = (timeframe :string) => {
+	if(!modelValueC.value.date || !modelValueC.value.hourEnd)
+		return;
+	const [ start, end ] = formToTime(modelValueC.value.date, modelValueC.value.hourStart, modelValueC.value.hourEnd)
+	const [ newStart, newEnd ] = setTimeframe(timeframe, start, end, testChangeDay);
+	const newForm = timeToForm(newStart, newEnd);
+	if(newForm.date !== modelValueC.value.date)
+		emit('message:emit', t('play-page.resolve-form-errors-called'))
+	modelValueC.value = {
+		...modelValueC.value,
+		...newForm
+	};
 };
 </script>
 

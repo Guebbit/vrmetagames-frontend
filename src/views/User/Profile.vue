@@ -153,7 +153,7 @@
 											:placeholder="t('user-data-form.info.username-typing')"
 											:disabled="!formToggleEdit"
 											:loading="formAsyncUsernameLoading"
-											:errors="formToggleUIErrors ? formErrors.username || !formAsyncUsernameValid : false"
+											:error="formToggleUIErrors ? formErrors.username || !formAsyncUsernameValid : false"
 											:error-messages="
 												formToggleUIErrors ?
 													formErrors.username ?
@@ -176,7 +176,7 @@
 											autocomplete="email"
 											:disabled="!formToggleEdit"
 											:loading="formAsyncEmailLoading"
-											:errors="formToggleUIErrors ? formErrors.email || !formAsyncEmailValid : false"
+											:error="formToggleUIErrors ? formErrors.email || !formAsyncEmailValid : false"
 											:error-messages="
 												formToggleUIErrors ?
 													formErrors.email ?
@@ -213,7 +213,7 @@
 													:label="t('user-data-form.values.password')"
 													:type="formToggleShowPassword ? 'text' : 'password'"
 													:disabled="!formToggleEdit"
-													:errors="formToggleUIErrors ? formErrors.password : false"
+													:error="formToggleUIErrors ? formErrors.password : false"
 													:error-messages="formToggleUIErrors && formErrors.password ? t('form-password-strong.' + formErrors.password) : ''"
 												>
 													<template v-slot:append-inner>
@@ -229,7 +229,7 @@
 													:label="t('user-data-form.values.passwordConfirm')"
 													:type="formToggleShowPassword ? 'text' : 'password'"
 													:disabled="!formToggleEdit"
-													:errors="formToggleUIErrors ? formErrors.passwordConfirm : false"
+													:error="formToggleUIErrors ? formErrors.passwordConfirm : false"
 													:error-messages="formToggleUIErrors && formErrors.passwordConfirm ? t('user-data-form.errors.passwordConfirm-' + formErrors.passwordConfirm) : ''"
 												>
 													<template v-slot:append-inner>
@@ -273,7 +273,7 @@
 											v-model="formValues.firstname"
 											:label="t('user-data-form.values.firstname')"
 											:disabled="!formToggleEdit"
-											:errors="formToggleUIErrors ? formErrors.firstname : false"
+											:error="formToggleUIErrors ? formErrors.firstname : false"
 											:error-messages="formToggleUIErrors && formErrors.firstname ? t('user-data-form.errors.firstname-' + formErrors.firstname) : ''"
 										>
 											<template v-slot:prepend>
@@ -287,7 +287,7 @@
 											v-model="formValues.lastname"
 											:label="t('user-data-form.values.lastname')"
 											:disabled="!formToggleEdit"
-											:errors="formToggleUIErrors ? formErrors.lastname : false"
+											:error="formToggleUIErrors ? formErrors.lastname : false"
 											:error-messages="formToggleUIErrors && formErrors.lastname ? t('user-data-form.errors.lastname-' + formErrors.lastname) : ''"
 										>
 											<template v-slot:prepend>
@@ -301,7 +301,7 @@
 											:label="t('user-data-form.values.phone')"
 											autocomplete="tel"
 											:disabled="!formToggleEdit"
-											:errors="formToggleUIErrors ? formErrors.phone : false"
+											:error="formToggleUIErrors ? formErrors.phone : false"
 											:error-messages="formToggleUIErrors && formErrors.phone ? t('user-data-form.errors.phone-' + formErrors.phone) : ''"
 										>
 											<template v-slot:prepend>
@@ -316,7 +316,7 @@
 											type="date"
 											:disabled="!formToggleEdit"
 											:label="t('user-data-form.values.birthday')"
-											:errors="formToggleUIErrors ? formErrors.birthday : false"
+											:error="formToggleUIErrors ? formErrors.birthday : false"
 											:error-messages="formToggleUIErrors && formErrors.birthday ? t('user-data-form.errors.birthday-' + formErrors.birthday) : ''"
 										>
 											<template v-slot:prepend>
@@ -328,7 +328,7 @@
 										<v-checkbox
 											v-model="formValues.terms"
 											class="text-secondary"
-											:errors="formToggleUIErrors ? formErrors.terms : false"
+											:error="formToggleUIErrors ? formErrors.terms : false"
 											:error-messages="formToggleUIErrors && formErrors.terms ? t('user-data-form.errors.terms-' + formErrors.terms) : ''"
 										>
 											<template #label>
@@ -397,7 +397,7 @@
 									<b>{{ item.total }}{{ item.currency }}</b>
 								</p>
 
-								<p class="text-disabled">{{ formatUIDate(item.time) }}</p>
+								<p class="text-disabled">{{ translateTimestampToString(item.time) }}</p>
                                 <font-awesome-icon class="px-5" :icon="['fas', 'arrow-right']" />
                             </div>
                         </v-card>
@@ -542,7 +542,7 @@ const props = defineProps({
  */
 
 const {
-	formatUIDate,
+	translateTimestampToString,
 } = useTimeHelpers(uiFormatDate + ' ' + uiFormatTime);
 
 const {
@@ -660,7 +660,7 @@ const formReset = () => {
 		passwordConfirm: '',
 		email: selectedUser.value?.email,
 		phone: selectedUser.value?.phone,
-		birthday: formatUIDate(selectedUser.value?.birthday, 'YYYY-MM-DD'),
+		birthday: translateTimestampToString(selectedUser.value?.birthday, 'YYYY-MM-DD'),
 		terms: false
 	}
 	formValidate();

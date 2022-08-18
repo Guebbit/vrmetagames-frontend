@@ -1,28 +1,34 @@
 // https://gist.github.com/soerenmartius/ad62ad59b991c99983a4e495bf6acb04
 import type { ComputedRef, Ref, WritableComputedRef } from "vue";
+import type { stateEcommerceMap } from './state/ecommerce';
+import type { stateMainMap } from './state/main';
+import type { stateUserMap } from './state/user';
 
 export {
-    // ecommerce
+    sendScheduleRequestMap,
     scheduleInputMap,
     scheduleMap,
     userMap,
     stationMap,
-    gameMap,
-    stateEcommerceMap,
+    gameMap
+} from './state/ecommerce';
 
-    //main
+export {
     toastMap,
-    BusinessHoursMap,
-    stateMainMap,
+    BusinessHoursMap
+} from './state/main';
 
-    // user
+export {
     paymentMethodMap,
     paymentMap,
-    currentUserMap,
-    stateUserMap,
-} from './state';
+    currentUserMap
+} from './state/user';
 
-import type { stateMainMap, stateUserMap, stateEcommerceMap} from './state';
+export {
+    stateEcommerceMap,
+    stateMainMap,
+    stateUserMap,
+};
 
 export interface stateRootMap {
     main: stateMainMap,

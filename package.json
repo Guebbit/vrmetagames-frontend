@@ -1,6 +1,6 @@
 {
   "name": "vrmetagames",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "private": true,
   "scripts": {
     "serve": "vite preview",
@@ -28,6 +28,7 @@
     "lodash": "^4.17.21",
     "roboto-fontface": "*",
     "swiper": "^8.3.1",
+    "v-calendar": "^3.0.0-alpha.8",
     "vee-validate": "^4.6.2",
     "vue": "^3.2.37",
     "vue-i18n": "^9.1.9",

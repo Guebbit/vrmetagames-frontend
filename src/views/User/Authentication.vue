@@ -11,7 +11,7 @@
 						hero
 					>
 						<template #default>
-							<div v-show="mode === 'registration'" class="authentication-info">
+							<div v-show="mode === 'registration'" class="pa-10">
 								<p class="text-h5">
 									{{ t('authentication-page.signin-explanation') }}
 								</p>
@@ -32,7 +32,7 @@
 									</v-btn>
 								</div>
 							</div>
-							<div v-show="mode === 'login'" class="authentication-info">
+							<div v-show="mode === 'login'" class="pa-10">
 								<p class="text-h5">
 									{{ t('authentication-page.signup-explanation') }}
 								</p>
@@ -53,7 +53,7 @@
 									</v-btn>
 								</div>
 							</div>
-							<div v-show="mode === 'password-retrieve'" class="authentication-info">
+							<div v-show="mode === 'password-retrieve'" class="pa-10">
 								<div class="text-center my-12">
 									<BusinessContactsPanel light />
 								</div>
@@ -123,7 +123,7 @@
 												:placeholder="t('authentication-form.info.username-typing')"
 												:loading="formAsyncUsernameLoading"
 
-												:errors="formToggleUIErrors ? formErrors.username || !formAsyncUsernameValid : false"
+												:error="formToggleUIErrors ? formErrors.username || !formAsyncUsernameValid : false"
 												:error-messages="
 												formToggleUIErrors ?
 													formErrors.username ?
@@ -140,7 +140,7 @@
 												v-model="formValues.password"
 												:label="t('authentication-form.values.password')"
 												:type="formToggleShowPassword ? 'text' : 'password'"
-												:errors="formToggleUIErrors ? formErrors.password : false"
+												:error="formToggleUIErrors ? formErrors.password : false"
 												:error-messages="formToggleUIErrors && formErrors.password ? t('form-password-strong.' + formErrors.password) : ''"
 											>
 												<template v-slot:append-inner>
@@ -157,7 +157,7 @@
 												v-model="formValues.passwordConfirm"
 												:label="t('authentication-form.values.passwordConfirm')"
 												:type="formToggleShowPassword ? 'text' : 'password'"
-												:errors="formToggleUIErrors ? formErrors.passwordConfirm : false"
+												:error="formToggleUIErrors ? formErrors.passwordConfirm : false"
 												:error-messages="formToggleUIErrors && formErrors.passwordConfirm ? t('authentication-form.errors.passwordConfirm-' + formErrors.passwordConfirm) : ''"
 											>
 												<template v-slot:append-inner>
@@ -175,7 +175,7 @@
 												:label="t('authentication-form.values.email')"
 												autocomplete="email"
 												:loading="formAsyncEmailLoading"
-												:errors="formToggleUIErrors ? formErrors.email || !formAsyncEmailValid : false"
+												:error="formToggleUIErrors ? formErrors.email || !formAsyncEmailValid : false"
 												:error-messages="
 												formToggleUIErrors ?
 													formErrors.email ?
@@ -192,7 +192,7 @@
 											<v-text-field
 												v-model="formValues.firstname"
 												:label="t('authentication-form.values.firstname')"
-												:errors="formToggleUIErrors ? formErrors.firstname : false"
+												:error="formToggleUIErrors ? formErrors.firstname : false"
 												:error-messages="formToggleUIErrors && formErrors.firstname ? t('authentication-form.errors.firstname-' + formErrors.firstname) : ''"
 											/>
 										</v-col>
@@ -201,7 +201,7 @@
 											<v-text-field
 												v-model="formValues.lastname"
 												:label="t('authentication-form.values.lastname')"
-												:errors="formToggleUIErrors ? formErrors.lastname : false"
+												:error="formToggleUIErrors ? formErrors.lastname : false"
 												:error-messages="formToggleUIErrors && formErrors.lastname ? t('authentication-form.errors.lastname-' + formErrors.lastname) : ''"
 											/>
 										</v-col>
@@ -210,7 +210,7 @@
 												v-model="formValues.phone"
 												:label="t('authentication-form.values.phone')"
 												autocomplete="tel"
-												:errors="formToggleUIErrors ? formErrors.phone : false"
+												:error="formToggleUIErrors ? formErrors.phone : false"
 												:error-messages="formToggleUIErrors && formErrors.phone ? t('authentication-form.errors.phone-' + formErrors.phone) : ''"
 											/>
 										</v-col>
@@ -220,7 +220,7 @@
 												v-model="formValues.birthday"
 												type="date"
 												:label="t('authentication-form.values.birthday')"
-												:errors="formToggleUIErrors ? formErrors.birthday : false"
+												:error="formToggleUIErrors ? formErrors.birthday : false"
 												:error-messages="formToggleUIErrors && formErrors.birthday ? t('authentication-form.errors.birthday-' + formErrors.birthday) : ''"
 											/>
 										</v-col>
@@ -228,7 +228,7 @@
 											<v-checkbox
 												v-model="formValues.terms"
 												class="text-secondary"
-												:errors="formToggleUIErrors ? formErrors.terms : false"
+												:error="formToggleUIErrors ? formErrors.terms : false"
 												:error-messages="formToggleUIErrors && formErrors.terms ? t('authentication-form.errors.terms-' + formErrors.terms) : ''"
 											>
 												<template #label>
@@ -296,7 +296,7 @@
 												:label="t('authentication-form.values.authentication')"
 												:placeholder="t('authentication-form.info.authentication-typing')"
 
-												:errors="formToggleUIErrors ? formErrors.authentication : false"
+												:error="formToggleUIErrors ? formErrors.authentication : false"
 												:error-messages="formToggleUIErrors && formErrors.authentication ? t('authentication-form.errors.authentication-' + formErrors.authentication) : ''"
 											/>
 										</v-col>
@@ -306,7 +306,7 @@
 												v-model="formValues.password"
 												:label="t('authentication-form.values.password')"
 												:type="formToggleShowPassword ? 'text' : 'password'"
-												:errors="formToggleUIErrors ? formErrors.password : false"
+												:error="formToggleUIErrors ? formErrors.password : false"
 												:error-messages="formToggleUIErrors && formErrors.password ? t('authentication-form.errors.password-' + formErrors.password) : ''"
 											>
 												<template v-slot:append-inner>
@@ -544,10 +544,6 @@ const authenticationFormUIRules = {
 @import 'src/assets/scss/main/global';
 
 #authentication-page{
-	.authentication-info{
-		padding: 40px;
-	}
-
 	.authentication-section{
 		position: relative;
 		height: 100%;

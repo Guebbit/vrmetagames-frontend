@@ -14,7 +14,7 @@
                     class="text-medium-emphasis"
                 >
                     {{ t('play-page.schedule-details-last-visit') }}:
-                    <span class="ml-3">{{ formatUIDate(userInfo.lastVisit) }}</span>
+                    <span class="ml-3">{{ translateTimestampToString(userInfo.lastVisit) }}</span>
                 </small>
             </div>
         </div>
@@ -62,7 +62,7 @@ const props = defineProps({
     },
 });
 
-const { formatUIDate } = useTimeHelpers(uiFormatDate + ' ' + uiFormatTime);
+const { translateTimestampToString } = useTimeHelpers(uiFormatDate + ' ' + uiFormatTime);
 
 const { userInfo: currentUserInfo } = toRefs(state.user);
 const { users } = toRefs(state.ecommerce);

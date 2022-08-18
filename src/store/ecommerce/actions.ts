@@ -3,7 +3,7 @@ import { shuffle } from "lodash";
 import { getUUID } from "guebbit-javascript-library";
 
 import type { ActionContext } from "vuex";
-import type { stateEcommerceMap, stateRootMap, scheduleMap } from "@/interfaces";
+import type { stateEcommerceMap, stateRootMap, scheduleMap, sendScheduleRequestMap } from "@/interfaces";
 
 const mockServerSchedule = [
     {
@@ -636,13 +636,12 @@ export default {
         if(!isAdmin && scheduleData.userId !== id){
             return Promise.reject(['error-403']);
         }
-
         // if schedule is not allowed in that timeframe
         const errorArray = determineScheduleIsAllowed(scheduleData.start, scheduleData.end, scheduleData.id, scheduleData.resourceId);
         if(errorArray.length > 0){
             return Promise.reject(errorArray);
         }
-
+        // determine ID if not present
         const scheduleId = scheduleData.id || getUUID();
         // Events without userId are admin inserted events
         // if(!scheduleData.userId){}
@@ -656,8 +655,11 @@ export default {
             unsaved: false,
             paid: false
         });
-
-        return Promise.resolve(scheduleId);
+        // server
+        return Promise.resolve(scheduleId)
+            .then()
+            // REVERT
+            .catch(() => commit("removeSchedule", scheduleId));
     },
 
     /**
@@ -706,7 +708,6 @@ export default {
      * @param {string} id
      */
     async resetSchedule({ dispatch, commit, getters: { getItem } }: ActionContext<stateEcommerceMap, stateRootMap>, id: string) :Promise<void> {
-        // const currentEvent = getItem('scheduleRecords', id);
         const archivedEvent = getItem('scheduleArchive', id);
         if(archivedEvent){
             commit("setSchedule", {
@@ -717,37 +718,61 @@ export default {
             return Promise.resolve();
         }
         // if not on archive, download from server
-        // force download
-        commit("main/setLastUpdate", ['scheduleRecords', id], { root: true });
+        // force download by resetting the TTW and requesting the new schedule data
+        commit("main/resetLastUpdate", ['scheduleRecords', id], { root: true });
         return dispatch('getSchedules', [id]);
     },
 
     /**
-     * Send OFFLINE schedules to server and save in central store
+     * Send schedules to server and save in central store, eventually pay
+     * OFFLINE => ONLINE
+     * ONLINE => CONFIRMED / PAID
+     *
      *
      * @param {Function} dispatch
      * @param {Function} commit
      * @param {Object} scheduleRecords
-     * @param {string[]} scheduleIdList
+     * @param {number} scheduleTimeStep
+     * @param {string} currentUserId
+     * @param {Object[]} request
      */
     // TODO "confirmed: true" quando fare i pagamenti?
     //  Il server paga in automatico se hai ore nel wallet e restituisce la lista di ID pagati + nuovo wallet
     //  Restituisce lista "da pagare"\"in attesa di conferma"?
-    async sendSchedules({ dispatch, commit, state: { scheduleRecords } }: ActionContext<stateEcommerceMap, stateRootMap>, scheduleIdList: string[]): Promise<void> {
+    async sendSchedules({ dispatch, commit, state: { scheduleRecords, scheduleTimeStep }, rootState: { user: { userInfo: { id: currentUserId } } } }: ActionContext<stateEcommerceMap, stateRootMap>, request: sendScheduleRequestMap[] = []): Promise<void> {
         const oldScheduleArray :scheduleMap[] = [];
-        for(let i = scheduleIdList.length; i--; ){
-            // if it doesn't exist it's an error OR if it exists and it's already online (should never happen), ignore it
-            if(!Object.prototype.hasOwnProperty.call(scheduleRecords, scheduleIdList[i]) || scheduleRecords[scheduleIdList[i]].online){
-                continue;
+        const walletRevertArray :Array<[string, number]> = [];
+        for(let i = request.length; i--; ){
+            const { id, confirm = false, pay = false } = request[i]; // useWallet = false
+            let isPaid = false;
+            // if it doesn't exist it's an error (should never happen)
+            if(!Object.prototype.hasOwnProperty.call(scheduleRecords, id))
+                Promise.reject(['error-404']);
+            // save old schedule
+            oldScheduleArray.push(scheduleRecords[id]);
+            // pay the event
+            if(pay){
+                const { userId, start, end } = scheduleRecords[id];
+                // step amount refunded
+                const amount = (end - start) / scheduleTimeStep;
+                walletRevertArray.push([userId, amount])
+                // if it's current user
+                if(userId === currentUserId)
+                    commit("user/subtractWallet", amount, { root: true });
+                // or generic user (admin only)
+                commit("subtractWallet", [ userId, amount ]);
+                isPaid = true;
             }
-            oldScheduleArray.push(scheduleRecords[scheduleIdList[i]]);
+            // local edit schedule
             commit("setSchedule", {
                 ...oldScheduleArray[oldScheduleArray.length - 1],
                 unsaved: false,
-                online: true
+                online: true,
+                confirmed: confirm,
+                paid: isPaid
             });
         }
-        return Promise.resolve(oldScheduleArray)
+        return Promise.resolve()
             .then(() => {
                 // TODO Possible logical error and revert needed
                 // TODO controlla se ha senso mettere catch per primo con
@@ -757,9 +782,18 @@ export default {
             })
             .catch(() => {
                 // REVERT in case of error
-                for(let i = oldScheduleArray.length; i--; ){
+                for(let i = oldScheduleArray.length; i--; )
                     commit("setSchedule", oldScheduleArray[i]);
+                // REVERT wallet data in case of error
+                for(let i = walletRevertArray.length; i--; ){
+                    const [ userId, amount ] = walletRevertArray[i];
+                    // if it's current user
+                    if(userId === currentUserId)
+                        commit("user/addWallet", amount, { root: true });
+                    // or generic user (admin only)
+                    commit("addWallet", [ userId, amount ]);
                 }
+                // default handle
                 return dispatch("main/handleServerError", "sendSchedules ERROR", { root: true });
             });
     },

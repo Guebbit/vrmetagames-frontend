@@ -43,7 +43,7 @@
 							<font-awesome-icon :icon="['fas', 'clock']" />
 						</v-list-item-avatar>
 						<v-list-item-title>
-							{{ formatUIDate(selectedRecord?.time) }}
+							{{ translateTimestampToString(selectedRecord?.time) }}
 						</v-list-item-title>
 					</v-list-item>
 				</v-list>
@@ -123,7 +123,7 @@ const { state } = useStore();
 const { paymentRecords } = toRefs(state.user);
 
 const {
-	formatUIDate,
+	translateTimestampToString,
 } = useTimeHelpers(props.dateFormat + ' ' + props.timeFormat);
 
 const {

@@ -64,7 +64,7 @@
 									color="primary"
 									@click="clickFillWalletUntilDiscount"
 								>
-									2 ore e 30 minuti
+									{{ fillWalletUntilDiscountLabel }}
 									<font-awesome-icon :icon="['fas', 'shopping-cart']" />
 								</v-btn>
 							</v-list-item>
@@ -179,7 +179,7 @@
                             <hr class="mt-2 mb-2">
                             <div class="d-flex justify-space-between align-center">
                                 <span class="label">{{ t('checkout-page.total-cost') }}</span>
-                                <span class="info">{{ scheduleCartTotalCost + stepAddedCost }} €</span>
+                                <span class="info">{{ scheduleCartTotalCost }} €</span>
                             </div>
                             <hr class="mt-2 mb-2">
                             <div class="d-flex justify-space-between align-center">
@@ -222,6 +222,8 @@ import UserInfoCard from "@/components/basics/cards/UserInfoCard.vue";
 import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsPanel.vue";
 import Footer from "@/components/generic/Footer.vue";
 import useScheduleHelpers, { type scheduleReadableMap } from "@/resources/composables/useScheduleHelpers";
+import useScheduleCalculations from "@/resources/composables/useScheduleCalculations";
+import useTimeHelpers from "@/resources/composables/useTimeHelpers";
 import { uiFormatDate, uiFormatTime } from "@/resources/constants";
 import type { scheduleMap } from "@/interfaces";
 
@@ -242,7 +244,7 @@ import {
     faPhone,
 	faShoppingCart,
 } from "@fortawesome/free-solid-svg-icons";
-import useCartCalculations from "@/resources/composables/useCartCalculations";
+
 
 library.add(
     faCalendar,
@@ -269,8 +271,14 @@ const { userInfo } = toRefs(state.user);
  * Schedule managing toolbox
  */
 const {
-	translateScheduleUI
+	getStepCost,
+	translateScheduleUI,
+	getScheduleTotalSteps
 } = useScheduleHelpers(uiFormatDate, uiFormatTime);
+
+const {
+	translateMillisecondsToReadable
+} = useTimeHelpers();
 
 /**
  * List of schedules
@@ -318,29 +326,45 @@ const toggleSchedule = (id :string) => {
 };
 
 /**
+ * Sum the STEPS of selected schedules (NO DISCOUNT, calculated later)
+ */
+const scheduleCartTotalSteps = computed(() =>
+	getScheduleTotalSteps(activeScheduleIdArray.value)
+);
+
+/**
+ * Added steps
+ *
+ * warning: double step added
+ */
+const stepAddedStepTemporaryName = 2;
+const stepAdded = ref(0);
+// const stepAddedTime = computed(() => stepAdded.value * stepAddedStepTemporaryName * scheduleTimeStep.value);
+const stepAddedCost = computed(() => stepAdded.value * stepAddedStepTemporaryName * scheduleTimeCost.value[0] / 100);
+const stepAddedCostDiscounted = computed(() => getStepCost(stepAdded.value * stepAddedStepTemporaryName) / 100);
+
+/**
  * Schedule toolbox and various checkout calculations
- * @param {string[]} id of schedule's to check
+ * @param {number} REF of steps to pay
  */
 const {
 	getNearestDiscountThreshold,
+	scheduleTimeStep,
 	scheduleTimeCost,
-	stepAdded,
-	stepAddedCost,
-	stepAddedCostDiscounted,
 	scheduleCartTotalTime,
-	scheduleCartTotalSteps,
 	scheduleCartTotalCost,
 	scheduleCartTotalCostDiscounted,
 	userInfoWalletTime,
 	userInfoWalletTimeRemaining,
 	scheduleCartFinalCost
-} = useCartCalculations(activeScheduleIdArray)
+} = useScheduleCalculations(computed(() => scheduleCartTotalSteps.value + stepAdded.value * stepAddedStepTemporaryName))
 
 /**
  * Add hours to the wallet until the next discount
  */
+const nearestDiscountThreshold = computed(() => getNearestDiscountThreshold(scheduleCartTotalSteps.value + stepAdded.value * 2));
 function clickFillWalletUntilDiscount(){
-	stepAdded.value += getNearestDiscountThreshold(scheduleCartTotalSteps.value + stepAdded.value * 2);
+	stepAdded.value += nearestDiscountThreshold.value;
 }
 
 /**
@@ -376,6 +400,21 @@ const scheduleCartDuration = computed<string>(() => {
         hours,
         minutes
     });
+});
+
+/**
+ * label of schedule duration
+ */
+const fillWalletUntilDiscountLabel = computed<string>(() => {
+	const {
+		mode,
+		hours,
+		minutes
+	} = translateMillisecondsToReadable(nearestDiscountThreshold.value * scheduleTimeStep.value);
+	return t('generic.add') + ' ' + t('generic.schedule-details-time-count.' + mode, {
+		hours,
+		minutes
+	});
 });
 </script>
 

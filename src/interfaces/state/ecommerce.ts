@@ -1,4 +1,28 @@
 import type { currentUserMap } from "@/interfaces";
+
+
+/**
+ *
+ */
+export interface sendScheduleRequestMap {
+    id: string,             // id of schedule
+    confirm?: boolean       // set schedule to confirmed
+    pay?: boolean           // auto-pay (fast mode)
+    useWallet?: boolean     // use wallet while auto-pay
+}
+
+
+/**
+ *
+ */
+export interface scheduleInputMap {
+    id?: string
+    resourceId?: string[]
+    start: number
+    end: number
+    allDay?: boolean
+}
+
 /**
  * SCHEDULE TYPES:
  *
@@ -15,14 +39,6 @@ import type { currentUserMap } from "@/interfaces";
  *  - false: normal situation
  *  - true: a previously ONLINE schedule that has been removed (not from database)
  */
-export interface scheduleInputMap {
-    id?: string
-    resourceId?: string[]
-    start: number
-    end: number
-    allDay?: boolean
-}
-
 export interface scheduleMap extends scheduleInputMap {
     id :string
     userId :string
@@ -35,11 +51,18 @@ export interface scheduleMap extends scheduleInputMap {
     expired: boolean    // WARNING: FE only (checks through date, offline & online)
 }
 
+
+/**
+ *
+ */
 export interface userMap extends currentUserMap {
     // color assigned to user in current session (fullcalendar event color)
     color?: string
 }
 
+/**
+ *
+ */
 export interface stationMap {
     id: string
     type: string
@@ -48,6 +71,9 @@ export interface stationMap {
     capacity :number
 }
 
+/**
+ *
+ */
 export interface gameMap {
     id :string
     title :string
@@ -71,7 +97,6 @@ export interface gameMap {
 
 
 /**
- *
  * scheduleRecords      - schedules (fullcalendar, user bookings)
  * users                - users
  * stations             - stations

@@ -1,22 +1,39 @@
+import { secondsToTime } from "guebbit-javascript-library";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { scheduleReadableMap } from "@/resources/composables/useScheduleHelpers";
 dayjs.extend(customParseFormat);
 
 export default (fromDatetime = 'YYYY-MM-DD HH:mm:ss', toDatetime = 'YYYY-MM-DD HH:mm:ss') => {
 
     /**
-     * Easy conversion from string to date
+     * timestamp to formatted date and viceversa
+     *
+     * @param {number} timestamp
+     * @param {string} dateTimeFormat - format
+     * @return {string}
+     */
+    const translateTimestampToString = (timestamp ?:number, dateTimeFormat = fromDatetime) :string =>
+        dayjs(timestamp).format(dateTimeFormat);
+    // viceversa
+    const translateStringToTimestamp = (stringDate = '', dateTimeFormat = fromDatetime) :number =>{
+        const dateObject = dayjs(stringDate, dateTimeFormat);
+        if(!dateObject.isValid())
+            return 0;
+        return dateObject.valueOf();
+    };
+
+    /**
+     * Easy conversion from string to date and viceversa
      *
      * @param {string} stringDate
      * @param {string} dateTimeFormat
      */
-    const translateToDate = (stringDate = '', dateTimeFormat = fromDatetime) :Date | null => {
-        const dayObject = dayjs(stringDate, dateTimeFormat);
-        if(!dayObject.isValid()){
-            return null;
-        }
-        return dayObject.toDate();
-    };
+    const translateStringToDate = (stringDate = '', dateTimeFormat = fromDatetime) :Date | null =>
+        new Date(translateStringToTimestamp(stringDate, dateTimeFormat));
+    // viceversa
+    const translateDateToString = (dateObject = new Date(), dateTimeFormat = fromDatetime) :string =>
+        translateTimestampToString(dateObject.getTime(), dateTimeFormat);
 
     /**
      * input type="date" accept only YYYY-MM-DD format, even if it shows another format,
@@ -45,19 +62,48 @@ export default (fromDatetime = 'YYYY-MM-DD HH:mm:ss', toDatetime = 'YYYY-MM-DD H
     };
 
     /**
-     * timestamp to formatted date
+     * Get human readable time from milliseconds
      *
-     * @param {number} timestamp
-     * @param {string} formatTo - format
-     * @return {string}
+     * @param {number} milliseconds
      */
-    const formatUIDate = (timestamp ?:number, formatTo = fromDatetime) :string =>
-        dayjs(timestamp).format(formatTo);
+    const translateMillisecondsToReadable = (milliseconds :number) => {
+        let mode = 0;
+        const { hoursOnly :hours = 0, minutes = 0 } = secondsToTime(milliseconds);
+        if(hours === 0 && minutes === 0){
+            mode = 1;
+        }
+        if(hours === 0 && minutes > 0){
+            mode = 2;
+        }
+        if(minutes === 0){
+            if(hours === 1){
+                mode = 3;
+            }
+            if(hours > 1){
+                mode = 4;
+            }
+        }else{
+            if(hours === 1){
+                mode = 5;
+            }
+            if(hours > 1){
+                mode = 6;
+            }
+        }
+        return {
+            mode,
+            hours,
+            minutes,
+        }
+    };
 
     return {
-        translateToDate,
+        translateTimestampToString,
+        translateStringToTimestamp,
+        translateStringToDate,
+        translateDateToString,
         formatInputTypeDate,
         formatInputTypeTime,
-        formatUIDate,
+        translateMillisecondsToReadable,
     }
 }

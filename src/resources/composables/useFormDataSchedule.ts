@@ -5,6 +5,7 @@ import * as yup from "yup";
 import dayjs, { type ManipulateType } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { timeToSeconds } from "guebbit-javascript-library";
+import useTimeHelpers from "@/resources/composables/useTimeHelpers";
 
 dayjs.extend(customParseFormat);
 
@@ -17,6 +18,7 @@ export interface scheduleFormMap {
 
 export interface scheduleFormSettings {
     admin?: boolean
+    temporaryNameUIDefaultStepJump?: number,
     stepTime?: number
     stepSlot?: number
     dateFormat?: string
@@ -25,6 +27,7 @@ export interface scheduleFormSettings {
 
 export default ({
         admin = false,
+        temporaryNameUIDefaultStepJump = 1,
         stepTime = 1800000,
         stepSlot = 2,
         dateFormat = 'YYYY-MM-DD',
@@ -32,20 +35,66 @@ export default ({
     } :scheduleFormSettings) => {
 
     /**
+     * Time helpers toolbox
+     */
+    const {
+        translateStringToDate
+    } = useTimeHelpers();
+
+    /**
      * Schedule managing toolbox
      */
     const {
         getScheduleFirstAvailable,
-        getScheduleTimes,
         normalizeTime,
         formToTime,
         timeToForm,
+        getTimeframe,
+        getScheduleTimes,
+        determineScheduleIsAllowed
     } = useScheduleHelpers(dateFormat, timeFormat, stepTime);
 
     /**
      * Form values
      */
     const formValues = ref<scheduleFormMap>({});
+
+    /**
+     * [SHORTCUT]
+     * [ start, end ] = formToTime();
+     */
+    const formStartEndTimestamps = computed<[number, number]>(() => formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd))
+
+    /**
+     * [SHORTCUT]
+     * Duration of form (end - start)
+     */
+    const formValuesDuration = computed(() => formStartEndTimestamps.value[1] - formStartEndTimestamps.value[0]);
+
+    /**
+     *
+     */
+    const formValuesTimeframe = computed(() => getTimeframe(formStartEndTimestamps.value[0]));
+
+    /**
+     * [UI] Is selected date today?
+     */
+    const formValuesIsToday = computed<boolean>(() =>
+        new Date().setHours(0, 0, 0, 0) === (translateStringToDate(formValues.value.date, dateFormat) || new Date()).setHours(0, 0, 0, 0)
+    )
+
+    /**
+     *
+     */
+    const formValuesSteps = computed(() => formValuesDuration.value / stepTime);
+
+    /**
+     * Form schedule is on a valid time?
+     */
+    const scheduleAvailability = computed<string[]>(() => {
+        const [ start, end ] = formStartEndTimestamps.value;
+        return determineScheduleIsAllowed(start, end);
+    });
 
     /**
      * Vee-validate validation
@@ -73,13 +122,43 @@ export default ({
 
     const {
         formErrors,
-        formErrorsList,
+        formErrorsList :formErrorsListOriginal,
         formMeta,
-        formIsValid,
+        formIsValid :formIsValidOriginal,
     } = useFormStructure(
         formValues,
         computed(() => admin ? formScheduleAdminSchema : formScheduleUserSchema)
     );
+
+    /**
+     * Form is valid flag
+     */
+    const formIsValid = computed(() => formIsValidOriginal.value && scheduleAvailability.value.length === 0);
+
+    /**
+     * Form errors made list
+     */
+    const formErrorsList = computed<string[]>(() => {
+        const errorList :string[] = [];
+        for(let i = scheduleAvailability.value.length; i--; )
+            errorList.push('availability-' + scheduleAvailability.value[i])
+        return [
+            ...errorList,
+            ...formErrorsListOriginal.value
+        ]
+    });
+
+    /**
+     * set duration (fixed start, changing end to meet required duration)
+     * @param {number} time
+     */
+    const setDuration = (time :number) => {
+        const [ newStart, newEnd ] = getScheduleTimes(formStartEndTimestamps.value[0], time);
+        formValues.value = {
+            ...formValues.value,
+            ...timeToForm(newStart, newEnd)
+        };
+    };
 
     /**
      *
@@ -95,7 +174,7 @@ export default ({
             };
         }
         if(direction === 'forward'){
-            const [ start, end ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
+            const [ start, end ] = formStartEndTimestamps.value;
             formValues.value = {
                 ...formValues.value,
                 date: dayjs(start).add(amount, unit).format(dateFormat),
@@ -104,7 +183,7 @@ export default ({
             };
         }
         if(direction === 'back'){
-            const [ start, end ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
+            const [ start, end ] = formStartEndTimestamps.value;
             formValues.value = {
                 ...formValues.value,
                 date: dayjs(start).subtract(amount, unit).format(dateFormat),
@@ -160,6 +239,7 @@ export default ({
         // old form clone
         const newForm = {
             ...formValues.value,
+            terms: true
         };
         // correction
         if(formErrors.value.date)
@@ -173,12 +253,13 @@ export default ({
             ...newForm,
         };
     };
+
     /**
      * Automatically resolve logic/scheduling errors if possible,
      * like finding better hours if closed or maxed out
      */
     const resolveFormLogicErrors = () => {
-        const [ start, end ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
+        const [ start, end ] = formStartEndTimestamps.value;
         const [ newStart, newEnd ] = getScheduleFirstAvailable(start, end, undefined, stepTime);
         if(start !== newStart || end !== newEnd)
         formValues.value = {
@@ -186,11 +267,18 @@ export default ({
             ...timeToForm(newStart, newEnd)
         };
     };
+
+    /**
+     * Resolve ALL the above problems
+     */
     const resolveFormErrors = () => {
         resolveFormSystemErrors();
         resolveFormLogicErrors();
     }
 
+    /**
+     *
+     */
     watch([() => formValues.value.hourStart, () => formValues.value.hourEnd], ([newHourStart, newHourEnd], [oldHourStart, oldHourEnd]) => {
         // valid hours, no need to intervene
         if(timeToSeconds(formValues.value.hourStart) < timeToSeconds(formValues.value.hourEnd === '00:00' ? '24:00' : formValues.value.hourEnd))
@@ -205,7 +293,6 @@ export default ({
             formValues.value.hourStart = dayjs(end - stepTime * 2).format(timeFormat);
     });
 
-
     // expose managed state as return value
     return {
         formValues,
@@ -213,7 +300,14 @@ export default ({
         formErrorsList,
         formMeta,
         formIsValid,
+        formStartEndTimestamps,
+        formValuesDuration,
+        formValuesTimeframe,
+        formValuesIsToday,
+        formValuesSteps,
+        scheduleAvailability,
         fillForm,
+        setDuration,
         formValueGo,
         resolveFormErrors
     }

@@ -22,7 +22,7 @@
                     <EventDetailsList
 						class="mb-4"
 						:id="selectedIdentifier"
-						:admin="isAuthenticated && isAdmin"
+						:admin="isAdmin"
 						:dateFormat="uiFormatDate"
 						:timeFormat="uiFormatTime"
 
@@ -33,16 +33,17 @@
 					<!-- form -->
                     <ScheduleFormCard
 						v-model="formValues"
-						:errors="formErrors"
+						:error="formErrors"
 						:disabled="!formIsValid"
 						:dateFormat="uiFormatDate"
 						:timeFormat="uiFormatTime"
-						:timeStep="scheduleTimeStep / 1000"
+						:timeStep="scheduleTimeStep"
+						:durationStep="2"
 						:hideTermsButton="isAdmin"
 						:allowPastSelection="isAdmin"
 
 						@submit="formSubmit"
-						@message:emit="sendMessage(t('play-page.resolve-form-changed'))"
+						@message:emit="sendMessage(t('generic.info'), t('play-page.resolve-form-changed'))"
 						@button:click:backward-day="formValueGo('back', 1, 'day')"
 						@button:click:now-day="formValueGo('now')"
 						@button:click:forward-day="formValueGo('forward', 1, 'day')"
@@ -68,6 +69,7 @@
 							v-for="(error, index) in formErrorsList"
 							:key="'error-' + index"
 							type="error"
+							variant="tonal"
 							class="my-2"
 						>
 							{{ t('schedule-form.errors.' + error) }}
@@ -76,7 +78,7 @@
                 </v-col>
                 <v-col cols="12" lg="9">
                     <ScheduleCalendar
-						:admin          = "isAuthenticated && isAdmin"
+						:admin          = "isAdmin"
 						@event:click    = "scheduleSelect"
 						@event:create   = "scheduleAdd"
 						@event:changed  = "scheduleEdit"
@@ -160,7 +162,7 @@
 									:timeFormat="uiFormatTime"
 
 									@click="scheduleSelect(id)"
-									@button:click:confirm="showConfirmDialog = true"
+									@button:click:confirm="scheduleSelect(id); showConfirmDialog = true;"
 									@button:click:cancel="showDeleteDialog = true"
 									@button:click:renew="showRenewDialog = true"
 								/>
@@ -198,7 +200,7 @@
 									:timeFormat="uiFormatTime"
 
 									@click="scheduleSelect(id)"
-									@button:click:confirm="showConfirmDialog = true"
+									@button:click:confirm="scheduleSelect(id); showConfirmDialog = true;"
 									@button:click:cancel="showDeleteDialog = true"
 									@button:click:renew="showRenewDialog = true"
 								/>
@@ -234,12 +236,7 @@
 		<DialogConfirmItem
 			v-model="showConfirmDialog"
 
-			@button:click:confirm="router.push({
-				name: 'Play',
-				params: {
-					id: selectedIdentifier
-				}
-			})"
+			@button:click:confirm="confirmSelectedSchedule(); selectedIdentifier = undefined; showConfirmDialog = false;"
 			@button:click:cancel="showConfirmDialog = false"
 		/>
 
@@ -309,10 +306,7 @@ import type {
 	scheduleInputMap,
 	scheduleMap,
 } from "@/interfaces";
-
-
-
-
+import { sendScheduleRequestMap } from "@/interfaces";
 
 library.add(faCalendar, faCalendarCheck, faClock, faPlay, faCheck, faCircleInfo, faCartArrowDown, faHatWizard, faGear, faTrashCan, faArrowDown19, faArrowUp91, faArrowDownAZ, faArrowUpZA);
 
@@ -335,7 +329,6 @@ const props = defineProps({
  */
 const {
 	loading,
-	isAuthenticated,
 	isAdmin,
 	getRecord,
 	selectedIdentifier,
@@ -359,7 +352,6 @@ const {
 	timeToForm,
 	formToTime,
 	checkScheduleIsEditable,
-	determineScheduleIsAllowed,
 } = useScheduleHelpers(uiFormatDate, uiFormatTime);
 
 /**
@@ -368,8 +360,8 @@ const {
 const {
 	formValues,
 	formErrors,
-	formErrorsList: formErrorsListOriginal,
-	formMeta,
+	formErrorsList,
+	formIsValid,
 	fillForm,
 	formValueGo,
 	resolveFormErrors
@@ -385,18 +377,6 @@ onMounted(() => fillForm());
 
 
 
-/**
- * Form is valid flag
- */
-const formIsValid = computed(() => formMeta.value.valid && scheduleAvailability.value.length === 0);
-
-/**
- * Form schedule is on a valid time?
- */
-const scheduleAvailability = computed<string[]>(() => {
-	const [ start, end ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
-	return determineScheduleIsAllowed(start, end);
-});
 
 /**
  * Select schedule
@@ -417,22 +397,16 @@ function scheduleSelect(id :string){
 }
 
 /**
- * Form errors made list
+ * Send a message to user via UI
+ *
+ * @param {string} title
+ * @param {string} message
+ * @param {string} variant
  */
-const formErrorsList = computed<string[]>(() => {
-	const errorList :string[] = [];
-	for(let i = scheduleAvailability.value.length; i--; )
-		errorList.push('availability-' + scheduleAvailability.value[i])
-	return [
-		...errorList,
-		...formErrorsListOriginal.value
-	]
-});
-
-
-const sendMessage = (message :string) =>
+const sendMessage = (title ?:string, message ?:string, variant ?:string) =>
 	commit('main/addToast', {
-		title: t('generic.info'),
+		variant,
+		title,
 		text: message,
 		timeout: 7000
 	});
@@ -441,8 +415,11 @@ const sendMessage = (message :string) =>
  * Call "resolveFormErrors" and inform the user via toast
  */
 const handleResolveFormErrors = () => {
-	sendMessage(t('play-page.resolve-form-errors-called'));
+	const [ oldStart, oldEnd ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
 	resolveFormErrors();
+	const [ newStart, newEnd ] = formToTime(formValues.value.date, formValues.value.hourStart, formValues.value.hourEnd);
+	if(oldStart !== newStart || oldEnd !== newEnd)
+		sendMessage(t('generic.info'), t('play-page.resolve-form-errors-called'));
 };
 
 
@@ -488,6 +465,16 @@ watch(computed(() => { return {...formValues.value, scheduleId: selectedIdentifi
 }, { deep: true });
 
 
+
+/**
+ *
+ */
+function confirmSelectedSchedule(){
+	if(!selectedRecord.value)
+		return;
+	scheduleConfirm(selectedRecord.value);
+}
+
 /**
  * Form Submit.
  * Events will be added\edited ready to be confirmed later
@@ -496,11 +483,7 @@ function formSubmit () {
 	if(!formIsValid.value){
 		// form is not valid for some reason, print the errors:
 		for(let i = formErrorsList.value.length; i--; )
-			commit('main/addToast', {
-				title: t('generic.error'),
-				text: t('schedule-form.errors.' + formErrorsList.value[i]),
-				timeout: 5000
-			});
+			sendMessage(t('generic.error'), t('schedule-form.errors.' + formErrorsList.value[i]))
 		return;
 	}
 	// translate form data
@@ -521,8 +504,6 @@ function formSubmit () {
 		scheduleAdd(scheduleInfo);
 }
 
-
-
 /**
  * Handle schedule errors
  *
@@ -530,11 +511,7 @@ function formSubmit () {
  */
 function scheduleHandleErrors(errors :string[]){
 	for(let i = errors.length; i--; )
-		commit('main/addToast', {
-			title: t('generic.error'),
-			text: errors[i],
-			timeout: 5000
-		});
+		sendMessage(t('generic.error'), errors[i]);
 }
 
 /**
@@ -559,6 +536,21 @@ function scheduleEdit(schedule :scheduleInputMap){
 }
 
 /**
+ * Add Schedule then confirm it right away
+ */
+function scheduleConfirm(schedule :scheduleInputMap){
+	// scheduleAdd & scheduleEdit are based on a custom Fullcalendar object, that I must recreate:
+	dispatch('ecommerce/addSchedule', schedule)
+		.then(id => dispatch('ecommerce/sendSchedules', [{
+			id,
+			confirm: true,
+			pay: true,
+			useWallet: true
+		} as sendScheduleRequestMap]))
+		.catch(scheduleHandleErrors)
+}
+
+/**
  * Confirm schedule and ask for payment
  *
  * @param {string} ids
@@ -570,7 +562,7 @@ function scheduleRemove(ids :string[] = []){
 		// translate
 		const { date, hourStart, hourEnd } = timeToForm(start, end);
 		// send message
-		sendMessage(t('play-page.schedule-removed', {
+		sendMessage(t('generic.info'), t('play-page.schedule-removed', {
 			date,
 			hourStart,
 			hourEnd
@@ -589,7 +581,7 @@ function scheduleRemoveAll(){
 		// translate
 		const { date, hourStart, hourEnd } = timeToForm(start, end);
 		// send message
-		sendMessage(t('play-page.schedule-removed', {
+		sendMessage(t('generic.info'), t('play-page.schedule-removed', {
 			date,
 			hourStart,
 			hourEnd

@@ -261,7 +261,7 @@ export default defineComponent({
                     minTime = startTime;
                 }
             }
-            return [minTime, maxTime];
+            return [ minTime, maxTime ];
         },
 
         /**
