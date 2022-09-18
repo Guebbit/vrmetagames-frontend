@@ -9069,10 +9069,10 @@
     "querystring" "^0.2.1"
     "upath" "^2.0.1"
 
-"vuetify@^3.0.0-alpha.11", "vuetify@^3.0.0-beta.7":
-  "integrity" "sha512-tLgqYepicB4tz7i91IcvqB/qjCAGPTrIGDP1K412WxH2bvODF2S6cd/NYLBKcOgA4WqmgvzN8qAtHBbEIFXjnw=="
-  "resolved" "https://registry.npmjs.org/vuetify/-/vuetify-3.0.0-beta.7.tgz"
-  "version" "3.0.0-beta.7"
+"vuetify@^3.0.0-alpha.11", "vuetify@^3.0.0-beta.8":
+  "integrity" "sha512-D8ZJc7HRMeXBsXRMWFcc+FQm6vMLgF7B3WZPoI59qsMKwwhaXdn3dm3pnLUFcH2YO378FQAoCbr3KRGwjoWs7w=="
+  "resolved" "https://registry.npmjs.org/vuetify/-/vuetify-3.0.0-beta.8.tgz"
+  "version" "3.0.0-beta.8"
 
 "vuex@^4.0.0":
   "integrity" "sha512-M6r8uxELjZIK8kTKDGgZTYX/ahzblnzC4isU1tpmEuOIIKmV+TRdc+H4s8ds2NuZ7wpUTdGRzJRtoj+lI+pc0Q=="

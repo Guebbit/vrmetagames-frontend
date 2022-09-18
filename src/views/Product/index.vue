@@ -317,8 +317,8 @@
                     <v-img
                         cover
                         class="panel-background"
-                        :lazy-src="game.imageThumbnail"
-                        :src="game.image"
+                        :lazy-src="game.image.thumbnail"
+                        :src="game.image.src"
                         height="100%"
                         width="100%"
                     >
@@ -341,8 +341,8 @@
                         :image="game.coverFront"
                     >
                         <v-img
-                            :lazy-src="game.coverFrontThumbnail"
-                            :src="game.coverFront"
+							:lazy-src="game.coverFront.thumbnail"
+							:src="game.coverFront.src"
                             height="100%"
                             width="100%"
                         />
@@ -462,7 +462,7 @@
                 >
                     <ImageHoverUpCard
                         :key="'game-' + game.id"
-                        :image="game.coverFront"
+                        :image="game.coverFront.src"
                         @click="$router.push({
                             name: 'GameTarget',
                             params: {
@@ -471,8 +471,8 @@
                         })"
                     >
                         <v-img
-                            :lazy-src="game.coverFrontThumbnail"
-                            :src="game.coverFront"
+                            :lazy-src="game.coverFront.thumbnail"
+                            :src="game.coverFront.src"
                             height="100%"
                             width="100%"
                         />
@@ -646,6 +646,7 @@ const itemListFiltered = computed<gameMap[]>(() => {
 	}
 
 	// SORTING
+	// TODO l'ultimo cliccato dovrebbe avere la priorità
 	gameArray.sort((item1 :gameMap, item2 :gameMap) => {
 		for(const key in sortList.value)
 			// if undefined or 0, ignore

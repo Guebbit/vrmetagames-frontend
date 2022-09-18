@@ -1,8 +1,13 @@
-// https://gist.github.com/soerenmartius/ad62ad59b991c99983a4e495bf6acb04
-import type { ComputedRef, Ref, WritableComputedRef } from "vue";
-import type { stateEcommerceMap } from './state/ecommerce';
-import type { stateMainMap } from './state/main';
-import type { stateUserMap } from './state/user';
+export {
+    imageMap,
+    AnyRef,
+    stateRootMap,
+} from './generic';
+
+export {
+    loginFormMap,
+    userInfoFormMap
+} from './auth';
 
 export {
     sendScheduleRequestMap,
@@ -10,47 +15,20 @@ export {
     scheduleMap,
     userMap,
     stationMap,
-    gameMap
+    gameMap,
+    stateEcommerceMap
 } from './state/ecommerce';
 
 export {
     toastMap,
-    BusinessHoursMap
+    BusinessHoursMap,
+    stateMainMap
 } from './state/main';
 
 export {
     paymentMethodMap,
     paymentMap,
-    currentUserMap
+    currentUserMap,
+    stateUserMap
 } from './state/user';
 
-export {
-    stateEcommerceMap,
-    stateMainMap,
-    stateUserMap,
-};
-
-export interface stateRootMap {
-    main: stateMainMap,
-    user: stateUserMap,
-    ecommerce: stateEcommerceMap
-}
-
-export interface loginFormMap {
-    authentication ?:string
-    password ?:string
-}
-
-export interface userInfoFormMap {
-    username?: string,
-    firstname?: string,
-    lastname?: string,
-    password?: string,
-    passwordConfirm?: string,
-    email?: string,
-    phone?: string,
-    birthday?: string,
-    terms?: boolean,
-}
-
-export type AnyRef<T> = Ref<T> | ComputedRef<T> | WritableComputedRef<T>;

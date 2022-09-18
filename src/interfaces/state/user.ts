@@ -1,3 +1,5 @@
+import type { imageMap } from "@/interfaces";
+
 export interface paymentMethodMap {
     id: string
     name: string
@@ -20,7 +22,7 @@ export interface paymentMap {
 
 export interface currentUserMap {
     id?: string
-    avatar?: string
+    avatar?: imageMap
     username?: string
     firstname?: string
     lastname?: string
@@ -28,6 +30,7 @@ export interface currentUserMap {
     phone?: string
     birthday?: number
     wallet?: number
+    lastVisit?: number
     isAdmin?: boolean
 }
 

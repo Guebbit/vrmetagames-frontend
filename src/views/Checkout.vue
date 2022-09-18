@@ -52,7 +52,7 @@
 								</p>
 								-->
 							</v-list-item>
-							<v-list-item>
+							<v-list-item v-show="nearestDiscountThreshold > 0">
 								<p class="mb-4">
 									Non vorresti aggiungere qualche ora al wallet?
 									Ti manca proprio al prossimo sconto per avere ore gratuite
@@ -184,7 +184,7 @@
                             <hr class="mt-2 mb-2">
                             <div class="d-flex justify-space-between align-center">
                                 <span class="label">{{ t('checkout-page.total-cost-discount') }}</span>
-                                <span class="info"> {{ (scheduleCartTotalCost - scheduleCartTotalCostDiscounted) + (stepAddedCost - stepAddedCostDiscounted) }} €</span>
+                                <span class="info"> {{ scheduleCartTotalCost - scheduleCartTotalCostDiscounted }} €</span>
                             </div>
                             <div class="d-flex justify-space-between align-center">
                                 <span class="label">{{ t('checkout-page.total-wallet') }}</span>
@@ -339,9 +339,6 @@ const scheduleCartTotalSteps = computed(() =>
  */
 const stepAddedStepTemporaryName = 2;
 const stepAdded = ref(0);
-// const stepAddedTime = computed(() => stepAdded.value * stepAddedStepTemporaryName * scheduleTimeStep.value);
-const stepAddedCost = computed(() => stepAdded.value * stepAddedStepTemporaryName * scheduleTimeCost.value[0] / 100);
-const stepAddedCostDiscounted = computed(() => getStepCost(stepAdded.value * stepAddedStepTemporaryName) / 100);
 
 /**
  * Schedule toolbox and various checkout calculations
@@ -350,7 +347,6 @@ const stepAddedCostDiscounted = computed(() => getStepCost(stepAdded.value * ste
 const {
 	getNearestDiscountThreshold,
 	scheduleTimeStep,
-	scheduleTimeCost,
 	scheduleCartTotalTime,
 	scheduleCartTotalCost,
 	scheduleCartTotalCostDiscounted,
@@ -364,7 +360,7 @@ const {
  */
 const nearestDiscountThreshold = computed(() => getNearestDiscountThreshold(scheduleCartTotalSteps.value + stepAdded.value * 2));
 function clickFillWalletUntilDiscount(){
-	stepAdded.value += nearestDiscountThreshold.value;
+	stepAdded.value += nearestDiscountThreshold.value / 2;
 }
 
 /**

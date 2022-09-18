@@ -19,7 +19,14 @@
                                 :color="todayIsOpen ? 'success' : 'error'"
                                 :to="{ name: 'Play' }"
                             >
-                                {{ todayIsOpen ? t('generic.play-now') : t('generic.book-now') }}
+								{{ todayIsOpen ? t('generic.opened') : t('generic.closed') }}
+								<v-divider
+									vertical
+									class="mr-2 ml-2"
+									thickness="2"
+									:color="todayIsOpen ? 'success' : 'error'"
+								/>
+                                <small>{{ todayIsOpen ? t('generic.play-now') : t('generic.book-now') }}</small>
                                 <font-awesome-icon class="ml-3" :icon="['fas', 'play']" />
                             </v-btn>
                             <v-btn
@@ -31,13 +38,13 @@
                                 {{ t('generic.look-openings') }}
                             </v-btn>
                         </div>
-                        <span class="status-circle text-h5 ml-10"
-                              :class="{
+						<span class="status-circle text-h5 ml-10"
+							:class="{
                                   online: todayIsOpen,
                                   'pulse-mode': todayIsOpen,
                                   offline: !todayIsOpen
                               }"
-                        />
+						/>
                     </div>
                 </v-container>
             </template>
@@ -83,7 +90,7 @@
                             :double="themeColors.primary"
                             :to="{ name: 'Play' }"
                         >
-                            {{ t('generic.play-now') }}
+                            {{ t('generic.about-us') }}
                             <font-awesome-icon :icon="['fas', 'arrow-right']" />
                         </InclinedButton>
                     </template>

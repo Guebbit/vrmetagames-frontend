@@ -15,7 +15,8 @@ export default {
     scheduleImminentSteps: 48,      // 48 step = 1 day
     // payment for each step. 0 = default 5.00€, 1 step (half hour) special price 6.00€, no 2 step price = default price
     scheduleTimeCost: {
-        0: 500, // default price PER STEP
+        0: 600, // default price PER STEP
+        2: 1000,
         10: 4000,
         20: 5000
     }

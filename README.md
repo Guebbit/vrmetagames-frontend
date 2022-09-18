@@ -7,6 +7,7 @@ GENERIC:
  - timestamp: conversione secondi\millisecondi via server. PUT & POST = secondi, GET = millisecondi
  - gestione ticket\request da utenti ad admin (generici + rimozione di schedule non più automaticamente removibili?)
  - Filter vs Reduce performance test
+ - Imparare ARIA e usability
 
 ADMIN:
  - default event on click\drag creato a suo nome, per inserimenti istantanei, modificabile dopo

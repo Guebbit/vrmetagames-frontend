@@ -7,7 +7,7 @@
         <v-list>
             <v-list-item
                 min-height="100"
-                :prepend-avatar="userInfo.avatar"
+                :prepend-avatar="userInfo.avatar.src"
                 :title="userInfo.username"
                 :subtitle="userInfo.email"
             />

@@ -3,7 +3,7 @@ import { useStore } from "@/store";
 import dayjs from "dayjs";
 import useTimeHelpers from "@/resources/composables/useTimeHelpers";
 import { scheduleMap } from "@/interfaces";
-import { secondsToTime, timeToSeconds } from "guebbit-javascript-library";
+import { timeToSeconds } from "guebbit-javascript-library";
 
 export interface scheduleTimeReadableMap {
     date: string
@@ -19,6 +19,17 @@ export interface scheduleReadableMap extends scheduleTimeReadableMap {
         hours: number
         minutes: number
     }
+}
+
+/**
+ *
+ * @param {number[]} haystack
+ * @param {number} needle
+ */
+function findClosestNumber(haystack: number[], needle :number){
+    return haystack.reduce((a, b) => {
+        return Math.abs(b - needle) < Math.abs(a - needle) ? b : a;
+    })
 }
 
 /**
@@ -184,22 +195,6 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
             startTimestamp = startObject.valueOf();
             // safeguard
             loop++;
-            /*
-            console.log(
-                "GGGGGGGGGGGG111111111111111",
-                loop,
-                timeframe,
-                new Date(startTimestamp),
-                new Date(endObject.valueOf()),
-            )
-            console.log(
-                "GGGGGGGG22222222222222",
-                startTimestamp < Date.now() ? 'passato' : 'futuro',
-                (timeframe && timeframe !== getTimeframe(startTimestamp)),
-                determineScheduleIsAllowed(startTimestamp, endObject.valueOf()),
-                checkScheduleIsAllowed(startTimestamp, endObject.valueOf())
-            )
-            */
         }
         return [
             startTimestamp,
@@ -382,29 +377,31 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
      * Add hours to the wallet until the next discount
      *
      * @param {number} steps
+     * @param {number} ignoreThreshold
      */
-    function getNearestDiscountThreshold(steps = 0){
-        // all the discount step thresholds
-        const stepDiscounts = Object.keys(scheduleTimeCost.value);
+    function getNearestDiscountThreshold(steps = 0, ignoreThreshold = 2){
+        // remove the threshold to ignore (at least 1 that is the default)
+        ignoreThreshold = Math.max(ignoreThreshold, 1);
+        const discountedSteps = Object.keys(scheduleTimeCost.value).reverse();
+        // remove thresholds
+        discountedSteps.splice(discountedSteps.length - ignoreThreshold, ignoreThreshold);
         // if no discount, return 0;
-        if(stepDiscounts.length < 2)
+        if(discountedSteps.length < 1)
             return 0;
-        // the nearest discount threshold TODO non è detto che sia il 1°, errore, calcolare
-        const nearestStepDiscount = parseInt(stepDiscounts[1]);
+        // parseInt
+        const discountedStepsInt = discountedSteps.map(item => parseInt(item));
         // the leftoversteps remained after the last applied discount
-        const leftoverSteps = Object.keys(scheduleTimeCost.value).reduce((total, stepString) :number => {
-            const stepInt = parseInt(stepString);
-            if(stepInt > 0 && Math.floor(total / stepInt) > 0)
-                return total % stepInt;
+        const leftoverSteps = discountedStepsInt.reduce((total, step) :number => {
+            if(step > 0 && Math.floor(total / step) > 0)
+                return total % step;
             return total;
         }, steps);
+        // the nearest discount threshold
+        const nearestStepDiscount = findClosestNumber(discountedStepsInt, leftoverSteps);
         // missing steps to nearest discount found
         const missingSteps = nearestStepDiscount - leftoverSteps;
-        console.log("xxxxxx", steps, nearestStepDiscount, leftoverSteps, missingSteps)
-        // We are arrived, add step
-        if(leftoverSteps === 0)
-            return 2; // TODO 2 step per fare l'ora logicamente, ma programmaticamente?
-        return missingSteps;
+        // If no leftovers, we are already at the discount
+        return leftoverSteps === 0 ? 0 : missingSteps;
     }
 
     return {

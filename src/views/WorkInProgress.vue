@@ -45,14 +45,6 @@ import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsP
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();
-/*
-defineProps({
-    id: {
-        type: String,
-        required: false
-    }
-})
-*/
 </script>
 
 <style lang="scss">

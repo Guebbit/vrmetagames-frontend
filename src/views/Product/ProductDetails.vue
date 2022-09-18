@@ -10,8 +10,8 @@
                 <v-img
                     cover
                     class="panel-background"
-                    :lazy-src="selectedRecord.imageThumbnail"
-                    :src="selectedRecord.image"
+                    :lazy-src="selectedRecord.image.thumbnail"
+                    :src="selectedRecord.image.src"
                     height="100%"
                     width="100%"
                 >
@@ -34,8 +34,8 @@
                     :image="selectedRecord.coverFront"
                 >
                     <v-img
-                        :lazy-src="selectedRecord.coverFrontThumbnail"
-                        :src="selectedRecord.coverFront"
+						:lazy-src="selectedRecord.coverFront.thumbnail"
+						:src="selectedRecord.coverFront.src"
                         height="100%"
                         width="100%"
                     />

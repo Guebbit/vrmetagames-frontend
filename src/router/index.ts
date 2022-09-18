@@ -13,7 +13,6 @@ import type {
 
 import Home from "@/views/Home.vue";
 const Test = () => import("@/views/Test.vue");
-const WorkInProgress = () => import("@/views/WorkInProgress.vue");
 const Play = () => import("@/views/Play.vue");
 const PlayAdvanced = () => import("@/views/PlayAdvanced.vue");
 const UserAuthentication = () => import("@/views/User/Authentication.vue");
@@ -23,6 +22,8 @@ const ProductIndex = () => import("@/views/Product/index.vue");
 const ProductDetails = () => import("@/views/Product/ProductDetails.vue");
 const EcommerceManagement = () => import("@/views/Admin/Product/EcommerceManagament.vue");
 const PathNotFound = () => import("@/views/PathNotFound.vue");
+const WorkInProgress = () => import("@/views/WorkInProgress.vue");
+const PageBuilder = () => import("@/views/PageBuilder.vue");
 
 
 
@@ -62,12 +63,18 @@ export const routes: Array<RouteRecordRaw> = [
     {
         path: "/about/us",
         name: "AboutUs",
-        component: WorkInProgress
+        component: PageBuilder,
+        props: {
+            uri: 'about-us',
+        }
     },
     {
         path: "/about/vr",
         name: "AboutVr",
-        component: WorkInProgress
+        component: PageBuilder,
+        props: {
+            uri: 'about-vr',
+        }
     },
     {
         path: "/contact-us",

@@ -36,8 +36,8 @@
                     :key="'game-' + item.id"
                     ratio="4.25/6.87"
                     rotation="2"
-                    :image="item.coverFront"
-                    :spine="item.coverSpine"
+                    :image="item.coverFront.src"
+                    :spine="item.coverSpine.src"
                 />
                 <div v-show="controls"
                      class="card-actions d-flex justify-center align-center flex-column"

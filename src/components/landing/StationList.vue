@@ -11,7 +11,7 @@
             <StationCard
                 class="observer-activate"
                 :key="'station-item-' + item.id"
-                :image="item.image"
+                :image="item.image.src"
 
                 :type="item.type"
                 :time="1654121642000"

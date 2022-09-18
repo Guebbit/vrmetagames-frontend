@@ -86,7 +86,7 @@
                                     <div class="d-flex align-center">
 										<!-- TODO possibilità di cambiarlo -->
                                         <v-avatar size="64" class="me-4">
-                                            <v-img :src="selectedUser?.avatar || defaultUserAvatar" />
+                                            <v-img :src="selectedUser?.avatar?.src ? selectedUser?.avatar?.src : defaultUserAvatarSrc" />
                                         </v-avatar>
                                         <div>
                                             <h4 class="font-600">{{ formValues.username }}</h4>
@@ -510,7 +510,7 @@ import CreditCard from "guebbit-vue-library/src/components/cards/CreditCard.vue"
 import DialogInfoPayment from "@/components/users/DialogInfoPayment.vue";
 import DialogInfoPaymentMethod from "@/components/users/DialogInfoPaymentMethod.vue";
 import Footer from "@/components/generic/Footer.vue";
-import { defaultUserAvatar, scheduleStates, uiFormatDate, uiFormatTime } from "@/resources/constants";
+import { defaultUserAvatarSrc, scheduleStates, uiFormatDate, uiFormatTime } from "@/resources/constants";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

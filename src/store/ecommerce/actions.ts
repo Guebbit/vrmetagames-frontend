@@ -110,7 +110,9 @@ const mockServerSchedule = [
 const mockServerUsers = [
     {
         id: 'user1',
-        avatar: "https://randomuser.me/api/portraits/women/85.jpg",
+        avatar: {
+            src: "https://randomuser.me/api/portraits/women/85.jpg"
+        },
         username: "UsernameTonio",
         firstname: "Tonio",
         lastname: "Cartonio",
@@ -123,19 +125,25 @@ const mockServerUsers = [
     },
     {
         id: "user2",
-        avatar: "https://randomuser.me/api/portraits/men/10.jpg",
+        avatar: {
+            src: "https://randomuser.me/api/portraits/men/10.jpg"
+        },
         username: "GeeenoPeeno",
         lastVisit: 1652355000000
     },
     {
         id: "user3",
-        avatar: "https://randomuser.me/api/portraits/women/84.jpg",
+        avatar: {
+            src: "https://randomuser.me/api/portraits/women/84.jpg"
+        },
         username: "LoremIpsum",
         lastVisit: 1652389200000
     },
     {
         id: "user4",
-        avatar: "https://randomuser.me/api/portraits/men/80.jpg",
+        avatar: {
+            src: "https://randomuser.me/api/portraits/men/80.jpg"
+        },
         username: "Nickname",
         lastVisit: 1652378400000
     },
@@ -150,14 +158,20 @@ const mockServerStations = [
         id: 'item1',
         type: 'Oculus',
         label: 'Oculus',
-        image: 'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png',
+        image: {
+            src: 'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png'
+        },
+        gallery: [],
         capacity: 4
     },
     {
         id: 'item2',
         type: 'Computer',
         label: 'Computer',
-        image: 'https://res.cloudinary.com/muhammederdem/image/upload/v1536405218/starwars/item-3.png',
+        image: {
+            src: 'https://res.cloudinary.com/muhammederdem/image/upload/v1536405218/starwars/item-3.png'
+        },
+        gallery: [],
         capacity: 1
     }
 ];
@@ -175,12 +189,23 @@ const mockServerGames = [
             "Golf",
             "PVP"
         ],
-        image: imagesUrl + 'games/walkabout-mini-golf.jpg',
-        imageThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf.jpg',
-        coverFront: imagesUrl + 'games/walkabout-mini-golf-cover.jpg',
-        coverFrontThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-cover.jpg',
-        coverSpine: imagesUrl + 'games/walkabout-mini-golf-spine.jpg',
-        coverSpineThumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/walkabout-mini-golf.jpg',
+            thumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf.jpg',
+            title: 'walkabout mini golf sport game',
+            alt: 'image for the game walkabout mini golf'
+        },
+        coverFront: {
+            src: imagesUrl + 'games/walkabout-mini-golf-cover.jpg',
+            thumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-cover.jpg',
+            title: 'walkabout mini golf sport game cover',
+            alt: 'cover for the game walkabout mini golf'
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/walkabout-mini-golf-spine.jpg',
+            thumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-spine.jpg',
+            role: 'presentation'
+        },
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
@@ -196,9 +221,15 @@ const mockServerGames = [
             "PVP",
             "COOP"
         ],
-        image: imagesUrl + 'games/acron-attack-of-the-squirrels.jpg',
-        coverFront: imagesUrl + 'games/acron-attack-of-the-squirrels-cover.jpg',
-        coverSpine: imagesUrl + 'games/acron-attack-of-the-squirrels-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/acron-attack-of-the-squirrels.jpg'
+        },
+        coverFront: {
+            src: imagesUrl + 'games/acron-attack-of-the-squirrels-cover.jpg'
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/acron-attack-of-the-squirrels-spine.jpg'
+        },
         maxPlayersOffline: 8,
         maxPlayersOnline: 8,
         familyFriendly: true,
@@ -217,9 +248,15 @@ const mockServerGames = [
         tags: [
             "PVP"
         ],
-        image: imagesUrl + 'games/blaston.jpg',
-        coverFront: imagesUrl + 'games/blaston-cover.jpg',
-        coverSpine: imagesUrl + 'games/blaston-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/blaston.jpg'
+        },
+        coverFront: {
+            src: imagesUrl + 'games/blaston-cover.jpg'
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/blaston-spine.jpg'
+        },
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
@@ -232,9 +269,15 @@ const mockServerGames = [
         categories: ["sport"],
         stations: ["Oculus"],
         tags: [],
-        image: imagesUrl + 'games/echo-arena.jpg',
-        coverFront: imagesUrl + 'games/echo-arena-cover.jpg',
-        coverSpine: imagesUrl + 'games/echo-arena-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/echo-arena.jpg'
+        },
+        coverFront: {
+            src: imagesUrl + 'games/echo-arena-cover.jpg'
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/echo-arena-spine.jpg'
+        },
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
@@ -247,9 +290,15 @@ const mockServerGames = [
         categories: ["puzzle"],
         stations: ["Oculus"],
         tags: [],
-        image: imagesUrl + 'games/angry-birds-isle-of-pigs.jpg',
-        coverFront: imagesUrl + 'games/angry-birds-isle-of-pigs-cover.jpg',
-        coverSpine: imagesUrl + 'games/angry-birds-isle-of-pigs-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/angry-birds-isle-of-pigs.jpg'
+        },
+        coverFront: {
+            src: imagesUrl + 'games/angry-birds-isle-of-pigs-cover.jpg'
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/angry-birds-isle-of-pigs-spine.jpg'
+        },
         maxPlayersOffline: 1,
         maxPlayersOnline: 0,
         familyFriendly: true,
@@ -266,12 +315,18 @@ const mockServerGames = [
             "Music",
             "Lightsabers"
         ],
-        image: imagesUrl + 'games/beat-saber.jpg',
-        imageThumbnail: imagesUrl + 'games/thumbnails/beat-saber.jpg',
-        coverFront: imagesUrl + 'games/beat-saber-cover.jpg',
-        coverFrontThumbnail: imagesUrl + 'games/thumbnails/beat-saber-cover.jpg',
-        coverSpine: imagesUrl + 'games/beat-saber-spine.jpg',
-        coverSpineThumbnail: imagesUrl + 'games/thumbnails/beat-saber-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/beat-saber.jpg',
+            thumbnail: imagesUrl + 'games/thumbnails/beat-saber.jpg',
+        },
+        coverFront: {
+            src: imagesUrl + 'games/beat-saber-cover.jpg',
+            thumbnail: imagesUrl + 'games/thumbnails/beat-saber-cover.jpg',
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/beat-saber-spine.jpg',
+            thumbnail: imagesUrl + 'games/thumbnails/beat-saber-spine.jpg',
+        },
         maxPlayersOffline: 1,
         maxPlayersOnline: 0,
         familyFriendly: true,
@@ -284,9 +339,15 @@ const mockServerGames = [
         categories: ["action"],
         stations: ["Oculus"],
         tags: [],
-        image: imagesUrl + 'games/locodojo.jpg',
-        coverFront: imagesUrl + 'games/locodojo-cover.jpg',
-        coverSpine: imagesUrl + 'games/locodojo-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/locodojo.jpg'
+        },
+        coverFront: {
+            src: imagesUrl + 'games/locodojo-cover.jpg'
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/locodojo-spine.jpg'
+        },
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
@@ -299,9 +360,15 @@ const mockServerGames = [
         categories: ["action"],
         stations: ["Oculus"],
         tags: [],
-        image: imagesUrl + 'games/nock.jpg',
-        coverFront: imagesUrl + 'games/nock-cover.jpg',
-        coverSpine: imagesUrl + 'games/nock-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/nock.jpg'
+        },
+        coverFront: {
+            src: imagesUrl + 'games/nock-cover.jpg'
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/nock-spine.jpg'
+        },
         maxPlayersOffline: 1,
         maxPlayersOnline: 0,
         familyFriendly: true,
@@ -317,9 +384,15 @@ const mockServerGames = [
             "Battle Royale",
             "PVP"
         ],
-        image: imagesUrl + 'games/population-one.jpg',
-        coverFront: imagesUrl + 'games/population-one-cover.jpg',
-        coverSpine: imagesUrl + 'games/population-one-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/population-one.jpg'
+        },
+        coverFront: {
+            src: imagesUrl + 'games/population-one-cover.jpg'
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/population-one-spine.jpg'
+        },
         maxPlayersOffline: 1,
         maxPlayersOnline: 24,
         familyFriendly: false,
@@ -332,9 +405,15 @@ const mockServerGames = [
         categories: ["puzzle"],
         stations: ["Oculus"],
         tags: [],
-        image: imagesUrl + 'games/puzzle-bobble-vacation-odyssey.jpg',
-        coverFront: imagesUrl + 'games/puzzle-bobble-vacation-odyssey-cover.jpg',
-        coverSpine: imagesUrl + 'games/puzzle-bobble-vacation-odyssey-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/puzzle-bobble-vacation-odyssey.jpg'
+        },
+        coverFront: {
+            src: imagesUrl + 'games/puzzle-bobble-vacation-odyssey-cover.jpg'
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/puzzle-bobble-vacation-odyssey-spine.jpg'
+        },
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
@@ -349,9 +428,15 @@ const mockServerGames = [
         tags: [
             "Music"
         ],
-        image: imagesUrl + 'games/ragnarock.jpg',
-        coverFront: imagesUrl + 'games/ragnarock-cover.jpg',
-        coverSpine: imagesUrl + 'games/ragnarock-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/ragnarock.jpg'
+        },
+        coverFront: {
+            src: imagesUrl + 'games/ragnarock-cover.jpg'
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/ragnarock-spine.jpg'
+        },
         maxPlayersOffline: 1,
         maxPlayersOnline: 0,
         familyFriendly: true,
@@ -368,9 +453,15 @@ const mockServerGames = [
             "Puzzle",
             "Mistery"
         ],
-        image: imagesUrl + 'games/the-room-a-dark-matter.jpg',
-        coverFront: imagesUrl + 'games/the-room-a-dark-matter-cover.jpg',
-        coverSpine: imagesUrl + 'games/the-room-a-dark-matter-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/the-room-a-dark-matter.jpg'
+        },
+        coverFront: {
+            src: imagesUrl + 'games/the-room-a-dark-matter-cover.jpg'
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/the-room-a-dark-matter-spine.jpg'
+        },
         maxPlayersOffline: 4,
         maxPlayersOnline: 0,
         familyFriendly: false,
@@ -385,12 +476,15 @@ const mockServerGames = [
         tags: [
             "Open World"
         ],
-        image: imagesUrl + 'games/zenith-the-last-city.jpg',
-        imageThumbnail: imagesUrl + 'games/thumbnails/zenith-the-last-city.jpg',
-        coverFront: imagesUrl + 'games/zenith-the-last-city-cover.jpg',
-        coverFrontThumbnail: imagesUrl + 'games/thumbnails/zenith-the-last-city-cover.jpg',
-        coverSpine: imagesUrl + 'games/zenith-the-last-city-spine.jpg',
-        coverSpineThumbnail: imagesUrl + 'games/thumbnails/zenith-the-last-city-spine.jpg',
+        image: {
+            src: imagesUrl + 'games/zenith-the-last-city.jpg',
+        },
+        coverFront: {
+            src: imagesUrl + 'games/zenith-the-last-city-cover.jpg',
+        },
+        coverSpine: {
+            src: imagesUrl + 'games/zenith-the-last-city-spine.jpg',
+        },
         maxPlayersOffline: 1,
         maxPlayersOnline: 20,
         familyFriendly: false,

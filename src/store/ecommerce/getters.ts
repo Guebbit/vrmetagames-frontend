@@ -229,17 +229,24 @@ export default {
          */
         return (steps = 0) :number => {
             let totalCost = 0;
+            const discountedSteps = Object.keys(scheduleTimeCost).reverse();
+            // remove default price (0)
+            discountedSteps.pop();
+            // if no discounts: full price
+            if(discountedSteps.length < 1)
+                return steps * scheduleTimeCost[0];
             // for every discounted amount
-            const leftoverSteps = Object.keys(scheduleTimeCost).reduce((total, stepString) :number => {
-                const step = parseInt(stepString);
+            const leftoverSteps = discountedSteps.reduce((total, thresholdStepString) :number => {
+                // threshold
+                const thresholdStep = parseInt(thresholdStepString);
                 // how many times the discounted amount is present in the total of steps
-                const stepDiscounted = Math.floor(total / step);
+                const discountedSteps = Math.floor(total / thresholdStep);
                 // if step = 0 then it's the default (and obviously can't be used in a division)
-                if(step > 0 && stepDiscounted > 0){
+                if(thresholdStep > 0 && discountedSteps > 0){
                     // add the total discounted cost
-                    totalCost += stepDiscounted * scheduleTimeCost[step];
+                    totalCost += discountedSteps * scheduleTimeCost[thresholdStep];
                     // remove the quantity of steps that got discounted
-                    return total % step;
+                    return total % thresholdStep;
                 }
                 // in the end, only the non-discountable amount of steps will remain
                 return total;

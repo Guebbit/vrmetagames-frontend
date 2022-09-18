@@ -8,7 +8,12 @@ import * as yup from 'yup';
 export const baseUrl = 'https://www.vrmetagames.it/'
 export const assetsUrl = 'https://assets.guebbit.com/vrmetagames/';
 export const imagesUrl = assetsUrl + 'images/';
-export const defaultUserAvatar = assetsUrl + 'images/logo/logo.jpg';
+export const defaultUserAvatarSrc = assetsUrl + 'images/logo/logo.jpg';
+export const defaultUserAvatarThumbnail = assetsUrl + 'images/logo/logo.jpg';
+export const defaultUserAvatar = {
+    src: defaultUserAvatarSrc,
+    thumbnail: defaultUserAvatarThumbnail
+}
 export const uiFormatDate = 'DD/MM/YYYY';
 export const uiFormatTime = 'HH:mm';
 export const contactAddressStreet = "Via C. Catellani 1/D";

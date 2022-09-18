@@ -1,4 +1,4 @@
-import type { currentUserMap } from "@/interfaces";
+import type { currentUserMap, imageMap } from "@/interfaces";
 
 
 /**
@@ -62,13 +62,16 @@ export interface userMap extends currentUserMap {
 
 /**
  *
+ *
+ * capacity: TODO infinite if not specified
  */
 export interface stationMap {
     id: string
     type: string
     label: string
-    image: string
-    capacity :number
+    image: imageMap
+    gallery?: imageMap[]
+    capacity?: number
 }
 
 /**
@@ -77,14 +80,14 @@ export interface stationMap {
 export interface gameMap {
     id :string
     title :string
-    author :string
-    description :string
+    author?: string
+    description?: string
     categories :string[]
     stations :string[]
     tags :string[]
-    image :string
-    coverFront :string
-    coverSpine :string
+    image?: imageMap
+    coverFront?: imageMap
+    coverSpine?: imageMap
     // TODO CHECK INFO:
     maxPlayersOffline?: number
     maxPlayersOnline?: number

@@ -5,8 +5,8 @@
     >
         <div class="d-flex align-center">
             <v-avatar class="flex-shrink-0 me-4" size="64">
-                <!-- <v-img :src="userInfo.avatar" /> TODO VUETIFY FIX -->
-                <img class="avatar-image" alt="user avatar" :src="userInfo.avatar" />
+                <!-- <v-img :src="userInfo.avatar.src" /> TODO VUETIFY FIX -->
+                <img class="avatar-image" alt="user avatar" :src="userInfo.avatar.src" />
             </v-avatar>
             <div>
                 <h4 class="font-600">{{ userInfo.username }}</h4>
