@@ -23,15 +23,15 @@
 				variant="text"
 			>
 				<v-list-item>
-					<v-list-item-avatar start>
-						<font-awesome-icon :icon="['fas', 'calendar']" />
-					</v-list-item-avatar>
+					<template v-slot:prepend>
+						<font-awesome-icon class="v-icon" :icon="['fas', 'calendar']" />
+					</template>
 					<v-list-item-title>{{ scheduleReadable.date || t('play-page.select-event-label-date') }}</v-list-item-title>
 				</v-list-item>
 				<v-list-item>
-					<v-list-item-avatar start>
-						<font-awesome-icon :icon="['fas', 'clock']" />
-					</v-list-item-avatar>
+					<template v-slot:prepend>
+						<font-awesome-icon class="v-icon" :icon="['fas', 'clock']" />
+					</template>
 					<v-list-item-title>
 						{{ scheduleReadable.hourStart && scheduleReadable.hourEnd ? scheduleReadable.hourStart + ' - ' + scheduleReadable.hourEnd : t('play-page.select-event-label-hours') }}
 					</v-list-item-title>

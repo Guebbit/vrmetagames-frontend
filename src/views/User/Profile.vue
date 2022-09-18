@@ -253,7 +253,7 @@
 														{{ label }}
 														<template v-slot:prepend>
 															<font-awesome-icon
-																class="mr-5"
+																class="v-icon"
 																:style="{
 																	color: formPasswordErrors.includes(rule) ? themeColors.error : themeColors.success
 																}"

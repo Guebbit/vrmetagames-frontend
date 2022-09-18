@@ -8,29 +8,29 @@
 			}"
 		/>
 		<v-list-item>
-			<v-list-item-avatar start>
-				<font-awesome-icon :icon="['fas', 'calendar']" />
-			</v-list-item-avatar>
+			<template v-slot:prepend>
+				<font-awesome-icon class="v-icon" :icon="['fas', 'calendar']" />
+			</template>
 			<v-list-item-title>{{ id ? scheduleReadable.date : t('play-page.select-event-label-date') }}</v-list-item-title>
 		</v-list-item>
 		<v-list-item>
-			<v-list-item-avatar start>
-				<font-awesome-icon :icon="['fas', 'clock']" />
-			</v-list-item-avatar>
+			<template v-slot:prepend>
+				<font-awesome-icon class="v-icon" :icon="['fas', 'clock']" />
+			</template>
 			<v-list-item-title>
 				{{ id ? scheduleReadable.hourStart + ' - ' + scheduleReadable.hourEnd : t('play-page.select-event-label-hours') }}
 			</v-list-item-title>
 		</v-list-item>
 		<v-list-item v-show="!id || !scheduleDuration" lines="">
-			<v-list-item-avatar start>
-				<font-awesome-icon :icon="['fas', 'circle-info']" />
-			</v-list-item-avatar>
+			<template v-slot:prepend>
+				<font-awesome-icon class="v-icon" :icon="['fas', 'circle-info']" />
+			</template>
 			<v-list-item-subtitle>{{ t('play-page.select-event-label-disclaimer') }}</v-list-item-subtitle>
 		</v-list-item>
 		<v-list-item v-show="id && scheduleDuration">
-			<v-list-item-avatar start>
-				<font-awesome-icon :icon="['fas', 'play']" />
-			</v-list-item-avatar>
+			<template v-slot:prepend>
+				<font-awesome-icon class="v-icon" :icon="['fas', 'play']" />
+			</template>
 			<v-list-item-title>{{ scheduleDuration }}</v-list-item-title>
 		</v-list-item>
 		<v-list-item v-show="id && !schedule?.userId && scheduleAvailability">

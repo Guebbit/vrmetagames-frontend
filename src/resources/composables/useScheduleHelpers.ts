@@ -373,7 +373,6 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
     };
 
     /**
-     * TODO formula rotta
      * Add hours to the wallet until the next discount
      *
      * @param {number} steps

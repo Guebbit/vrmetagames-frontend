@@ -14,6 +14,7 @@
                     :src="selectedRecord.image.src"
                     height="100%"
                     width="100%"
+					:aria-describedby="'description-' + selectedRecord.id"
                 >
                     <template #placeholder>
                         <v-row
@@ -67,7 +68,8 @@
                         {{ badge }}
                     </v-chip>
                 </div>
-                <p class="panel-text">
+                <p :id="'description-' + selectedRecord.id" class="panel-text">
+					<!-- TODO -->
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                     eiusmod tempor incididunt ut labore et dolore magna aliqua
                 </p>

@@ -37,7 +37,7 @@ export default createVuetify({
           ...themeColors
         },
         variables: {
-          ['disabled-opacity']: 0.7 // TODO BETA valore fisso .v-btn--disabled.v-btn--variant-elevated
+          // ['disabled-opacity']: 0.7 
         }, // BUGFIX: ADD AN EMPTY OBJECT
       },
       light: {

@@ -52,19 +52,34 @@
 								</p>
 								-->
 							</v-list-item>
-							<v-list-item v-show="nearestDiscountThreshold > 0">
-								<p class="mb-4">
+							<v-list-item
+								:class="{
+									'text-disabled': nearestDiscountThreshold < 1 || stepAdded >= stepAddedMax
+								}"
+							>
+								<!-- TODO REWORK -->
+								<p class="mb-4"
+									:class="{
+									'text-disabled': nearestDiscountThreshold < 1 || stepAdded >= stepAddedMax
+								}"
+
+								>
 									Non vorresti aggiungere qualche ora al wallet?
 									Ti manca proprio al prossimo sconto per avere ore gratuite
 								</p>
-								<!-- TODO IMPLEMENT -->
 								<v-btn
 									class="vuetify-button-icon"
 									block
 									color="primary"
+									:disabled="nearestDiscountThreshold < 1 || stepAdded >= stepAddedMax"
 									@click="clickFillWalletUntilDiscount"
 								>
-									{{ fillWalletUntilDiscountLabel }}
+									{{
+										stepAdded < stepAddedMax ?
+											nearestDiscountThreshold > 0 ?
+												fillWalletUntilDiscountLabel :
+												'Sconto raggiunto' :
+											'Massimo limite' }}
 									<font-awesome-icon :icon="['fas', 'shopping-cart']" />
 								</v-btn>
 							</v-list-item>
@@ -160,12 +175,14 @@
 								</span>
 								<span class="info">
 									<v-text-field
-										v-model="stepAdded"
+										:modelValue="stepAdded"
+										@update:modelValue="value => stepAdded = Math.min(value, stepAddedMax)"
 										class="step-add-input"
 										variant="outlined"
 										type="number"
 										step="1"
 										min="0"
+										max="20"
 										density="compact"
 										hide-details
 									/>
@@ -337,8 +354,9 @@ const scheduleCartTotalSteps = computed(() =>
  *
  * warning: double step added
  */
-const stepAddedStepTemporaryName = 2;
+const stepAddedStepTemporaryName = 2; // TODO
 const stepAdded = ref(0);
+const stepAddedMax = 20;
 
 /**
  * Schedule toolbox and various checkout calculations

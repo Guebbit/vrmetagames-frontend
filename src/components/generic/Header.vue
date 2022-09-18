@@ -7,7 +7,7 @@
         <v-list>
             <v-list-item
                 min-height="100"
-                :prepend-avatar="userInfo.avatar.src"
+                :prepend-avatar="userInfo.avatar ? userInfo.avatar.src : defaultUserAvatarSrc"
                 :title="userInfo.username"
                 :subtitle="userInfo.email"
             />
@@ -155,6 +155,7 @@ import { imagesUrl } from "@/resources/constants";
 
 import { shyJs, classScroll } from 'guebbit-javascript-library';
 import InclinedButton from "@/components/basics/buttons/InclinedButton.vue";
+import { defaultUserAvatarSrc } from "@/resources/constants";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

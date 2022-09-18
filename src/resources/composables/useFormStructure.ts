@@ -49,10 +49,10 @@ export const formRules = {
         // The password must contain one or more lowercase characters
         .matches(/(?=.*[a-z])/, 'need-lowercase')
         // The password must contain one or more numeric values
-        .matches(/(?=.*[0-9])/, 'need-digit')
-        // The password must contain one or more special characters
+        .matches(/(?=.*[0-9])/, 'need-digit'),
+        // The password must contain one or more special characters (WARNING: disabled for admin request)
         // eslint-disable-next-line no-useless-escape
-        .matches(/(?=.*[!@#$%^&ç*\-_=+{}\[\]();:,<.>°§'"])/, 'need-special-char'),
+        // .matches(/(?=.*[!@#$%^&ç*\-_=+{}\[\]();:,<.>°§'"])/, 'need-special-char'),
     passwordConfirm: yup
         .string()
         .typeError('invalid')

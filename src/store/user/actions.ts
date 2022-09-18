@@ -3,7 +3,9 @@ import type { stateUserMap, stateRootMap, loginFormMap, userInfoFormMap } from "
 
 const mockUserInfo = {
     id: 'user1',
-    avatar: "https://randomuser.me/api/portraits/women/85.jpg",
+    avatar: {
+        src: "https://randomuser.me/api/portraits/women/85.jpg"
+    },
     username: "UsernameTonio",
     firstname: "Tonio",
     lastname: "Cartonio",

@@ -25,23 +25,23 @@
 					variant="text"
 				>
 					<v-list-item>
-						<v-list-item-avatar start>
-							<font-awesome-icon :icon="['fas', 'calendar']" />
-						</v-list-item-avatar>
+						<template v-slot:prepend>
+							<font-awesome-icon class="v-icon" :icon="['fas', 'calendar']" />
+						</template>
 						<v-list-item-title>
 							{{ selectedRecord?.code ? selectedRecord?.code : t('profile-page.payment-local') }}
 						</v-list-item-title>
 					</v-list-item>
 					<v-list-item>
-						<v-list-item-avatar start>
-							<font-awesome-icon :icon="['fas', 'calendar']" />
-						</v-list-item-avatar>
+						<template v-slot:prepend>
+							<font-awesome-icon class="v-icon" :icon="['fas', 'calendar']" />
+						</template>
 						<v-list-item-title>{{ selectedRecord?.total }} {{ selectedRecord?.currency }}</v-list-item-title>
 					</v-list-item>
 					<v-list-item>
-						<v-list-item-avatar start>
-							<font-awesome-icon :icon="['fas', 'clock']" />
-						</v-list-item-avatar>
+						<template v-slot:prepend>
+							<font-awesome-icon class="v-icon" :icon="['fas', 'clock']" />
+						</template>
 						<v-list-item-title>
 							{{ translateTimestampToString(selectedRecord?.time) }}
 						</v-list-item-title>

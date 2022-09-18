@@ -37,7 +37,7 @@ export default (password :AnyRef<string | undefined> | (() => string | undefined
         'need-uppercase': t('form-password-strong.need-uppercase'),
         'need-lowercase': t('form-password-strong.need-lowercase'),
         'need-digit': t('form-password-strong.need-digit'),
-        'need-special-char': t('form-password-strong.need-special-char'),
+        // 'need-special-char': t('form-password-strong.need-special-char'), // (WARNING: disabled for admin request)
     };
 
 
