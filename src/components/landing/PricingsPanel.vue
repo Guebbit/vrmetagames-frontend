@@ -73,8 +73,8 @@ const { scheduleTimeCost } = toRefs(state.ecommerce);
 
 const priceList = computed<number[][]>(() => {
     return [
-        [600, 1],
-        [scheduleTimeCost.value[0]*2, 2],
+        [scheduleTimeCost.value[0], 1],
+        [scheduleTimeCost.value[2], 2],
         [scheduleTimeCost.value[20], 20],
     ]
 });

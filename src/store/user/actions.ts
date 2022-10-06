@@ -14,7 +14,7 @@ const mockUserInfo = {
     birthday: 681775200000,
     wallet: 6,
     lastVisit: 1653050140000,
-    isAdmin: true,  // TODO false test
+    isAdmin: false,  // TODO false test
 };
 
 const mockPaymentMethods = [

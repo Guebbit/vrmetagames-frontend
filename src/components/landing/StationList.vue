@@ -13,7 +13,7 @@
                 :key="'station-item-' + item.id"
                 :image="item.image.src"
 
-                :type="item.type"
+                :type="item.name"
                 :time="1654121642000"
                 :number="i % 2 ? 2 : 0"
                 :available="i % 2 ? true : false"

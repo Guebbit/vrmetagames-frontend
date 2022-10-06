@@ -29,6 +29,7 @@ export interface currentUserMap {
     email?: string
     phone?: string
     birthday?: number
+    adminInfo?: string
     wallet?: number
     lastVisit?: number
     isAdmin?: boolean

@@ -11,6 +11,7 @@ const mockServerSchedule = [
         start: 1652349600000,
         end: 1652360400000,
         userId: "user4",
+        stationId: "item1",
         confirmed: true,
         paid: true,
     },
@@ -19,6 +20,7 @@ const mockServerSchedule = [
         start: 1652364000000,
         end: 1652385600000,
         userId: "user4",
+        stationId: "item1",
         confirmed: true,
         paid: true,
     },
@@ -27,6 +29,7 @@ const mockServerSchedule = [
         start: 1652353200000,
         end: 1652355000000,
         userId: "user1",
+        stationId: "item1",
         confirmed: true,
         paid: false,
     },
@@ -35,6 +38,7 @@ const mockServerSchedule = [
         start: 1652344200000,
         end: 1652389200000,
         userId: "user3",
+        stationId: "item1",
         confirmed: true,
         paid: true,
     },
@@ -43,6 +47,7 @@ const mockServerSchedule = [
         start: 1652358600000,
         end: 1652378400000,
         userId: "user2",
+        stationId: "item1",
         confirmed: true,
         paid: true,
     },
@@ -51,6 +56,7 @@ const mockServerSchedule = [
         start: 1652376600000,
         end: 1652392800000,
         userId: "user1",
+        stationId: "item1",
         canceled: true,
         paid: false,
     },
@@ -59,6 +65,7 @@ const mockServerSchedule = [
         start: 1652344200000,
         end: 1652371200000,
         userId: "user5",
+        stationId: "item1",
         confirmed: true,
         paid: true,
     },
@@ -67,6 +74,7 @@ const mockServerSchedule = [
         start: 1652436000000,
         end: 1652450400000,
         userId: "user1",
+        stationId: "item1",
         resourceId: "item1",
         confirmed: true,
         paid: true,
@@ -76,6 +84,7 @@ const mockServerSchedule = [
         start: 1652457600000,
         end: 1652466600000,
         userId: "user2",
+        stationId: "item1",
         resourceId: "item1",
         confirmed: true,
         paid: true,
@@ -85,6 +94,7 @@ const mockServerSchedule = [
         start: 1652470200000,
         end: 1652477400000,
         userId: "user1",
+        stationId: "item1",
         resourceId: "item1",
         confirmed: true,
         paid: true,
@@ -94,6 +104,7 @@ const mockServerSchedule = [
         start: 1652470200000,
         end: 1652477400000,
         userId: "user3",
+        stationId: "item2",
         resourceId: "item2",
         confirmed: true,
         paid: true,
@@ -103,6 +114,7 @@ const mockServerSchedule = [
         start: 1671051600000,
         end: 1671058800000,
         userId: "user1",
+        stationId: "item1",
         confirmed: true,
         paid: true,
     }
@@ -122,6 +134,7 @@ const mockServerUsers = [
         wallet: 6,
         lastVisit: 1653050140000,
         isAdmin: true,  // TODO false test
+        adminInfo: "informazioni profili di salvataggio e bazze varie"
     },
     {
         id: "user2",
@@ -156,23 +169,25 @@ const mockServerUsers = [
 const mockServerStations = [
     {
         id: 'item1',
-        type: 'Oculus',
-        label: 'Oculus',
+        name: 'oculus',
+        icon: 'vr-cardboard',
         image: {
             src: 'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png'
         },
         gallery: [],
-        capacity: 4
+        capacity: 4,
+        order: 1
     },
     {
         id: 'item2',
-        type: 'Computer',
-        label: 'Computer',
+        name: 'ps5',
+        icon: 'gamepad',
         image: {
             src: 'https://res.cloudinary.com/muhammederdem/image/upload/v1536405218/starwars/item-3.png'
         },
         gallery: [],
-        capacity: 1
+        capacity: 1,
+        order: 2
     }
 ];
 
@@ -520,7 +535,7 @@ export default {
                 for(let i = mockServerStations.length; i--; ){
                     commit("setStation", mockServerStations[i]);
                 }
-                commit("main/setLastUpdate", ['stationList'], { root: true });
+                commit("main/setLastUpdate", ['stationsList'], { root: true });
             })
             .catch(() => dispatch("main/handleServerError", "getStations ERROR", { root: true }));
     },

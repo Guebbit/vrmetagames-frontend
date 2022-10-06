@@ -5,7 +5,6 @@ import type {
     stationMap,
     gameMap,
 } from "@/interfaces";
-import { stateUserMap } from "@/interfaces";
 
 export default {
 

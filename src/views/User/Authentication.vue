@@ -372,7 +372,7 @@ import * as yup from "yup";
 import { formRules } from "@/resources/composables/useFormStructure";
 import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
 import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsPanel.vue";
-import { imagesUrl } from "@/resources/constants";
+import { imagesUrl, userMinAge } from "@/resources/constants";
 import type { loginFormMap, userInfoFormMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -413,7 +413,7 @@ const formUserInfoSchema = yup.object({
 	birthday: yup.date()
 		.typeError('invalid')
 		// minimo 6 anni TODO ASK
-		.test('DOB', 'too-early', (date) => !date ? false : new Date().getFullYear() - date.getFullYear() >= 6)
+		.test('DOB', 'too-early', (date) => !date ? false : new Date().getFullYear() - date.getFullYear() >= userMinAge)
 		.required('required'),
 	terms: formRules.requiredCheck,
 });

@@ -2,7 +2,7 @@
 	<Calendar
 		:modes			= "['dayGridMonth', 'timeGridWeek']"
 		:admin          = "admin"
-		:events         = "scheduleDetailedList"
+		:events         = "Object.values(scheduleDetailedRecords)"
 		:resources		= "resources"
 		:businessHours  = "businessHoursFullcalendar"
 		:primary        = "themeColors.primary"
@@ -19,16 +19,19 @@
 		@event:changed  = "handleChangedEvent"
 		@event:limit-reached = "fullcalendarLimitReached"
 	>
-		<template v-slot:eventContent="{timeText, isMirror, event}">
+		<template v-slot:eventContent="{ timeText, isMirror, event }">
+			<!--
+			Since it uses scheduleDetailedRecords and all non-compliant event data goes in extendedProps,
+			We have all schedule data in it
+			-->
 			<EventContentCard
 				v-if="event.display !== 'background'"
 				:time="timeText"
 				:start="event.start"
 				:end="event.end"
 				:isMirror="isMirror"
-
-				:username="event.extendedProps?.user?.username"
-				:image="event.extendedProps?.user?.avatar || defaultUserAvatar"
+				:schedule="event?.extendedProps"
+				:completeScheduleText="t('calendar.complete-schedule')"
 			/>
 		</template>
 	</Calendar>
@@ -42,13 +45,13 @@ import { useI18n } from "vue-i18n";
 import Calendar from "@/components/play/Calendar.vue";
 import EventContentCard from "@/components/play/FAEventContentCard.vue";
 import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
-import { defaultUserAvatar, uiFormatDate, uiFormatTime } from "@/resources/constants";
+import { uiFormatDate, uiFormatTime } from "@/resources/constants";
 
-import type { scheduleInputMap, stationMap } from "@/interfaces";
+import type { scheduleMapAdvanced, scheduleInputMap, stationMap } from "@/interfaces";
 import type { DateSpanApi, EventApi } from "@fullcalendar/vue3";
 import type { ResourceInput } from "@fullcalendar/resource-common";
-import { EventChangeArg } from "@fullcalendar/vue3";
-import { ResourceApi } from "@fullcalendar/resource-common";
+import type { EventChangeArg } from "@fullcalendar/vue3";
+import type { ResourceApi } from "@fullcalendar/resource-common";
 
 // The fullcalendar EventInput is too generic
 interface EventInput {
@@ -60,8 +63,8 @@ interface EventInput {
 }
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
-const { state, getters, commit } = useStore();
 const { t } = useI18n();
+const { state, getters, commit } = useStore();
 
 const emit = defineEmits([
 	'event:click',
@@ -89,35 +92,6 @@ const {
 	determineScheduleIsAllowed,
 } = useScheduleHelpers(uiFormatDate, uiFormatTime);
 
-/**
- *
- */
-const { businessHours } = toRefs(state.main);
-const { stations, scheduleTimeStep } = toRefs(state.ecommerce);
-const scheduleDetailedList = computed(() => getters['ecommerce/scheduleDetailedList']);
-
-/**
- * To calculate resource limits
- */
-const totalStations = computed(() => getters['ecommerce/totalStations']);
-
-/**
- * FULLCALENDAR RESOURCE MODE
- * Lo sto già facendo in modo custom, sperimentare?
- */
-const resources = computed<ResourceInput[]>(() => {
-	const stationList = Object.values(stations.value);
-	let resourcesArray :ResourceInput[] = [];
-	for(let len = stationList.length, i = 0; i < len; i++){
-		const { id, label, capacity } = stationList[i] as stationMap;
-		resourcesArray.push({
-			id,
-			title: label,
-			capacity
-		})
-	}
-	return resourcesArray;
-});
 
 /**
  * Translate and emit the changed event
@@ -189,7 +163,6 @@ function fullcalendarLimitReached(start :Date, end :Date, idArray :string[]){
 	});
 }
 
-
 /**
  * Transform fullcalendar EventApi in scheduleInputMap
  * Take only start, end and allyday (for now)
@@ -207,11 +180,42 @@ function fullcalendarEventApiTranslate({ id, resourceId, start, end, allDay } :E
 	};
 }
 
+// ---------------------- Fullcalendar options ----------------------
 
+/**
+ * Stations
+ * (to list and calculate resource limits)
+ */
+const scheduleDetailedRecords = computed<Record<string, scheduleMapAdvanced>>(() => getters['ecommerce/scheduleDetailedRecords']);
+const stationsList = computed(() => getters['ecommerce/stationsList']);
+const totalStations = computed(() => getters['ecommerce/totalStations']);
+
+/**
+ * FULLCALENDAR RESOURCE MODE
+ * Lo sto già facendo in modo custom, sperimentare?
+ */
+const resources = computed<ResourceInput[]>(() => {
+	let resourcesArray :ResourceInput[] = [];
+	for(let len = stationsList.value.length, i = 0; i < len; i++){
+		const { id, label, capacity } = stationsList.value[i] as stationMap;
+		resourcesArray.push({
+			id,
+			title: label,
+			capacity
+		})
+	}
+	return resourcesArray;
+});
+
+/**
+ *
+ */
+const { scheduleTimeStep } = toRefs(state.ecommerce);
 
 /**
  * Business hours translated for Fullcalendar
  */
+const { businessHours } = toRefs(state.main);
 const businessHoursFullcalendar = computed(() => {
 	const businessHoursArray = [];
 	for(let i = businessHours.value.length; i--; ){

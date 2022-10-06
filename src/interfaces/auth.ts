@@ -12,5 +12,6 @@ export interface userInfoFormMap {
     email?: string,
     phone?: string,
     birthday?: string,
+    adminInfo?: string
     terms?: boolean,
 }

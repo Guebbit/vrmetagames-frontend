@@ -31,130 +31,104 @@
             </template>
         </Panel>
 
-        <v-container>
-			<v-row
-				justify="center"
-				align="center"
-				class="mb-3"
-			>
-				<v-col cols="12" lg="8">
-					<h1>{{ t('profile-page.title') }}</h1>
-				</v-col>
-				<v-col cols="12" md="6" lg="4">
-					<v-toolbar
-						color="surface"
-						dark
-						prominent
-						dense
+		<section class="theme-section">
+			<v-container>
+				<v-toolbar
+					class="px-6 mb-5"
+					color="surface"
+					dark
+					prominent
+					dense
+				>
+					<font-awesome-icon class="mr-4" size="xl" :icon="['fas', 'user']"/>
+					<v-toolbar-title>{{ t('profile-page.title') }}</v-toolbar-title>
+					<v-spacer></v-spacer>
+					<v-btn
+						icon
+						:elevation="0"
+						@click = "formToggleEdit = !formToggleEdit"
 					>
-						<v-btn
-							icon
-							:elevation="0"
-							@click = "formToggleEdit = !formToggleEdit"
-						>
-							<font-awesome-icon :icon="['fas', 'pen']" />
-						</v-btn>
-						<v-spacer></v-spacer>
-						<!-- <v-divider vertical></v-divider> -->
-						<v-btn
-							icon
-							class="icon-add-plus"
-							:elevation="0"
-							@click="showWalletDialog = true;"
-						>
-							+
-							<font-awesome-icon :icon="['fas', 'wallet']" />
-						</v-btn>
-						<v-btn
-							icon
-							class="icon-add-plus"
-							:elevation="0"
-							@click="selectedPaymentMethodId = undefined; showPaymentMethodDialog = true;"
-						>
-							+
-							<font-awesome-icon :icon="['fas', 'credit-card']" />
-						</v-btn>
-					</v-toolbar>
-				</v-col>
-			</v-row>
-            <v-defaults-provider :defaults="profileUserFormUIRules">
-                <v-row>
-                    <v-col cols="12" md="12" lg="4">
-                        <v-card>
-                            <div class="pa-5">
-                                <div class="d-flex justify-space-between align-center flex-wrap">
-                                    <div class="d-flex align-center">
-										<!-- TODO possibilità di cambiarlo -->
-                                        <v-avatar size="64" class="me-4">
-                                            <v-img :src="selectedUser?.avatar?.src ? selectedUser?.avatar?.src : defaultUserAvatarSrc" />
-                                        </v-avatar>
-                                        <div>
-                                            <h4 class="font-600">{{ formValues.username }}</h4>
-                                            <p class="mb-0 grey--text text--darken-1 text-disabled">
-												{{ isAdmin ? t('generic.admin') : t('generic.user') }}
-											</p>
-                                        </div>
-                                    </div>
-									<v-btn
-										icon
-										color="secondary"
-										disabled
-									>
-										<font-awesome-icon :icon="['fas', 'camera']" />
-									</v-btn>
-                                </div>
-                            </div>
-                        </v-card>
-                    </v-col>
-                    <v-col cols="6" sm="6" md="3" lg="2">
-                        <v-card
-                            class="waiting-class-default-provider"
-                            max-width="100%"
-                        >
-                            <h3 class="font-600 primary--text mb-0"><small>Coming Soon</small></h3>
-                            <p class="mb-0 text-12 grey--text text--darken-1">{{ t('profile-page.total-hours-played') }}</p>
-                        </v-card>
-                    </v-col>
-                    <v-col cols="6" sm="6" md="3" lg="2">
-                        <v-card
-                            class="waiting-class-default-provider"
-                            max-width="100%"
-                        >
-                            <h3 class="font-600 primary--text mb-0">{{ selectedUser?.wallet }}</h3>
-                            <p class="mb-0 text-12 grey--text text--darken-1">{{ t('profile-page.total-hours-wallet') }}</p>
-                        </v-card>
-                    </v-col>
-                    <v-col cols="6" sm="6" md="3" lg="2">
-                        <v-card
-                            class="waiting-class-default-provider"
-                            max-width="100%"
-                        >
-                            <h3 class="font-600 primary--text mb-0">10</h3>
-                            <p class="mb-0 text-12 grey--text text--darken-1">Lorem ipsum</p>
-                        </v-card>
-                    </v-col>
-                    <v-col cols="6" sm="6" md="3" lg="2">
-                        <v-card
-                            class="waiting-class-default-provider"
-                            max-width="100%"
-                        >
-                            <h3 class="font-600 primary--text mb-0">99</h3>
-                            <p class="mb-0 text-12 grey--text text--darken-1">Lorem Ipsum</p>
-                        </v-card>
-                    </v-col>
-                    <v-col cols="12">
-                        <v-card class="pa-5" color="primary">
-							<v-form>
-								<v-row>
-									<v-col cols="12" md="6">
-										<v-text-field
-											v-model="formValues.username"
-											:label="t('user-data-form.values.username')"
-											:placeholder="t('user-data-form.info.username-typing')"
-											:disabled="!formToggleEdit"
-											:loading="formAsyncUsernameLoading"
-											:error="formToggleUIErrors ? formErrors.username || !formAsyncUsernameValid : false"
-											:error-messages="
+						<font-awesome-icon :icon="['fas', 'pen']" />
+					</v-btn>
+				</v-toolbar>
+				<v-defaults-provider :defaults="profileUserFormUIRules">
+					<v-row>
+						<v-col cols="12" md="12" lg="4">
+							<v-card>
+								<div class="pa-5">
+									<div class="d-flex justify-space-between align-center flex-wrap">
+										<div class="d-flex align-center">
+											<!-- TODO possibilità di cambiarlo -->
+											<v-avatar size="64" class="me-4">
+												<v-img :src="selectedUser?.avatar?.src ? selectedUser?.avatar?.src : defaultUserAvatarSrc" />
+											</v-avatar>
+											<div>
+												<h4 class="font-600">{{ formValues.username }}</h4>
+												<p class="mb-0 grey--text text--darken-1 text-disabled">
+													{{ isAdmin ? t('generic.admin') : t('generic.user') }}
+												</p>
+											</div>
+										</div>
+										<v-btn
+											icon
+											color="secondary"
+											disabled
+										>
+											<font-awesome-icon :icon="['fas', 'camera']" />
+										</v-btn>
+									</div>
+								</div>
+							</v-card>
+						</v-col>
+						<v-col cols="6" sm="6" md="3" lg="2">
+							<v-card
+								class="waiting-class-default-provider"
+								max-width="100%"
+							>
+								<h3 class="font-600 primary--text mb-0"><small>Coming Soon</small></h3>
+								<p class="mb-0 text-12 grey--text text--darken-1">{{ t('profile-page.total-hours-played') }}</p>
+							</v-card>
+						</v-col>
+						<v-col cols="6" sm="6" md="3" lg="2">
+							<v-card
+								class="waiting-class-default-provider"
+								max-width="100%"
+							>
+								<h3 class="font-600 primary--text mb-0">{{ selectedUser?.wallet }}</h3>
+								<p class="mb-0 text-12 grey--text text--darken-1">{{ t('profile-page.total-hours-wallet') }}</p>
+							</v-card>
+						</v-col>
+						<v-col cols="6" sm="6" md="3" lg="2">
+							<v-card
+								class="waiting-class-default-provider"
+								max-width="100%"
+							>
+								<h3 class="font-600 primary--text mb-0">10</h3>
+								<p class="mb-0 text-12 grey--text text--darken-1">Lorem ipsum</p>
+							</v-card>
+						</v-col>
+						<v-col cols="6" sm="6" md="3" lg="2">
+							<v-card
+								class="waiting-class-default-provider"
+								max-width="100%"
+							>
+								<h3 class="font-600 primary--text mb-0">99</h3>
+								<p class="mb-0 text-12 grey--text text--darken-1">Lorem Ipsum</p>
+							</v-card>
+						</v-col>
+						<v-col cols="12">
+							<v-card class="pa-5" color="primary">
+								<v-form>
+									<v-row>
+										<v-col cols="12" md="6">
+											<v-text-field
+												v-model="formValues.username"
+												:label="t('user-data-form.values.username')"
+												:placeholder="t('user-data-form.info.username-typing')"
+												:disabled="!formToggleEdit"
+												:loading="formAsyncUsernameLoading"
+												:error="formToggleUIErrors ? formErrors.username || !formAsyncUsernameValid : false"
+												:error-messages="
 												formToggleUIErrors ?
 													formErrors.username ?
 														t('user-data-form.errors.username-' + formErrors.username) :
@@ -163,21 +137,21 @@
 															'' :
 														''
 											"
-										>
-											<template v-slot:prepend>
-												<font-awesome-icon :icon="['fas', 'gamepad']" />
-											</template>
-										</v-text-field>
-									</v-col>
-									<v-col cols="12" md="6">
-										<v-text-field
-											v-model="formValues.email"
-											:label="t('user-data-form.values.email')"
-											autocomplete="email"
-											:disabled="!formToggleEdit"
-											:loading="formAsyncEmailLoading"
-											:error="formToggleUIErrors ? formErrors.email || !formAsyncEmailValid : false"
-											:error-messages="
+											>
+												<template v-slot:prepend>
+													<font-awesome-icon :icon="['fas', 'gamepad']" />
+												</template>
+											</v-text-field>
+										</v-col>
+										<v-col cols="12" md="6">
+											<v-text-field
+												v-model="formValues.email"
+												:label="t('user-data-form.values.email')"
+												autocomplete="email"
+												:disabled="!formToggleEdit"
+												:loading="formAsyncEmailLoading"
+												:error="formToggleUIErrors ? formErrors.email || !formAsyncEmailValid : false"
+												:error-messages="
 												formToggleUIErrors ?
 													formErrors.email ?
 														t('user-data-form.errors.email-' + formErrors.email) :
@@ -186,227 +160,196 @@
 															'' :
 														''
 											"
-										>
-											<template v-slot:prepend>
-												<font-awesome-icon :icon="['fas', 'envelope']" />
-											</template>
-										</v-text-field>
-									</v-col>
-									<v-col cols="12" v-show="formToggleEdit">
-										<div class="text-center">
-											<v-btn
-												class="ml-7"
-												@click="formToggleEditPassword = !formToggleEditPassword"
 											>
-												{{ formToggleEditPassword ? t('profile-page.hide-password-section') : t('profile-page.show-password-section') }}
-											</v-btn>
-										</div>
-										<v-row
-											v-show="formToggleEditPassword"
-											justify="center"
-											align="center"
-										>
-											<v-col cols="12" md="6">
-												<v-text-field
-													v-model="formValues.password"
-													class="mb-5"
-													:label="t('user-data-form.values.password')"
-													:type="formToggleShowPassword ? 'text' : 'password'"
-													:disabled="!formToggleEdit"
-													:error="formToggleUIErrors ? formErrors.password : false"
-													:error-messages="formToggleUIErrors && formErrors.password ? t('form-password-strong.' + formErrors.password) : ''"
+												<template v-slot:prepend>
+													<font-awesome-icon :icon="['fas', 'envelope']" />
+												</template>
+											</v-text-field>
+										</v-col>
+										<v-col cols="12" v-show="formToggleEdit">
+											<div class="text-center">
+												<v-btn
+													class="ml-7"
+													@click="formToggleEditPassword = !formToggleEditPassword"
 												>
-													<template v-slot:append-inner>
-														<font-awesome-icon
-															class="v-icon v-icon--size-default v-icon--start cursor-pointer"
-															:icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']"
-															@click="formToggleShowPassword = !formToggleShowPassword"
-														/>
-													</template>
-												</v-text-field>
-												<v-text-field
-													v-model="formValues.passwordConfirm"
-													:label="t('user-data-form.values.passwordConfirm')"
-													:type="formToggleShowPassword ? 'text' : 'password'"
-													:disabled="!formToggleEdit"
-													:error="formToggleUIErrors ? formErrors.passwordConfirm : false"
-													:error-messages="formToggleUIErrors && formErrors.passwordConfirm ? t('user-data-form.errors.passwordConfirm-' + formErrors.passwordConfirm) : ''"
-												>
-													<template v-slot:append-inner>
-														<font-awesome-icon
-															class="v-icon v-icon--size-default v-icon--start cursor-pointer"
-															:icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']"
-															@click="formToggleShowPassword = !formToggleShowPassword"
-														/>
-													</template>
-												</v-text-field>
-											</v-col>
-											<v-col cols="12" md="6">
-												<v-list
-													class="password-lacking-list bg-transparent mb-5"
-													density="compact"
-												>
-													<v-list-item
-														v-for="(label, rule) in formPasswordRules"
-														:key="'rule-' + rule"
+													{{ formToggleEditPassword ? t('profile-page.hide-password-section') : t('profile-page.show-password-section') }}
+												</v-btn>
+											</div>
+											<v-row
+												v-show="formToggleEditPassword"
+												justify="center"
+												align="center"
+											>
+												<v-col cols="12" md="6">
+													<v-text-field
+														v-model="formValues.password"
+														class="mb-5"
+														:label="t('user-data-form.values.password')"
+														:type="formToggleShowPassword ? 'text' : 'password'"
+														:disabled="!formToggleEdit"
+														:error="formToggleUIErrors ? formErrors.password : false"
+														:error-messages="formToggleUIErrors && formErrors.password ? t('form-password-strong.' + formErrors.password) : ''"
 													>
-														{{ label }}
-														<template v-slot:prepend>
+														<template v-slot:append-inner>
 															<font-awesome-icon
-																class="v-icon"
-																:style="{
-																	color: formPasswordErrors.includes(rule) ? themeColors.error : themeColors.success
-																}"
-																:icon="formPasswordErrors.includes(rule) ?
-																	['fas', 'triangle-exclamation'] :
-																	['fas', 'circle-check']"
+																class="v-icon v-icon--size-default v-icon--start cursor-pointer"
+																:icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']"
+																@click="formToggleShowPassword = !formToggleShowPassword"
 															/>
 														</template>
-													</v-list-item>
-												</v-list>
-											</v-col>
-										</v-row>
-									</v-col>
-									<v-col cols="12" md="6">
-										<!-- autocomplete="name" -->
-										<v-text-field
-											v-model="formValues.firstname"
-											:label="t('user-data-form.values.firstname')"
-											:disabled="!formToggleEdit"
-											:error="formToggleUIErrors ? formErrors.firstname : false"
-											:error-messages="formToggleUIErrors && formErrors.firstname ? t('user-data-form.errors.firstname-' + formErrors.firstname) : ''"
-										>
-											<template v-slot:prepend>
-												<font-awesome-icon :icon="['fas', 'user-pen']" />
-											</template>
-										</v-text-field>
-									</v-col>
-									<v-col cols="12" md="6">
-										<!-- autocomplete="???" -->
-										<v-text-field
-											v-model="formValues.lastname"
-											:label="t('user-data-form.values.lastname')"
-											:disabled="!formToggleEdit"
-											:error="formToggleUIErrors ? formErrors.lastname : false"
-											:error-messages="formToggleUIErrors && formErrors.lastname ? t('user-data-form.errors.lastname-' + formErrors.lastname) : ''"
-										>
-											<template v-slot:prepend>
-												<font-awesome-icon :icon="['fas', 'user-pen']" />
-											</template>
-										</v-text-field>
-									</v-col>
-									<v-col cols="12" md="6">
-										<v-text-field
-											v-model="formValues.phone"
-											:label="t('user-data-form.values.phone')"
-											autocomplete="tel"
-											:disabled="!formToggleEdit"
-											:error="formToggleUIErrors ? formErrors.phone : false"
-											:error-messages="formToggleUIErrors && formErrors.phone ? t('user-data-form.errors.phone-' + formErrors.phone) : ''"
-										>
-											<template v-slot:prepend>
-												<font-awesome-icon :icon="['fas', 'phone']" />
-											</template>
-										</v-text-field>
-									</v-col>
-									<v-col cols="12" md="6">
-										<!-- autocomplete="???" -->
-										<v-text-field
-											v-model="formValues.birthday"
-											type="date"
-											:disabled="!formToggleEdit"
-											:label="t('user-data-form.values.birthday')"
-											:error="formToggleUIErrors ? formErrors.birthday : false"
-											:error-messages="formToggleUIErrors && formErrors.birthday ? t('user-data-form.errors.birthday-' + formErrors.birthday) : ''"
-										>
-											<template v-slot:prepend>
-												<font-awesome-icon :icon="['fas', 'calendar']" />
-											</template>
-										</v-text-field>
-									</v-col>
-									<v-col cols="12" md="6" v-show="formToggleEdit">
-										<v-checkbox
-											v-model="formValues.terms"
-											class="text-secondary"
-											:error="formToggleUIErrors ? formErrors.terms : false"
-											:error-messages="formToggleUIErrors && formErrors.terms ? t('user-data-form.errors.terms-' + formErrors.terms) : ''"
-										>
-											<template #label>
-												<span v-html="t('user-data-form.info.terms')"></span>
-											</template>
-										</v-checkbox>
-									</v-col>
-								</v-row>
+													</v-text-field>
+													<v-text-field
+														v-model="formValues.passwordConfirm"
+														:label="t('user-data-form.values.passwordConfirm')"
+														:type="formToggleShowPassword ? 'text' : 'password'"
+														:disabled="!formToggleEdit"
+														:error="formToggleUIErrors ? formErrors.passwordConfirm : false"
+														:error-messages="formToggleUIErrors && formErrors.passwordConfirm ? t('user-data-form.errors.passwordConfirm-' + formErrors.passwordConfirm) : ''"
+													>
+														<template v-slot:append-inner>
+															<font-awesome-icon
+																class="v-icon v-icon--size-default v-icon--start cursor-pointer"
+																:icon="formToggleShowPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']"
+																@click="formToggleShowPassword = !formToggleShowPassword"
+															/>
+														</template>
+													</v-text-field>
+												</v-col>
+												<v-col cols="12" md="6">
+													<v-list
+														class="password-lacking-list bg-transparent mb-5"
+														density="compact"
+													>
+														<v-list-item
+															v-for="(label, rule) in formPasswordRules"
+															:key="'rule-' + rule"
+														>
+															{{ label }}
+															<template v-slot:prepend>
+																<font-awesome-icon
+																	class="v-icon"
+																	:style="{
+																	color: formPasswordErrors.includes(rule) ? themeColors.error : themeColors.success
+																}"
+																	:icon="formPasswordErrors.includes(rule) ?
+																	['fas', 'triangle-exclamation'] :
+																	['fas', 'circle-check']"
+																/>
+															</template>
+														</v-list-item>
+													</v-list>
+												</v-col>
+											</v-row>
+										</v-col>
+										<v-col cols="12" md="6">
+											<!-- autocomplete="name" -->
+											<v-text-field
+												v-model="formValues.firstname"
+												:label="t('user-data-form.values.firstname')"
+												:disabled="!formToggleEdit"
+												:error="formToggleUIErrors ? formErrors.firstname : false"
+												:error-messages="formToggleUIErrors && formErrors.firstname ? t('user-data-form.errors.firstname-' + formErrors.firstname) : ''"
+											>
+												<template v-slot:prepend>
+													<font-awesome-icon :icon="['fas', 'user-pen']" />
+												</template>
+											</v-text-field>
+										</v-col>
+										<v-col cols="12" md="6">
+											<!-- autocomplete="???" -->
+											<v-text-field
+												v-model="formValues.lastname"
+												:label="t('user-data-form.values.lastname')"
+												:disabled="!formToggleEdit"
+												:error="formToggleUIErrors ? formErrors.lastname : false"
+												:error-messages="formToggleUIErrors && formErrors.lastname ? t('user-data-form.errors.lastname-' + formErrors.lastname) : ''"
+											>
+												<template v-slot:prepend>
+													<font-awesome-icon :icon="['fas', 'user-pen']" />
+												</template>
+											</v-text-field>
+										</v-col>
+										<v-col cols="12" md="6">
+											<v-text-field
+												v-model="formValues.phone"
+												:label="t('user-data-form.values.phone')"
+												autocomplete="tel"
+												:disabled="!formToggleEdit"
+												:error="formToggleUIErrors ? formErrors.phone : false"
+												:error-messages="formToggleUIErrors && formErrors.phone ? t('user-data-form.errors.phone-' + formErrors.phone) : ''"
+											>
+												<template v-slot:prepend>
+													<font-awesome-icon :icon="['fas', 'phone']" />
+												</template>
+											</v-text-field>
+										</v-col>
+										<v-col cols="12" md="6">
+											<!-- autocomplete="???" -->
+											<v-text-field
+												v-model="formValues.birthday"
+												type="date"
+												:disabled="!formToggleEdit"
+												:label="t('user-data-form.values.birthday')"
+												:error="formToggleUIErrors ? formErrors.birthday : false"
+												:error-messages="formToggleUIErrors && formErrors.birthday ? t('user-data-form.errors.birthday-' + formErrors.birthday) : ''"
+											>
+												<template v-slot:prepend>
+													<font-awesome-icon :icon="['fas', 'calendar']" />
+												</template>
+											</v-text-field>
+										</v-col>
+										<v-col cols="12" md="6" v-show="formToggleEdit">
+											<v-checkbox
+												v-model="formValues.terms"
+												class="text-secondary"
+												:error="formToggleUIErrors ? formErrors.terms : false"
+												:error-messages="formToggleUIErrors && formErrors.terms ? t('user-data-form.errors.terms-' + formErrors.terms) : ''"
+											>
+												<template #label>
+													<span v-html="t('user-data-form.info.terms')"></span>
+												</template>
+											</v-checkbox>
+										</v-col>
+										<v-col cols="12" md="6">
+											<v-textarea
+												v-show="isAdmin"
+												:label="t('user-data-form.values.admin-info')"
+												:value="formValues.adminInfo"
+												counter
+											>
+												<template v-slot:prepend>
+													<font-awesome-icon class="v-icon v-icon--size-default v-icon--start" :icon="['fas', 'info']" />
+												</template>
+											</v-textarea>
+										</v-col>
+										<v-col cols="12" md="6">
+											TODO: aggiungere gruppi\gradi con diversi range di prezzi
 
-								<v-btn
-									v-show="formToggleEdit"
-									class="w-100"
-									color="secondary"
-									@click="formSubmit"
-								>
-									{{ t('user-data-form.submit-signup') }}
-								</v-btn>
-							</v-form>
-                        </v-card>
-                    </v-col>
-                </v-row>
-            </v-defaults-provider>
-            <v-row>
-                <!-- TODO magari un carousel\swiper? -->
-                <v-col cols="12" sm="3" md="3" lg="2">
-                    <v-row>
-                        <v-col v-for = "creditCard in paymentMethods"
-                               :key="'payment-method-'+creditCard.id"
-                               cols="6" sm="12"
-                        >
-                            <CreditCard
-                                :name = "creditCard.name"
-                                :logo = "creditCard.logo"
-                                :background = "creditCard.background"
-                                :color = "creditCard.color"
-                                :cardNumber = "creditCard.cardNumber"
-                                :cardEmail = "creditCard.cardEmail"
-                                :cardExpire = "creditCard.cardExpire"
+											TODO GIOCHI:
+											filtro obbligatorio PER POSTAZIONI al posto del cerca
+											il cerca di fianco ai SORT
+											+ filtro tags
+										</v-col>
+									</v-row>
 
-								@click="selectTargetPaymentMethod(creditCard.id); showPaymentMethodDialog = true;"
-                            />
-                        </v-col>
-                    </v-row>
-                </v-col>
-                <v-col cols="12" sm="9" md="9" lg="10">
-                    <v-defaults-provider :defaults="paymentHistoryUIRules">
-                        <v-card
-							v-for="item in paymentRecords"
-							:key="'payment-history-' + item.id"
-							class="waiting-class-default-provider-2"
-							@click="selectTargetPayment(item.id)"
-                        >
-                            <div class="d-flex justify-space-between align-center">
-                                <font-awesome-icon
-                                    class="px-3"
-                                    size="2x"
-                                    :icon="paymentTypeIcon(item.type)"
-                                    :color="paymentTypeColor(item.type)"
-                                />
+									<v-btn
+										v-show="formToggleEdit"
+										class="w-100"
+										color="secondary"
+										@click="formSubmit"
+									>
+										{{ t('user-data-form.submit-signup') }}
+									</v-btn>
+								</v-form>
+							</v-card>
+						</v-col>
+					</v-row>
+				</v-defaults-provider>
+			</v-container>
+		</section>
 
-                                <h4 class="font-600 text-left d-none d-sm-block">{{ item.code ? item.code : t('profile-page.payment-local')}}</h4>
-
-								<v-spacer />
-
-								<p class="mr-10 text-secondary">
-									<b>{{ item.total }}{{ item.currency }}</b>
-								</p>
-
-								<p class="text-disabled">{{ translateTimestampToString(item.time) }}</p>
-                                <font-awesome-icon class="px-5" :icon="['fas', 'arrow-right']" />
-                            </div>
-                        </v-card>
-                    </v-defaults-provider>
-                </v-col>
-            </v-row>
-
-			<div class="schedule-list">
-				<!-- TODO controlli, riordinamenti, etc -->
+		<section class="theme-section">
+			<v-container>
 				<v-toolbar
 					class="px-6 mb-5"
 					color="surface"
@@ -414,60 +357,149 @@
 					prominent
 					dense
 				>
-					<font-awesome-icon class="mr-4" size="xl" :icon="['fas', 'calendar-check']"/>
-					<v-toolbar-title>{{ t('profile-page.schedule-user-list') }}</v-toolbar-title>
+					<font-awesome-icon class="mr-4" size="xl" :icon="['fas', 'coins']"/>
+					<v-toolbar-title>{{ t('profile-page.user-payments-list') }}</v-toolbar-title>
 					<v-spacer></v-spacer>
+					<v-btn
+						icon
+						class="icon-add-plus"
+						:elevation="0"
+						@click="showWalletDialog = true;"
+					>
+						+
+						<font-awesome-icon :icon="['fas', 'wallet']" />
+					</v-btn>
+					<v-btn
+						icon
+						class="icon-add-plus"
+						:elevation="0"
+						@click="selectedPaymentMethodId = undefined; showPaymentMethodDialog = true;"
+					>
+						+
+						<font-awesome-icon :icon="['fas', 'credit-card']" />
+					</v-btn>
 				</v-toolbar>
-				<div v-show="scheduleList.length < 1">
-					<h3 class="simple-icon-text d-inline-flex">
-						<font-awesome-icon :icon="['fas', 'circle-info']" />
-						{{ t('profile-page.schedule-list-empty') }}
-					</h3>
-				</div>
-				<v-row v-show="scheduleList.length > 0">
-					<v-col cols="12" lg="3">
-						<v-list
-							class="schedule-legend bg-transparent"
-							variant="text"
-						>
-							<v-list-item
-								v-for="({ variant, icon, color, title, description }, index) in statusListLegenda"
-								:key="'schedule-chip-' + index"
-								class="mb-2"
+				<v-row>
+					<!-- TODO magari un carousel\swiper? -->
+					<v-col cols="12" sm="3" md="3" lg="2">
+						<v-row>
+							<v-col v-for = "creditCard in paymentMethods"
+								:key="'payment-method-'+creditCard.id"
+								cols="6" sm="12"
 							>
-								<v-chip
-									:color="color"
-									:variant="variant"
-									size="small"
-								>
-									<font-awesome-icon class="mr-3" :icon="['fas', icon]"/>
-									{{ title }}
-								</v-chip>
-								<p class="explanation ml-4 mt-2">{{ description }}</p>
-							</v-list-item>
-						</v-list>
-					</v-col>
-					<v-col cols="12" lg="9">
-						<EventCard
-							v-for="{ id } in scheduleList"
-							class="cursor-pointer"
-							:key="'event-onhold-' + id"
-							:id="id"
-							:admin="isAdmin"
-							:dateFormat="uiFormatDate"
-							:timeFormat="uiFormatTime"
-							mini
+								<CreditCard
+									:name = "creditCard.name"
+									:logo = "creditCard.logo"
+									:background = "creditCard.background"
+									:color = "creditCard.color"
+									:cardNumber = "creditCard.cardNumber"
+									:cardEmail = "creditCard.cardEmail"
+									:cardExpire = "creditCard.cardExpire"
 
-							@click="scheduleSelect(id)"
-							@button:click:confirm="showConfirmDialog = true"
-							@button:click:cancel="showDeleteDialog = true"
-							@button:click:renew="showRenewDialog = true"
-						/>
+									@click="selectTargetPaymentMethod(creditCard.id); showPaymentMethodDialog = true;"
+								/>
+							</v-col>
+						</v-row>
+					</v-col>
+					<v-col cols="12" sm="9" md="9" lg="10">
+						<v-defaults-provider :defaults="paymentHistoryUIRules">
+							<v-card
+								v-for="item in paymentRecords"
+								:key="'payment-history-' + item.id"
+								class="waiting-class-default-provider-2"
+								@click="selectTargetPayment(item.id)"
+							>
+								<div class="d-flex justify-space-between align-center">
+									<font-awesome-icon
+										class="px-3"
+										size="2x"
+										:icon="paymentTypeIcon(item.type)"
+										:color="paymentTypeColor(item.type)"
+									/>
+
+									<h4 class="font-600 text-left d-none d-sm-block">{{ item.code ? item.code : t('profile-page.payment-local')}}</h4>
+
+									<v-spacer />
+
+									<p class="mr-10 text-secondary">
+										<b>{{ item.total }}{{ item.currency }}</b>
+									</p>
+
+									<p class="text-disabled">{{ translateTimestampToString(item.time) }}</p>
+									<font-awesome-icon class="px-5" :icon="['fas', 'arrow-right']" />
+								</div>
+							</v-card>
+						</v-defaults-provider>
 					</v-col>
 				</v-row>
-			</div>
+			</v-container>
+		</section>
 
-        </v-container>
+        <section class="theme-section">
+			<v-container>
+				<div class="schedule-list">
+					<!-- TODO controlli, riordinamenti, etc -->
+					<v-toolbar
+						class="px-6 mb-5"
+						color="surface"
+						dark
+						prominent
+						dense
+					>
+						<font-awesome-icon class="mr-4" size="xl" :icon="['fas', 'calendar-check']"/>
+						<v-toolbar-title>{{ t('profile-page.user-schedule-list') }}</v-toolbar-title>
+						<v-spacer></v-spacer>
+					</v-toolbar>
+					<div v-show="scheduleList.length < 1">
+						<h3 class="simple-icon-text d-inline-flex">
+							<font-awesome-icon :icon="['fas', 'circle-info']" />
+							{{ t('profile-page.schedule-list-empty') }}
+						</h3>
+					</div>
+					<v-row v-show="scheduleList.length > 0">
+						<v-col cols="12" lg="3">
+							<v-list
+								class="schedule-legend bg-transparent"
+								variant="text"
+							>
+								<v-list-item
+									v-for="({ variant, icon, color, title, description }, index) in statusListLegenda"
+									:key="'schedule-chip-' + index"
+									class="mb-2"
+								>
+									<v-chip
+										:color="color"
+										:variant="variant"
+										size="small"
+									>
+										<font-awesome-icon class="mr-3" :icon="['fas', icon]"/>
+										{{ title }}
+									</v-chip>
+									<p class="explanation ml-4 mt-2">{{ description }}</p>
+								</v-list-item>
+							</v-list>
+						</v-col>
+						<v-col cols="12" lg="9">
+							<EventCard
+								v-for="{ id } in scheduleList"
+								class="cursor-pointer"
+								:key="'event-onhold-' + id"
+								:id="id"
+								:admin="isAdmin"
+								:dateFormat="uiFormatDate"
+								:timeFormat="uiFormatTime"
+								mini
+
+								@click="scheduleSelect(id)"
+								@button:click:confirm="showConfirmDialog = true"
+								@button:click:cancel="showDeleteDialog = true"
+								@button:click:renew="showRenewDialog = true"
+							/>
+						</v-col>
+					</v-row>
+				</div>
+			</v-container>
+		</section>
 
 		<DialogInfoPayment
 			:modelValue="!!selectedPaymentId"
@@ -510,18 +542,18 @@ import CreditCard from "guebbit-vue-library/src/components/cards/CreditCard.vue"
 import DialogInfoPayment from "@/components/users/DialogInfoPayment.vue";
 import DialogInfoPaymentMethod from "@/components/users/DialogInfoPaymentMethod.vue";
 import Footer from "@/components/generic/Footer.vue";
-import { defaultUserAvatarSrc, scheduleStates, uiFormatDate, uiFormatTime } from "@/resources/constants";
+import { defaultUserAvatarSrc, scheduleStates, uiFormatDate, uiFormatTime, userMinAge } from "@/resources/constants";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faPen, faUser, faArrowRight, faCreditCard, faWallet, faCoins, faCalendar, faPhone, faEnvelope, faUserPen, faCamera, faGamepad } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faUser, faArrowRight, faCreditCard, faWallet, faCoins, faCalendar, faPhone, faEnvelope, faUserPen, faCamera, faGamepad, faInfo } from "@fortawesome/free-solid-svg-icons";
 import { faCcPaypal } from "@fortawesome/free-brands-svg-icons";
 import useFormDataUser from "@/resources/composables/useFormDataUser";
 import type { userInfoFormMap } from "@/interfaces";
 import { formRules } from "@/resources/composables/useFormStructure";
 import DialogAddWallet from "@/components/users/DialogAddWallet.vue";
 
-library.add(faPen, faUser, faArrowRight, faCreditCard, faWallet, faCoins, faCcPaypal, faCalendar, faPhone, faEnvelope, faUserPen, faCamera, faGamepad)
+library.add(faPen, faUser, faArrowRight, faCreditCard, faWallet, faCoins, faCcPaypal, faCalendar, faPhone, faEnvelope, faUserPen, faCamera, faGamepad, faInfo)
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();
@@ -593,7 +625,7 @@ const formUserInfoSchema = yup.object({
 	birthday: yup.date()
 		.typeError('invalid')
 		// minimo 6 anni TODO ASK
-		.test('DOB', 'too-early', (date) => !date ? false : new Date().getFullYear() - date.getFullYear() >= 6)
+		.test('DOB', 'too-early', (date) => !date ? false : new Date().getFullYear() - date.getFullYear() >= userMinAge)
 		.required('required'),
 	terms: formRules.requiredCheck,
 });
@@ -661,6 +693,7 @@ const formReset = () => {
 		email: selectedUser.value?.email,
 		phone: selectedUser.value?.phone,
 		birthday: translateTimestampToString(selectedUser.value?.birthday, 'YYYY-MM-DD'),
+		adminInfo: selectedUser.value?.adminInfo,
 		terms: false
 	}
 	formValidate();
@@ -776,6 +809,9 @@ const profileUserFormUIRules = computed(() => {
 		VTextField: {
 			variant: formToggleEdit.value ? 'solo' : 'plain',
 			hideDetails: 'auto'
+		},
+		VTextarea: {
+			variant: 'solo'
 		},
 		VCheckbox: {
 			hideDetails: 'auto'

@@ -57,9 +57,12 @@
 								group
 							>
 								<v-btn
-									v-for="timeframe in ['morning', 'afternoon', 'evening']"
+									v-for="timeframe in timeframeList"
 									:key="'timeframe-' + timeframe"
 									:value="timeframe"
+									:class="{
+										'v-btn--active bg-secondary': formValuesTimeframe === timeframe
+									}"
 									@click="setNewTimeframe(timeframe)"
 								>
 									{{ t('generic.' + timeframe) }}
@@ -104,6 +107,9 @@
 									v-for="hour in 3"
 									:key="'hour-' + hour"
 									:value="hour * timeStep * durationStep"
+									:class="{
+										'v-btn--active bg-secondary': formValuesDuration === hour * timeStep * durationStep
+									}"
 									@click="setDuration(hour * timeStep * durationStep)"
 								>
 									{{ hour }}
@@ -119,6 +125,71 @@
 									<sub><small>h</small></sub>
 								</v-btn>
 							</v-btn-toggle>
+						</v-col>
+						<v-col cols="12" class="d-flex justify-center align-center">
+							<v-row
+								align="center"
+								justify="space-around"
+							>
+								<v-col cols="12" md="6" lg="5" xl="4">
+									<vuetifyInputNumber
+										v-model="modelValueC.numPeople"
+										:label="t('play-page.form-number-people')"
+										:error="errors.numPeople ? errors.numPeople : false"
+										:error-messages="errors.numPeople ? t('schedule-form.errors.hourEnd-' + errors.numPeople) : ''"
+										min="1"
+										hide-details
+									>
+										<template v-slot:prepend>
+											<font-awesome-icon class="v-icon v-icon--size-default v-icon--start" :icon="['fas', 'users']" />
+										</template>
+									</vuetifyInputNumber>
+								</v-col>
+								<v-col cols="12" md="6" lg="5" xl="4">
+									<vuetifyInputNumber
+										v-model="modelValueC.numStations"
+										:label="t('play-page.form-number-stations')"
+										:error="errors.numStations ? errors.numStations : false"
+										:error-messages="errors.numStations ? t('schedule-form.errors.hourEnd-' + errors.numStations) : ''"
+										min="1"
+										hide-details
+									>
+										<template v-slot:prepend>
+											<font-awesome-icon class="v-icon v-icon--size-default v-icon--start" :icon="['fas', 'couch']" />
+										</template>
+									</vuetifyInputNumber>
+								</v-col>
+							</v-row>
+						</v-col>
+						<v-col cols="12">
+							<v-select
+								v-model="modelValueC.selectedStation"
+								v-model:menu="showSelectStation"
+								:items="stations"
+								item-title="name"
+								item-value="id"
+								:label="t('generic.stations')"
+								:error="errors.selectedStation ? errors.selectedStation : false"
+								:error-messages="errors.selectedStation ? t('schedule-form.errors.hourEnd-' + errors.selectedStation) : ''"
+								hide-details
+								variant="solo"
+							>
+								<template v-slot:item="{ item }">
+									<v-list-item
+										:value="item.value"
+										active-color="primary"
+										@click="modelValueC.selectedStation = item.value; showSelectStation = false"
+									>
+										{{ item.title }}
+										<template v-slot:prepend>
+											<font-awesome-icon class="v-icon v-icon--size-default v-icon--start" :icon="['fas', item.raw.icon]" />
+										</template>
+									</v-list-item>
+								</template>
+								<template v-slot:prepend-inner>
+									<font-awesome-icon class="v-icon v-icon--size-default v-icon--start" :icon="['fas', selectedStation ? selectedStation.icon : 'couch']" />
+								</template>
+							</v-select>
 						</v-col>
 						<v-col cols="12" v-show="!hideTermsButton">
 							<v-checkbox
@@ -151,17 +222,21 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, computed, type PropType } from "vue";
+import { defineProps, defineEmits, computed, ref, type PropType } from "vue";
 import { useTheme } from "vuetify";
 import { useI18n } from "vue-i18n";
 import useTimeHelpers from "@/resources/composables/useTimeHelpers";
 import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
+import VuetifyInputNumber from "@/components/basics/atoms/vuetifyInputNumber.vue";
 import type { scheduleFormMap } from "@/resources/composables/useFormDataSchedule";
+import type { stationMap } from "@/interfaces";
 
+import { timeframeList } from "@/resources/constants";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faPlus, faBan, faPlay, faStop, faClock, faChevronRight, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-library.add(faPlus, faBan, faPlay, faStop, faClock, faChevronRight, faChevronLeft);
+import { faPlus, faBan, faPlay, faStop, faClock, faChevronRight, faChevronLeft, faUsers, faGamepad, faCouch } from "@fortawesome/free-solid-svg-icons";
+
+library.add(faPlus, faBan, faPlay, faStop, faClock, faChevronRight, faChevronLeft, faUsers, faGamepad, faCouch);
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();
@@ -179,6 +254,12 @@ const props = defineProps({
 	modelValue: {
 		type: Object as PropType<scheduleFormMap>,
 		required: false
+	},
+	stations: {
+		type: Object as PropType<stationMap[]>,
+		default: () => {
+			return []
+		}
 	},
 	disabled: {
 		type: Boolean,
@@ -228,13 +309,21 @@ const props = defineProps({
 });
 
 /**
+ *	Mirror of formValues on page
+ */
+const modelValueC = computed({
+	get: () => props.modelValue || {},
+	set: (value) => emit('update:modelValue', value),
+});
+
+/**
  * Time helpers toolbox
  */
 const {
 	translateStringToDate,
 	formatInputTypeDate,
+	formatInputTypeTime,
 } = useTimeHelpers(props.dateFormat + ' ' + props.timeFormat);
-
 
 /**
  * Schedule managing toolbox
@@ -248,12 +337,15 @@ const {
 } = useScheduleHelpers(props.dateFormat, props.timeFormat);
 
 /**
- *	Mirror of formValues on page
+ * Show select menu
  */
-const modelValueC = computed({
-	get: () => props.modelValue || {},
-	set: (value) => emit('update:modelValue', value),
-});
+const showSelectStation = ref(false);
+
+/**
+ * Selected station record
+ * TODO check capacity, posizioni libere, etc. Da usare per messaggi di errore specifici
+ */
+const selectedStation = computed(() => props.stations.find(({ id }) => id === modelValueC.value.selectedStation));
 
 /**
  * UI
@@ -303,12 +395,11 @@ const setDuration = (time :number) => {
 const formValuesIsToday = computed(() =>
 	new Date().setHours(0, 0, 0, 0) === (translateStringToDate(modelValueC.value?.date, props.dateFormat) || new Date()).setHours(0, 0, 0, 0)
 )
-const testChangeDay = true;
 const setNewTimeframe = (timeframe :string) => {
 	if(!modelValueC.value.date || !modelValueC.value.hourEnd)
 		return;
 	const [ start, end ] = formToTime(modelValueC.value.date, modelValueC.value.hourStart, modelValueC.value.hourEnd)
-	const [ newStart, newEnd ] = setTimeframe(timeframe, start, end, testChangeDay);
+	const [ newStart, newEnd ] = setTimeframe(timeframe, start, end);
 	const newForm = timeToForm(newStart, newEnd);
 	if(newForm.date !== modelValueC.value.date)
 		emit('message:emit', t('play-page.resolve-form-errors-called'))

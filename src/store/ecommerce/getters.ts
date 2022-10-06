@@ -5,7 +5,9 @@ import type { GetterTree } from 'vuex';
 import type {
     stateRootMap,
     stateEcommerceMap,
-    scheduleMap
+    scheduleMap,
+    scheduleMapAdvanced,
+    scheduleMapBackground,
 } from "@/interfaces";
 
 
@@ -40,32 +42,45 @@ export default {
      */
     // TODO admin can see all events (opacity 0.8 su tutti gli eventi non-admin?)
     // TODO normal user can see only his events (with multiple random colors) and other users events are greyed out
-    // TODO separare in multipli
-    scheduleDetailedList: ({ scheduleRecords, users } :stateEcommerceMap, { totalStations }, rootState, rootGetters) => {
-        // stations
+    // TODO separare in multipli (tipo "scheduleMapBackground" e "scheduleMapAdvanced")
+    scheduleDetailedRecords: ({ scheduleRecords, users, stations } :stateEcommerceMap, { totalStations }, rootState, rootGetters) :Record<string, scheduleMapBackground | scheduleMapAdvanced> => {
         let i :number;
+        // regular schedules
         const scheduleArray = Object.values(scheduleRecords);
-        const fullCalendarScheduleArray = [];
+        // result with advanced schedules
+        const fullCalendarScheduleRecords :Record<string, scheduleMapBackground | scheduleMapAdvanced>  = {};
+        // time data for management
         const businessSeconds = rootGetters['main/businessSeconds'];
         const businessAvailableTime = [];
+        // list of all dates inserted in the fullcalendar, necessary to create background-schedules
         const dateRecords :Record<string, number[]> = {};
 
-        // calculate the total seconds available on a business day
+        /**
+         * calculate the total seconds available on a business day
+         */
         for(i = businessSeconds.length; i--; ){
             // TODO different stations with different possible games
             // multiply for total stations
             businessAvailableTime[i] = businessSeconds[i] * totalStations['global'];
         }
 
-        // calculate the event seconds, grouped daily
+        /**
+         * Regular schedules:
+         *  - Calculate the event seconds
+         *  - Grouped daily
+         */
         for(i = scheduleArray.length; i--; ){
-            // push event in calendar
-            fullCalendarScheduleArray.push({
+            // put event in calendar
+            fullCalendarScheduleRecords[scheduleArray[i].id] = {
                 ...scheduleArray[i],
-                user: users?.[scheduleArray[i].userId], // if NOT admin, there will be no user info
+                // if NOT admin, there will be NO user info
+                user: users?.[scheduleArray[i].userId],
+                // neither user color, they will be all the same
                 color: users?.[scheduleArray[i].userId]?.color,
+                // stations data
+                station: stations?.[scheduleArray[i].stationId],
                 className: 'regular-schedule'
-            });
+            }
             // SAME DAY
             // TODO WARNING In inserimento via FullCalendar necessito del -1, via form invece è d'intralcio
             if(
@@ -86,7 +101,10 @@ export default {
             }
         }
 
-        // business day total seconds - event seconds = remaining business day seconds (that can be rented)
+        /**
+         * Background schedules (for FullCalendar)
+         * business day total seconds - event seconds = remaining business day seconds (that can be rented)
+         */
         for (const day in dateRecords) {
             if(!Object.prototype.hasOwnProperty.call(dateRecords, day)){
                 continue;
@@ -110,16 +128,16 @@ export default {
                     capacityClass = 'capacity-red';
                     break;
             }
-            // finished schedule
-            fullCalendarScheduleArray.push({
+            // finished schedule TODO TEMPORARY
+            fullCalendarScheduleRecords[day] = {
                 start: day,
                 end: day,
                 display: 'background',
                 className: 'day-capacity-indicator ' + capacityClass
-            })
+            }
         }
         // list of schedule for fullcalendar
-        return fullCalendarScheduleArray;
+        return fullCalendarScheduleRecords;
     },
 
     /**
@@ -440,7 +458,15 @@ export default {
     },
 
 
-        /**
+    /**
+     * Station list sorted by order
+     * @param {Object} stations
+     * @return {Object[]}
+     */
+    stationsList: ({ stations } :stateEcommerceMap) =>
+        Object.values(stations).sort(({ order :a = 0}, { order :b = 0}) => a - b),
+
+    /**
      * get item or leaf by id of state
      * TODO root getter?
      *

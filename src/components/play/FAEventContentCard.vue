@@ -1,5 +1,6 @@
 <template>
     <div ref="card" class="fc-event-content-card">
+		<!-- mirror schedule (user selection) -->
         <div v-show="isMirror"
              class="mirror-card"
              :style="{
@@ -8,26 +9,32 @@
         >
             <b class="time">{{ time }}</b>
             <p v-show="scheduleHeight > 50">
-                Completa la prenotazione nel box apposito
+				{{ completeScheduleText }}
             </p>
         </div>
+		<!-- regular schedule -->
         <div v-show="!isMirror"
              class="regular-card"
              :style="{
                 'font-size': scheduleHeight > 80 ? '1.5em' : '0.7em'
              }"
         >
-            <img :src="image">
-            <div>
+			<img :src="schedule.user?.avatar ? schedule.user?.avatar.src : defaultUserAvatarSrc">
+			<img v-if="schedule.station"
+				:src="schedule.station.image.src"
+			>
+            <div class="ml-3">
                 <b class="time">{{ time }}</b>
-                <span v-show="scheduleHeight > 80"><br> {{ username }}</span>
+                <span v-show="scheduleHeight > 80"><br> {{ schedule.username }}</span>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, nextTick, onMounted, onUpdated,  } from 'vue';
+import { defineProps, ref, nextTick, onMounted, onUpdated, type PropType } from "vue";
+import { defaultUserAvatarSrc } from "@/resources/constants";
+import type { scheduleMapAdvanced } from "@/interfaces";
 
 defineProps({
     time: {
@@ -44,10 +51,12 @@ defineProps({
     },
     isMirror: {
         type: Boolean,
-        default: () => {
-            return false;
-        }
+        default: () => false
     },
+	schedule: {
+		type: Object as PropType<scheduleMapAdvanced>,
+		required: false
+	},
     username: {
         type: String,
         required: false
@@ -56,8 +65,16 @@ defineProps({
         type: String,
         required: false
     },
+	completeScheduleText: {
+		type: String,
+		default: () => ""
+	},
 });
 
+
+/**
+ * UI
+ */
 const card = ref<HTMLDivElement>();
 const scheduleHeight = ref(0);
 
@@ -83,7 +100,6 @@ onUpdated(() => {
         img{
             max-width: 4em;
             max-height: 4em;
-            margin-right: 1em;
             border-radius: 3px 0 6px 0;
             object-fit: cover;
         }

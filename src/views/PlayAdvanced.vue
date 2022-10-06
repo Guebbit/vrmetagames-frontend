@@ -33,8 +33,9 @@
 					<!-- form -->
                     <ScheduleFormCard
 						v-model="formValues"
+						:stations="stationsList"
 						:error="formErrors"
-						:disabled="!formIsValid"
+						:disabled="!formIsValid || (selectedIdentifier && !isAdmin)"
 						:dateFormat="uiFormatDate"
 						:timeFormat="uiFormatTime"
 						:timeStep="scheduleTimeStep"
@@ -58,7 +59,7 @@
 						size="x-large"
 						@click="handleResolveFormErrors"
 					>
-						{{ t('play-page.button-magic-solution') }}
+						<small>{{ t('play-page.button-magic-solution') }}</small>
 						<font-awesome-icon :icon="['fas', 'hat-wizard']" />
 					</v-btn>
 					<!-- error list -->
@@ -306,15 +307,14 @@ import type {
 	scheduleInputMap,
 	scheduleMap,
 } from "@/interfaces";
-import { sendScheduleRequestMap } from "@/interfaces";
+import { sendScheduleRequestMap, stationMap } from "@/interfaces";
 
 library.add(faCalendar, faCalendarCheck, faClock, faPlay, faCheck, faCircleInfo, faCartArrowDown, faHatWizard, faGear, faTrashCan, faArrowDown19, faArrowUp91, faArrowDownAZ, faArrowUpZA);
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();
-const { state, getters, commit, dispatch } = useStore();
 const router = useRouter();
-
+const { state, getters, commit, dispatch } = useStore();
 const { scheduleRecords, scheduleTimeStep } = toRefs(state.ecommerce);
 
 const props = defineProps({
@@ -375,8 +375,10 @@ const {
 // default data based on current time
 onMounted(() => fillForm());
 
-
-
+/**
+ *
+ */
+const stationsList = computed(() => getters['ecommerce/stationsList']);
 
 /**
  * Select schedule

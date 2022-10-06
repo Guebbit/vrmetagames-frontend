@@ -1,5 +1,12 @@
 import type { currentUserMap, imageMap } from "@/interfaces";
 
+/**
+ *
+ */
+export interface userMap extends currentUserMap {
+    // color assigned to user in current session (fullcalendar event color)
+    color?: string
+}
 
 /**
  *
@@ -10,7 +17,6 @@ export interface sendScheduleRequestMap {
     pay?: boolean           // auto-pay (fast mode)
     useWallet?: boolean     // use wallet while auto-pay
 }
-
 
 /**
  *
@@ -42,22 +48,34 @@ export interface scheduleInputMap {
 export interface scheduleMap extends scheduleInputMap {
     id :string
     userId :string
-    online :boolean      // WARNING: FE only
+    stationId :string,
+    online :boolean     // WARNING: FE only
     confirmed :boolean
-    unsaved: boolean     // WARNING: FE only
+    unsaved: boolean    // WARNING: FE only
     canceled: boolean
     paid: boolean
     imminent: boolean   // WARNING: FE only
     expired: boolean    // WARNING: FE only (checks through date, offline & online)
 }
 
+/**
+ *
+ */
+export interface scheduleMapAdvanced extends scheduleMap {
+    user?: userMap,
+    station?: stationMap
+    color?: string,
+    className?: string
+}
 
 /**
  *
  */
-export interface userMap extends currentUserMap {
-    // color assigned to user in current session (fullcalendar event color)
-    color?: string
+export interface scheduleMapBackground {
+    start :string,
+    end :string,
+    display :string,
+    className :string,
 }
 
 /**
@@ -67,11 +85,12 @@ export interface userMap extends currentUserMap {
  */
 export interface stationMap {
     id: string
-    type: string
+    name: string
     label: string
     image: imageMap
     gallery?: imageMap[]
     capacity?: number
+    order?: number
 }
 
 /**

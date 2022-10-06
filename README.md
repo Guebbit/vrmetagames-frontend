@@ -2,8 +2,13 @@ https://www.virtual-room.com/en/
 https://toulon.virtual-room.com/reservation/
 
 
-GENERIC: 
- - IMPORTANT: dalle 23.30 alle 00.30 c'è un bug (va in negativo di 23 ore)
+IMPORTANT
+- Dalle 23.30 alle 00.30 c'è un bug (va in negativo di 23 ore)
+- stations diverse + stations multiple prenotabili dal singolo utente
+    - checkScheduleIsAllowed non considera il multi-station
+    - la capacity ed il timeavailable sono sempre settati sulla prima station
+
+GENERIC:
  - timestamp: conversione secondi\millisecondi via server. PUT & POST = secondi, GET = millisecondi
  - gestione ticket\request da utenti ad admin (generici + rimozione di schedule non più automaticamente removibili?)
  - Filter vs Reduce performance test
@@ -12,8 +17,8 @@ GENERIC:
 ADMIN:
  - default event on click\drag creato a suo nome, per inserimenti istantanei, modificabile dopo
 
-WAITING VUETIFY:
- - remove iconfont mdi & uninstall @mdi/font
+PROFILE
+ - Creazione info profili salvataggi (intanto usare adminInfo)
 
 SCHEDULE
  - SCHEDULE / EVENTS / BOOKINGS = scegli 1
@@ -22,7 +27,6 @@ SCHEDULE
 
 COMPONENTS
  - BookCard lieve overflow hidden a destra, all'hover\rotate
- - FormSchedule "['morning', 'afternoon', 'evening']" non devono essere hard coded
 
 YUP
  - yup.object.test() mi restituisce key vuota, problema nel controllo delle date di yup

@@ -15,6 +15,7 @@ export default (password :AnyRef<string | undefined> | (() => string | undefined
     // Shortcut to check if password is valid (no errors)
     const formPasswordValid = computed(() => formPasswordErrors.value.length < 0);
     // schema
+    // TODO ZOD (yup?) pick & omit 
     const formPasswordValidate = async (psw ?:string) =>
         formRules.password.validate(psw, { abortEarly: false })
             .then(() => formPasswordErrors.value = [])

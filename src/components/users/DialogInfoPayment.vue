@@ -86,7 +86,7 @@ import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
 import useTimeHelpers from "@/resources/composables/useTimeHelpers";
 import useItemDetails from "@/resources/composables/useItemDetails";
-import type { paymentMap, paymentMethodMap } from "@/interfaces";
+import type { paymentMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -126,6 +126,9 @@ const {
 	translateTimestampToString,
 } = useTimeHelpers(props.dateFormat + ' ' + props.timeFormat);
 
+/**
+ * Common item details utilities
+ */
 const {
 	selectedRecord,
 	selectTargetRecord

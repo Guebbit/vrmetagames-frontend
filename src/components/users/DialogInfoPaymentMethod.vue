@@ -77,6 +77,9 @@ const props = defineProps({
 const { state } = useStore();
 const { paymentMethods } = toRefs(state.user);
 
+/**
+ * Common item details utilities
+ */
 const {
 	selectedRecord,
 	selectTargetRecord

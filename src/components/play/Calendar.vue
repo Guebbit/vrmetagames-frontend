@@ -23,6 +23,7 @@
             '--fc-event-bg-color': secondary,
             '--fc-event-border-color': secondary,
             '--fc-event-text-color': text,
+            '--fc-event-anon-bg-color': background,
             '--fc-bg-event-opacity': '0.6',
 
             '--fc-button-bg-color': 'rgba('+primaryRGB+', 0.2)',
@@ -42,6 +43,13 @@
 
 <script lang="ts">
 // TODO remake in <script SETUP>
+// https://fullcalendar.io/docs#main
+// https://github.com/fullcalendar/fullcalendar-example-projects/blob/master/vue3-typescript/src/Demo.vue
+// https://github.com/fullcalendar/fullcalendar/blob/master/packages/common/src/styles/vars.css
+// https://fullcalendar.io/docs/google-calendar
+// https://fullcalendar.io/docs/Calendar-select
+
+
 import { defineComponent, PropType } from "vue";
 import {
     hexToRGB,
@@ -50,12 +58,6 @@ import {
     rangeOverlaps,
 	arrayColumns
 } from "guebbit-javascript-library";
-
-// https://fullcalendar.io/docs#main
-// https://github.com/fullcalendar/fullcalendar-example-projects/blob/master/vue3-typescript/src/Demo.vue
-// https://github.com/fullcalendar/fullcalendar/blob/master/packages/common/src/styles/vars.css
-// https://fullcalendar.io/docs/google-calendar
-// https://fullcalendar.io/docs/Calendar-select
 
 import '@fullcalendar/core/vdom';   // solves problem with Vite
 import FullCalendar from '@fullcalendar/vue3';
@@ -212,14 +214,6 @@ export default defineComponent({
             default: () => {},
         },
     },
-
-    data: () => {
-        return {
-            // TODO per ora inutile
-            idLastEvent: '',
-        };
-    },
-
     computed: {
 
         /**
@@ -467,8 +461,6 @@ export default defineComponent({
             if(!this.disableNativeApi){
                 this.calendarApi.addEvent(event)
             }
-            // last inserted event
-            this.idLastEvent = id;
         },
 
         /**
@@ -480,6 +472,7 @@ export default defineComponent({
          * @param {Date} beRaw
          * @return {boolean}
          */
+		/*
         compareEventTimes({ start: asRaw, end: aeRaw } :EventApi, { start: bsRaw, end: beRaw } :EventApi){
             const as = asRaw ? asRaw : new Date();
             const ae = aeRaw ? aeRaw : as;
@@ -487,6 +480,7 @@ export default defineComponent({
             const be = beRaw ? beRaw : bs;
             return rangeOverlaps(as.getTime(), ae.getTime(), bs.getTime(), be.getTime());
         },
+        */
 
         /**
          * Get all events between 2 dates
@@ -677,7 +671,7 @@ export default defineComponent({
          * Triggered when resizing stops and the event has changed in duration.
          * BEFORE eventChange
          *
-         * @param eventResizeInfo
+         * @param eventDropInfo
          */
         _handleEventDrop(eventDropInfo :EventDropArg) :void {
             return this.handleEventDrop(eventDropInfo);
@@ -697,7 +691,11 @@ $fullcalendar-mobile-threshold: 600px !default;
 .fc{
     table{
         cursor: pointer;
-        // background: var(--fc-custom-background-color);
+		// TODO
+		// background-color: red;
+        tbody{
+			// background: var(--fc-custom-background-color);
+		}
     }
     .fc-icon{
         // fix default icons center
@@ -769,10 +767,9 @@ $fullcalendar-mobile-threshold: 600px !default;
 
     &.anonymous-mode{
         .fc-v-event{
-            background: var(--fc-event-bg-color) !important;
-            border: none !important;
-            opacity: 0.5;
-            box-shadow: none !important;
+            background: var(--fc-event-anon-bg-color) !important;
+            // border: none !important;		// primary
+            box-shadow: none !important;	// secondary
         }
     }
     &.no-borders{

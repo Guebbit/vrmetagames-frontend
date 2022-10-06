@@ -40,8 +40,8 @@ export default <T = unknown>(
      *
      * @param id
      */
-    const getRecord = (id :string) :T | undefined =>
-        (!Object.prototype.hasOwnProperty.call(itemRecords.value, id)) ? undefined : itemRecords.value[id];
+    const getRecord = (id ?:string) :T | undefined =>
+        (!id || !Object.prototype.hasOwnProperty.call(itemRecords.value, id)) ? undefined : itemRecords.value[id];
 
     /**
      * Select target item

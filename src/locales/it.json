@@ -49,6 +49,7 @@
     "date": "Giorno",
     "start": "Inizio",
     "end": "Fine",
+    "stations": "Postazioni",
     "morning": "Mattina",
     "afternoon": "Pomeriggio",
     "evening": "Sera",
@@ -129,20 +130,22 @@
     "price-card-0-text": "La scelta giusta per chi vuole provare la prima volta o per una pausa veloce di svago e relax",
     "price-card-0-list-1": "Scelta economicissima",
     "price-card-0-list-2": "Possibilità di provare un primo approccio",
-    "price-card-0-button": "Prenota",
+    "price-card-0-button": "Fai una prova",
     "price-card-1-title": "Player",
     "price-card-1-text": "Se sei un vero gamer, o vuoi condividere la postazione con amici o famiglia, allora questa è la soluzione più adatta a te. <br><br> Un'ora di gioco no stop in maniera del tutto autonoma. Puoi giocare in locale, con gli amici, o online con chiunque nel mondo.",
     "price-card-1-list-1": "Condivisione della postazione",
     "price-card-1-list-2": "Possibilità di partite più lunghe o di testare diversi giochi",
-    "price-card-1-button": "Prenota",
+    "price-card-1-button": "Vieni a giocare",
     "price-card-2-title": "Pro",
     "price-card-2-text": "Un'ora è per i nabbi, i veri pro non mollano mai. 10 ore da solo o con gli amici a metà prezzo rispetto al normale. 10 ore di gioco a 5 Euro l'ora, tutta un'altra storia.",
     "price-card-2-list-1": "Condivisione della postazione per il doppio del tempo rispetto al normale.",
     "price-card-2-list-2": "Possibilità di partite più lunghe o di testare diversi giochi",
-    "price-card-2-button": "Prenota",
+    "price-card-2-button": "Vivi l'esperienza 3D",
     "footer-content-1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
   },
   "play-page": {
+    "form-number-people": "N. persone",
+    "form-number-stations": "N. postazioni",
     "calendar-title": "Calendario avanzato",
     "schedule-details-last-visit": "Ultima visita",
     "select-event-form-terms": "Accetta le <b><a href=\"/regolamento\" target=\"_blank\" class=\"text-decoration-none text-secondary\">condizioni</a></b>",
@@ -156,7 +159,7 @@
     "schedules-advanced-settings": "Prenotazione avanzata",
     "schedules-confirm-all": "Conferma tutti gli eventi",
     "schedule-removed": "Evento del {date} dalle {hourStart} alle {hourEnd} rimosso",
-    "button-magic-solution": "Risolvi errori!",
+    "button-magic-solution": "Prenotazione magica!",
     "resolve-form-errors-called": "Abbiamo trovato il primo orario disponibile con la durata richiesta, hurray!",
     "resolve-form-changed": "L'orario richiesto non era disponbile, quindi abbiamo trovato la prossima data disponibile più vicina alle richieste",
     "schedule-cart-list": "Lista eventi nel carrello",
@@ -281,7 +284,8 @@
     "show-password-section": "Cambia la password",
     "total-hours-wallet": "Ore nel wallet",
     "total-hours-played": "Totale ore giocate",
-    "schedule-user-list": "Storico eventi utente",
+    "user-payments-list": "Storico pagamenti utente",
+    "user-schedule-list": "Storico eventi utente",
     "schedule-list-empty": "Nessun evento presente"
   },
   "user-data-form": {
@@ -297,7 +301,8 @@
       "passwordConfirm": "Ripeti password",
       "email": "Email",
       "phone": "Telefono",
-      "birthday": "Anno di nascita"
+      "birthday": "Anno di nascita",
+      "admin-info": "Informazioni (admin only)"
     },
     "errors": {
       "firstname-required": "Nome mancante",
@@ -336,6 +341,7 @@
     "button-close": "Chiudi"
   },
   "calendar": {
+    "complete-schedule": "Completa la prenotazione nel box apposito",
     "max-limit-reached": "Non c'è spazio nelle date da {start} a {end}",
     "not-allowed-error-closed": "Siamo chiusi in questa data a questo orario",
     "not-allowed-error-max-reached": "Siamo pieni in questa data a questo orario",

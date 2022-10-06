@@ -10,10 +10,12 @@ export {
 } from './auth';
 
 export {
+    userMap,
     sendScheduleRequestMap,
     scheduleInputMap,
     scheduleMap,
-    userMap,
+    scheduleMapAdvanced,
+    scheduleMapBackground,
     stationMap,
     gameMap,
     stateEcommerceMap

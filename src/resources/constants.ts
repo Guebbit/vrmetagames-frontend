@@ -5,6 +5,8 @@ const { t } = i18n.global;
 import vuetifyColors from "vuetify/lib/util/colors";
 import * as yup from 'yup';
 
+export const timeframeList = ['morning', 'afternoon', 'evening'];
+export const userMinAge = 6;
 export const baseUrl = 'https://www.vrmetagames.it/'
 export const assetsUrl = 'https://assets.guebbit.com/vrmetagames/';
 export const imagesUrl = assetsUrl + 'images/';

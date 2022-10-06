@@ -118,9 +118,12 @@
 									group
 								>
 									<v-btn
-										v-for="timeframe in ['morning', 'afternoon', 'evening']"
+										v-for="timeframe in timeframeList"
 										:key="'timeframe-' + timeframe"
 										:value="timeframe"
+										:class="{
+											'v-btn--active bg-secondary': formValuesTimeframe === timeframe
+										}"
 										@click="setNewTimeframe(timeframe)"
 									>
 										{{ t('generic.' + timeframe) }}
@@ -139,6 +142,9 @@
 										v-for="hour in 3"
 										:key="'hour-' + hour"
 										:value="hour * scheduleTimeStep * temporaryNameUIDefaultStepJump"
+										:class="{
+											'v-btn--active bg-secondary': formValuesDuration === hour * scheduleTimeStep * temporaryNameUIDefaultStepJump
+										}"
 										@click="setDuration(hour * scheduleTimeStep * temporaryNameUIDefaultStepJump)"
 									>
 										{{ hour }}
@@ -215,7 +221,7 @@
 											size="x-large"
 											@click="handleResolveFormErrors"
 										>
-											{{ t('play-page.button-magic-solution') }}
+											<small>{{ t('play-page.button-magic-solution') }}</small>
 											<font-awesome-icon :icon="['fas', 'hat-wizard']" />
 										</v-btn>
 									</v-col>
@@ -333,7 +339,7 @@ import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
 import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsPanel.vue";
 import DialogConfirmItem from "@/components/play/DialogConfirmItem.vue";
 import Footer from "@/components/generic/Footer.vue";
-import { imagesUrl, uiFormatDate, uiFormatTime } from "@/resources/constants";
+import { timeframeList, imagesUrl, uiFormatDate, uiFormatTime } from "@/resources/constants";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -468,12 +474,11 @@ const resetForm = (id ?:string) => {
  *
  * @param {string} timeframe
  */
-const testChangeDay = true;
 const setNewTimeframe = (timeframe :string) => {
 	if(!formValues.value.date || !formValues.value.hourEnd)
 		return;
 	const [ start, end ] = formStartEndTimestamps.value;
-	const [ newStart, newEnd ] = setTimeframe(timeframe, start, end, testChangeDay);
+	const [ newStart, newEnd ] = setTimeframe(timeframe, start, end);
 	const newForm = timeToForm(newStart, newEnd);
 	if(newForm.date !== formValues.value.date)
 		sendMessage(t('generic.info'), t('play-page.resolve-form-errors-called'));

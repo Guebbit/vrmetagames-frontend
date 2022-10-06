@@ -1,6 +1,5 @@
 <template>
 	<div id="work-in-progress-page" class="theme-page full-page">
-		<pre>{{selectedPageInstructions}}</pre>
 		<Panel class="theme-panel"
 			shadow="#000000"
 			:shadow-opacity="0.9"
@@ -9,24 +8,7 @@
 			hero
 		>
 			<template #default>
-				<v-container class="text-center">
-					<h1 class="theme-page-title mb-5">
-						{{ t('generic.work-in-progress') }}
-					</h1>
-					<div class="alert-panel">
-						<BusinessContactsPanel />
-						<InclinedButton
-							class="panel-button mt-10"
-							size="x-large"
-							:background="themeColors.primary"
-							:double="themeColors.secondary"
-							:to="{ name: 'Play' }"
-						>
-							{{ t('generic.back-home') }}
-							<font-awesome-icon :icon="['fas', 'arrow-right']" />
-						</InclinedButton>
-					</div>
-				</v-container>
+				<pre>{{selectedPageInstructions}}</pre>
 			</template>
 			<template #background>
 				<video class="panel-background" autoplay="" loop="" muted="" poster="">
@@ -41,9 +23,7 @@
 import { defineProps, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
-import InclinedButton from "@/components/basics/buttons/InclinedButton.vue";
 import { useTheme } from "vuetify";
-import BusinessContactsPanel from "@/components/generic/panels/BusinessContactsPanel.vue";
 import type { pageBuilderMap } from "@/resources/composables/usePageBuilder";
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
