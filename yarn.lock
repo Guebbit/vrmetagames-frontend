@@ -9043,10 +9043,10 @@
     "querystring" "^0.2.1"
     "upath" "^2.0.1"
 
-"vuetify@^3.0.0-alpha.11", "vuetify@^3.0.0-beta.11":
-  "integrity" "sha512-WHwHNRpnDZ2ZUaOlL3oSnIvVSz0kVLmF/OVQUupIYvgV8pERgFN2NtXN5E3bq/DQkMyYcEUcnSQIrzQs2aZ36A=="
-  "resolved" "https://registry.npmjs.org/vuetify/-/vuetify-3.0.0-beta.11.tgz"
-  "version" "3.0.0-beta.11"
+"vuetify@^3.0.0-alpha.11", "vuetify@^3.0.0-beta.13":
+  "integrity" "sha512-CgDyKCIBZ0ogKUxRw3gNswx9GA6eSSp7otZcJapWJCVuon/RooQPQjf3bDuRb5ZpJ55NkX13ugjl2nq+b0U8SA=="
+  "resolved" "https://registry.npmjs.org/vuetify/-/vuetify-3.0.0-beta.13.tgz"
+  "version" "3.0.0-beta.13"
 
 "vuex@^4.0.0":
   "integrity" "sha512-M6r8uxELjZIK8kTKDGgZTYX/ahzblnzC4isU1tpmEuOIIKmV+TRdc+H4s8ds2NuZ7wpUTdGRzJRtoj+lI+pc0Q=="
