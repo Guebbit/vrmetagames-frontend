@@ -19,17 +19,15 @@
             <!-- TODO hover-only? -->
             <v-list-item
                 v-for="menu in menuList"
-                v-show="menu.authentication == null || (menu.authentication && isAuthenticated || !menu.authentication && !isAuthenticated)"
+				v-show="!menu.authentication || (menu.authentication && isAuthenticated || !menu.authentication && !isAuthenticated)"
                 :key="'desktop-navigation-' + menu.label"
                 :class="menu.class"
                 min-height="60"
                 :to="menu.route"
             >
-                <v-list-item-avatar class="v-list-item-avatar--start">
-                    <v-avatar>
-                        <font-awesome-icon :icon="menu.icon" />
-                    </v-avatar>
-                </v-list-item-avatar>
+				<template v-slot:prepend>
+					<font-awesome-icon class="v-icon ml-3" :icon="menu.icon" />
+				</template>
                 <v-list-item-title>
                     {{ menu.label }}
                 </v-list-item-title>
@@ -127,7 +125,7 @@
         <!--
         <v-list-item
             v-for="menu in menuList"
-            v-show="menu.authentication == null || (menu.authentication && isAuthenticated || !menu.authentication && !isAuthenticated)"
+            v-show="!menu.authentication || (menu.authentication && isAuthenticated || !menu.authentication && !isAuthenticated)"
             :key="'desktop-navigation-' + menu.label"
             class="button-parallelogram hover-only"
             :class="menu.class"

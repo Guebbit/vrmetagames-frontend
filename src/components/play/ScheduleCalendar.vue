@@ -2,7 +2,7 @@
 	<Calendar
 		:modes			= "['dayGridMonth', 'timeGridWeek']"
 		:admin          = "admin"
-		:events         = "Object.values(scheduleDetailedRecords)"
+		:events         = "[...Object.values(scheduleDetailedRecords), ...scheduleCalendarBackgrounds]"
 		:resources		= "resources"
 		:businessHours  = "businessHoursFullcalendar"
 		:primary        = "themeColors.primary"
@@ -47,7 +47,7 @@ import EventContentCard from "@/components/play/FAEventContentCard.vue";
 import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
 import { uiFormatDate, uiFormatTime } from "@/resources/constants";
 
-import type { scheduleMapAdvanced, scheduleInputMap, stationMap } from "@/interfaces";
+import type { scheduleMapAdvanced, scheduleMapBackground, scheduleInputMap, stationMap } from "@/interfaces";
 import type { DateSpanApi, EventApi } from "@fullcalendar/vue3";
 import type { ResourceInput } from "@fullcalendar/resource-common";
 import type { EventChangeArg } from "@fullcalendar/vue3";
@@ -183,10 +183,15 @@ function fullcalendarEventApiTranslate({ id, resourceId, start, end, allDay } :E
 // ---------------------- Fullcalendar options ----------------------
 
 /**
+ * Schedules
+ */
+const scheduleDetailedRecords = computed<Record<string, scheduleMapAdvanced>>(() => getters['ecommerce/scheduleDetailedRecords']);
+const scheduleCalendarBackgrounds = computed<scheduleMapBackground[]>(() => getters['ecommerce/scheduleCalendarBackgrounds']);
+
+/**
  * Stations
  * (to list and calculate resource limits)
  */
-const scheduleDetailedRecords = computed<Record<string, scheduleMapAdvanced>>(() => getters['ecommerce/scheduleDetailedRecords']);
 const stationsList = computed(() => getters['ecommerce/stationsList']);
 const totalStations = computed(() => getters['ecommerce/totalStations']);
 

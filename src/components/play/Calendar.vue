@@ -42,7 +42,6 @@
 </template>
 
 <script lang="ts">
-// TODO remake in <script SETUP>
 // https://fullcalendar.io/docs#main
 // https://github.com/fullcalendar/fullcalendar-example-projects/blob/master/vue3-typescript/src/Demo.vue
 // https://github.com/fullcalendar/fullcalendar/blob/master/packages/common/src/styles/vars.css
@@ -142,7 +141,7 @@ export default defineComponent({
         },
 
         // MODES
-        // TODO admin can edit other events
+        // Admin can edit other events
         admin: {
             type: Boolean,
             default: () => {
@@ -333,13 +332,13 @@ export default defineComponent({
                 eventResourceEditable: this.admin,          // same, but with resources
                 selectable: true,                           // boolean, select on calendar
                 selectMirror: true,                         // boolean, draw temporary event on select
-                // dayMaxEvents: true,                      // TODO https://fullcalendar.io/docs/dayMaxEvents
+                // dayMaxEvents: true,                      // externally customized
                 allDaySlot: false,                          // boolean, top slot
                 hiddenDays: this.hideDisabledDays ? this.closeDays : [],
                 // forceEventDuration: true,                // boolean: force event's "end" to be specified
                 slotEventOverlap: true,                     // boolean, should
                 eventStartEditable: true,                   // if event can be dragged
-                eventDurationEditable : false,              // if event can be resized by dragging TODO TEMPORARY non triggera eventAllow
+                eventDurationEditable : false,              // if event can be resized by dragging
                 selectOverlap: this.handleOverlap || true,  // boolean or function that return boolean
                 eventOverlap: this.handleOverlap || true,   // boolean or function that return boolean
                 eventAllow: this._handleAllow,              // function that return boolean
@@ -681,17 +680,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-/** TODO
-Admin mode: users with different colors, opacity 0.8? Admin with opacity 1 primary\secondary color
-User mode: users with different colors? opacity 0.4? User with opacity 1 primary\secondary color
- */
-
 $fullcalendar-mobile-threshold: 600px !default;
 
 .fc{
     table{
         cursor: pointer;
-		// TODO
 		// background-color: red;
         tbody{
 			// background: var(--fc-custom-background-color);

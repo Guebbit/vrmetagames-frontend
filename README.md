@@ -28,6 +28,15 @@ SCHEDULE
 COMPONENTS
  - BookCard lieve overflow hidden a destra, all'hover\rotate
 
+CALENDAR
+ - background color
+ - normal user can see only his events (with multiple random colors) and other users events are greyed out
+   - Admin mode: users with different colors, opacity 0.8? Admin with opacity 1 primary\secondary color 
+   - User mode: users with different colors? opacity 0.4? User with opacity 1 primary\secondary color
+ - Calendar.vue TODO remake in <script SETUP>
+ - Fullcalendar eventDurationEditable = false perché non triggera eventAllow
+ - dayMaxEvents: true (non dovrebbe servire ma controlla https://fullcalendar.io/docs/dayMaxEvents, magari come comportamento standard interno)
+
 YUP
  - yup.object.test() mi restituisce key vuota, problema nel controllo delle date di yup
 

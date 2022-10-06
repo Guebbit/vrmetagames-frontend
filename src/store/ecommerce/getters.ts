@@ -31,29 +31,56 @@ export default {
 
     /**
      * Schedule list with FE only elaborated data
+     * Join schedule with users and stations using the IDs
      *
      * @param {Object[]} scheduleRecords
      * @param {Object[]} users
      * @param {Object[]} stations
-     * @param {Object} totalStations
-     * @param {Object} rootState
-     * @param {Object} rootGetters
      * @return {Object[]}
      */
-    // TODO admin can see all events (opacity 0.8 su tutti gli eventi non-admin?)
-    // TODO normal user can see only his events (with multiple random colors) and other users events are greyed out
-    // TODO separare in multipli (tipo "scheduleMapBackground" e "scheduleMapAdvanced")
-    scheduleDetailedRecords: ({ scheduleRecords, users, stations } :stateEcommerceMap, { totalStations }, rootState, rootGetters) :Record<string, scheduleMapBackground | scheduleMapAdvanced> => {
-        let i :number;
+    scheduleDetailedRecords: ({ scheduleRecords, users, stations } :stateEcommerceMap) :Record<string, scheduleMapBackground | scheduleMapAdvanced> => {
         // regular schedules
         const scheduleArray = Object.values(scheduleRecords);
         // result with advanced schedules
-        const fullCalendarScheduleRecords :Record<string, scheduleMapBackground | scheduleMapAdvanced>  = {};
+        const scheduleFinalResult :Record<string, scheduleMapBackground | scheduleMapAdvanced>  = {};
+        // joining data
+        for(let i = scheduleArray.length; i--; ){
+            // put event in calendar
+            scheduleFinalResult[scheduleArray[i].id] = {
+                ...scheduleArray[i],
+                // if NOT admin, there will be NO user info
+                user: users?.[scheduleArray[i].userId],
+                // neither user color, they will be all the same
+                color: users?.[scheduleArray[i].userId]?.color,
+                // stations data
+                station: stations?.[scheduleArray[i].stationId],
+                className: 'regular-schedule'
+            }
+        }
+        return scheduleFinalResult;
+    },
+
+    /**
+     * 
+     * @param scheduleRecords
+     * @param users
+     * @param stations
+     * @param totalStations
+     * @param rootState
+     * @param rootGetters
+     */
+    scheduleCalendarBackgrounds: ({ scheduleRecords } :stateEcommerceMap, { totalStations }, rootState, rootGetters) :scheduleMapBackground[] => {
+        // iterator
+        let i :number;
+        // regular schedules
+        const scheduleArray = Object.values(scheduleRecords)
+        // final result
+        const scheduleFinalResult :Record<string, scheduleMapBackground> = {};
+        // list of all dates inserted in the fullcalendar, necessary to create background-schedules
+        const dateRecords :Record<string, number[]> = {};
         // time data for management
         const businessSeconds = rootGetters['main/businessSeconds'];
         const businessAvailableTime = [];
-        // list of all dates inserted in the fullcalendar, necessary to create background-schedules
-        const dateRecords :Record<string, number[]> = {};
 
         /**
          * calculate the total seconds available on a business day
@@ -65,22 +92,10 @@ export default {
         }
 
         /**
-         * Regular schedules:
-         *  - Calculate the event seconds
-         *  - Grouped daily
+         * Get dateRecords using the regular schedules
+         *  - Calculate the event seconds for the day
          */
-        for(i = scheduleArray.length; i--; ){
-            // put event in calendar
-            fullCalendarScheduleRecords[scheduleArray[i].id] = {
-                ...scheduleArray[i],
-                // if NOT admin, there will be NO user info
-                user: users?.[scheduleArray[i].userId],
-                // neither user color, they will be all the same
-                color: users?.[scheduleArray[i].userId]?.color,
-                // stations data
-                station: stations?.[scheduleArray[i].stationId],
-                className: 'regular-schedule'
-            }
+        for(let i = scheduleArray.length; i--; ){
             // SAME DAY
             // TODO WARNING In inserimento via FullCalendar necessito del -1, via form invece è d'intralcio
             if(
@@ -106,9 +121,8 @@ export default {
          * business day total seconds - event seconds = remaining business day seconds (that can be rented)
          */
         for (const day in dateRecords) {
-            if(!Object.prototype.hasOwnProperty.call(dateRecords, day)){
+            if(!Object.prototype.hasOwnProperty.call(dateRecords, day))
                 continue;
-            }
             const [ weekday, rentedSeconds ] = dateRecords[day];
             // calculate remaining seconds (percentage)
             const remainingTimePercentage = (rentedSeconds / businessAvailableTime[weekday]) * 100;
@@ -128,8 +142,7 @@ export default {
                     capacityClass = 'capacity-red';
                     break;
             }
-            // finished schedule TODO TEMPORARY
-            fullCalendarScheduleRecords[day] = {
+            scheduleFinalResult[day] = {
                 start: day,
                 end: day,
                 display: 'background',
@@ -137,7 +150,7 @@ export default {
             }
         }
         // list of schedule for fullcalendar
-        return fullCalendarScheduleRecords;
+        return Object.values(scheduleFinalResult);
     },
 
     /**
