@@ -5,11 +5,10 @@ import it from "@/locales/it.json";
 import en from "@/locales/en.json";
 
 export const i18n = createI18n({
-    locale: navigator.language, // browser language
-    fallbackLocale: 'it-IT',
+    locale: navigator.language.slice(0, 2), // browser language
+    fallbackLocale: 'it',
     messages: {
-        'it-IT': it,
-        'en-US': en,
-        'en-GB': en
+        it,
+        en
     }
 })

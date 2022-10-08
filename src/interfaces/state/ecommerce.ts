@@ -80,13 +80,14 @@ export interface scheduleMapBackground {
 
 /**
  *
- *
+ * gallery: TODO
  * capacity: TODO infinite if not specified
  */
 export interface stationMap {
     id: string
     name: string
-    label: string
+    icon: string
+    locale: Record<string, string>
     image: imageMap
     gallery?: imageMap[]
     capacity?: number
@@ -102,7 +103,7 @@ export interface gameMap {
     author?: string
     description?: string
     categories :string[]
-    stations :string[]
+    stationIds :string[]
     tags :string[]
     image?: imageMap
     coverFront?: imageMap

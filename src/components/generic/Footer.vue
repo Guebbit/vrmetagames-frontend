@@ -158,12 +158,12 @@ import {
     contactEmail,
     contactNumber,
     contactTelegram,
-    socialFacebook,
-    socialInstagram,
-    socialTiktok,
-    socialYoutube
+    // socialFacebook,
+    // socialInstagram,
+    // socialTiktok,
+    // socialYoutube
 } from "@/resources/constants";
-import guebbitLogo from "@/assets/svg/logo/vuefixed-guebbit-logo-simple.vue";
+import guebbitLogo from "@/assets/svg/logo/guebbit-logo-simple.svg?component";
 import OpeningHours from "@/components/basics/cards/OpeningHours.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";

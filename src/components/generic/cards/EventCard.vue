@@ -44,7 +44,7 @@
                     v-show="showConfirmButton && !schedule.expired"
 					variant="elevated"
                     :color="secondary || themeColors.secondary"
-                    @click="emit('button:click:confirm')"
+                    @click="emit('click:button:confirm')"
                 >
                     {{ t('generic.confirm') }}
                     <font-awesome-icon class="ml-3" :icon="['fas', 'check']" />
@@ -53,7 +53,7 @@
 					v-show="showRenewButton && schedule.expired"
 					variant="outlined"
 					:color="primary || themeColors.primary"
-					@click="emit('button:click:renew')"
+					@click="emit('click:button:renew')"
 				>
 					{{ t('generic.renew') }}
 					<font-awesome-icon class="ml-3" :icon="['fas', 'refresh']" />
@@ -62,7 +62,7 @@
                     v-show="showCancelButton && !schedule.expired"
                     variant="outlined"
 					:disabled="schedule.imminent"
-                    @click="emit('button:click:cancel')"
+                    @click="emit('click:button:cancel')"
                 >
                     {{ schedule.paid ? t('schedule-card.cancel') : t('schedule-card.remove') }}
                     <font-awesome-icon class="ml-3" :icon="['fas', 'trash-can']" />
@@ -120,9 +120,9 @@ const { t } = useI18n();
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 
 const emit = defineEmits([
-	'button:click:confirm',
-	'button:click:cancel',
-	'button:click:renew'
+	'click:button:confirm',
+	'click:button:cancel',
+	'click:button:renew'
 ]);
 
 const props = defineProps({

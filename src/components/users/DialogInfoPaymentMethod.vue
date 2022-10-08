@@ -13,7 +13,13 @@
 			closable
 		>
 			<template #close>
-				<font-awesome-icon class="ml-3" :icon="['fas', 'xmark']" />
+				<v-btn
+					icon
+					variant="text"
+					@click="emit('update:modelValue', false)"
+				>
+					<font-awesome-icon size="xl" :icon="['fas', 'xmark']" />
+				</v-btn>
 			</template>
 
 			<p class="my-3">{{ t('dialog-info-payment-method.description') }}</p>
@@ -47,7 +53,6 @@
 import { defineProps, defineEmits, toRefs, watch } from "vue";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
-import useTimeHelpers from "@/resources/composables/useTimeHelpers";
 import useItemDetails from "@/resources/composables/useItemDetails";
 import type { paymentMethodMap } from "@/interfaces";
 

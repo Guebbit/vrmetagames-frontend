@@ -76,7 +76,7 @@
                 <ActionPanel
                     class="py-10"
                     :title="t('home-page.landing-presentation-title')"
-                    @button:click="() => {}"
+                    @click:button="() => {}"
                 >
                     <template #background>
                         <video class="panel-background" preload="metadata" playsinline="" muted="" loop="" autoplay="">

@@ -27,13 +27,13 @@
 				</v-btn>
 				<v-btn
 					variant="tonal"
-					@click="emit('button:click:cancel')"
+					@click="emit('click:button:cancel')"
 				>
 					{{ t('dialog-delete-all-schedule.button-cancel') }}
 				</v-btn>
 				<v-btn
 					variant="outlined"
-					@click="emit('button:click:confirm')"
+					@click="emit('click:button:confirm')"
 				>
 					{{ t('dialog-delete-all-schedule.button-confirm') }}
 					<font-awesome-icon class="ml-3" :icon="['fas', 'check']" />
@@ -55,8 +55,8 @@ library.add(faXmark, faCheck, faEnvelope);
 
 const emit = defineEmits([
 	'update:modelValue',
-	'button:click:confirm',
-	'button:click:cancel'
+	'click:button:confirm',
+	'click:button:cancel'
 ])
 
 const { t } = useI18n();

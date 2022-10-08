@@ -187,7 +187,7 @@
 									</v-list-item>
 								</template>
 								<template v-slot:prepend-inner>
-									<font-awesome-icon class="v-icon v-icon--size-default v-icon--start" :icon="['fas', selectedStation ? selectedStation.icon : 'couch']" />
+									<font-awesome-icon class="v-icon v-icon--size-default v-icon--start" :icon="['fas', selectedStationIcon]" />
 								</template>
 							</v-select>
 						</v-col>
@@ -343,9 +343,8 @@ const showSelectStation = ref(false);
 
 /**
  * Selected station record
- * TODO check capacity, posizioni libere, etc. Da usare per messaggi di errore specifici
  */
-const selectedStation = computed(() => props.stations.find(({ id }) => id === modelValueC.value.selectedStation));
+const selectedStationIcon = computed(() => props.stations.find(({ id }) => id === modelValueC.value.selectedStation)?.icon || 'couch' );
 
 /**
  * UI

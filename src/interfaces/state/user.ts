@@ -4,8 +4,11 @@ export interface paymentMethodMap {
     id: string
     name: string
     logo: string
-    background: string
-    color: string
+    icon: string | string[]
+    iconColor: string
+    cardBackground: string
+    cardColor: string
+    cardNumber: string
     cardEmail: string
     cardExpire: string
 }

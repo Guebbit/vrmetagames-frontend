@@ -298,8 +298,8 @@
 	<DialogConfirmItem
 		v-model="showConfirmDialog"
 
-		@button:click:confirm="scheduleConfirm(); showConfirmDialog = false;"
-		@button:click:cancel="showConfirmDialog = false"
+		@click:button:confirm="scheduleConfirm(); showConfirmDialog = false;"
+		@click:button:cancel="showConfirmDialog = false"
 	/>
 
 	<Footer

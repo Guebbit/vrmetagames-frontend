@@ -1,6 +1,6 @@
 // TODO OPTIMIZE
 @import 'main/global';
-@import '_transitions';
+@import 'main/transitions';
 @import 'atoms/ButtonParallelogram';
 @import 'atoms/AnimationLoadingAlexWarnesRotatingSquares';
 @import 'guebbit-scss-library/components/atoms/ButtonBrandIcon';
@@ -14,7 +14,7 @@
 // TODO TEMPORARY: hope that vuetify make this easily modifiable
 @import 'fixes/VuetifyBetaFixes';
 @import 'fixes/elevation';
-
+@import 'fixes/svgstyle';
 
 // TODO guebbit (magari ancora meno di atom?)
 @import 'atoms/SimpleIconText';

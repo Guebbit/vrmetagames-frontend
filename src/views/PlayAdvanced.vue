@@ -278,7 +278,6 @@
 
 <script setup lang="ts">
 import { defineProps, ref, computed, toRefs, watch, onMounted } from "vue";
-import { useRouter } from 'vue-router'
 import { useTheme } from "vuetify";
 import { useI18n } from "vue-i18n";
 import { useStore } from "@/store";
@@ -307,13 +306,12 @@ import type {
 	scheduleInputMap,
 	scheduleMap,
 } from "@/interfaces";
-import { sendScheduleRequestMap, stationMap } from "@/interfaces";
+import { sendScheduleRequestMap } from "@/interfaces";
 
 library.add(faCalendar, faCalendarCheck, faClock, faPlay, faCheck, faCircleInfo, faCartArrowDown, faHatWizard, faGear, faTrashCan, faArrowDown19, faArrowUp91, faArrowDownAZ, faArrowUpZA);
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { t } = useI18n();
-const router = useRouter();
 const { state, getters, commit, dispatch } = useStore();
 const { scheduleRecords, scheduleTimeStep } = toRefs(state.ecommerce);
 
@@ -376,7 +374,7 @@ const {
 onMounted(() => fillForm());
 
 /**
- *
+ * Stations for ScheduleFormCard list of possible stations
  */
 const stationsList = computed(() => getters['ecommerce/stationsList']);
 

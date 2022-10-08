@@ -209,10 +209,17 @@
     "edit-product": "Modifica prodotto"
   },
   "product-list-page": {
+    "filter-label-logic": "Logiche di ricerca",
+    "filter-label-searchable": "Su cosa effettuare la ricerca",
+    "filter-label-tags": "Cerca tra i tag",
     "filter-title": "Titolo",
+    "filter-author": "Sviluppatori",
+    "filter-description": "Descrizione",
     "filter-minAge": "Età minima",
     "filter-duration": "Tempo di gioco",
     "filter-maxPlayersOffline": "Numero giocatori",
+    "filter-logic-and":  "Logica AND",
+    "filter-logic-or": "Logica OR",
     "motion-sickness-indifferent": "Qualsiasi motion sickness",
     "motion-sickness-low": "Bassa motion sickness",
     "motion-sickness-high": "Alta motion sickness",

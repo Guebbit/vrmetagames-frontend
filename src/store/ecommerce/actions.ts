@@ -171,6 +171,10 @@ const mockServerStations = [
         id: 'item1',
         name: 'oculus',
         icon: 'vr-cardboard',
+        label: {
+            it: 'Oculus',
+            en: 'Oculus'
+        },
         image: {
             src: 'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png'
         },
@@ -182,6 +186,10 @@ const mockServerStations = [
         id: 'item2',
         name: 'ps5',
         icon: 'gamepad',
+        label: {
+            it: 'PlayStation 5',
+            en: 'PlayStation 5'
+        },
         image: {
             src: 'https://res.cloudinary.com/muhammederdem/image/upload/v1536405218/starwars/item-3.png'
         },
@@ -199,7 +207,7 @@ const mockServerGames = [
         author: "Mighty Coconut",
         description: "",
         categories: ["sport"],
-        stations: ["Oculus"],
+        stationIds: ["item1"],
         tags: [
             "Golf",
             "PVP"
@@ -231,7 +239,7 @@ const mockServerGames = [
         author: "Resolution Games",
         description: "",
         categories: ["party-game", "action"],
-        stations: ["Oculus"],
+        stationIds: ["item1"],
         tags: [
             "PVP",
             "COOP"
@@ -259,7 +267,7 @@ const mockServerGames = [
         author: "Resolution Games",
         description: "",
         categories: ["shooter"],
-        stations: ["Oculus"],
+        stationIds: ["item1"],
         tags: [
             "PVP"
         ],
@@ -282,7 +290,7 @@ const mockServerGames = [
         author: "",
         description: "",
         categories: ["sport"],
-        stations: ["Oculus"],
+        stationIds: ["item1"],
         tags: [],
         image: {
             src: imagesUrl + 'games/echo-arena.jpg'
@@ -303,7 +311,7 @@ const mockServerGames = [
         author: "Resolution Games",
         description: "",
         categories: ["puzzle"],
-        stations: ["Oculus"],
+        stationIds: ["item1", "item2"],
         tags: [],
         image: {
             src: imagesUrl + 'games/angry-birds-isle-of-pigs.jpg'
@@ -324,7 +332,7 @@ const mockServerGames = [
         author: "Beat Games",
         description: "",
         categories: ["rhythm"],
-        stations: ["Oculus"],
+        stationIds: ["item1", "item2"],
         tags: [
             "Dance",
             "Music",
@@ -352,7 +360,7 @@ const mockServerGames = [
         author: "Make Real",
         description: "",
         categories: ["action"],
-        stations: ["Oculus"],
+        stationIds: ["item2"],
         tags: [],
         image: {
             src: imagesUrl + 'games/locodojo.jpg'
@@ -373,7 +381,7 @@ const mockServerGames = [
         author: "",
         description: "",
         categories: ["action"],
-        stations: ["Oculus"],
+        stationIds: ["item1"],
         tags: [],
         image: {
             src: imagesUrl + 'games/nock.jpg'
@@ -394,7 +402,7 @@ const mockServerGames = [
         author: "BigBox VR, Inc.",
         description: "",
         categories: ["shooter", "action"],
-        stations: ["Oculus"],
+        stationIds: ["item1"],
         tags: [
             "Battle Royale",
             "PVP"
@@ -418,7 +426,7 @@ const mockServerGames = [
         author: "Survios, Taito Corporation",
         description: "",
         categories: ["puzzle"],
-        stations: ["Oculus"],
+        stationIds: ["item1"],
         tags: [],
         image: {
             src: imagesUrl + 'games/puzzle-bobble-vacation-odyssey.jpg'
@@ -439,7 +447,7 @@ const mockServerGames = [
         author: "WanadevStudio",
         description: "",
         categories: ["rhythm"],
-        stations: ["Oculus"],
+        stationIds: ["item1"],
         tags: [
             "Music"
         ],
@@ -462,7 +470,7 @@ const mockServerGames = [
         author: "Fireproof Games",
         description: "",
         categories: ["adventure"],
-        stations: ["Oculus"],
+        stationIds: ["item1"],
         tags: [
             "Horror",
             "Puzzle",
@@ -487,7 +495,7 @@ const mockServerGames = [
         author: "Ramen VR",
         description: "",
         categories: ["action"],
-        stations: ["Oculus"],
+        stationIds: ["item1"],
         tags: [
             "Open World"
         ],

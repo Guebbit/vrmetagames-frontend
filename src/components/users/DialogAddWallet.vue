@@ -13,7 +13,13 @@
 			closable
 		>
 			<template #close>
-				<font-awesome-icon class="ml-3" :icon="['fas', 'xmark']" />
+				<v-btn
+					icon
+					variant="text"
+					@click="emit('update:modelValue', false)"
+				>
+					<font-awesome-icon size="xl" :icon="['fas', 'xmark']" />
+				</v-btn>
 			</template>
 
 			<p class="my-3">{{ t('dialog-add-wallet.description') }}</p>
@@ -44,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, toRefs, watch } from "vue";
+import { defineProps, defineEmits } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { library } from "@fortawesome/fontawesome-svg-core";

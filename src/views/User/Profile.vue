@@ -390,8 +390,8 @@
 								<CreditCard
 									:name = "creditCard.name"
 									:logo = "creditCard.logo"
-									:background = "creditCard.background"
-									:color = "creditCard.color"
+									:background = "creditCard.cardBackground"
+									:color = "creditCard.cardColor"
 									:cardNumber = "creditCard.cardNumber"
 									:cardEmail = "creditCard.cardEmail"
 									:cardExpire = "creditCard.cardExpire"
@@ -413,8 +413,8 @@
 									<font-awesome-icon
 										class="px-3"
 										size="2x"
-										:icon="paymentTypeIcon(item.type)"
-										:color="paymentTypeColor(item.type)"
+										:icon="paymentMethods[item.methodId] ? paymentMethods[item.methodId].icon : ['fas', 'coins']"
+										:color="paymentMethods[item.methodId] ? paymentMethods[item.methodId].iconColor : themeColors.primary"
 									/>
 
 									<h4 class="font-600 text-left d-none d-sm-block">{{ item.code ? item.code : t('profile-page.payment-local')}}</h4>
@@ -508,7 +508,7 @@
 			:dateFormat="uiFormatDate"
 			:timeFormat="uiFormatTime"
 
-			@button:click:method="(value) => { selectTargetPaymentMethod(value); selectedPaymentId = false; }"
+			@button:click:method="(value) => { selectedPaymentId = false; selectTargetPaymentMethod(value); showPaymentMethodDialog = true; }"
 		/>
 
 		<DialogInfoPaymentMethod
@@ -769,28 +769,7 @@ const scheduleList = computed(() =>
 );
 
 
-/**
- * UI
- */
-const paymentTypeIcon = (name :string) => {
-	switch (name) {
-		case 'paypal':
-			return ['fab', 'cc-paypal'];
-		case 'credit-card':
-			return ['fas', 'credit-card'];
-	}
-	return ['fas', 'coins'];
-}
-const paymentTypeColor = (name :string) => {
-	switch (name) {
-		case 'paypal':
-			return '#f0f0f0';
-		case 'credit-card':
-			return '#ffff33';
-	}
-	return themeColors.primary;
-}
-
+// ---------------- UI ----------------
 /**
  * Legenda of the different statuses of schedule
  * (no computed because it's the translation of a constant)

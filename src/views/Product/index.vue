@@ -3,28 +3,86 @@
     <div id="product-list-page" class="theme-page page-menu-padding">
         <v-container class="page-controls">
 
-            <v-row>
-                <v-col cols="12" md="12" lg="6" xl="6">
-					<!--
-					TODO
-					v-model="gameFilters[0].searchParams"
-					:items="searchableParametersList"
-					-->
-                    <v-text-field
-                        v-model="gameFilters[0].search"
-                        :label="t('generic.search')"
-                        variant="solo"
+			<v-row v-show="isAdmin">
+				<v-col cols="12" md="6" lg="4" xl="2">
+					<v-select
+						:items="filterTargetLogicList"
+						variant="outlined"
+						:label="t('product-list-page.filter-label-logic')"
+					/>
+				</v-col>
+				<v-col cols="12" md="6" lg="4" xl="2">
+					<v-select
+						:items="searchTextParametersList"
+						variant="outlined"
+						chips
+						:label="t('product-list-page.filter-label-searchable')"
+						multiple
+					/>
+				</v-col>
+			</v-row>
+
+			<v-row>
+				<v-col cols="12" md="8" lg="7" xl="4">
+					<v-text-field
+						v-model="gameFilters[0].search"
+						:label="t('generic.search')"
+						variant="solo"
 						hide-details
-                    >
-                        <template v-slot:append>
-                            <font-awesome-icon
+					>
+						<template v-slot:append>
+							<font-awesome-icon
 								class="v-icon v-icon--size-default v-icon--start cursor-pointer"
 								:icon="['fas', 'magnifying-glass']"
 							/>
-                        </template>
-                    </v-text-field>
-                </v-col>
-                <v-col cols="12" md="12" lg="6" xl="6" class="d-flex align-center justify-center">
+						</template>
+					</v-text-field>
+				</v-col>
+
+				<v-col cols="12" md="4" lg="5" xl="2">
+					<v-select
+						v-model="gameFilters[2].search"
+						:items="tagsList"
+						chips
+						:label="t('product-list-page.filter-label-tags')"
+						multiple
+						hide-details
+					></v-select>
+				</v-col>
+			</v-row>
+
+            <v-row>
+				<v-col cols="12" md="12" lg="4" xl="4" class="filter-by-station-section">
+					<v-item-group
+						v-model="vuetifyTemporaryFixItemGroupVModel"
+						class="d-flex align-center justify-center flex-gap-12"
+						multiple
+					>
+						<v-item
+							v-for="station in stationsList"
+							:key="'stations-filter-' + station.id"
+							v-slot="{ isSelected, toggle }"
+						>
+							<v-card
+								:color="isSelected ? 'secondary' : ''"
+								class="d-flex align-center"
+								dark
+								@click="toggle"
+							>
+								<div class="flex-grow-1 text-center">
+									<vrmetagamesLogo />
+									<component
+										:is="station.label[locale].length > 10 ? 'small' : 'p'"
+										class="d-block mt-n7 text-no-wrap"
+									>
+										{{ station.label[locale] }}
+									</component>
+								</div>
+							</v-card>
+						</v-item>
+					</v-item-group>
+				</v-col>
+                <v-col cols="12" md="12" lg="8" xl="8" class="d-flex align-center justify-center">
                     <div class="d-flex justify-center align-start mb-5 w-100">
                         <v-btn-toggle
                             v-model="gameFilters[1].search"
@@ -46,210 +104,81 @@
                         </v-btn-toggle>
                     </div>
                 </v-col>
-				<v-col cols="12" md="12" lg="12" xl="6" class="tag-search d-flex align-center justify-center flex-gap-12 flex-wrap">
-					<v-item-group
-						v-model="filterList.familySafe"
-						selected-class="bg-primary"
-					>
-						<v-item v-slot="{ selectedClass, toggle }">
-							<v-card
-								:class="['d-flex align-center', selectedClass]"
-								@click="toggle"
+            </v-row>
+
+			<v-row>
+				<v-col cols="12" md="12" lg="12" xl="7" class="filter-by-tag-section d-flex align-center justify-space-between flex-wrap flex-gap-12">
+
+					<!-- TODO creare VuetifyBlockFilter, filterableParametersList as items e lista icone con Record<string, componenteicona> da richiamare  -->
+					<div class="d-flex flex-wrap flex-gap-12">
+						<template
+							v-for="{ name, text, icon, variant = 'elevated', activeColor, levels = [] } in filterableParametersList"
+							:key="'card-filters-' + name"
+						>
+							<v-item-group
+								v-if="levels.length < 1"
+								v-model="filterList[name]"
+								:variant="variant"
+								:selectedClass="activeColor"
 							>
-								<div class="flex-grow-1 text-center">
-									<font-awesome-icon :icon="['fas', 'people-roof']" />
-									<p class="mt-3">{{ t('generic.family-friendly') }}</p>
+								<v-item v-slot="{ selectedClass, toggle }">
+									<v-card
+										:class="['d-flex align-center', selectedClass]"
+										@click="toggle"
+									>
+										<div class="flex-grow-1 text-center">
+											<font-awesome-icon v-show="icon" :icon="icon" />
+											<p v-show="text" class="mt-3">{{ text }}</p>
+										</div>
+									</v-card>
+								</v-item>
+							</v-item-group>
+							<v-card
+								v-else
+								:variant="variant"
+								class="d-flex align-center pa-3"
+								:class="{
+								[activeColor]: filterList[name] > 0
+							}"
+								@click="filterList[name] === undefined ?
+											filterList[name] = 1 :
+												filterList[name] + 1 >= levels.length ?
+													filterList[name] = 0 :
+													filterList[name]++"
+							>
+								<div
+									v-if="levels[filterList[name] || 0]"
+									class="flex-grow-1 text-center"
+								>
+									<font-awesome-icon
+										v-if="levels[filterList[name] || 0].icon"
+										size="2x"
+										:icon="levels[filterList[name] || 0].icon"
+									/>
+									<span
+										v-if="levels[filterList[name] || 0].iconText"
+										class="text-h4"
+									>
+									{{ levels[filterList[name] || 0].iconText }}
+								</span>
+									<component
+										v-if="levels[filterList[name] || 0].text"
+										:is="levels[filterList[name] || 0].text?.length > 10 ? 'small' : 'p'"
+										class="d-block mt-3"
+									>
+										{{ levels[filterList[name] || 0].text }}
+									</component>
 								</div>
 							</v-card>
-						</v-item>
-					</v-item-group>
-					<v-item-group
-						v-model="filterList.multiplayerOnline"
-						selected-class="bg-primary"
-					>
-						<v-item v-slot="{ selectedClass, toggle }">
-							<v-card
-								:class="['d-flex align-center', selectedClass]"
-								@click="toggle"
-							>
-								<div class="flex-grow-1 text-center">
-									<font-awesome-icon :icon="['fas', 'globe']" />
-									<p class="mt-3">{{ t('generic.online') }}</p>
-								</div>
-							</v-card>
-						</v-item>
-					</v-item-group>
+						</template>
+					</div>
 
-					<!-- TODO fare un ciclo for e standardizzare: -->
-
-					<v-card
-						class="d-flex align-center pa-3"
-						:class="{
-							'bg-primary': filterList.multiplayerOffline > 0
-						}"
-						@click="filterList.multiplayerOffline === undefined ?
-										filterList.multiplayerOffline = 1 :
-											filterList.multiplayerOffline >= 2 ?
-												filterList.multiplayerOffline = 0 :
-												filterList.multiplayerOffline++"
-					>
-						<div class="flex-grow-1 text-center">
-							<font-awesome-icon
-								size="2x"
-								:icon="!filterList.multiplayerOffline ?
-											['fas', 'user-group'] :
-											filterList.multiplayerOffline === 1 ?
-											['fas', 'user'] :
-											['fas', 'users']"
-							/>
-							<small v-if="!filterList.multiplayerOffline" class="d-block mt-3">
-								{{ t('generic.singleplayer') + '/' + t('generic.multiplayer') }}
-							</small>
-							<p v-else class="mt-3">
-								{{
-									filterList.multiplayerOffline === 1 ?
-										t('generic.singleplayer') :
-										t('generic.multiplayer')
-								}}
-							</p>
-						</div>
-					</v-card>
-					<v-card
-						class="d-flex align-center pa-3"
-						:class="{
-							'bg-primary': filterList.motionSickness > 0
-						}"
-						@click="filterList.motionSickness === undefined ?
-										filterList.motionSickness = 1 :
-											filterList.motionSickness >= 2 ?
-												filterList.motionSickness = 0 :
-												filterList.motionSickness++"
-					>
-						<div class="flex-grow-1 text-center">
-							<font-awesome-icon
-								size="2x"
-								:icon="!filterList.motionSickness ?
-									['fas', 'face-smile'] :
-									filterList.motionSickness === 1 ?
-									['fas', 'face-grin-beam'] :
-									['fas', 'face-dizzy']"
-							/>
-							<small class="d-block mt-3">
-								{{
-									!filterList.motionSickness ?
-										t('product-list-page.motion-sickness-indifferent')  :
-										filterList.motionSickness === 1 ?
-											t('product-list-page.motion-sickness-low') :
-											t('product-list-page.motion-sickness-high')
-								}}
-							</small>
-						</div>
-					</v-card>
-
-					<v-card
-						class="d-flex align-center pa-3"
-						:class="{
-							'bg-primary': filterList.difficulty > 0
-						}"
-						@click="filterList.difficulty === undefined ?
-										filterList.difficulty = 1 :
-											filterList.difficulty >= 2 ?
-												filterList.difficulty = 0 :
-												filterList.difficulty++"
-					>
-						<div class="flex-grow-1 text-center">
-							<font-awesome-icon
-								size="2x"
-								:icon="!filterList.difficulty ?
-									['fas', 'face-smile'] :
-									filterList.difficulty === 1 ?
-									['fas', 'face-grin-beam'] :
-									['fas', 'face-dizzy']"
-							/>
-							<p class="mt-3">
-								{{
-									!filterList.difficulty ?
-										t('product-list-page.difficulty-indifferent')  :
-										filterList.difficulty === 1 ?
-											t('product-list-page.difficulty-low') :
-											t('product-list-page.difficulty-high')
-								}}
-							</p>
-						</div>
-					</v-card>
-
-					<v-card
-						class="d-flex align-center pa-3"
-						:class="{
-							'bg-primary': filterList.duration > 0
-						}"
-						@click="filterList.duration === undefined ?
-										filterList.duration = 1 :
-											filterList.duration >= 3 ?
-												filterList.duration = 0 :
-												filterList.duration++"
-					>
-						<div class="flex-grow-1 text-center">
-							<font-awesome-icon
-								size="2x"
-								:icon="!filterList.duration ?
-									['fas', 'hourglass-empty'] :
-									filterList.duration === 1 ?
-										['fas', 'hourglass-start'] :
-										filterList.duration === 2 ?
-											['fas', 'hourglass-half'] :
-											['fas', 'hourglass-end']"
-							/>
-							<p class="mt-3">
-								{{
-									!filterList.duration ?
-										t('product-list-page.duration-indifferent')  :
-										filterList.duration === 1 ?
-											t('product-list-page.duration-low') :
-											filterList.duration === 2 ?
-												t('product-list-page.duration-medium') :
-												t('product-list-page.duration-high')
-								}}
-							</p>
-						</div>
-					</v-card>
-
-					<v-card
-						class="d-flex align-center pa-3"
-						:class="{
-							'bg-primary': filterList.minAge > 0
-						}"
-						@click="filterList.minAge === undefined ?
-									filterList.minAge = 1 :
-									filterList.minAge >= 3 ?
-										filterList.minAge = 0 :
-										filterList.minAge++"
-					>
-						<div class="flex-grow-1 text-center">
-							<span class="text-h4">
-								{{
-									!filterList.minAge ?
-										'6+' :
-										filterList.minAge === 1 ?
-											'10+' :
-											filterList.minAge === 2 ?
-												'14+' :
-												'18+'
-								}}
-							</span>
-							<small class="d-block mt-3">
-								{{ t('product-list-page.minAge-warning') }}
-							</small>
-						</div>
-					</v-card>
-
-					<!-- TODO modeVisualization >= 2 -->
 					<v-card
 						class="d-flex align-center pa-3"
 						variant="outlined"
 						@click="modeVisualization === undefined ?
 										modeVisualization = 1 :
-											modeVisualization >= 1 ?
+											modeVisualization >= 2 ?
 												modeVisualization = 0 :
 												modeVisualization++"
 					>
@@ -265,10 +194,8 @@
 						</div>
 					</v-card>
 
-
 				</v-col>
-
-				<v-col cols="12" md="12" lg="12" xl="6" class="d-flex align-end justify-center flex-gap-12">
+				<v-col cols="12" md="12" lg="12" xl="5" class="d-flex align-end justify-end flex-gap-12">
 					<v-btn
 						v-for="sort in sortingParametersList"
 						:key="'sortable-' + sort"
@@ -298,11 +225,10 @@
 						<font-awesome-icon class="ml-3" :icon="sortingIcon(sort)" />
 					</v-btn>
 				</v-col>
-
-            </v-row>
+			</v-row>
         </v-container>
 
-        <div v-show="modeVisualization === 0"
+        <div v-if="modeVisualization === 0"
              class="game-list-details"
         >
             <div class="game-list-details-shadow"></div>
@@ -451,17 +377,16 @@
             </ProductComicPanel>
         </div>
 
-        <v-container v-show="modeVisualization === 1">
+        <v-container v-if="modeVisualization === 1">
             <v-row
                 class="game-list-masonry"
                 justify="center"
             >
                 <v-col v-for="game in itemListFiltered"
-                       :key="'game-wrapper-' + game.id"
+                       :key="'game-card-' + game.id"
                        cols="6" md="4" lg="3" xl="2"
                 >
                     <ImageHoverUpCard
-                        :key="'game-' + game.id"
                         :image="game.coverFront.src"
                         @click="$router.push({
                             name: 'GameTarget',
@@ -481,10 +406,49 @@
             </v-row>
         </v-container>
 
-		<v-container v-show="modeVisualization === 2">
-			<br><br><br><br><br><br><br>
-			<h1 class="text-center">COMING SOON</h1>
-			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+		<v-container v-if="modeVisualization === 2">
+
+
+			<v-card
+				v-for="game in itemListFiltered"
+				:key="'game-list2-' + game.id"
+			>
+				<div class="d-flex justify-space-between align-center">
+					<v-img
+						:lazy-src="game.coverFront.thumbnail"
+						:src="game.coverFront.src"
+						height="64px"
+					/>
+
+					<h4 class="font-600 text-left d-none d-sm-block">
+						{{ game.title }}
+					</h4>
+
+					<v-spacer />
+
+					<font-awesome-icon class="px-5" :icon="['fas', 'arrow-right']" />
+				</div>
+			</v-card>
+
+
+			<v-list
+				item-props
+			>
+				<v-list-item
+					v-for="game in itemListFiltered"
+					:key="'game-list-' + game.id"
+				>
+					<template v-slot:prepend>
+						<v-avatar>
+							<v-img
+								:lazy-src="game.coverFront.thumbnail"
+								:src="game.coverFront.src"
+							/>
+						</v-avatar>
+					</template>
+					{{ game.id }}
+				</v-list-item>
+			</v-list>
 		</v-container>
     </div>
 
@@ -495,7 +459,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs, ref, computed } from "vue";
+import { toRefs, ref, computed, watch } from "vue";
 import { useTheme } from "vuetify";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
@@ -504,6 +468,7 @@ import useItemList, { type itemListFiltersMap } from "@/resources/composables/us
 import ProductComicPanel from "@/components/basics/blocks/ProductComicPanel.vue";
 import ImageHoverUpCard from "@/components/basics/cards/ImageHoverUpCard.vue";
 import Footer from "@/components/generic/Footer.vue";
+import vrmetagamesLogo from "@/assets/svg/logo/logo.svg?component";
 import type { gameMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -518,8 +483,8 @@ library.add(faUser, faUsers, faUserGroup, faGlobe, faPeopleRoof, faTags, faGrip,
 	faHourglassHalf, faHourglassEnd, faSort, faSortDown, faSortUp, faFaceSmile, faFaceGrinBeam, faFaceDizzy
 );
 
-const { t } = useI18n();
-const { state, dispatch } = useStore();
+const { t, locale } = useI18n();
+const { state, getters, dispatch } = useStore();
 const { games } = toRefs(state.ecommerce);
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 
@@ -527,43 +492,197 @@ const { global: { current: { value: { colors: themeColors } } } } = useTheme();
  * Possible sort/search options
  */
 const sortingParametersList = ['title',	'minAge', 'duration', 'maxPlayersOffline'];
-const searchableParametersList = ['title', 'author', 'description'];
+const searchTextParametersList = [
+	{
+		title: t('product-list-page.filter-title'),
+		value: 'title'
+	},
+	{
+		title: t('product-list-page.filter-author'),
+		value: 'author'
+	},
+	{
+		title: t('product-list-page.filter-description'),
+		value: 'description'
+	}
+];
+
+const filterableParametersList = [
+	{
+		name: "familySafe",
+		activeColor: 'bg-primary',
+		icon: ['fas', 'people-roof'],
+		text: t('generic.family-friendly')
+},
+	{
+		name: "multiplayerOnline",
+		activeColor: 'bg-primary',
+		icon: ['fas', 'globe'],
+		text: t('generic.online')
+	},
+	{
+		name: "multiplayerOffline",
+		activeColor: 'bg-primary',
+		levels: [
+			{
+				icon: ['fas', 'user-group'],
+				text: t('generic.singleplayer') + '/' + t('generic.multiplayer'),
+			},
+			{
+				icon: ['fas', 'user'],
+				text: t('generic.singleplayer'),
+			},
+			{
+				icon: ['fas', 'users'],
+				text: t('generic.multiplayer'),
+			}
+		]
+	},
+	{
+		name: "motionSickness",
+		activeColor: 'bg-primary',
+		levels: [
+			{
+				icon: ['fas', 'face-smile'],
+				text: t('product-list-page.motion-sickness-indifferent'),
+			},
+			{
+				icon: ['fas', 'face-grin-beam'],
+				text: t('product-list-page.motion-sickness-low'),
+			},
+			{
+				icon: ['fas', 'face-dizzy'],
+				text: t('product-list-page.motion-sickness-high'),
+			}
+		]
+	},
+	{
+		name: "difficulty",
+		activeColor: 'bg-primary',
+		levels: [
+			{
+				icon: ['fas', 'face-smile'],
+				text: t('product-list-page.difficulty-indifferent'),
+			},
+			{
+				icon: ['fas', 'face-grin-beam'],
+				text: t('product-list-page.difficulty-low'),
+			},
+			{
+				icon: ['fas', 'face-dizzy'],
+				text: t('product-list-page.difficulty-high'),
+			}
+		]
+	},
+	{
+		name: "duration",
+		activeColor: 'bg-primary',
+		levels: [
+			{
+				icon: ['fas', 'hourglass-empty'],
+				text: t('product-list-page.duration-indifferent'),
+			},
+			{
+				icon: ['fas', 'hourglass-start'],
+				text: t('product-list-page.duration-low'),
+			},
+			{
+				icon: ['fas', 'hourglass-half'],
+				text: t('product-list-page.duration-medium'),
+			},
+			{
+				icon: ['fas', 'hourglass-end'],
+				text: t('product-list-page.duration-high'),
+			}
+		]
+	},
+	{
+		name: "minAge",
+		activeColor: 'bg-primary',
+		levels: [
+			{
+				iconText: '6+',
+				text: t('product-list-page.minAge-warning'),
+			},
+			{
+				iconText: '10+',
+				text: t('product-list-page.minAge-warning'),
+			},
+			{
+				iconText: '14+',
+				text: t('product-list-page.minAge-warning'),
+			},
+			{
+				iconText: '18+',
+				text: t('product-list-page.minAge-warning'),
+			}
+		]
+	}
+]
+
+/**
+ * Stations for ScheduleFormCard list of possible stations
+ * TODO vuetifyTemporaryFixItemGroupVModel è un temporary fix
+ * 		perché item-group v-model restituisce solo gli indici
+ */
+const stationsList = computed(() => getters['ecommerce/stationsList']);
+const vuetifyTemporaryFixItemGroupVModel = ref([]);
+watch(vuetifyTemporaryFixItemGroupVModel, (arrayValue :string[]) => {
+		gameFilters.value[3].search = arrayValue.reduce((reducer, stationIndex) => [
+			...reducer,
+			stationsList.value[stationIndex].id
+		], [] as string[])
+	}
+)
+
+
 
 /**
  * Filter rules (for searchRecords of guebbit-javascript-library)
  * General logic: AND
+ * Target logic: default OR, can be And
  * So every rule in the array has to be true
  *
  * Invidually, every rule can be AND or OR on the checks it make
  */
-const gameFilters = ref<itemListFiltersMap[]>([
+const filterTargetLogicList = [
 	{
-          search: '',
-          searchParams: ['title'],
-          logic: 'OR',
-          stringLimit: 2,
-          distance: -1
+		title: t('product-list-page.filter-logic-and'),
+		value: 'AND'
 	},
 	{
-          search: [],
-          searchParams: ['categories'],
-          logic: 'OR',
+		title: t('product-list-page.filter-logic-or'),
+		value: 'OR'
+	}
+]
+const filterTargetLogic = ref<'OR' | 'AND'>('OR');
+const gameFilters = ref<itemListFiltersMap[]>([
+	{
+		search: '',
+		searchParams: ['title'],
+		stringLimit: 2,
+		distance: -1
+	},
+	{
+		search: [],
+		searchParams: ['categories']
+	},
+	{
+		search: [],
+		searchParams: ['tags']
+	},
+	{
+		search: [],
+		searchParams: ['stationIds']
 	}
 ]);
-
-/**
- *
- */
-const {
-	itemList,
-	itemListFiltered :itemListFilteredOriginal
-} = useItemList<gameMap>(
-	games,
-	Promise.all([
-		dispatch('main/initApp'),
-		dispatch('ecommerce/getGames')
-	]),
-	gameFilters,
+const gameFiltersWithLogic = computed<itemListFiltersMap[]>(() =>
+	gameFilters.value.map((item) => {
+		return {
+			...item,
+			logic: filterTargetLogic.value
+		}
+	})
 );
 
 /**
@@ -582,20 +701,40 @@ const sortList = ref<Record<string, number>>({});
 const filterList = ref<Record<string, number>>({});
 
 /**
- * Visualization mode
+ * list of tags & categories (extrapolated from games)
  */
-const modeVisualization = ref(1);
-
-
-// list of categories (extrapolated from games)
 const categoriesList = computed<string[]>(() => {
-    return [... new Set(
-        itemList.value.reduce((catArray, { categories = [] }) => {
-            catArray.push(...categories);
-            return catArray;
+    return [...new Set(
+        itemList.value.reduce((gameArray, { categories = [] }) => {
+            gameArray.push(...categories);
+            return gameArray;
         }, [] as string[])
     )]
 });
+const tagsList = computed<string[]>(() => {
+	return [...new Set(
+		itemList.value.reduce((gameArray, { tags = [] }) => {
+			gameArray.push(...tags);
+			return gameArray;
+		}, [] as string[])
+	)]
+});
+
+/**
+ * Page list toolbox
+ */
+const {
+	itemList,
+	itemListFiltered :itemListFilteredOriginal,
+	isAdmin
+} = useItemList<gameMap>(
+	games,
+	Promise.all([
+		dispatch('main/initApp'),
+		dispatch('ecommerce/getGames')
+	]),
+	gameFiltersWithLogic,
+);
 
 /**
  * list to show after filters and sorting are applied
@@ -672,8 +811,16 @@ const itemListFiltered = computed<gameMap[]>(() => {
 	return gameArray;
 });
 
+// -------------------- UI --------------------
+
 /**
- * UI
+ * Visualization mode
+ */
+const modeVisualization = ref(2);
+
+/**
+ *
+ * @param {string} category
  */
 function categoryIcon(category :string) :[string, string]{
 	switch (category){
@@ -697,6 +844,10 @@ function categoryIcon(category :string) :[string, string]{
 	return ['fas', 'play'];
 }
 
+/**
+ *
+ * @param {string} sort
+ */
 function sortingIcon(sort :string){
 	switch (sort){
 		case 'title':
@@ -736,7 +887,13 @@ function sortingIcon(sort :string){
                 }
             }
         }
-        .tag-search{
+		.filter-by-station-section {
+			.v-card{
+				width: 120px;
+				height: 120px;
+			}
+		}
+        .filter-by-tag-section {
 			font-size: 0.7em;
             .v-card{
 				width: 100px;

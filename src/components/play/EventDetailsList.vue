@@ -37,7 +37,7 @@
 			<v-btn
 				block
 				color="success"
-				@click="emit('button:click:confirm')"
+				@click="emit('click:button:confirm')"
 			>
 				{{ t('play-page.select-event-label-available') }}
 			</v-btn>
@@ -47,7 +47,7 @@
 				<v-btn
 					block
 					variant="tonal"
-					@click="emit('button:click:remove')"
+					@click="emit('click:button:remove')"
 				>
 					{{ t('play-page.select-event-label-remove-event') }}
 				</v-btn>
@@ -56,7 +56,7 @@
 				<v-btn
 					block
 					variant="tonal"
-					@click="emit('button:click:unselect')"
+					@click="emit('click:button:unselect')"
 				>
 					{{ t('play-page.select-event-label-unselect-event') }}
 				</v-btn>
@@ -80,9 +80,9 @@ library.add(faCalendar, faClock, faPlay, faCircleInfo);
 const { t } = useI18n();
 
 const emit = defineEmits([
-	'button:click:confirm',
-	'button:click:remove',
-	'button:click:unselect'
+	'click:button:confirm',
+	'click:button:remove',
+	'click:button:unselect'
 ])
 
 const props = defineProps({

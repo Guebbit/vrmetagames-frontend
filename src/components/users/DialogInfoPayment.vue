@@ -13,7 +13,13 @@
 			closable
 		>
 			<template #close>
-				<font-awesome-icon class="ml-3" :icon="['fas', 'xmark']" />
+				<v-btn
+					icon
+					variant="text"
+					@click="emit('update:modelValue', false)"
+				>
+					<font-awesome-icon size="xl" :icon="['fas', 'xmark']" />
+				</v-btn>
 			</template>
 
 			<p class="my-3">{{ t('dialog-info-payment.description') }}</p>

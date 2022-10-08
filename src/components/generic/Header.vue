@@ -68,11 +68,10 @@
     >
         <template v-slot:prepend>
             <router-link :to="{ name: 'Home' }">
-                <img :src="imagesUrl + '/logo/logo.svg'"
-                     :alt="t('generic.name')"
-                     height="64"
-                     width="64"
-                />
+				<vrmetagamesLogo
+					:alt="t('generic.name')"
+					height="64"
+				/>
             </router-link>
         </template>
         <template v-slot:append>
@@ -149,10 +148,10 @@
 import { computed, onMounted, ref, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { useStore } from "@/store";
-import { imagesUrl } from "@/resources/constants";
 
-import { shyJs, classScroll } from 'guebbit-javascript-library';
+import { shyJs } from 'guebbit-javascript-library';
 import InclinedButton from "@/components/basics/buttons/InclinedButton.vue";
+import vrmetagamesLogo from "@/assets/svg/logo/logo.svg?component";
 import { defaultUserAvatarSrc } from "@/resources/constants";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -164,7 +163,6 @@ const { t } = useI18n();
 const {
     state,
     getters,
-    commit,
     dispatch
 } = useStore();
 

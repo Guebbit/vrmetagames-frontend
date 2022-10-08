@@ -8,6 +8,7 @@
 			hero
 		>
 			<template #default>
+				<h1>{{locale}}</h1>
 				<pre>{{selectedPageInstructions}}</pre>
 			</template>
 			<template #background>

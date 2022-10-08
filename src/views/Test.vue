@@ -223,7 +223,7 @@
 				<ActionPanel
 					class="py-10"
 					:title="'LOREM IPSUM SIT DOLOR AMET'"
-					@button:click="() => {}"
+					@click:button="() => {}"
 				>
 					<template #background>
 						<video class="panel-background" preload="metadata" playsinline="" muted="" loop="" autoplay="">
@@ -385,7 +385,7 @@
 		<ActionPanel
 			:height="'400px'"
 			:title="'VIDEO YOUTUBE LOOP'"
-			@button:click="() => {}"
+			@click:button="() => {}"
 		>
 			<template #background>
 				<div class="panel-background">
@@ -1048,7 +1048,7 @@
 				<ActionPanel
 					:height="'300px'"
 					:title="'CONNECT WITH US <br/> FOR GAMING UPDATE'"
-					@button:click="() => {}"
+					@click:button="() => {}"
 				>
 					<template v-slot:background>
 						<v-img
@@ -1083,7 +1083,7 @@
 			<ActionPanel
 				:height="'300px'"
 				:title="'CONNECT WITH US <br/> FOR GAMING UPDATE'"
-				@button:click="() => {}"
+				@click:button="() => {}"
 			>
 				<template v-slot:background>
 					<video class="panel-background" preload="metadata" playsinline="" muted="" loop="" autoplay="">

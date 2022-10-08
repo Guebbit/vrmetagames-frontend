@@ -52,14 +52,14 @@
 				</v-btn>
 				<v-btn
 					variant="tonal"
-					@click="emit('button:click:cancel')"
+					@click="emit('click:button:cancel')"
 				>
 					{{ t('dialog-renew-schedule.button-cancel') }}
 				</v-btn>
 				<v-btn
 					variant="outlined"
 					disabled
-					@click="emit('button:click:confirm')"
+					@click="emit('click:button:confirm')"
 				>
 					{{ t('dialog-renew-schedule.button-confirm') }}
 				</v-btn>
@@ -84,8 +84,8 @@ const { t } = useI18n();
 
 const emit = defineEmits([
 	'update:modelValue',
-	'button:click:confirm',
-	'button:click:cancel'
+	'click:button:confirm',
+	'click:button:cancel'
 ])
 
 const props = defineProps({

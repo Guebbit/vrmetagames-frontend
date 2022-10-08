@@ -1,7 +1,7 @@
 import { computed, ref } from "vue";
 import useItemDetails from "@/resources/composables/useItemDetails";
 import { searchRecords } from "guebbit-javascript-library";
-import type { filterRulesMap, logicGatesType } from "guebbit-javascript-library";
+import type { logicGatesType } from "guebbit-javascript-library";
 import type { AnyRef } from "@/interfaces";
 
 
@@ -102,11 +102,8 @@ export default<T>(
         // if no filters are set
         if(filters.value.length < 1)
             return itemList.value;
-        // starting list
-        let filteredArray = [ ...itemList.value ] as Record<string, unknown>[];
         // guebbit filter
-        filteredArray = searchRecords(filteredArray, filters.value);
-        return filteredArray;
+        return searchRecords([ ...itemList.value ], filters.value);
     })
 
     return {

@@ -22,8 +22,10 @@ const mockPaymentMethods = [
         id: "paypal1",
         name: "Nome Proprietario",
         logo: "https://assets.guebbit.com/vrmetagames/images/logo/PayPal.svg",
-        background: "#ffff33",
-        color: "#000000",
+        icon: ['fab', 'cc-paypal'],
+        iconColor: "#f0f0f0",
+        cardBackground: "#ffff33",
+        cardColor: "#000000",
         cardEmail: "guerzoni.andrea91@gmail.com",
         cardExpire: "10/25",
     },
@@ -31,9 +33,12 @@ const mockPaymentMethods = [
         id: "mastercard1",
         name: "Nome Proprietario",
         logo: "https://assets.guebbit.com/vrmetagames/images/logo/MasterCard.svg",
-        background: "#f0f0f0",
-        color: "#231F20",
-        cardNumber: "5200828282828210"
+        icon: ['fas', 'credit-card'],
+        iconColor: "#ffff33",
+        cardBackground: "#f0f0f0",
+        cardColor: "#231F20",
+        cardNumber: "5200828282828210",
+
     }
 ];
 const mockPaymentRecords = [
@@ -164,6 +169,7 @@ export default {
      * @return {Promise}
      */
     async checkUsername({ dispatch }: ActionContext<stateUserMap, stateRootMap>, check :string) :Promise<boolean> {
+        console.log("STRING", check)
         return Promise.resolve()
             .then(() => {
                 return true;
@@ -183,6 +189,7 @@ export default {
      * @return {Promise}
      */
     async checkEmail({ dispatch }: ActionContext<stateUserMap, stateRootMap>, check :string) :Promise<boolean> {
+        console.log("STRING", check)
         return Promise.resolve()
             .then(() => {
                 return true;
