@@ -6,7 +6,7 @@
             :secondary="themeColors.primary"
             hero
         >
-            <template #background2 >
+            <template #background >
                 <v-img
                     cover
                     class="panel-background"

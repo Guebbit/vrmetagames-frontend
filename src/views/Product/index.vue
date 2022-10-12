@@ -237,7 +237,7 @@
                 :secondary="themeColors.primary"
                 height="70vh"
             >
-                <template #background2 >
+                <template #background >
                     <v-img
                         cover
                         class="panel-background"

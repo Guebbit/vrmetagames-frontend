@@ -10,9 +10,9 @@
             '--product-comic-panel-secondary': secondary,
         }"
     >
-        <!-- TODO background2 => background || backgroundMedia -->
+        <!-- TODO background => background || backgroundMedia -->
         <template #background >
-            <slot name="background2" />
+            <slot name="background" />
         </template>
         <div>
             <slot name="image">
