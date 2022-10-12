@@ -46,3 +46,4 @@ FUTURO:
      (quindi sarà possibile inviare gli schedule online senza confermare o pagare)
    - useWallet: è sempre true, in futuro l'utente potrà decidere se usare o meno il wallet
  - Forms: usare Timepicker e Datepicker migliori, o splittare type="time" in una select (problema dropdown minuti, che devono riflettere lo step, tipo 00 e 30)
+ - Le traduzioni di cose come, esempio, il genere (action => genre-action = azione), i tag, etc, che fare visto che sono custom? Far arrivare dal server la traduzione (con l'icona, il colore, etc)?

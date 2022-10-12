@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import { defineProps, ref, nextTick, onMounted, onUpdated, type PropType } from "vue";
 import { defaultUserAvatarSrc } from "@/resources/constants";
-import type { scheduleMapAdvanced } from "@/interfaces";
+import type { scheduleMapExtended } from "@/interfaces";
 
 defineProps({
     time: {
@@ -54,7 +54,7 @@ defineProps({
         default: () => false
     },
 	schedule: {
-		type: Object as PropType<scheduleMapAdvanced>,
+		type: Object as PropType<scheduleMapExtended>,
 		required: false
 	},
     username: {

@@ -205,7 +205,7 @@ const mockServerGames = [
         id: "item-12",
         title: "Walkabout Mini Golf",
         author: "Mighty Coconut",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["sport"],
         stationIds: ["item1"],
         tags: [
@@ -237,7 +237,7 @@ const mockServerGames = [
         id: "item-2",
         title: "Acron: Attack of the Squirrels!",
         author: "Resolution Games",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["party-game", "action"],
         stationIds: ["item1"],
         tags: [
@@ -257,7 +257,7 @@ const mockServerGames = [
         maxPlayersOnline: 8,
         familyFriendly: true,
         motionSickness: 1,
-        difficulty: 4,      // true: 1
+        difficulty: 4,
         duration: 900000,   // 15 min
         minAge: 6,
     },
@@ -265,7 +265,7 @@ const mockServerGames = [
         id: "item-4",
         title: "Blaston Spectator",
         author: "Resolution Games",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["shooter"],
         stationIds: ["item1"],
         tags: [
@@ -288,7 +288,7 @@ const mockServerGames = [
         id: "item-5",
         title: "Echo Arena",
         author: "",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["sport"],
         stationIds: ["item1"],
         tags: [],
@@ -309,7 +309,7 @@ const mockServerGames = [
         id: "item-3",
         title: "Angry Birds VR: Isle of Pigs",
         author: "Resolution Games",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["puzzle"],
         stationIds: ["item1", "item2"],
         tags: [],
@@ -325,12 +325,16 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 0,
         familyFriendly: true,
+        motionSickness: 1,
+        difficulty: 1,
+        duration: 2000000,
+        minAge: 6,
     },
     {
         id: "item-1",
         title: "Beat Saber",
         author: "Beat Games",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["rhythm"],
         stationIds: ["item1", "item2"],
         tags: [
@@ -358,7 +362,7 @@ const mockServerGames = [
         id: "item-6",
         title: "Loco Dojo",
         author: "Make Real",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["action"],
         stationIds: ["item2"],
         tags: [],
@@ -374,12 +378,16 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
+        motionSickness: 5,
+        difficulty: 3,
+        duration: 1500000,
+        minAge: 18,
     },
     {
         id: "item-7",
         title: "Nock",
         author: "",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["action"],
         stationIds: ["item1"],
         tags: [],
@@ -400,7 +408,7 @@ const mockServerGames = [
         id: "item-8",
         title: "Population: One",
         author: "BigBox VR, Inc.",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["shooter", "action"],
         stationIds: ["item1"],
         tags: [
@@ -419,12 +427,14 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 24,
         familyFriendly: false,
+        duration: 10000000,
+        minAge: 15
     },
     {
         id: "item-9",
         title: "Puzzle Bobble 3D: Vacation Odyssey",
         author: "Survios, Taito Corporation",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["puzzle"],
         stationIds: ["item1"],
         tags: [],
@@ -440,12 +450,13 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
+        minAge: 10
     },
     {
         id: "item-10",
         title: "Ragnarock",
         author: "WanadevStudio",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["rhythm"],
         stationIds: ["item1"],
         tags: [
@@ -468,10 +479,16 @@ const mockServerGames = [
         id: "item-11",
         title: "The Room VR: A Dark Matter",
         author: "Fireproof Games",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["adventure"],
         stationIds: ["item1"],
         tags: [
+            "Horror",
+            "Puzzle",
+            "Mistery",
+            "Horror",
+            "Puzzle",
+            "Mistery",
             "Horror",
             "Puzzle",
             "Mistery"
@@ -493,7 +510,7 @@ const mockServerGames = [
         id: "item-13",
         title: "Zenith: The Last City",
         author: "Ramen VR",
-        description: "",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["action"],
         stationIds: ["item1"],
         tags: [
@@ -748,7 +765,7 @@ export default {
      * @param {boolean} isAdmin
      * @param {Object} scheduleData
      */
-    async addSchedule({ commit, getters: { determineScheduleIsAllowed }, rootState: { user: { userInfo: { id, isAdmin }}}}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :Promise<string> {
+    async addSchedule({ commit, getters: { determineScheduleIsAllowed }, rootState: { user: { userInfo: { id, isAdmin }}}}: ActionContext<stateEcommerceMap, stateRootMap>, scheduleData: scheduleMap) :Promise<string | void> {
         // If NOT admin, user can make decisions only for himself
         if(!isAdmin && scheduleData.userId !== id){
             return Promise.reject(['error-403']);
@@ -774,8 +791,6 @@ export default {
         });
         // server
         return Promise.resolve(scheduleId)
-            .then()
-            // REVERT
             .catch(() => commit("removeSchedule", scheduleId));
     },
 

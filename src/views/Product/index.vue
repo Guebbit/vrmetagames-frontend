@@ -1,8 +1,6 @@
-
 <template>
     <div id="product-list-page" class="theme-page page-menu-padding">
         <v-container class="page-controls">
-
 			<v-row v-show="isAdmin">
 				<v-col cols="12" md="6" lg="4" xl="2">
 					<v-select
@@ -91,15 +89,15 @@
                             multiple
                         >
                             <v-btn
-                                v-for="category in categoriesList"
-                                :key="category + '-button'"
-                                :value="category"
+                                v-for="cat in categoriesList"
+                                :key="cat + '-button'"
+                                :value="cat"
 								class="px-6 py-4 rounded-0"
                             >
 								<span class="hidden-md-and-down">
-									{{ t('games.genre-' + category) }}
+									{{ t('games.genre-' + cat) }}
 								</span>
-								<font-awesome-icon class="ml-3" size="xl" :icon="categoryIcon(category)" />
+								<font-awesome-icon class="ml-3" size="xl" :icon="categoryIcon(cat)" />
                             </v-btn>
                         </v-btn-toggle>
                     </div>
@@ -107,7 +105,7 @@
             </v-row>
 
 			<v-row>
-				<v-col cols="12" md="12" lg="12" xl="7" class="filter-by-tag-section d-flex align-center justify-space-between flex-wrap flex-gap-12">
+				<v-col cols="12" class="filter-by-tag-section d-flex align-center justify-space-between flex-wrap flex-gap-12">
 
 					<!-- TODO creare VuetifyBlockFilter, filterableParametersList as items e lista icone con Record<string, componenteicona> da richiamare  -->
 					<div class="d-flex flex-wrap flex-gap-12">
@@ -117,11 +115,11 @@
 						>
 							<v-item-group
 								v-if="levels.length < 1"
-								v-model="filterList[name]"
+								v-model="gameFiltersAdvanced[name]"
 								:variant="variant"
 								:selectedClass="activeColor"
 							>
-								<v-item v-slot="{ selectedClass, toggle }">
+								<v-item v-slot="{ selectedClass, toggle }" :value="1">
 									<v-card
 										:class="['d-flex align-center', selectedClass]"
 										@click="toggle"
@@ -138,35 +136,35 @@
 								:variant="variant"
 								class="d-flex align-center pa-3"
 								:class="{
-								[activeColor]: filterList[name] > 0
+								[activeColor]: gameFiltersAdvanced[name] > 0
 							}"
-								@click="filterList[name] === undefined ?
-											filterList[name] = 1 :
-												filterList[name] + 1 >= levels.length ?
-													filterList[name] = 0 :
-													filterList[name]++"
+								@click="gameFiltersAdvanced[name] === undefined ?
+											gameFiltersAdvanced[name] = 1 :
+												gameFiltersAdvanced[name] + 1 >= levels.length ?
+													gameFiltersAdvanced[name] = 0 :
+													gameFiltersAdvanced[name]++"
 							>
 								<div
-									v-if="levels[filterList[name] || 0]"
+									v-if="levels[gameFiltersAdvanced[name] || 0]"
 									class="flex-grow-1 text-center"
 								>
 									<font-awesome-icon
-										v-if="levels[filterList[name] || 0].icon"
+										v-if="levels[gameFiltersAdvanced[name] || 0].icon"
 										size="2x"
-										:icon="levels[filterList[name] || 0].icon"
+										:icon="levels[gameFiltersAdvanced[name] || 0].icon"
 									/>
 									<span
-										v-if="levels[filterList[name] || 0].iconText"
+										v-if="levels[gameFiltersAdvanced[name] || 0].iconText"
 										class="text-h4"
 									>
-									{{ levels[filterList[name] || 0].iconText }}
+									{{ levels[gameFiltersAdvanced[name] || 0].iconText }}
 								</span>
 									<component
-										v-if="levels[filterList[name] || 0].text"
-										:is="levels[filterList[name] || 0].text?.length > 10 ? 'small' : 'p'"
+										v-if="levels[gameFiltersAdvanced[name] || 0].text"
+										:is="levels[gameFiltersAdvanced[name] || 0].text?.length > 10 ? 'small' : 'p'"
 										class="d-block mt-3"
 									>
-										{{ levels[filterList[name] || 0].text }}
+										{{ levels[gameFiltersAdvanced[name] || 0].text }}
 									</component>
 								</div>
 							</v-card>
@@ -195,7 +193,7 @@
 					</v-card>
 
 				</v-col>
-				<v-col cols="12" md="12" lg="12" xl="5" class="d-flex align-end justify-end flex-gap-12">
+				<v-col cols="12" class="d-flex align-end justify-end flex-gap-12">
 					<v-btn
 						v-for="sort in sortingParametersList"
 						:key="'sortable-' + sort"
@@ -353,21 +351,22 @@
                             variant="outlined"
                             color="primary"
                             class="ma-2"
-                            @click="$router.push({
-                            name: 'GameTarget',
-                            params: {
-                                id: game.id
-                            }
-                        })"
+							:to="{
+								name: 'GameTarget',
+								params: {
+									id: game.id
+								}
+							}"
                         >
                             {{ t('generic.more-info') }}
                             <font-awesome-icon class="ml-3" :icon="['fas', 'arrow-right']" />
                         </v-btn>
-                        <v-btn color="primary"
-                               class="ma-2"
-                               @click="$router.push({
+                        <v-btn
+							color="primary"
+							class="ma-2"
+							:to="{
                                 name: 'Play'
-                           })"
+                           }"
                         >
                             {{ t('generic.play-now') }}
                             <font-awesome-icon class="ml-3" :icon="['fas', 'play']" />
@@ -407,46 +406,93 @@
         </v-container>
 
 		<v-container v-if="modeVisualization === 2">
-
-
-			<v-card
-				v-for="game in itemListFiltered"
-				:key="'game-list2-' + game.id"
-			>
-				<div class="d-flex justify-space-between align-center">
-					<v-img
-						:lazy-src="game.coverFront.thumbnail"
-						:src="game.coverFront.src"
-						height="64px"
-					/>
-
-					<h4 class="font-600 text-left d-none d-sm-block">
-						{{ game.title }}
-					</h4>
-
-					<v-spacer />
-
-					<font-awesome-icon class="px-5" :icon="['fas', 'arrow-right']" />
-				</div>
-			</v-card>
-
-
-			<v-list
-				item-props
-			>
+			<v-list class="game-list-simple bg-transparent">
 				<v-list-item
 					v-for="game in itemListFiltered"
 					:key="'game-list-' + game.id"
+					class="py-5"
+					:to="{
+						name: 'GameTarget',
+						params: {
+							id: game.id
+						}
+					}"
 				>
 					<template v-slot:prepend>
-						<v-avatar>
+						<v-avatar
+							size="100"
+							rounded
+						>
 							<v-img
 								:lazy-src="game.coverFront.thumbnail"
 								:src="game.coverFront.src"
 							/>
 						</v-avatar>
 					</template>
-					{{ game.id }}
+					<v-list-item-title>
+						<b>{{ game.title }}</b>
+					</v-list-item-title>
+					<v-list-item-subtitle>
+						{{ game.author }}
+					</v-list-item-subtitle>
+					<v-list-item-content>
+						<small>{{ game.description }}</small>
+					</v-list-item-content>
+
+					<div class="pt-2">
+						<v-chip
+							v-for="tag in game.tags"
+							:key="'game-list-tag-' + game.id + '-' + tag"
+							class="ma-2"
+							size="small"
+							label
+						>
+							{{ tag }}
+						</v-chip>
+					</div>
+
+					<template v-slot:append>
+						<v-list-item-action class="flex-gap-12">
+							<v-btn
+								v-for="station in game.stations"
+								:key="'game-list-stations-' + game.id + '-' + station"
+								size="large"
+								icon=""
+								variant="text"
+								color="secondary"
+								@click.stop.prevent="$router.push({
+									name: 'Games',
+									query: {
+										filters: JSON.stringify({
+											stations: [station.id]
+										})
+									}
+								})"
+							>
+								<font-awesome-icon size="xl" :icon="station.icon" />
+							</v-btn>
+						</v-list-item-action>
+						<v-list-item-action class="flex-gap-12">
+							<v-btn
+								v-for="cat in game.categories"
+								:key="'game-list-cat-' + game.id + '-' + cat"
+								size="large"
+								icon=""
+								variant="text"
+								color="primary"
+								@click.stop.prevent="$router.push({
+									name: 'Games',
+									query: {
+										filters: JSON.stringify({
+											categories: [cat]
+										})
+									}
+								})"
+							>
+								<font-awesome-icon size="xl" :icon="categoryIcon(cat)" />
+							</v-btn>
+						</v-list-item-action>
+					</template>
 				</v-list-item>
 			</v-list>
 		</v-container>
@@ -459,7 +505,8 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs, ref, computed, watch } from "vue";
+import { ref, computed, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useTheme } from "vuetify";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
@@ -469,7 +516,7 @@ import ProductComicPanel from "@/components/basics/blocks/ProductComicPanel.vue"
 import ImageHoverUpCard from "@/components/basics/cards/ImageHoverUpCard.vue";
 import Footer from "@/components/generic/Footer.vue";
 import vrmetagamesLogo from "@/assets/svg/logo/logo.svg?component";
-import type { gameMap } from "@/interfaces";
+import type { gameMapExtended } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -483,10 +530,41 @@ library.add(faUser, faUsers, faUserGroup, faGlobe, faPeopleRoof, faTags, faGrip,
 	faHourglassHalf, faHourglassEnd, faSort, faSortDown, faSortUp, faFaceSmile, faFaceGrinBeam, faFaceDizzy
 );
 
+const route = useRoute();
 const { t, locale } = useI18n();
-const { state, getters, dispatch } = useStore();
-const { games } = toRefs(state.ecommerce);
+const { getters, dispatch } = useStore();
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
+
+
+/**
+ * List of stations
+ */
+const stationsList = computed(() => getters['ecommerce/stationsList']);
+/**
+ * List of games (extended)
+ */
+const gameDetailedRecords = computed(() => getters['ecommerce/gameDetailedRecords']);
+
+/**
+ * list of tags & categories (extrapolated from games)
+ */
+const categoriesList = computed<string[]>(() => {
+	return [...new Set(
+		itemList.value.reduce((gameArray, { categories = [] }) => {
+			gameArray.push(...categories);
+			return gameArray;
+		}, [] as string[])
+	)]
+});
+const tagsList = computed<string[]>(() => {
+	return [...new Set(
+		itemList.value.reduce((gameArray, { tags = [] }) => {
+			gameArray.push(...tags);
+			return gameArray;
+		}, [] as string[])
+	)]
+});
+
 
 /**
  * Possible sort/search options
@@ -507,13 +585,16 @@ const searchTextParametersList = [
 	}
 ];
 
+/**
+ * Simple filters for game characteristics
+ */
 const filterableParametersList = [
 	{
-		name: "familySafe",
+		name: "familyFriendly",
 		activeColor: 'bg-primary',
 		icon: ['fas', 'people-roof'],
 		text: t('generic.family-friendly')
-},
+	},
 	{
 		name: "multiplayerOnline",
 		activeColor: 'bg-primary',
@@ -621,23 +702,6 @@ const filterableParametersList = [
 ]
 
 /**
- * Stations for ScheduleFormCard list of possible stations
- * TODO vuetifyTemporaryFixItemGroupVModel è un temporary fix
- * 		perché item-group v-model restituisce solo gli indici
- */
-const stationsList = computed(() => getters['ecommerce/stationsList']);
-const vuetifyTemporaryFixItemGroupVModel = ref([]);
-watch(vuetifyTemporaryFixItemGroupVModel, (arrayValue :string[]) => {
-		gameFilters.value[3].search = arrayValue.reduce((reducer, stationIndex) => [
-			...reducer,
-			stationsList.value[stationIndex].id
-		], [] as string[])
-	}
-)
-
-
-
-/**
  * Filter rules (for searchRecords of guebbit-javascript-library)
  * General logic: AND
  * Target logic: default OR, can be And
@@ -655,8 +719,9 @@ const filterTargetLogicList = [
 		value: 'OR'
 	}
 ]
+const filterGlobalLogic = ref<'OR' | 'AND'>('OR');
 const filterTargetLogic = ref<'OR' | 'AND'>('OR');
-const gameFilters = ref<itemListFiltersMap[]>([
+const gameFilters = ref<itemListFiltersMap["rules"]>([
 	{
 		search: '',
 		searchParams: ['title'],
@@ -676,14 +741,179 @@ const gameFilters = ref<itemListFiltersMap[]>([
 		searchParams: ['stationIds']
 	}
 ]);
-const gameFiltersWithLogic = computed<itemListFiltersMap[]>(() =>
-	gameFilters.value.map((item) => {
-		return {
-			...item,
-			logic: filterTargetLogic.value
-		}
-	})
-);
+
+/**
+ * TEMPORARY FIX
+ * Stations for ScheduleFormCard list of possible stations
+ * TODO vuetifyTemporaryFixItemGroupVModel è un temporary fix
+ * 		perché item-group v-model restituisce solo gli index
+ */
+const vuetifyTemporaryFixItemGroupVModel = ref([]);
+watch(vuetifyTemporaryFixItemGroupVModel, (arrayValue :string[]) => {
+		gameFilters.value![3].search = arrayValue.reduce((reducer, stationIndex) => [
+			...reducer,
+			stationsList.value[stationIndex].id
+		], [] as string[])
+	}
+)
+
+/**
+ * TODO query selections
+ */
+watch(() => route.query.filters, (filters) => {
+	console.log("Query selection: ", filters)
+});
+/**
+ * Generationg rules for guebbit's searchRecords
+ */
+const searchFilters = computed<itemListFiltersMap>(() => {
+	// rules: gamefilters + gameFiltersAdvanced that will be added latero
+	const rules :itemListFiltersMap["rules"] = [...gameFilters.value || []];
+
+	/*
+	// self inserting rules (booleans or simple rules)
+	for(const key in gameFiltersAdvanced.value) {
+		if (!Object.prototype.hasOwnProperty.call(gameFiltersAdvanced.value, key))
+			continue;
+		// find rule "instructions"
+		const ruleInstructions = filterableParametersList.find(({ name }) => name === key)
+		if(!ruleInstructions)
+			continue;
+		// if there are no levels: it just a boolean
+		if(!ruleInstructions.levels)
+			rules.push({
+				search: true,
+				searchParams: [key]
+			})
+	}
+	*/
+
+	// --------- BOOLEANS ---------
+	// if selected: only familyFriendly(boolean) games
+	if(gameFiltersAdvanced.value['familyFriendly'])
+		rules.push({
+			search: true,
+			searchParams: ['familyFriendly']
+		});
+	// if selected: multiplayer online means maxPlayersOnline > 0
+	if(gameFiltersAdvanced.value['multiplayerOnline'])
+		rules.push({
+			search: 0,
+			searchParams: ['maxPlayersOnline'],
+			numberRule: "gt"
+		});
+	// --------- MULTI OFFLINE ---------
+	// single player = maxPlayersOffline limited to 1
+	if(gameFiltersAdvanced.value['multiplayerOffline'] === 1)
+		rules.push({
+			search: 1,
+			searchParams: ['maxPlayersOffline'],
+			numberRule: "eq"
+		});
+	// offline multiplayer = maxPlayersOffline from 2 to unlimited
+	if(gameFiltersAdvanced.value['multiplayerOffline'] === 2)
+		rules.push({
+			search: 1,
+			searchParams: ['maxPlayersOffline'],
+			numberRule: "gt"
+		});
+	// --------- MOTION SICKNESS ---------
+	// low motion sickess
+	if(gameFiltersAdvanced.value['motionSickness'] === 1)
+		rules.push({
+			search: 2,
+			searchParams: ['motionSickness'],
+			numberRule: "elt"
+		});
+	// high motion sickness
+	if(gameFiltersAdvanced.value['motionSickness'] === 2)
+		rules.push({
+			search: 3,
+			searchParams: ['motionSickness'],
+			numberRule: "gt"
+		});
+	// --------- DIFFICULTY ---------
+	// low difficulty
+	if(gameFiltersAdvanced.value['difficulty'] === 1)
+		rules.push({
+			search: 2,
+			searchParams: ['difficulty'],
+			numberRule: "elt"
+		});
+	// high difficulty
+	if(gameFiltersAdvanced.value['difficulty'] === 2)
+		rules.push({
+			search: 3,
+			searchParams: ['difficulty'],
+			numberRule: "gt"
+		});
+	// --------- DURATION ---------
+	// Duration less than 30 min
+	if(gameFiltersAdvanced.value['duration'] === 1)
+		rules.push({
+			search: 1800000,
+			searchParams: ['duration'],
+			numberRule: "elt"
+		});
+	/*
+	TODO rework: invece che "AND/OR" globale fare un qualche "link" tra una rule a l'altra
+		Si può fare richiamando più volte searchRecords, è da pensare
+	// Duration from 30 to 60 min
+	if(gameFiltersAdvanced.value['duration'] === 2){
+		rules.push({
+			search: 1800000,
+			searchParams: ['duration'],
+			numberRule: "lt",
+			logic: "AND"
+		});
+		rules.push({
+			search: 3600000,
+			searchParams: ['duration'],
+			numberRule: "egt",
+			logic: "AND"
+		});
+	}
+	*/
+	// Duration more than 60 min
+	if(gameFiltersAdvanced.value['duration'] === 3)
+		rules.push({
+			search: 3600000,
+			searchParams: ['duration'],
+			numberRule: "gt"
+		});
+	// --------- AGE ---------
+	// 10+ age
+	if(gameFiltersAdvanced.value['minAge'] === 1)
+		rules.push({
+			search: 10,
+			searchParams: ['minAge'],
+			numberRule: "egt"
+		});
+	// 14+ age
+	if(gameFiltersAdvanced.value['minAge'] === 2)
+		rules.push({
+			search: 14,
+			searchParams: ['minAge'],
+			numberRule: "egt"
+		});
+	// 18+ age
+	if(gameFiltersAdvanced.value['minAge'] === 3)
+		rules.push({
+			search: 18,
+			searchParams: ['minAge'],
+			numberRule: "egt"
+		});
+
+	return {
+		logic: filterGlobalLogic.value,
+		rules: (rules || []).map((item) => {
+			return {
+				...item,
+				logic: filterTargetLogic.value
+			}
+		})
+	}
+});
 
 /**
  * Sort order
@@ -698,27 +928,7 @@ const sortList = ref<Record<string, number>>({});
 /**
  * WARNING: vuetify item-group flags with "undefined" as false and "0" as true
  */
-const filterList = ref<Record<string, number>>({});
-
-/**
- * list of tags & categories (extrapolated from games)
- */
-const categoriesList = computed<string[]>(() => {
-    return [...new Set(
-        itemList.value.reduce((gameArray, { categories = [] }) => {
-            gameArray.push(...categories);
-            return gameArray;
-        }, [] as string[])
-    )]
-});
-const tagsList = computed<string[]>(() => {
-	return [...new Set(
-		itemList.value.reduce((gameArray, { tags = [] }) => {
-			gameArray.push(...tags);
-			return gameArray;
-		}, [] as string[])
-	)]
-});
+const gameFiltersAdvanced = ref<Record<string, number>>({});
 
 /**
  * Page list toolbox
@@ -727,66 +937,28 @@ const {
 	itemList,
 	itemListFiltered :itemListFilteredOriginal,
 	isAdmin
-} = useItemList<gameMap>(
-	games,
+} = useItemList<gameMapExtended>(
+	gameDetailedRecords,
 	Promise.all([
 		dispatch('main/initApp'),
 		dispatch('ecommerce/getGames')
 	]),
-	gameFiltersWithLogic,
+	searchFilters,
 );
 
 /**
  * list to show after filters and sorting are applied
  * TODO break down better
  */
-const itemListFiltered = computed<gameMap[]>(() => {
-	// TODO add filters numbers "< = >" + booleans
-	let gameArray = itemListFilteredOriginal.value as gameMap[];
-
-	// EXTENDED FILTERS
-	if(filterList.value['familySafe'] === 0)
-		gameArray = gameArray.filter(({ familyFriendly }) => familyFriendly);
-	if(filterList.value['multiplayerOnline'] === 0)
-		gameArray = gameArray.filter(({ maxPlayersOnline = 0 }) => maxPlayersOnline > 0);
-	if(filterList.value['multiplayerOffline']){
-		if(filterList.value['multiplayerOffline'] === 1)
-			gameArray = gameArray.filter(({ maxPlayersOffline = 1 }) => maxPlayersOffline === 1);
-		if(filterList.value['multiplayerOffline'] === 2)
-			gameArray = gameArray.filter(({ maxPlayersOffline = 1 }) => maxPlayersOffline > 1);
-	}
-	if(filterList.value['motionSickness']){
-		if(filterList.value['motionSickness'] === 1)
-			gameArray = gameArray.filter(({ motionSickness }) => motionSickness && motionSickness <= 2);
-		if(filterList.value['motionSickness'] === 2)
-			gameArray = gameArray.filter(({ motionSickness }) => motionSickness && motionSickness > 3);
-	}
-	if(filterList.value['difficulty']){
-		if(filterList.value['difficulty'] === 1)
-			gameArray = gameArray.filter(({ difficulty }) => difficulty && difficulty <= 2);
-		if(filterList.value['difficulty'] === 2)
-			gameArray = gameArray.filter(({ difficulty }) => difficulty && difficulty > 3);
-	}
-	if(filterList.value['duration']){
-		if(filterList.value['duration'] === 1)
-			gameArray = gameArray.filter(({ duration }) => duration && duration <= 1800000);
-		if(filterList.value['duration'] === 2)
-			gameArray = gameArray.filter(({ duration }) => duration && (1800000 < duration && duration < 3600000));
-		if(filterList.value['duration'] === 3)
-			gameArray = gameArray.filter(({ duration }) => duration && duration > 3600000);
-	}
-	if(filterList.value['minAge']){
-		if(filterList.value['duration'] === 1)
-			gameArray = gameArray.filter(({ minAge }) => minAge && minAge >= 10);
-		if(filterList.value['duration'] === 2)
-			gameArray = gameArray.filter(({ minAge }) => minAge && minAge >= 14);
-		if(filterList.value['duration'] === 3)
-			gameArray = gameArray.filter(({ minAge }) => minAge && minAge >= 18);
-	}
-
+const itemListFiltered = computed<gameMapExtended[]>(() => {
+	let gameArray = itemListFilteredOriginal.value as gameMapExtended[];
+	// TODO rework
+	if(gameFiltersAdvanced.value['duration'] === 2)
+		gameArray = gameArray.filter(({ duration }) => duration && (1800000 < duration && duration < 3600000));
 	// SORTING
+	// TODO guebbit sort sul modello di searchRecords
 	// TODO l'ultimo cliccato dovrebbe avere la priorità
-	gameArray.sort((item1 :gameMap, item2 :gameMap) => {
+	gameArray.sort((item1 :gameMapExtended, item2 :gameMapExtended) => {
 		for(const key in sortList.value)
 			// if undefined or 0, ignore
 			if(Object.prototype.hasOwnProperty.call(sortList.value, key) && sortList.value[key] > 0){
@@ -816,7 +988,13 @@ const itemListFiltered = computed<gameMap[]>(() => {
 /**
  * Visualization mode
  */
-const modeVisualization = ref(2);
+const modeVisualization = ref(1);
+/* TODO query selections
+watch(() => route.query.v, (mode = "1") => {
+	console.log("FFFF", mode)
+	modeVisualization.value = parseInt(mode)
+});
+*/
 
 /**
  *
@@ -970,6 +1148,7 @@ function sortingIcon(sort :string){
             }
         }
     }
+
     .game-list-masonry{
         .image-hover-up-card{
             cursor: pointer;
@@ -979,5 +1158,15 @@ function sortingIcon(sort :string){
             }
         }
     }
+
+	.game-list-simple{
+		&.v-list {
+			.v-list-item {
+				& + .v-list-item{
+					border-top: 1px solid rgb(var(--v-theme-on-surface));
+				}
+			}
+		}
+	}
 }
 </style>

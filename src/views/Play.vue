@@ -37,8 +37,8 @@
 								<v-btn
 									color="secondary"
 									:to="{
-											name: 'Login'
-										}"
+										name: 'Login'
+									}"
 								>
 									{{ t('authentication-form.switch-to-signin') }}
 								</v-btn>

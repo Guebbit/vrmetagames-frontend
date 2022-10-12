@@ -14,10 +14,11 @@ export {
     sendScheduleRequestMap,
     scheduleInputMap,
     scheduleMap,
-    scheduleMapAdvanced,
+    scheduleMapExtended,
     scheduleMapBackground,
     stationMap,
     gameMap,
+    gameMapExtended,
     stateEcommerceMap
 } from './state/ecommerce';
 

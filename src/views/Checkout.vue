@@ -440,11 +440,9 @@ const fillWalletUntilDiscountLabel = computed<string>(() => {
         &.v-list{
             padding: 0;
             .v-list-item{
-                border-bottom: 1px solid rgb(var(--v-theme-on-surface));
-
-                &:first-child{
-                    border-top: 1px solid rgb(var(--v-theme-on-surface));
-                }
+				& + .v-list-item{
+					border-top: 1px solid rgb(var(--v-theme-on-surface));
+				}
 
                 &.disabled{
                     opacity: 0.3;

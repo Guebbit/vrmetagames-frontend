@@ -24,9 +24,7 @@
 									</p>
 									<v-btn
 										color="secondary"
-										:to="{
-											name: 'Login'
-										}"
+										:to="{ name: 'Login' }"
 									>
 										{{ t('authentication-form.switch-to-signin') }}
 									</v-btn>
@@ -45,9 +43,7 @@
 									</p>
 									<v-btn
 										color="secondary"
-										:to="{
-											name: 'Registration'
-										}"
+										:to="{ name: 'Registration' }"
 									>
 										{{ t('authentication-form.switch-to-signup') }}
 									</v-btn>
@@ -105,9 +101,7 @@
 										{{ t('authentication-page.signin-request') }}
 										<router-link
 											class="text-decoration-none"
-											:to="{
-											name: 'Login'
-										}"
+											:to="{ name: 'Login' }"
 										>
 											<b class="text-secondary">
 												{{ t('authentication-form.switch-to-signin') }}
@@ -279,9 +273,7 @@
 										{{ t('authentication-page.signup-request') }}
 										<router-link
 											class="text-decoration-none"
-											:to="{
-											name: 'Registration'
-										}"
+											:to="{ name: 'Registration' }"
 										>
 											<b class="text-secondary">
 												{{ t('authentication-form.switch-to-signup') }}
@@ -331,9 +323,7 @@
 										<v-btn
 											size="x-small"
 											variant="plain"
-											:to="{
-											name: 'PasswordRetrieve'
-										}"
+											:to="{ name: 'PasswordRetrieve' }"
 										>
 											{{ t('authentication-form.forgot-password') }}
 										</v-btn>

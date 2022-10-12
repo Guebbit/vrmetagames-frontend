@@ -61,7 +61,7 @@ export interface scheduleMap extends scheduleInputMap {
 /**
  *
  */
-export interface scheduleMapAdvanced extends scheduleMap {
+export interface scheduleMapExtended extends scheduleMap {
     user?: userMap,
     station?: stationMap
     color?: string,
@@ -87,7 +87,7 @@ export interface stationMap {
     id: string
     name: string
     icon: string
-    locale: Record<string, string>
+    label: Record<string, string>
     image: imageMap
     gallery?: imageMap[]
     capacity?: number
@@ -118,6 +118,13 @@ export interface gameMap {
     minAge?: number         // 1 to 99
 }
 
+/**
+ * Extension of gameMap with all data joined
+ * TODO categories & tags
+ */
+export interface gameMapExtended extends gameMap {
+    stations?: stationMap[]
+}
 
 /**
  * scheduleRecords      - schedules (fullcalendar, user bookings)

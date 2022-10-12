@@ -5,11 +5,12 @@ import type { GetterTree } from 'vuex';
 import type {
     stateRootMap,
     stateEcommerceMap,
+    stationMap,
     scheduleMap,
-    scheduleMapAdvanced,
+    scheduleMapExtended,
     scheduleMapBackground,
+    gameMapExtended,
 } from "@/interfaces";
-
 
 export default {
 
@@ -38,15 +39,15 @@ export default {
      * @param {Object[]} stations
      * @return {Object[]}
      */
-    scheduleDetailedRecords: ({ scheduleRecords, users, stations } :stateEcommerceMap) :Record<string, scheduleMapBackground | scheduleMapAdvanced> => {
+    scheduleDetailedRecords: ({ scheduleRecords, users, stations } :stateEcommerceMap) :Record<string, scheduleMapBackground | scheduleMapExtended> => {
         // regular schedules
         const scheduleArray = Object.values(scheduleRecords);
         // result with advanced schedules
-        const scheduleFinalResult :Record<string, scheduleMapBackground | scheduleMapAdvanced>  = {};
+        const extendedRecords :Record<string, scheduleMapBackground | scheduleMapExtended>  = {};
         // joining data
         for(let i = scheduleArray.length; i--; ){
             // put event in calendar
-            scheduleFinalResult[scheduleArray[i].id] = {
+            extendedRecords[scheduleArray[i].id] = {
                 ...scheduleArray[i],
                 // if NOT admin, there will be NO user info
                 user: users?.[scheduleArray[i].userId],
@@ -57,7 +58,7 @@ export default {
                 className: 'regular-schedule'
             }
         }
-        return scheduleFinalResult;
+        return extendedRecords;
     },
 
     /**
@@ -75,7 +76,7 @@ export default {
         // regular schedules
         const scheduleArray = Object.values(scheduleRecords)
         // final result
-        const scheduleFinalResult :Record<string, scheduleMapBackground> = {};
+        const scheduleBackgrounds :Record<string, scheduleMapBackground> = {};
         // list of all dates inserted in the fullcalendar, necessary to create background-schedules
         const dateRecords :Record<string, number[]> = {};
         // time data for management
@@ -142,7 +143,7 @@ export default {
                     capacityClass = 'capacity-red';
                     break;
             }
-            scheduleFinalResult[day] = {
+            scheduleBackgrounds[day] = {
                 start: day,
                 end: day,
                 display: 'background',
@@ -150,7 +151,7 @@ export default {
             }
         }
         // list of schedule for fullcalendar
-        return Object.values(scheduleFinalResult);
+        return Object.values(scheduleBackgrounds);
     },
 
     /**
@@ -345,7 +346,7 @@ export default {
             const cappedSlots :Record<string, string[]> = {};
             // do cycle
             do {
-                cappedSlots[stepperStart + '_' + stepperEnd] = arrayColumns(getSchedulesByTime(stepperStart, stepperEnd, resourceIdArray), 'id');
+                cappedSlots[stepperStart + '_' + stepperEnd] = arrayColumns(getSchedulesByTime(stepperStart, stepperEnd, resourceIdArray), 'id') as string[];
                 // next step, until loading reach END
                 stepperStart = stepperStart + slotDuration;
                 stepperEnd = stepperEnd + slotDuration;
@@ -470,6 +471,32 @@ export default {
         }
     },
 
+    /**
+     * List of games extended with station's data
+     * TODO: da separare category e tags e poi unire qui
+     * 
+     * @param {Object} games
+     * @param {Object} stations
+     */
+    gameDetailedRecords: ({ games, stations } :stateEcommerceMap) :Record<string, gameMapExtended> => {
+        const extendedRecords :Record<string, gameMapExtended> = {};
+        // iterate throught all games (original list)
+        for(const key in games) {
+            if (!Object.prototype.hasOwnProperty.call(games, key))
+                continue;
+            // station details
+            const stationsJoin :stationMap[] = [];
+            for(let i = games[key].stationIds.length; i--; )
+                if (Object.prototype.hasOwnProperty.call(stations, games[key].stationIds[i]))
+                    stationsJoin.push(stations[games[key].stationIds[i]]);
+            // final record
+            extendedRecords[games[key].id] = {
+                ...games[key],
+                stations: stationsJoin
+            }
+        }
+        return extendedRecords;
+    },
 
     /**
      * Station list sorted by order

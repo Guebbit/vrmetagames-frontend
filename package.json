@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vite preview",
-    "build": "vite build",
+    "build": "tsc --noEmit && vite build",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
@@ -21,7 +21,7 @@
     "@mdi/font": "^6.7.96",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.2",
-    "guebbit-javascript-library": "^2.4.7",
+    "guebbit-javascript-library": "^2.5.0",
     "guebbit-scss-library": "^1.3.0",
     "guebbit-vue-library": "^1.0.9",
     "leaflet": "^1.8.0",

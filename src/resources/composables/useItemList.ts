@@ -1,31 +1,21 @@
 import { computed, ref } from "vue";
 import useItemDetails from "@/resources/composables/useItemDetails";
-import { searchRecords } from "guebbit-javascript-library";
-import type { logicGatesType } from "guebbit-javascript-library";
+import { searchRecords, type filterRulesMap, type logicGatesType } from "guebbit-javascript-library";
 import type { AnyRef } from "@/interfaces";
-
-
-// TODO capire perché l'estensione da problemi
-export interface itemListFiltersMap { // extends filterRulesMap {
-    // if string, minimum number of characters to trigger search
-    stringLimit?: number
-
-    // TODO fix extends
-    search: string | string[]
-    searchParams: string | string[]
-    logic?: logicGatesType,
-    sensitive?: boolean
-    distance?: number
-}
 
 export interface itemListSettingsMap {
     defaultLoading?: boolean
 }
 
+export interface itemListFiltersMap {
+    logic?: logicGatesType,
+    rules?: filterRulesMap[],
+}
+
 export default<T>(
     itemRecords :AnyRef<Record<string, T>>,
     loadPromise :Promise<unknown | unknown[]> = Promise.resolve(),
-    filters: AnyRef<itemListFiltersMap[]> = ref([]),
+    filters: AnyRef<itemListFiltersMap> = ref({}),
     settings :itemListSettingsMap = {}
 ) => {
     /**
@@ -99,11 +89,12 @@ export default<T>(
      *  List of all FILTERED itemRecords
      */
     const itemListFiltered = computed(() => {
+        const { logic = 'AND', rules = [] } = filters.value;
         // if no filters are set
-        if(filters.value.length < 1)
+        if(rules.length < 1)
             return itemList.value;
         // guebbit filter
-        return searchRecords([ ...itemList.value ], filters.value);
+        return searchRecords([ ...itemList.value ] as Array<Record<string, unknown | unknown[]>>, rules, logic);
     })
 
     return {

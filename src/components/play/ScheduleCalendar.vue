@@ -47,7 +47,7 @@ import EventContentCard from "@/components/play/FAEventContentCard.vue";
 import useScheduleHelpers from "@/resources/composables/useScheduleHelpers";
 import { uiFormatDate, uiFormatTime } from "@/resources/constants";
 
-import type { scheduleMapAdvanced, scheduleMapBackground, scheduleInputMap, stationMap } from "@/interfaces";
+import type { scheduleMapExtended, scheduleMapBackground, scheduleInputMap, stationMap } from "@/interfaces";
 import type { DateSpanApi, EventApi } from "@fullcalendar/vue3";
 import type { ResourceInput } from "@fullcalendar/resource-common";
 import type { EventChangeArg } from "@fullcalendar/vue3";
@@ -63,7 +63,7 @@ interface EventInput {
 }
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { state, getters, commit } = useStore();
 
 const emit = defineEmits([
@@ -185,7 +185,7 @@ function fullcalendarEventApiTranslate({ id, resourceId, start, end, allDay } :E
 /**
  * Schedules
  */
-const scheduleDetailedRecords = computed<Record<string, scheduleMapAdvanced>>(() => getters['ecommerce/scheduleDetailedRecords']);
+const scheduleDetailedRecords = computed<Record<string, scheduleMapExtended>>(() => getters['ecommerce/scheduleDetailedRecords']);
 const scheduleCalendarBackgrounds = computed<scheduleMapBackground[]>(() => getters['ecommerce/scheduleCalendarBackgrounds']);
 
 /**
@@ -205,7 +205,7 @@ const resources = computed<ResourceInput[]>(() => {
 		const { id, label, capacity } = stationsList.value[i] as stationMap;
 		resourcesArray.push({
 			id,
-			title: label,
+			title: label[locale.value],
 			capacity
 		})
 	}

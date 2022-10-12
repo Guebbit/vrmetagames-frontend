@@ -67,7 +67,9 @@
                class="ghost-mode"
     >
         <template v-slot:prepend>
-            <router-link :to="{ name: 'Home' }">
+            <router-link
+				:to="{ name: 'Home' }"
+			>
 				<vrmetagamesLogo
 					:alt="t('generic.name')"
 					height="64"

@@ -69,9 +69,7 @@
                     </v-chip>
                 </div>
                 <p :id="'description-' + selectedRecord.id" class="panel-text">
-					<!-- TODO -->
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua
+					{{ selectedRecord.description }}
                 </p>
 
                 <div class="panel-info-icons d-flex justify-center align-center flex-gap-24 flex-wrap">
@@ -173,9 +171,9 @@
 					<v-btn
 						class="ma-2"
 						variant="tonal"
-						@click="$router.push({
+						:to="{
 							name: 'Games'
-						})"
+						}"
 					>
 						<font-awesome-icon class="mr-5" :icon="['fas', 'arrow-left-long']" />
 						{{ t('generic.go-back') }}
@@ -188,11 +186,12 @@
                         <font-awesome-icon class="mr-5" :icon="['fas', 'edit']" />
                         {{ t('product-page.edit-product') }}
                     </v-btn>
-                    <v-btn color="primary"
-                           class="ma-2"
-                           @click="$router.push({
-                                name: 'Play'
-                           })"
+                    <v-btn
+						color="primary"
+						class="ma-2"
+						:to="{
+							name: 'Play'
+						}"
                     >
                         {{ t('generic.play-now') }}
                         <font-awesome-icon class="ml-3" :icon="['fas', 'play']" />
