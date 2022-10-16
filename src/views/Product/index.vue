@@ -1,9 +1,13 @@
 <template>
+
+	<pre>{{ sortListConverted }}</pre>
+
     <div id="product-list-page" class="theme-page page-menu-padding">
         <v-container class="page-controls">
 			<v-row v-show="isAdmin">
 				<v-col cols="12" md="6" lg="4" xl="2">
 					<v-select
+						v-model="filterGlobalLogic"
 						:items="filterTargetLogicList"
 						variant="outlined"
 						:label="t('product-list-page.filter-label-logic')"
@@ -11,7 +15,26 @@
 				</v-col>
 				<v-col cols="12" md="6" lg="4" xl="2">
 					<v-select
+						v-model="filterTargetLogic"
+						:items="filterTargetLogicList"
+						variant="outlined"
+						:label="t('product-list-page.filter-label-logic')"
+					/>
+				</v-col>
+				<v-col cols="12" md="6" lg="4" xl="2">
+					<v-select
+						v-model="searchTextParametersSelected"
 						:items="searchTextParametersList"
+						variant="outlined"
+						chips
+						:label="t('product-list-page.filter-label-searchable')"
+						multiple
+					/>
+				</v-col>
+				<v-col cols="12" md="12" lg="6" xl="4">
+					<v-select
+						v-model="sortingParametersSelected"
+						:items="sortingParametersList"
 						variant="outlined"
 						chips
 						:label="t('product-list-page.filter-label-searchable')"
@@ -184,18 +207,17 @@
 							<font-awesome-icon
 								size="2x"
 								:icon="!modeVisualization ?
-											['fas', 'grip'] :
-											modeVisualization === 1 ?
 											['fas', 'panorama'] :
+											modeVisualization === 1 ?
+											['fas', 'grip'] :
 											['fas', 'list']"
 							/>
 						</div>
 					</v-card>
-
 				</v-col>
 				<v-col cols="12" class="d-flex align-end justify-end flex-gap-12">
 					<v-btn
-						v-for="sort in sortingParametersList"
+						v-for="sort in sortingParametersSelected"
 						:key="'sortable-' + sort"
 						:class="{
 							'bg-primary': sortList[sort] === 1,
@@ -215,8 +237,8 @@
 							:icon="!sortList[sort] ?
 								['fas', 'sort'] :
 								sortList[sort] === 1 ?
-								['fas', 'sort-down'] :
-								['fas', 'sort-up']
+								['fas', 'sort-up'] :
+								['fas', 'sort-down']
 							"
 						/>
 						<span class="hidden-md-and-down">{{ t('product-list-page.filter-' + sort) }}</span>
@@ -510,6 +532,7 @@ import { useRoute } from "vue-router";
 import { useTheme } from "vuetify";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
+import type { sortParameterType, sortParameterOrderType, filterRulesMap } from "guebbit-javascript-library";
 
 import useItemList, { type itemListFiltersMap } from "@/resources/composables/useItemList";
 import ProductComicPanel from "@/components/basics/blocks/ProductComicPanel.vue";
@@ -524,6 +547,7 @@ import { faUser, faUsers, faUserGroup, faGlobe, faPeopleRoof, faTags, faGrip, fa
 	faDiceD20, faHandFist, faVolleyball, faHatWizard, faMusic, faPuzzlePiece, faGun, faPeopleGroup, faHeading, faIdCard, faHourglass, faHourglassEmpty, faHourglassStart,
 	faHourglassHalf, faHourglassEnd, faSort, faSortDown, faSortUp, faFaceSmile, faFaceGrinBeam, faFaceDizzy
 } from "@fortawesome/free-solid-svg-icons";
+import { filterFunctionMap, filterGroupMap } from "guebbit-javascript-library";
 
 library.add(faUser, faUsers, faUserGroup, faGlobe, faPeopleRoof, faTags, faGrip, faList, faPanorama, faPlay, faArrowRight, faMagnifyingGlass,
 	faDiceD20, faHandFist, faVolleyball, faHatWizard, faMusic, faPuzzlePiece, faGun, faPeopleGroup, faHeading, faIdCard, faHourglass, faHourglassEmpty, faHourglassStart,
@@ -569,7 +593,9 @@ const tagsList = computed<string[]>(() => {
 /**
  * Possible sort/search options
  */
-const sortingParametersList = ['title',	'minAge', 'duration', 'maxPlayersOffline'];
+// TODO title, value, t()
+const sortingParametersList = computed(() => itemList.value.length > 0 ? Object.keys(itemList.value[0]) : []);
+const sortingParametersSelected = ref(['title', 'minAge', 'duration', 'maxPlayersOffline'])
 const searchTextParametersList = [
 	{
 		title: t('product-list-page.filter-title'),
@@ -584,6 +610,7 @@ const searchTextParametersList = [
 		value: 'description'
 	}
 ];
+const searchTextParametersSelected = ref(['title']);
 
 /**
  * Simple filters for game characteristics
@@ -750,7 +777,7 @@ const gameFilters = ref<itemListFiltersMap["rules"]>([
  */
 const vuetifyTemporaryFixItemGroupVModel = ref([]);
 watch(vuetifyTemporaryFixItemGroupVModel, (arrayValue :string[]) => {
-		gameFilters.value![3].search = arrayValue.reduce((reducer, stationIndex) => [
+		(gameFilters.value![3] as filterRulesMap).search = arrayValue.reduce((reducer, stationIndex) => [
 			...reducer,
 			stationsList.value[stationIndex].id
 		], [] as string[])
@@ -768,39 +795,26 @@ watch(() => route.query.filters, (filters) => {
  */
 const searchFilters = computed<itemListFiltersMap>(() => {
 	// rules: gamefilters + gameFiltersAdvanced that will be added latero
-	const rules :itemListFiltersMap["rules"] = [...gameFilters.value || []];
-
-	/*
-	// self inserting rules (booleans or simple rules)
-	for(const key in gameFiltersAdvanced.value) {
-		if (!Object.prototype.hasOwnProperty.call(gameFiltersAdvanced.value, key))
-			continue;
-		// find rule "instructions"
-		const ruleInstructions = filterableParametersList.find(({ name }) => name === key)
-		if(!ruleInstructions)
-			continue;
-		// if there are no levels: it just a boolean
-		if(!ruleInstructions.levels)
-			rules.push({
-				search: true,
-				searchParams: [key]
-			})
-	}
-	*/
+	// const rules :itemListFiltersMap["rules"] = [...gameFilters.value || []];
+	// @ts-config
+	const rules :Array<any> = [...gameFilters.value || []];	// TODO filterRulesMap
+	const rulesGroup :filterGroupMap[] = [];
 
 	// --------- BOOLEANS ---------
 	// if selected: only familyFriendly(boolean) games
 	if(gameFiltersAdvanced.value['familyFriendly'])
 		rules.push({
 			search: true,
-			searchParams: ['familyFriendly']
+			searchParams: ['familyFriendly'],
+			logic: filterTargetLogic.value,
 		});
 	// if selected: multiplayer online means maxPlayersOnline > 0
 	if(gameFiltersAdvanced.value['multiplayerOnline'])
 		rules.push({
 			search: 0,
 			searchParams: ['maxPlayersOnline'],
-			numberRule: "gt"
+			numberRule: "gt",
+			logic: filterTargetLogic.value,
 		});
 	// --------- MULTI OFFLINE ---------
 	// single player = maxPlayersOffline limited to 1
@@ -808,14 +822,16 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 		rules.push({
 			search: 1,
 			searchParams: ['maxPlayersOffline'],
-			numberRule: "eq"
+			numberRule: "eq",
+			logic: filterTargetLogic.value,
 		});
 	// offline multiplayer = maxPlayersOffline from 2 to unlimited
 	if(gameFiltersAdvanced.value['multiplayerOffline'] === 2)
 		rules.push({
 			search: 1,
 			searchParams: ['maxPlayersOffline'],
-			numberRule: "gt"
+			numberRule: "gt",
+			logic: filterTargetLogic.value,
 		});
 	// --------- MOTION SICKNESS ---------
 	// low motion sickess
@@ -823,14 +839,16 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 		rules.push({
 			search: 2,
 			searchParams: ['motionSickness'],
-			numberRule: "elt"
+			numberRule: "elt",
+			logic: filterTargetLogic.value,
 		});
 	// high motion sickness
 	if(gameFiltersAdvanced.value['motionSickness'] === 2)
 		rules.push({
 			search: 3,
 			searchParams: ['motionSickness'],
-			numberRule: "gt"
+			numberRule: "gt",
+			logic: filterTargetLogic.value,
 		});
 	// --------- DIFFICULTY ---------
 	// low difficulty
@@ -838,14 +856,16 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 		rules.push({
 			search: 2,
 			searchParams: ['difficulty'],
-			numberRule: "elt"
+			numberRule: "elt",
+			logic: filterTargetLogic.value,
 		});
 	// high difficulty
 	if(gameFiltersAdvanced.value['difficulty'] === 2)
 		rules.push({
 			search: 3,
 			searchParams: ['difficulty'],
-			numberRule: "gt"
+			numberRule: "gt",
+			logic: filterTargetLogic.value,
 		});
 	// --------- DURATION ---------
 	// Duration less than 30 min
@@ -853,33 +873,34 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 		rules.push({
 			search: 1800000,
 			searchParams: ['duration'],
-			numberRule: "elt"
+			numberRule: "elt",
+			logic: filterTargetLogic.value,
 		});
-	/*
-	TODO rework: invece che "AND/OR" globale fare un qualche "link" tra una rule a l'altra
-		Si può fare richiamando più volte searchRecords, è da pensare
 	// Duration from 30 to 60 min
 	if(gameFiltersAdvanced.value['duration'] === 2){
-		rules.push({
-			search: 1800000,
-			searchParams: ['duration'],
-			numberRule: "lt",
-			logic: "AND"
-		});
-		rules.push({
-			search: 3600000,
-			searchParams: ['duration'],
-			numberRule: "egt",
-			logic: "AND"
+		rulesGroup.push({
+			logic: "AND",
+			rules: [
+				{
+					search: 1800000,
+					searchParams: ['duration'],
+					numberRule: "egt"
+				},
+				{
+					search: 3600000,
+					searchParams: ['duration'],
+					numberRule: "lt"
+				}
+			]
 		});
 	}
-	*/
 	// Duration more than 60 min
 	if(gameFiltersAdvanced.value['duration'] === 3)
 		rules.push({
 			search: 3600000,
 			searchParams: ['duration'],
-			numberRule: "gt"
+			numberRule: "gt",
+			logic: filterTargetLogic.value,
 		});
 	// --------- AGE ---------
 	// 10+ age
@@ -887,34 +908,40 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 		rules.push({
 			search: 10,
 			searchParams: ['minAge'],
-			numberRule: "egt"
+			numberRule: "egt",
+			logic: filterTargetLogic.value,
 		});
 	// 14+ age
 	if(gameFiltersAdvanced.value['minAge'] === 2)
 		rules.push({
 			search: 14,
 			searchParams: ['minAge'],
-			numberRule: "egt"
+			numberRule: "egt",
+			logic: filterTargetLogic.value,
 		});
 	// 18+ age
 	if(gameFiltersAdvanced.value['minAge'] === 3)
 		rules.push({
 			search: 18,
 			searchParams: ['minAge'],
-			numberRule: "egt"
+			numberRule: "egt",
+			logic: filterTargetLogic.value,
 		});
 
-	return {
+	// normal filters (with global logic switch)
+	rulesGroup.push({
 		logic: filterGlobalLogic.value,
-		rules: (rules || []).map((item) => {
-			return {
-				...item,
-				logic: filterTargetLogic.value
-			}
-		})
+		rules
+	});
+
+	// final result
+	return {
+		logic: "AND",
+		rules: rulesGroup
 	}
 });
 
+// TODO AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA pop e unshift(?) in base all'ultimo cliccato
 /**
  * Sort order
  * Order of array is order of importance
@@ -924,6 +951,13 @@ const searchFilters = computed<itemListFiltersMap>(() => {
  * 2 = ascending
  */
 const sortList = ref<Record<string, number>>({});
+const sortListConverted = computed(() => {
+	const sortListNew :sortParameterType[] = [];
+	for(const key in sortList.value)
+		if(Object.prototype.hasOwnProperty.call(sortList.value, key))
+			sortListNew.push([key, sortList.value[key] as sortParameterOrderType]);
+	return sortListNew;
+})
 
 /**
  * WARNING: vuetify item-group flags with "undefined" as false and "0" as true
@@ -935,7 +969,7 @@ const gameFiltersAdvanced = ref<Record<string, number>>({});
  */
 const {
 	itemList,
-	itemListFiltered :itemListFilteredOriginal,
+	itemListFiltered,
 	isAdmin
 } = useItemList<gameMapExtended>(
 	gameDetailedRecords,
@@ -944,44 +978,8 @@ const {
 		dispatch('ecommerce/getGames')
 	]),
 	searchFilters,
+	sortListConverted,
 );
-
-/**
- * list to show after filters and sorting are applied
- * TODO break down better
- */
-const itemListFiltered = computed<gameMapExtended[]>(() => {
-	let gameArray = itemListFilteredOriginal.value as gameMapExtended[];
-	// TODO rework
-	if(gameFiltersAdvanced.value['duration'] === 2)
-		gameArray = gameArray.filter(({ duration }) => duration && (1800000 < duration && duration < 3600000));
-	// SORTING
-	// TODO guebbit sort sul modello di searchRecords
-	// TODO l'ultimo cliccato dovrebbe avere la priorità
-	gameArray.sort((item1 :gameMapExtended, item2 :gameMapExtended) => {
-		for(const key in sortList.value)
-			// if undefined or 0, ignore
-			if(Object.prototype.hasOwnProperty.call(sortList.value, key) && sortList.value[key] > 0){
-				// if nobody has the value, ignore and continue
-				if(!Object.prototype.hasOwnProperty.call(item1, key) && !Object.prototype.hasOwnProperty.call(item1, key))
-					continue;
-				// if one of the items hasn't the parameter but other does: the first loses
-				if(!Object.prototype.hasOwnProperty.call(item1, key))
-					return -1;
-				if(!Object.prototype.hasOwnProperty.call(item2, key))
-					return 1;
-				// if descending: the greatest win, if ascending: the lowest win
-				if(item1[key as keyof typeof item1]! > item2[key as keyof typeof item2]!)
-					return sortList.value[key] === 1 ? 1 : -1;
-				if(item1[key as keyof typeof item1]! < item2[key as keyof typeof item2]!)
-					return sortList.value[key] === 1 ? -1 : 1;
-				// if they were the same, continue to the next
-			}
-		return 0;
-	});
-	// return remaining values
-	return gameArray;
-});
 
 // -------------------- UI --------------------
 

@@ -427,7 +427,7 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 24,
         familyFriendly: false,
-        duration: 10000000,
+        duration: 99999999,
         minAge: 15
     },
     {
@@ -450,7 +450,8 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
-        minAge: 10
+        minAge: 10,
+        duration: 3000000,
     },
     {
         id: "item-10",
@@ -474,6 +475,7 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 0,
         familyFriendly: true,
+        duration: 2000000,
     },
     {
         id: "item-11",

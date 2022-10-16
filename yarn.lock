@@ -5019,10 +5019,10 @@
   "resolved" "https://registry.npmmirror.com/graceful-fs/-/graceful-fs-4.2.10.tgz"
   "version" "4.2.10"
 
-"guebbit-javascript-library@^2.5.0":
-  "integrity" "sha512-Ojo5U9ENDcxCfw+TsdruKOAnpnIuGr3vU864x5LtPEv5vc0DIGPnAscotj3cbTPk76NgqkXK7iCbo5i4zT6ujQ=="
-  "resolved" "https://registry.npmjs.org/guebbit-javascript-library/-/guebbit-javascript-library-2.5.0.tgz"
-  "version" "2.5.0"
+"guebbit-javascript-library@^2.5.9":
+  "integrity" "sha512-8c3HTDx7XlcsmPpiiIvky31bV3RjkLmBaENeWpfjzdzA8/+08B3yG9QLR6ngq+8mTL1y+7kwTOcKOwGlHBXPtg=="
+  "resolved" "https://registry.npmjs.org/guebbit-javascript-library/-/guebbit-javascript-library-2.5.9.tgz"
+  "version" "2.5.9"
   dependencies:
     "lodash" "^4.17.21"
 
