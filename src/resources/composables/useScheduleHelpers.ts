@@ -138,9 +138,8 @@ export default (dateFormat = 'YYYY-MM-DD', timeFormat = 'HH:mm:ss', stepTime = 0
         if(idArray.length === 0){
             return 0;
         }
-        return scheduleList.value.reduce((total, { id, start, end }) :number => {
-            return idArray.includes(id) ? total + (end - start) : total;
-        }, 0);
+        return scheduleList.value.reduce((total, { id, start, end }) :number =>
+            idArray.includes(id) ? total + (end - start) : total, 0);
     }
 
     /**

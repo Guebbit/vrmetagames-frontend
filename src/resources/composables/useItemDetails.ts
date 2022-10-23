@@ -1,8 +1,7 @@
 import { computed, ref, type Ref, type ComputedRef } from "vue";
-import useItemStructure from "@/resources/composables/useItemStructure";
+import useItemStructure, { type itemStructureSettingsMap } from "@/resources/composables/useItemStructure";
 
-export interface itemDetailsSettingsMap {
-    defaultLoading?: boolean,
+export interface itemDetailsSettingsMap extends itemStructureSettingsMap {
     userIdParam?: string
 }
 

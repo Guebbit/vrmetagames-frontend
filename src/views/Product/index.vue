@@ -1,7 +1,4 @@
 <template>
-
-	<pre>{{ sortListConverted }}</pre>
-
     <div id="product-list-page" class="theme-page page-menu-padding">
         <v-container class="page-controls">
 			<v-row v-show="isAdmin">
@@ -21,7 +18,7 @@
 						:label="t('product-list-page.filter-label-logic')"
 					/>
 				</v-col>
-				<v-col cols="12" md="6" lg="4" xl="2">
+				<v-col cols="8" md="6" lg="4" xl="2">
 					<v-select
 						v-model="searchTextParametersSelected"
 						:items="searchTextParametersList"
@@ -31,7 +28,7 @@
 						multiple
 					/>
 				</v-col>
-				<v-col cols="12" md="12" lg="6" xl="4">
+				<v-col cols="8" md="10" lg="10" xl="4">
 					<v-select
 						v-model="sortingParametersSelected"
 						:items="sortingParametersList"
@@ -43,15 +40,15 @@
 				</v-col>
 			</v-row>
 
-			<v-row>
-				<v-col cols="12" md="8" lg="7" xl="4">
+			<v-row align="center">
+				<v-col cols="12" md="7" lg="6" xl="4">
 					<v-text-field
-						v-model="gameFilters[0].search"
+						v-model="regularFiltersRules[0].search"
 						:label="t('generic.search')"
 						variant="solo"
 						hide-details
 					>
-						<template v-slot:append>
+						<template v-slot:prepend-inner>
 							<font-awesome-icon
 								class="v-icon v-icon--size-default v-icon--start cursor-pointer"
 								:icon="['fas', 'magnifying-glass']"
@@ -60,28 +57,51 @@
 					</v-text-field>
 				</v-col>
 
-				<v-col cols="12" md="4" lg="5" xl="2">
+				<v-col cols="8" md="3" lg="4" xl="4">
 					<v-select
-						v-model="gameFilters[2].search"
+						v-model="regularFiltersRules[2].search"
 						:items="tagsList"
 						chips
 						:label="t('product-list-page.filter-label-tags')"
 						multiple
 						hide-details
-					></v-select>
+					>
+						<template v-slot:prepend-inner>
+							<font-awesome-icon
+								class="v-icon v-icon--size-default v-icon--start cursor-pointer"
+								:icon="['fas', 'tags']"
+							/>
+						</template>
+					</v-select>
+				</v-col>
+
+				<v-col cols="4" md="2" lg="2" xl="2" offset-xl="2">
+					<v-btn
+						class="vuetify-button-icon"
+						block
+						size="x-large"
+						@click="filtersReset()"
+					>
+						<font-awesome-icon
+							class="mr-3"
+							:icon="['fas', 'eraser']"
+						/>
+						<span class="hidden-md-and-down">{{ t('generic.reset') }}</span>
+					</v-btn>
 				</v-col>
 			</v-row>
 
             <v-row>
 				<v-col cols="12" md="12" lg="4" xl="4" class="filter-by-station-section">
 					<v-item-group
-						v-model="vuetifyTemporaryFixItemGroupVModel"
+						v-model="regularFiltersRules[3].search"
 						class="d-flex align-center justify-center flex-gap-12"
 						multiple
 					>
 						<v-item
 							v-for="station in stationsList"
 							:key="'stations-filter-' + station.id"
+							:value="station.id"
 							v-slot="{ isSelected, toggle }"
 						>
 							<v-card
@@ -106,7 +126,7 @@
                 <v-col cols="12" md="12" lg="8" xl="8" class="d-flex align-center justify-center">
                     <div class="d-flex justify-center align-start mb-5 w-100">
                         <v-btn-toggle
-                            v-model="gameFilters[1].search"
+                            v-model="regularFiltersRules[1].search"
                             class="flex-wrap"
                             selected-class="bg-primary"
                             multiple
@@ -129,7 +149,6 @@
 
 			<v-row>
 				<v-col cols="12" class="filter-by-tag-section d-flex align-center justify-space-between flex-wrap flex-gap-12">
-
 					<!-- TODO creare VuetifyBlockFilter, filterableParametersList as items e lista icone con Record<string, componenteicona> da richiamare  -->
 					<div class="d-flex flex-wrap flex-gap-12">
 						<template
@@ -138,7 +157,7 @@
 						>
 							<v-item-group
 								v-if="levels.length < 1"
-								v-model="gameFiltersAdvanced[name]"
+								v-model="toggleFilters[name]"
 								:variant="variant"
 								:selectedClass="activeColor"
 							>
@@ -159,35 +178,35 @@
 								:variant="variant"
 								class="d-flex align-center pa-3"
 								:class="{
-								[activeColor]: gameFiltersAdvanced[name] > 0
+								[activeColor]: toggleFilters[name] > 0
 							}"
-								@click="gameFiltersAdvanced[name] === undefined ?
-											gameFiltersAdvanced[name] = 1 :
-												gameFiltersAdvanced[name] + 1 >= levels.length ?
-													gameFiltersAdvanced[name] = 0 :
-													gameFiltersAdvanced[name]++"
+								@click="toggleFilters[name] === undefined ?
+											toggleFilters[name] = 1 :
+												toggleFilters[name] + 1 >= levels.length ?
+													toggleFilters[name] = 0 :
+													toggleFilters[name]++"
 							>
 								<div
-									v-if="levels[gameFiltersAdvanced[name] || 0]"
+									v-if="levels[toggleFilters[name] || 0]"
 									class="flex-grow-1 text-center"
 								>
 									<font-awesome-icon
-										v-if="levels[gameFiltersAdvanced[name] || 0].icon"
+										v-if="levels[toggleFilters[name] || 0].icon"
 										size="2x"
-										:icon="levels[gameFiltersAdvanced[name] || 0].icon"
+										:icon="levels[toggleFilters[name] || 0].icon"
 									/>
 									<span
-										v-if="levels[gameFiltersAdvanced[name] || 0].iconText"
+										v-if="levels[toggleFilters[name] || 0].iconText"
 										class="text-h4"
 									>
-									{{ levels[gameFiltersAdvanced[name] || 0].iconText }}
+									{{ levels[toggleFilters[name] || 0].iconText }}
 								</span>
 									<component
-										v-if="levels[gameFiltersAdvanced[name] || 0].text"
-										:is="levels[gameFiltersAdvanced[name] || 0].text?.length > 10 ? 'small' : 'p'"
+										v-if="levels[toggleFilters[name] || 0].text"
+										:is="levels[toggleFilters[name] || 0].text?.length > 10 ? 'small' : 'p'"
 										class="d-block mt-3"
 									>
-										{{ levels[gameFiltersAdvanced[name] || 0].text }}
+										{{ levels[toggleFilters[name] || 0].text }}
 									</component>
 								</div>
 							</v-card>
@@ -220,25 +239,19 @@
 						v-for="sort in sortingParametersSelected"
 						:key="'sortable-' + sort"
 						:class="{
-							'bg-primary': sortList[sort] === 1,
-							'bg-secondary': sortList[sort] === 2
+							'bg-primary': sortListUI[sort] === 1,
+							'bg-secondary': sortListUI[sort] === 2
 						}"
 						variant="flat"
-						@click="
-						sortList[sort] === undefined ?
-						sortList[sort] = 1 :
-							sortList[sort] >= 2 ?
-								sortList[sort] = 0 :
-								sortList[sort]++
-						"
+						@click="addSortFilter(sort)"
 					>
 						<font-awesome-icon
 							class="mr-3"
-							:icon="!sortList[sort] ?
+							:icon="!sortListUI[sort] ?
 								['fas', 'sort'] :
-								sortList[sort] === 1 ?
-								['fas', 'sort-up'] :
-								['fas', 'sort-down']
+								sortListUI[sort] === 1 ?
+								['fas', 'sort-down'] :
+								['fas', 'sort-up']
 							"
 						/>
 						<span class="hidden-md-and-down">{{ t('product-list-page.filter-' + sort) }}</span>
@@ -283,9 +296,7 @@
                     </v-img>
                 </template>
                 <template #image>
-                    <ImageHoverUpCard
-                        :image="game.coverFront"
-                    >
+                    <ImageHoverUpCard>
                         <v-img
 							:lazy-src="game.coverFront.thumbnail"
 							:src="game.coverFront.src"
@@ -408,8 +419,7 @@
                        cols="6" md="4" lg="3" xl="2"
                 >
                     <ImageHoverUpCard
-                        :image="game.coverFront.src"
-                        @click="$router.push({
+                        @click="push({
                             name: 'GameTarget',
                             params: {
                                 id: game.id
@@ -482,12 +492,14 @@
 								icon=""
 								variant="text"
 								color="secondary"
-								@click.stop.prevent="$router.push({
+								@click.stop.prevent="push({
 									name: 'Games',
 									query: {
-										filters: JSON.stringify({
-											stations: [station.id]
-										})
+										filters: encodeURIComponent(
+											JSON.stringify({
+												stations: [station.id]
+											})
+										)
 									}
 								})"
 							>
@@ -502,12 +514,14 @@
 								icon=""
 								variant="text"
 								color="primary"
-								@click.stop.prevent="$router.push({
+								@click.stop.prevent="push({
 									name: 'Games',
 									query: {
-										filters: JSON.stringify({
-											categories: [cat]
-										})
+										filters: encodeURIComponent(
+											JSON.stringify({
+												categories: [cat]
+											})
+										)
 									}
 								})"
 							>
@@ -527,8 +541,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
-import { useRoute } from "vue-router";
+import { ref, computed, watch, onMounted } from "vue";
+import { useRouter, useRoute, type LocationQueryValue } from "vue-router";
 import { useTheme } from "vuetify";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
@@ -545,15 +559,16 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faUser, faUsers, faUserGroup, faGlobe, faPeopleRoof, faTags, faGrip, faList, faPanorama, faPlay, faArrowRight, faMagnifyingGlass,
 	faDiceD20, faHandFist, faVolleyball, faHatWizard, faMusic, faPuzzlePiece, faGun, faPeopleGroup, faHeading, faIdCard, faHourglass, faHourglassEmpty, faHourglassStart,
-	faHourglassHalf, faHourglassEnd, faSort, faSortDown, faSortUp, faFaceSmile, faFaceGrinBeam, faFaceDizzy
+	faHourglassHalf, faHourglassEnd, faSort, faSortDown, faSortUp, faFaceSmile, faFaceGrinBeam, faFaceDizzy, faEraser
 } from "@fortawesome/free-solid-svg-icons";
-import { filterFunctionMap, filterGroupMap } from "guebbit-javascript-library";
+import { filterGroupMap } from "guebbit-javascript-library";
 
 library.add(faUser, faUsers, faUserGroup, faGlobe, faPeopleRoof, faTags, faGrip, faList, faPanorama, faPlay, faArrowRight, faMagnifyingGlass,
 	faDiceD20, faHandFist, faVolleyball, faHatWizard, faMusic, faPuzzlePiece, faGun, faPeopleGroup, faHeading, faIdCard, faHourglass, faHourglassEmpty, faHourglassStart,
-	faHourglassHalf, faHourglassEnd, faSort, faSortDown, faSortUp, faFaceSmile, faFaceGrinBeam, faFaceDizzy
+	faHourglassHalf, faHourglassEnd, faSort, faSortDown, faSortUp, faFaceSmile, faFaceGrinBeam, faFaceDizzy, faEraser
 );
 
+const { push, replace } = useRouter();
 const route = useRoute();
 const { t, locale } = useI18n();
 const { getters, dispatch } = useStore();
@@ -589,6 +604,10 @@ const tagsList = computed<string[]>(() => {
 	)]
 });
 
+/**
+ * Visualization mode
+ */
+const modeVisualization = ref(1);
 
 /**
  * Possible sort/search options
@@ -748,68 +767,58 @@ const filterTargetLogicList = [
 ]
 const filterGlobalLogic = ref<'OR' | 'AND'>('OR');
 const filterTargetLogic = ref<'OR' | 'AND'>('OR');
-const gameFilters = ref<itemListFiltersMap["rules"]>([
+const regularFiltersRules = ref<Array<filterRulesMap>>([
 	{
+		id: 'title',
 		search: '',
 		searchParams: ['title'],
 		stringLimit: 2,
 		distance: -1
 	},
 	{
+		id: 'categories',
 		search: [],
 		searchParams: ['categories']
 	},
 	{
+		id: 'tags',
 		search: [],
 		searchParams: ['tags']
 	},
 	{
+		id: 'stations',
 		search: [],
 		searchParams: ['stationIds']
 	}
 ]);
-
-/**
- * TEMPORARY FIX
- * Stations for ScheduleFormCard list of possible stations
- * TODO vuetifyTemporaryFixItemGroupVModel è un temporary fix
- * 		perché item-group v-model restituisce solo gli index
- */
-const vuetifyTemporaryFixItemGroupVModel = ref([]);
-watch(vuetifyTemporaryFixItemGroupVModel, (arrayValue :string[]) => {
-		(gameFilters.value![3] as filterRulesMap).search = arrayValue.reduce((reducer, stationIndex) => [
-			...reducer,
-			stationsList.value[stationIndex].id
-		], [] as string[])
-	}
+const regularFilters = computed(() =>
+	regularFiltersRules.value.reduce((filters, { id, search, searchParams }) => {
+		if(search && (search as string | string[]).length > 0)
+			for(let i = searchParams.length; i--; )
+				if(id)
+					filters[id] = search;
+		return filters;
+	}, {} as Record<string, unknown | unknown[]>)
 )
 
-/**
- * TODO query selections
- */
-watch(() => route.query.filters, (filters) => {
-	console.log("Query selection: ", filters)
-});
 /**
  * Generationg rules for guebbit's searchRecords
  */
 const searchFilters = computed<itemListFiltersMap>(() => {
-	// rules: gamefilters + gameFiltersAdvanced that will be added latero
-	// const rules :itemListFiltersMap["rules"] = [...gameFilters.value || []];
-	// @ts-config
-	const rules :Array<any> = [...gameFilters.value || []];	// TODO filterRulesMap
+	// rules: regularFiltersRules + toggleFilters that will be added later
+	const rules :Array<filterRulesMap> = [...regularFiltersRules.value || []];
 	const rulesGroup :filterGroupMap[] = [];
 
 	// --------- BOOLEANS ---------
 	// if selected: only familyFriendly(boolean) games
-	if(gameFiltersAdvanced.value['familyFriendly'])
+	if(toggleFilters.value['familyFriendly'])
 		rules.push({
 			search: true,
 			searchParams: ['familyFriendly'],
 			logic: filterTargetLogic.value,
 		});
 	// if selected: multiplayer online means maxPlayersOnline > 0
-	if(gameFiltersAdvanced.value['multiplayerOnline'])
+	if(toggleFilters.value['multiplayerOnline'])
 		rules.push({
 			search: 0,
 			searchParams: ['maxPlayersOnline'],
@@ -818,7 +827,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 		});
 	// --------- MULTI OFFLINE ---------
 	// single player = maxPlayersOffline limited to 1
-	if(gameFiltersAdvanced.value['multiplayerOffline'] === 1)
+	if(toggleFilters.value['multiplayerOffline'] === 1)
 		rules.push({
 			search: 1,
 			searchParams: ['maxPlayersOffline'],
@@ -826,7 +835,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 			logic: filterTargetLogic.value,
 		});
 	// offline multiplayer = maxPlayersOffline from 2 to unlimited
-	if(gameFiltersAdvanced.value['multiplayerOffline'] === 2)
+	if(toggleFilters.value['multiplayerOffline'] === 2)
 		rules.push({
 			search: 1,
 			searchParams: ['maxPlayersOffline'],
@@ -835,7 +844,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 		});
 	// --------- MOTION SICKNESS ---------
 	// low motion sickess
-	if(gameFiltersAdvanced.value['motionSickness'] === 1)
+	if(toggleFilters.value['motionSickness'] === 1)
 		rules.push({
 			search: 2,
 			searchParams: ['motionSickness'],
@@ -843,7 +852,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 			logic: filterTargetLogic.value,
 		});
 	// high motion sickness
-	if(gameFiltersAdvanced.value['motionSickness'] === 2)
+	if(toggleFilters.value['motionSickness'] === 2)
 		rules.push({
 			search: 3,
 			searchParams: ['motionSickness'],
@@ -852,7 +861,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 		});
 	// --------- DIFFICULTY ---------
 	// low difficulty
-	if(gameFiltersAdvanced.value['difficulty'] === 1)
+	if(toggleFilters.value['difficulty'] === 1)
 		rules.push({
 			search: 2,
 			searchParams: ['difficulty'],
@@ -860,7 +869,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 			logic: filterTargetLogic.value,
 		});
 	// high difficulty
-	if(gameFiltersAdvanced.value['difficulty'] === 2)
+	if(toggleFilters.value['difficulty'] === 2)
 		rules.push({
 			search: 3,
 			searchParams: ['difficulty'],
@@ -869,7 +878,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 		});
 	// --------- DURATION ---------
 	// Duration less than 30 min
-	if(gameFiltersAdvanced.value['duration'] === 1)
+	if(toggleFilters.value['duration'] === 1)
 		rules.push({
 			search: 1800000,
 			searchParams: ['duration'],
@@ -877,7 +886,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 			logic: filterTargetLogic.value,
 		});
 	// Duration from 30 to 60 min
-	if(gameFiltersAdvanced.value['duration'] === 2){
+	if(toggleFilters.value['duration'] === 2){
 		rulesGroup.push({
 			logic: "AND",
 			rules: [
@@ -895,7 +904,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 		});
 	}
 	// Duration more than 60 min
-	if(gameFiltersAdvanced.value['duration'] === 3)
+	if(toggleFilters.value['duration'] === 3)
 		rules.push({
 			search: 3600000,
 			searchParams: ['duration'],
@@ -904,7 +913,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 		});
 	// --------- AGE ---------
 	// 10+ age
-	if(gameFiltersAdvanced.value['minAge'] === 1)
+	if(toggleFilters.value['minAge'] === 1)
 		rules.push({
 			search: 10,
 			searchParams: ['minAge'],
@@ -912,7 +921,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 			logic: filterTargetLogic.value,
 		});
 	// 14+ age
-	if(gameFiltersAdvanced.value['minAge'] === 2)
+	if(toggleFilters.value['minAge'] === 2)
 		rules.push({
 			search: 14,
 			searchParams: ['minAge'],
@@ -920,7 +929,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 			logic: filterTargetLogic.value,
 		});
 	// 18+ age
-	if(gameFiltersAdvanced.value['minAge'] === 3)
+	if(toggleFilters.value['minAge'] === 3)
 		rules.push({
 			search: 18,
 			searchParams: ['minAge'],
@@ -941,28 +950,60 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 	}
 });
 
-// TODO AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA pop e unshift(?) in base all'ultimo cliccato
 /**
  * Sort order
  * Order of array is order of importance
+ * Last clicked is the first of array
  *
  * 0 = neutral
  * 1 = descending
  * 2 = ascending
  */
-const sortList = ref<Record<string, number>>({});
-const sortListConverted = computed(() => {
-	const sortListNew :sortParameterType[] = [];
-	for(const key in sortList.value)
-		if(Object.prototype.hasOwnProperty.call(sortList.value, key))
-			sortListNew.push([key, sortList.value[key] as sortParameterOrderType]);
-	return sortListNew;
+const sortList = ref<sortParameterType[]>([]);
+const sortListUI = computed(() => {
+	const result :Record<string, sortParameterOrderType> = {};
+	for(let i = sortList.value.length; i--; )
+		result[sortList.value[i][0]] = sortList.value[i][1];
+	return result;
 })
+const addSortFilter = (filter :string) => {
+	let value = 1;
+	// if exist
+	const index = sortList.value.findIndex(([name]) => name === filter);
+	if(index >= 0){
+		// get initial value
+		value = sortList.value[index][1] + 1;
+		// if max value, become neutral
+		if(sortList.value[index][1] >= 2)
+			value = 0;
+		// remove (it will be reinserted first)
+		sortList.value.splice(index, 1);
+	}
+	// add it again, on top of list (to be first in importance)
+	sortList.value.unshift([
+		filter,
+		value as sortParameterOrderType
+	]);
+};
 
 /**
  * WARNING: vuetify item-group flags with "undefined" as false and "0" as true
  */
-const gameFiltersAdvanced = ref<Record<string, number>>({});
+const toggleFilters = ref<Record<string, number>>({});
+
+/**
+ * Fast filters reset
+ */
+function filtersReset(){
+	sortList.value = [];
+	toggleFilters.value = {};
+	for(let i = regularFiltersRules.value.length; i--; )
+		if(Array.isArray(regularFiltersRules.value[i].search))
+			regularFiltersRules.value[i].search = [];
+		else
+			regularFiltersRules.value[i].search = "";
+}
+
 
 /**
  * Page list toolbox
@@ -970,7 +1011,9 @@ const gameFiltersAdvanced = ref<Record<string, number>>({});
 const {
 	itemList,
 	itemListFiltered,
-	isAdmin
+	isAdmin,
+	fromObjectToUrl,
+	fromUrlToObject
 } = useItemList<gameMapExtended>(
 	gameDetailedRecords,
 	Promise.all([
@@ -978,21 +1021,49 @@ const {
 		dispatch('ecommerce/getGames')
 	]),
 	searchFilters,
-	sortListConverted,
+	sortList,
 );
 
-// -------------------- UI --------------------
+/**
+ * Save filters objects in URL and viceversa
+ */
+const preloadFilters = () => {
+	const { sort = [], toggle = {}, v = 0, ...regularFilters } = fromUrlToObject(route.query as Record<string, string>);
+	sortList.value = sort as sortParameterType[];
+	toggleFilters.value = toggle as Record<string, number>;
+	modeVisualization.value = v as number;
+	/**
+	 * Regular filters are heavily personalized
+	 */
+	for(const key in regularFilters){
+		if (!Object.prototype.hasOwnProperty.call(regularFilters, key))
+			continue;
+		const index = regularFiltersRules.value.findIndex(({ id }) => key === id);
+		// if found
+		if(index >= 0)
+			regularFiltersRules.value[index].search = regularFilters[key];
+	}
+};
+onMounted(preloadFilters)
+watch(() => route.query, preloadFilters, { deep :true });
 
 /**
- * Visualization mode
+ * go to new url with new query (no reload);
  */
-const modeVisualization = ref(1);
-/* TODO query selections
-watch(() => route.query.v, (mode = "1") => {
-	console.log("FFFF", mode)
-	modeVisualization.value = parseInt(mode)
-});
-*/
+watch([regularFilters, sortList, toggleFilters, modeVisualization],
+	([ filters = {}, sort = [], toggle = [], v ]) =>
+		replace({
+			...route,
+			query: fromObjectToUrl({
+				...filters,
+				sort,
+				toggle,
+				v
+			})
+		})
+, { deep :true });
+
+// -------------------- UI --------------------
 
 /**
  *

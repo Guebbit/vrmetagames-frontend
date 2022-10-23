@@ -17,7 +17,7 @@ import { defineProps } from "vue";
 defineProps({
     image: {
         type: String,
-        required: true
+        required: false
     },
     text: {
         type: String,
