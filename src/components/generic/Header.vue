@@ -101,7 +101,7 @@
 
             <v-btn
                 v-show="scheduleTotal > 0"
-                :to="{ name: 'Checkout' }"
+				@click="push({ name: 'Checkout' })"
             >
                 {{ scheduleCartTotalCostDiscounted }}€
                 <v-badge
@@ -149,6 +149,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { useStore } from "@/store";
 
 import { shyJs } from 'guebbit-javascript-library';
@@ -162,6 +163,7 @@ import { faBars, faPlay, faCartShopping, faHouse, faShop, faGamepad, faVrCardboa
 library.add(faBars, faPlay, faCartShopping, faHouse, faShop, faGamepad, faVrCardboard, faRightToBracket, faRightFromBracket)
 
 const { t } = useI18n();
+const { push } = useRouter();
 const {
     state,
     getters,

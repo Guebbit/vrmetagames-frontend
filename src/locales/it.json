@@ -207,11 +207,19 @@
     "prices-description-2": "Quindi acquistando 40 ore si otterrà 2 volte il prezzo speciale da 20 ore."
   },
   "product-page": {
-    "edit-product": "Modifica prodotto"
-  },
-  "product-list-page": {
+    "edit-product": "Modifica prodotto",
+    "label-maxPlayersOffline": "N. giocatori locale",
+    "label-maxPlayersOnline": "N. giocatori online",
+    "label-familyFriendly":  "Per famiglie",
+    "label-motionSickness": "Motion Sickness",
+    "label-difficulty":  "Difficoltà",
+    "label-duration": "Durata",
+    "label-minAge":  "Età minima consigliata",
+    "label-logic-and":  "Logica AND",
+    "label-logic-or": "Logica OR",
     "filter-label-logic": "Logiche di ricerca",
     "filter-label-searchable": "Su cosa effettuare la ricerca",
+    "filter-label-sortable": "Su cosa effettuare l'ordinamento",
     "filter-label-tags": "Cerca tra i tag",
     "filter-title": "Titolo",
     "filter-author": "Sviluppatori",

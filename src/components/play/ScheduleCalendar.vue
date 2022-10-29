@@ -189,10 +189,9 @@ const scheduleDetailedRecords = computed<Record<string, scheduleMapExtended>>(()
 const scheduleCalendarBackgrounds = computed<scheduleMapBackground[]>(() => getters['ecommerce/scheduleCalendarBackgrounds']);
 
 /**
- * Stations
- * (to list and calculate resource limits)
+ * List of stations, for ScheduleFormCard list of possible stations
  */
-const stationsList = computed(() => getters['ecommerce/stationsList']);
+const stationsList = computed(() => getters['ecommerce/stationsList'](locale.value));
 const totalStations = computed(() => getters['ecommerce/totalStations']);
 
 /**
@@ -205,7 +204,7 @@ const resources = computed<ResourceInput[]>(() => {
 		const { id, label, capacity } = stationsList.value[i] as stationMap;
 		resourcesArray.push({
 			id,
-			title: label[locale.value],
+			title: label,
 			capacity
 		})
 	}

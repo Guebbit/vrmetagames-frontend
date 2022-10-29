@@ -1,13 +1,13 @@
 <template>
     <div id="product-list-page" class="theme-page page-menu-padding">
         <v-container class="page-controls">
-			<v-row v-show="isAdmin">
+			<v-row v-show="isAdmin" align="center">
 				<v-col cols="12" md="6" lg="4" xl="2">
 					<v-select
 						v-model="filterGlobalLogic"
 						:items="filterTargetLogicList"
 						variant="outlined"
-						:label="t('product-list-page.filter-label-logic')"
+						:label="t('product-page.filter-label-logic')"
 					/>
 				</v-col>
 				<v-col cols="12" md="6" lg="4" xl="2">
@@ -15,7 +15,7 @@
 						v-model="filterTargetLogic"
 						:items="filterTargetLogicList"
 						variant="outlined"
-						:label="t('product-list-page.filter-label-logic')"
+						:label="t('product-page.filter-label-logic')"
 					/>
 				</v-col>
 				<v-col cols="8" md="6" lg="4" xl="2">
@@ -24,17 +24,20 @@
 						:items="searchTextParametersList"
 						variant="outlined"
 						chips
-						:label="t('product-list-page.filter-label-searchable')"
+						:label="t('product-page.filter-label-searchable')"
 						multiple
 					/>
 				</v-col>
 				<v-col cols="8" md="10" lg="10" xl="4">
+					<pre>{{sortingParametersSelected}}</pre>
 					<v-select
 						v-model="sortingParametersSelected"
-						:items="sortingParametersList"
+						:items="Object.values(gameParameters)"
 						variant="outlined"
+						:label="t('product-page.filter-label-sortable')"
 						chips
-						:label="t('product-list-page.filter-label-searchable')"
+						item-value="id"
+						item-title="label"
 						multiple
 					/>
 				</v-col>
@@ -56,13 +59,14 @@
 						</template>
 					</v-text-field>
 				</v-col>
-
 				<v-col cols="8" md="3" lg="4" xl="4">
 					<v-select
 						v-model="regularFiltersRules[2].search"
-						:items="tagsList"
+						:items="Object.values(gameTags)"
+						:label="t('product-page.filter-label-tags')"
+						item-value="id"
+						item-title="label"
 						chips
-						:label="t('product-list-page.filter-label-tags')"
 						multiple
 						hide-details
 					>
@@ -78,7 +82,7 @@
 				<v-col cols="4" md="2" lg="2" xl="2" offset-xl="2">
 					<v-btn
 						class="vuetify-button-icon"
-						block
+						block=""
 						size="x-large"
 						@click="filtersReset()"
 					>
@@ -91,11 +95,11 @@
 				</v-col>
 			</v-row>
 
-            <v-row>
+            <v-row align="center">
 				<v-col cols="12" md="12" lg="4" xl="4" class="filter-by-station-section">
 					<v-item-group
 						v-model="regularFiltersRules[3].search"
-						class="d-flex align-center justify-center flex-gap-12"
+						class="d-flex align-center justify-md-center justify-lg-start flex-gap-12"
 						multiple
 					>
 						<v-item
@@ -106,50 +110,53 @@
 						>
 							<v-card
 								:color="isSelected ? 'secondary' : ''"
-								class="d-flex align-center"
+								class="d-flex align-center justify-center flex-column"
 								dark
 								@click="toggle"
 							>
-								<div class="flex-grow-1 text-center">
-									<vrmetagamesLogo />
-									<component
-										:is="station.label[locale].length > 10 ? 'small' : 'p'"
-										class="d-block mt-n7 text-no-wrap"
-									>
-										{{ station.label[locale] }}
-									</component>
-								</div>
+								<component
+									:is="station.icon"
+									class="flex-shrink-0"
+									role="icon"
+									:aria-label="station.label"
+								/>
+								<component
+									:is="station.label.length > 10 ? 'small' : 'p'"
+									class="d-block mt-2 text-no-wrap"
+								>
+									{{ station.label }}
+								</component>
 							</v-card>
 						</v-item>
 					</v-item-group>
 				</v-col>
-                <v-col cols="12" md="12" lg="8" xl="8" class="d-flex align-center justify-center">
-                    <div class="d-flex justify-center align-start mb-5 w-100">
+                <v-col cols="12" md="12" lg="8" xl="8">
+                    <div class="d-flex justify-md-center justify-lg-end align-start w-100">
                         <v-btn-toggle
                             v-model="regularFiltersRules[1].search"
-                            class="flex-wrap"
+                            class="flex-wrap justify-end"
                             selected-class="bg-primary"
                             multiple
                         >
                             <v-btn
-                                v-for="cat in categoriesList"
-                                :key="cat + '-button'"
-                                :value="cat"
+                                v-for="cat in gameCategories"
+                                :key="cat.id + '-button'"
+                                :value="cat.name"
 								class="px-6 py-4 rounded-0"
                             >
-								<span class="hidden-md-and-down">
-									{{ t('games.genre-' + cat) }}
+								<span class="hidden-md-and-down mr-3">
+									{{ cat.label }}
 								</span>
-								<font-awesome-icon class="ml-3" size="xl" :icon="categoryIcon(cat)" />
+								<font-awesome-icon size="xl" :icon="cat.icon" />
                             </v-btn>
                         </v-btn-toggle>
                     </div>
                 </v-col>
             </v-row>
 
-			<v-row>
-				<v-col cols="12" class="filter-by-tag-section d-flex align-center justify-space-between flex-wrap flex-gap-12">
-					<!-- TODO creare VuetifyBlockFilter, filterableParametersList as items e lista icone con Record<string, componenteicona> da richiamare  -->
+			<v-row align="center">
+				<v-col cols="12" class="filter-by-tag-section d-flex align-center justify-md-center justify-lg-space-between flex-wrap flex-gap-12">
+
 					<div class="d-flex flex-wrap flex-gap-12">
 						<template
 							v-for="{ name, text, icon, variant = 'elevated', activeColor, levels = [] } in filterableParametersList"
@@ -178,8 +185,8 @@
 								:variant="variant"
 								class="d-flex align-center pa-3"
 								:class="{
-								[activeColor]: toggleFilters[name] > 0
-							}"
+									[activeColor]: toggleFilters[name] > 0
+								}"
 								@click="toggleFilters[name] === undefined ?
 											toggleFilters[name] = 1 :
 												toggleFilters[name] + 1 >= levels.length ?
@@ -217,213 +224,111 @@
 						class="d-flex align-center pa-3"
 						variant="outlined"
 						@click="modeVisualization === undefined ?
-										modeVisualization = 1 :
-											modeVisualization >= 2 ?
-												modeVisualization = 0 :
+										modeVisualization = 2 :
+											modeVisualization >= 3 ?
+												modeVisualization = 1 :
 												modeVisualization++"
 					>
 						<div class="flex-grow-1 text-center">
 							<font-awesome-icon
 								size="2x"
-								:icon="!modeVisualization ?
+								:icon="!modeVisualization || modeVisualization === 1 ?
 											['fas', 'panorama'] :
-											modeVisualization === 1 ?
+											modeVisualization === 2 ?
 											['fas', 'grip'] :
 											['fas', 'list']"
 							/>
 						</div>
 					</v-card>
+
 				</v-col>
 				<v-col cols="12" class="d-flex align-end justify-end flex-gap-12">
-					<v-btn
-						v-for="sort in sortingParametersSelected"
-						:key="'sortable-' + sort"
-						:class="{
-							'bg-primary': sortListUI[sort] === 1,
-							'bg-secondary': sortListUI[sort] === 2
-						}"
-						variant="flat"
-						@click="addSortFilter(sort)"
+					<template
+						v-for="id in sortingParametersSelected"
+						:key="'sortable-' + id"
 					>
-						<font-awesome-icon
-							class="mr-3"
-							:icon="!sortListUI[sort] ?
-								['fas', 'sort'] :
-								sortListUI[sort] === 1 ?
-								['fas', 'sort-down'] :
-								['fas', 'sort-up']
-							"
-						/>
-						<span class="hidden-md-and-down">{{ t('product-list-page.filter-' + sort) }}</span>
-						<font-awesome-icon class="ml-3" :icon="sortingIcon(sort)" />
-					</v-btn>
+						<v-btn
+							v-if="gameParameters[id]"
+							:class="{
+								'bg-primary': sortListUI[gameParameters[id].name] === 1,
+								'bg-secondary': sortListUI[gameParameters[id].name] === 2
+							}"
+							variant="flat"
+							@click="addSortFilter(gameParameters[id].name)"
+						>
+							<font-awesome-icon
+								class="mr-3"
+								:icon="!sortListUI[gameParameters[id].name] ?
+									['fas', 'sort'] :
+									sortListUI[gameParameters[id].name] === 1 ?
+									['fas', 'sort-down'] :
+									['fas', 'sort-up']
+								"
+							/>
+							<span class="hidden-md-and-down">{{ gameParameters[id].label }}</span>
+							<font-awesome-icon class="ml-3" :icon="gameParameters[id].icon" />
+						</v-btn>
+					</template>
 				</v-col>
 			</v-row>
         </v-container>
 
-        <div v-if="modeVisualization === 0"
+        <div v-if="modeVisualization === 1"
              class="game-list-details"
         >
             <div class="game-list-details-shadow"></div>
-            <ProductComicPanel
-                v-for="game in itemListFiltered"
-                :key="'game-panel-' + game.id"
-                :primary="themeColors.secondary"
-                :secondary="themeColors.primary"
-                height="70vh"
-            >
-                <template #background >
-                    <v-img
-                        cover
-                        class="panel-background"
-                        :lazy-src="game.image.thumbnail"
-                        :src="game.image.src"
-                        height="100%"
-                        width="100%"
-                    >
-                        <template #placeholder>
-                            <v-row
-                                class="fill-height ma-0"
-                                align="center"
-                                justify="center"
-                            >
-                                <v-progress-circular
-                                    indeterminate
-                                    color="grey lighten-5"
-                                ></v-progress-circular>
-                            </v-row>
-                        </template>
-                    </v-img>
-                </template>
-                <template #image>
-                    <ImageHoverUpCard>
-                        <v-img
-							:lazy-src="game.coverFront.thumbnail"
-							:src="game.coverFront.src"
-                            height="100%"
-                            width="100%"
-                        />
-                    </ImageHoverUpCard>
-                </template>
-                <template #content>
-                    <div class="categories-wrapper">
-                        <v-btn
-                            v-for="(category, i) in game.categories"
-                            :key="'category-title-' + i"
-                            class="mx-2"
-                            variant="flat"
-                            color="primary"
-                        >
-                            {{ t('games.genre-' + category) }}
-                        </v-btn>
-                    </div>
-
-                    <!-- TODO stations -->
-                    <h3 class="panel-title">{{ game.title }}</h3>
-                    <h4 class="panel-subtitle">{{ game.author }}</h4>
-                    <div class="panel-chips">
-                        <v-chip
-                            v-for="(badge, i) in game.tags"
-                            :key="'badge-' + i"
-                            class="ma-2"
-                            text-color="white"
-                        >
-                            {{ badge }}
-                        </v-chip>
-                    </div>
-                    <p class="panel-text">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                        eiusmod tempor incididunt ut labore et dolore magna aliqua
-                    </p>
-                    <div class="panel-info-icons">
-                    <span class="icon-text-resources">
-                        <span class="icon">
-                            4+
-                            <font-awesome-icon :icon="['fas', 'id-card']" />
-                        </span>
-                        <small>Età minima consigliata</small>
-                    </span>
-                        <span v-show="game.maxPlayersOffline > 1"
-                              class="icon-text-resources"
-                        >
-                        <span class="icon">
-                            {{ game.maxPlayersOffline }}
-                            <font-awesome-icon :icon="['fas', 'users']" />
-                        </span>
-                        <small>{{ t('generic.multiplayer') }}</small>
-                    </span>
-                        <span v-show="game.maxPlayersOnline > 1"
-                              class="icon-text-resources"
-                        >
-                        <span class="icon">
-                            <font-awesome-icon :icon="['fas', 'globe']" />
-                        </span>
-                        <small>{{ t('generic.multiplayer') }} {{ t('generic.online') }}</small>
-                    </span>
-                        <span v-show="game.maxPlayersOffline <= 1 && game.maxPlayersOnline <= 1"
-                              class="icon-text-resources"
-                        >
-                        <span class="icon">
-                            <font-awesome-icon :icon="['fas', 'user']" />
-                        </span>
-                        <small>{{ t('generic.singleplayer-2') }}</small>
-                    </span>
-                        <span v-show="game.familyFriendly"
-                              class="icon-text-resources"
-                        >
-                        <span class="icon">
-                            <font-awesome-icon :icon="['fas', 'people-roof']" />
-                        </span>
-                        <small>{{ t('generic.family-friendly') }}</small>
-                    </span>
-                    </div>
-                </template>
-                <template #actions>
-                    <div class="panel-actions text-right mt-10">
-                        <v-btn
-                            variant="outlined"
-                            color="primary"
-                            class="ma-2"
-							:to="{
-								name: 'GameTarget',
-								params: {
-									id: game.id
-								}
-							}"
-                        >
-                            {{ t('generic.more-info') }}
-                            <font-awesome-icon class="ml-3" :icon="['fas', 'arrow-right']" />
-                        </v-btn>
-                        <v-btn
-							color="primary"
-							class="ma-2"
-							:to="{
-                                name: 'Play'
-                           }"
-                        >
-                            {{ t('generic.play-now') }}
-                            <font-awesome-icon class="ml-3" :icon="['fas', 'play']" />
-                        </v-btn>
-                    </div>
-                </template>
-            </ProductComicPanel>
+			<GameDetailsPage
+				v-for="game in itemListFiltered"
+				:key="'game-panel-' + game.id"
+				:id="game.id"
+				:extended="false"
+			>
+				<template #actions>
+					<v-btn
+						variant="outlined"
+						color="primary"
+						class="ma-2"
+						:to="{
+							name: 'GameTarget',
+							params: {
+								id: game.id
+							}
+						}"
+					>
+						{{ t('generic.more-info') }}
+						<font-awesome-icon class="ml-3" :icon="['fas', 'arrow-right']" />
+					</v-btn>
+					<v-btn
+						color="primary"
+						class="ma-2"
+						:to="{
+							name: 'Play'
+						}"
+					>
+						{{ t('generic.play-now') }}
+						<font-awesome-icon class="ml-3" :icon="['fas', 'play']" />
+					</v-btn>
+				</template>
+			</GameDetailsPage>
         </div>
 
-        <v-container v-if="modeVisualization === 1">
+        <v-container v-if="modeVisualization === 2">
             <v-row
                 class="game-list-masonry"
                 justify="center"
+				align="center"
             >
                 <v-col v-for="game in itemListFiltered"
                        :key="'game-card-' + game.id"
                        cols="6" md="4" lg="3" xl="2"
                 >
                     <ImageHoverUpCard
-                        @click="push({
+                        @click.stop.prevent="push({
                             name: 'GameTarget',
                             params: {
                                 id: game.id
-                            }
+                            },
+                            query: {}
                         })"
                     >
                         <v-img
@@ -437,7 +342,7 @@
             </v-row>
         </v-container>
 
-		<v-container v-if="modeVisualization === 2">
+		<v-container v-if="modeVisualization === 3">
 			<v-list class="game-list-simple bg-transparent">
 				<v-list-item
 					v-for="game in itemListFiltered"
@@ -477,9 +382,9 @@
 							:key="'game-list-tag-' + game.id + '-' + tag"
 							class="ma-2"
 							size="small"
-							label
+							label=""
 						>
-							{{ tag }}
+							{{ tag }} aaaaa
 						</v-chip>
 					</div>
 
@@ -507,6 +412,12 @@
 							</v-btn>
 						</v-list-item-action>
 						<v-list-item-action class="flex-gap-12">
+							<div v-for="cat in game.categories" :key="cat" >
+								{{cat}}
+								{{ gameCategories[cat] }}
+								bbbbb
+							</div>
+							<!--
 							<v-btn
 								v-for="cat in game.categories"
 								:key="'game-list-cat-' + game.id + '-' + cat"
@@ -527,6 +438,7 @@
 							>
 								<font-awesome-icon size="xl" :icon="categoryIcon(cat)" />
 							</v-btn>
+							-->
 						</v-list-item-action>
 					</template>
 				</v-list-item>
@@ -542,30 +454,30 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
-import { useRouter, useRoute, type LocationQueryValue } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useTheme } from "vuetify";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
-import type { sortParameterType, sortParameterOrderType, filterRulesMap } from "guebbit-javascript-library";
+import type { sortParameterType, sortParameterOrderType, filterRulesMap, filterGroupMap, filterAnyMap } from "guebbit-javascript-library";
 
-import useItemList, { type itemListFiltersMap } from "@/resources/composables/useItemList";
-import ProductComicPanel from "@/components/basics/blocks/ProductComicPanel.vue";
+import useItemList from "@/resources/composables/useItemList";
+import GameDetailsPage from "@/components/products/GameDetailsPage.vue";
 import ImageHoverUpCard from "@/components/basics/cards/ImageHoverUpCard.vue";
 import Footer from "@/components/generic/Footer.vue";
-import vrmetagamesLogo from "@/assets/svg/logo/logo.svg?component";
 import type { gameMapExtended } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faUser, faUsers, faUserGroup, faGlobe, faPeopleRoof, faTags, faGrip, faList, faPanorama, faPlay, faArrowRight, faMagnifyingGlass,
+import {
+	faUser, faUsers, faUserGroup, faGlobe, faPeopleRoof, faTags, faGrip, faList, faPanorama, faPlay, faArrowRight, faMagnifyingGlass,
 	faDiceD20, faHandFist, faVolleyball, faHatWizard, faMusic, faPuzzlePiece, faGun, faPeopleGroup, faHeading, faIdCard, faHourglass, faHourglassEmpty, faHourglassStart,
 	faHourglassHalf, faHourglassEnd, faSort, faSortDown, faSortUp, faFaceSmile, faFaceGrinBeam, faFaceDizzy, faEraser
 } from "@fortawesome/free-solid-svg-icons";
-import { filterGroupMap } from "guebbit-javascript-library";
 
-library.add(faUser, faUsers, faUserGroup, faGlobe, faPeopleRoof, faTags, faGrip, faList, faPanorama, faPlay, faArrowRight, faMagnifyingGlass,
+library.add(
+	faUser, faUsers, faUserGroup, faGlobe, faPeopleRoof, faTags, faGrip, faList, faPanorama, faPlay, faArrowRight, faMagnifyingGlass,
 	faDiceD20, faHandFist, faVolleyball, faHatWizard, faMusic, faPuzzlePiece, faGun, faPeopleGroup, faHeading, faIdCard, faHourglass, faHourglassEmpty, faHourglassStart,
-	faHourglassHalf, faHourglassEnd, faSort, faSortDown, faSortUp, faFaceSmile, faFaceGrinBeam, faFaceDizzy, faEraser
+	faHourglassHalf, faHourglassEnd, faSort, faSortDown, faSortUp, faFaceSmile, faFaceGrinBeam, faFaceDizzy, faEraser,
 );
 
 const { push, replace } = useRouter();
@@ -574,58 +486,45 @@ const { t, locale } = useI18n();
 const { getters, dispatch } = useStore();
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 
-
+//TODO locale dove? dentro getters meglio
 /**
  * List of stations
  */
-const stationsList = computed(() => getters['ecommerce/stationsList']);
+const stationsList = computed(() => getters['ecommerce/stationsList'](locale.value));
+
 /**
  * List of games (extended)
  */
 const gameDetailedRecords = computed(() => getters['ecommerce/gameDetailedRecords']);
 
 /**
- * list of tags & categories (extrapolated from games)
- */
-const categoriesList = computed<string[]>(() => {
-	return [...new Set(
-		itemList.value.reduce((gameArray, { categories = [] }) => {
-			gameArray.push(...categories);
-			return gameArray;
-		}, [] as string[])
-	)]
-});
-const tagsList = computed<string[]>(() => {
-	return [...new Set(
-		itemList.value.reduce((gameArray, { tags = [] }) => {
-			gameArray.push(...tags);
-			return gameArray;
-		}, [] as string[])
-	)]
-});
-
-/**
  * Visualization mode
  */
-const modeVisualization = ref(1);
+const defaultModeVisualization = 1;
+const modeVisualization = ref(defaultModeVisualization);
+
+/**
+ * Filters options
+ */
+const gameCategories = computed(() => getters['ecommerce/getInfoData']("categories-" + locale.value));
+const gameTags = computed(() => getters['ecommerce/getInfoData']("tags-" + locale.value));
 
 /**
  * Possible sort/search options
  */
-// TODO title, value, t()
-const sortingParametersList = computed(() => itemList.value.length > 0 ? Object.keys(itemList.value[0]) : []);
-const sortingParametersSelected = ref(['title', 'minAge', 'duration', 'maxPlayersOffline'])
+const gameParameters = computed(() => getters['ecommerce/getInfoData']("gameParameters-" + locale.value));
+const sortingParametersSelected = ref(["17", "18", "19"])
 const searchTextParametersList = [
 	{
-		title: t('product-list-page.filter-title'),
+		title: t('product-page.filter-title'),
 		value: 'title'
 	},
 	{
-		title: t('product-list-page.filter-author'),
+		title: t('product-page.filter-author'),
 		value: 'author'
 	},
 	{
-		title: t('product-list-page.filter-description'),
+		title: t('product-page.filter-description'),
 		value: 'description'
 	}
 ];
@@ -671,15 +570,15 @@ const filterableParametersList = [
 		levels: [
 			{
 				icon: ['fas', 'face-smile'],
-				text: t('product-list-page.motion-sickness-indifferent'),
+				text: t('product-page.motion-sickness-indifferent'),
 			},
 			{
 				icon: ['fas', 'face-grin-beam'],
-				text: t('product-list-page.motion-sickness-low'),
+				text: t('product-page.motion-sickness-low'),
 			},
 			{
 				icon: ['fas', 'face-dizzy'],
-				text: t('product-list-page.motion-sickness-high'),
+				text: t('product-page.motion-sickness-high'),
 			}
 		]
 	},
@@ -689,15 +588,15 @@ const filterableParametersList = [
 		levels: [
 			{
 				icon: ['fas', 'face-smile'],
-				text: t('product-list-page.difficulty-indifferent'),
+				text: t('product-page.difficulty-indifferent'),
 			},
 			{
 				icon: ['fas', 'face-grin-beam'],
-				text: t('product-list-page.difficulty-low'),
+				text: t('product-page.difficulty-low'),
 			},
 			{
 				icon: ['fas', 'face-dizzy'],
-				text: t('product-list-page.difficulty-high'),
+				text: t('product-page.difficulty-high'),
 			}
 		]
 	},
@@ -707,19 +606,19 @@ const filterableParametersList = [
 		levels: [
 			{
 				icon: ['fas', 'hourglass-empty'],
-				text: t('product-list-page.duration-indifferent'),
+				text: t('product-page.duration-indifferent'),
 			},
 			{
 				icon: ['fas', 'hourglass-start'],
-				text: t('product-list-page.duration-low'),
+				text: t('product-page.duration-low'),
 			},
 			{
 				icon: ['fas', 'hourglass-half'],
-				text: t('product-list-page.duration-medium'),
+				text: t('product-page.duration-medium'),
 			},
 			{
 				icon: ['fas', 'hourglass-end'],
-				text: t('product-list-page.duration-high'),
+				text: t('product-page.duration-high'),
 			}
 		]
 	},
@@ -729,19 +628,19 @@ const filterableParametersList = [
 		levels: [
 			{
 				iconText: '6+',
-				text: t('product-list-page.minAge-warning'),
+				text: t('product-page.minAge-warning'),
 			},
 			{
 				iconText: '10+',
-				text: t('product-list-page.minAge-warning'),
+				text: t('product-page.minAge-warning'),
 			},
 			{
 				iconText: '14+',
-				text: t('product-list-page.minAge-warning'),
+				text: t('product-page.minAge-warning'),
 			},
 			{
 				iconText: '18+',
-				text: t('product-list-page.minAge-warning'),
+				text: t('product-page.minAge-warning'),
 			}
 		]
 	}
@@ -757,11 +656,11 @@ const filterableParametersList = [
  */
 const filterTargetLogicList = [
 	{
-		title: t('product-list-page.filter-logic-and'),
+		title: t('product-page.filter-logic-and'),
 		value: 'AND'
 	},
 	{
-		title: t('product-list-page.filter-logic-or'),
+		title: t('product-page.filter-logic-or'),
 		value: 'OR'
 	}
 ]
@@ -804,7 +703,7 @@ const regularFilters = computed(() =>
 /**
  * Generationg rules for guebbit's searchRecords
  */
-const searchFilters = computed<itemListFiltersMap>(() => {
+const searchFilters = computed<filterAnyMap[]>(() => {
 	// rules: regularFiltersRules + toggleFilters that will be added later
 	const rules :Array<filterRulesMap> = [...regularFiltersRules.value || []];
 	const rulesGroup :filterGroupMap[] = [];
@@ -944,10 +843,7 @@ const searchFilters = computed<itemListFiltersMap>(() => {
 	});
 
 	// final result
-	return {
-		logic: "AND",
-		rules: rulesGroup
-	}
+	return rulesGroup
 });
 
 /**
@@ -995,7 +891,7 @@ const toggleFilters = ref<Record<string, number>>({});
  * Fast filters reset
  */
 function filtersReset(){
-	sortList.value = [];
+	resetSort();
 	toggleFilters.value = {};
 	for(let i = regularFiltersRules.value.length; i--; )
 		if(Array.isArray(regularFiltersRules.value[i].search))
@@ -1009,16 +905,16 @@ function filtersReset(){
  * Page list toolbox
  */
 const {
-	itemList,
 	itemListFiltered,
 	isAdmin,
 	fromObjectToUrl,
-	fromUrlToObject
+	fromUrlToObject,
+	resetSort,
 } = useItemList<gameMapExtended>(
 	gameDetailedRecords,
 	Promise.all([
-		dispatch('main/initApp'),
-		dispatch('ecommerce/getGames')
+		dispatch('main/initApp', locale.value),
+		dispatch('ecommerce/getGames', [locale.value])
 	]),
 	searchFilters,
 	sortList,
@@ -1028,10 +924,10 @@ const {
  * Save filters objects in URL and viceversa
  */
 const preloadFilters = () => {
-	const { sort = [], toggle = {}, v = 0, ...regularFilters } = fromUrlToObject(route.query as Record<string, string>);
+	const { sort = [], toggle = {}, v = defaultModeVisualization, ...regularFilters } = fromUrlToObject(route.query as Record<string, string>);
+	console.log("VVVVV", v)
 	sortList.value = sort as sortParameterType[];
 	toggleFilters.value = toggle as Record<string, number>;
-	modeVisualization.value = v as number;
 	/**
 	 * Regular filters are heavily personalized
 	 */
@@ -1062,57 +958,10 @@ watch([regularFilters, sortList, toggleFilters, modeVisualization],
 			})
 		})
 , { deep :true });
-
-// -------------------- UI --------------------
-
-/**
- *
- * @param {string} category
- */
-function categoryIcon(category :string) :[string, string]{
-	switch (category){
-		case 'gdr':
-			return ['fas', 'dice-d20'];
-		case 'action':
-			return ['fas', 'hand-fist'];
-		case 'sport':
-			return ['fas', 'volleyball'];
-		case 'adventure':
-			return ['fas', 'hat-wizard'];
-		case 'rhythm':
-			return ['fas', 'music'];
-		case 'puzzle':
-			return ['fas', 'puzzle-piece'];
-		case 'shooter':
-			return ['fas', 'gun'];
-		case 'party-game':
-			return ['fas', 'people-group'];
-	}
-	return ['fas', 'play'];
-}
-
-/**
- *
- * @param {string} sort
- */
-function sortingIcon(sort :string){
-	switch (sort){
-		case 'title':
-			return ['fas', 'heading'];
-		case 'minAge':
-			return ['fas', 'id-card'];
-		case 'duration':
-			return ['fas', 'hourglass'];
-		case 'maxPlayersOffline':
-			return ['fas', 'people-group'];
-	}
-	return ['fas', 'play'];
-}
 </script>
 
 <style lang="scss">
 @import 'src/assets/scss/main/global';
-@import "@/assets/scss/atoms/IconTextResources";
 
 #product-list-page{
     .page-controls{
@@ -1138,6 +987,11 @@ function sortingIcon(sort :string){
 			.v-card{
 				width: 120px;
 				height: 120px;
+				svg{
+					fill: rgb(var(--v-theme-on-surface));
+					max-width: 80%;
+					max-height: 80%;
+				}
 			}
 		}
         .filter-by-tag-section {
@@ -1172,50 +1026,6 @@ function sortingIcon(sort :string){
             }
         }
         */
-
-        .product-comic-panel{
-            padding: 60px 0;
-            /*
-            .panel-shadow {
-                opacity: 1;
-                background: linear-gradient(to bottom,
-                    rgb(var(--v-theme-background)),
-                    rgba(var(--v-theme-background), 0.7),
-                    rgba(var(--v-theme-background), 0.5),
-                    rgba(var(--v-theme-background), 0.7),
-                    rgb(var(--v-theme-background))
-                );
-            }
-            */
-
-            .categories-wrapper{
-                position: absolute;
-                top: -2em;
-                right: 0;
-            }
-
-            .v-chip{
-                background: rgb(var(--v-theme-primary));
-            }
-            .image-hover-up-card{
-                max-width: 300px;
-                margin: 0 auto;
-            }
-            .panel-info-icons{
-                font-size: 0.9em;
-                margin-top: 24px;
-                .icon-text-resources{
-                    margin: 12px;
-                    color: rgb(var(--v-theme-on-surface));
-                    .icon{
-                        color: inherit;
-                    }
-                }
-                @include media-mobile(){
-                    text-align: center;
-                }
-            }
-        }
     }
 
     .game-list-masonry{

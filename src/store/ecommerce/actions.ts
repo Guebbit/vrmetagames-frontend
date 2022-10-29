@@ -167,50 +167,51 @@ const mockServerUsers = [
     }
 ];
 const mockServerStations = [
+    /*
     {
         id: 'item1',
         name: 'oculus',
         icon: 'vr-cardboard',
-        label: {
-            it: 'Oculus',
-            en: 'Oculus'
-        },
-        image: {
-            src: 'https://assets.guebbit.com/vrmetagames/images/consoles/vr-headset-main-1.png'
-        },
+        label: "Oculus-EN",
         gallery: [],
         capacity: 4,
-        order: 1
+        order: 1,
+        lang: "en"
+    },
+    */
+    {
+        id: 'item1',
+        name: 'oculus',
+        icon: 'vr-cardboard',
+        label: "Oculus",
+        gallery: [],
+        capacity: 4,
+        order: 1,
+        lang: "it"
     },
     {
         id: 'item2',
         name: 'ps5',
         icon: 'gamepad',
-        label: {
-            it: 'PlayStation 5',
-            en: 'PlayStation 5'
-        },
-        image: {
-            src: 'https://res.cloudinary.com/muhammederdem/image/upload/v1536405218/starwars/item-3.png'
-        },
+        label: "PlayStation 5",
         gallery: [],
         capacity: 1,
-        order: 2
+        order: 2,
+        lang: "it"
     }
 ];
-
-// TODO SLUG / ID?
 const mockServerGames = [
     {
         id: "item-12",
+        slug: "walkabout-mini-golf",
         title: "Walkabout Mini Golf",
         author: "Mighty Coconut",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["sport"],
         stationIds: ["item1"],
         tags: [
-            "Golf",
-            "PVP"
+            "golf",
+            "pvp"
         ],
         image: {
             src: imagesUrl + 'games/walkabout-mini-golf.jpg',
@@ -232,17 +233,19 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
+        lang: "it",
     },
     {
         id: "item-2",
+        slug: "acron-attack-of-the-squirrels",
         title: "Acron: Attack of the Squirrels!",
         author: "Resolution Games",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["party-game", "action"],
         stationIds: ["item1"],
         tags: [
-            "PVP",
-            "COOP"
+            "pvp",
+            "coop"
         ],
         image: {
             src: imagesUrl + 'games/acron-attack-of-the-squirrels.jpg'
@@ -260,16 +263,31 @@ const mockServerGames = [
         difficulty: 4,
         duration: 900000,   // 15 min
         minAge: 6,
+        gallery: [
+            {
+                type: "youtube",
+                src: "https://www.youtube.com/embed/Yq_xosIa1mw?playlist=Yq_xosIa1mw&controls=0&showinfo=0&rel=0&autoplay=1&loop=1&mute=1",
+                title: "Acron: Attack of the Squirrels Trailer",
+            },
+            {
+                type: "image",
+                src: "https://l3apq3bncl82o596k2d1ydn1-wpengine.netdna-ssl.com/wp-content/uploads/2019/08/Tree-holding-a-squirrel.png",
+                title: "Tree perspective",
+                alt: "Gameplay image from the tree perspective "
+            }
+        ],
+        lang: "it",
     },
     {
         id: "item-4",
+        slug: "blaston-spectator",
         title: "Blaston Spectator",
         author: "Resolution Games",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["shooter"],
         stationIds: ["item1"],
         tags: [
-            "PVP"
+            "pvp"
         ],
         image: {
             src: imagesUrl + 'games/blaston.jpg'
@@ -283,9 +301,11 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
+        lang: "it",
     },
     {
         id: "item-5",
+        slug: "echo-arena",
         title: "Echo Arena",
         author: "",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -304,9 +324,11 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
+        lang: "it",
     },
     {
         id: "item-3",
+        slug: "angry-birds-vr-isle-of-pigs",
         title: "Angry Birds VR: Isle of Pigs",
         author: "Resolution Games",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -329,18 +351,20 @@ const mockServerGames = [
         difficulty: 1,
         duration: 2000000,
         minAge: 6,
+        lang: "it",
     },
     {
         id: "item-1",
+        slug: "beat-saber",
         title: "Beat Saber",
         author: "Beat Games",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["rhythm"],
         stationIds: ["item1", "item2"],
         tags: [
-            "Dance",
-            "Music",
-            "Lightsabers"
+            "dance",
+            "music",
+            "lightsabers"
         ],
         image: {
             src: imagesUrl + 'games/beat-saber.jpg',
@@ -357,9 +381,11 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 0,
         familyFriendly: true,
+        lang: "it",
     },
     {
         id: "item-6",
+        slug: "loco-dojo",
         title: "Loco Dojo",
         author: "Make Real",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -378,13 +404,15 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 2,
         familyFriendly: true,
-        motionSickness: 5,
+        motionSickness: 4,
         difficulty: 3,
         duration: 1500000,
         minAge: 18,
+        lang: "it",
     },
     {
         id: "item-7",
+        slug: "nock",
         title: "Nock",
         author: "",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -403,17 +431,19 @@ const mockServerGames = [
         maxPlayersOffline: 1,
         maxPlayersOnline: 0,
         familyFriendly: true,
+        lang: "it",
     },
     {
         id: "item-8",
+        slug: "population-one",
         title: "Population: One",
         author: "BigBox VR, Inc.",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["shooter", "action"],
         stationIds: ["item1"],
         tags: [
-            "Battle Royale",
-            "PVP"
+            "battle-royale",
+            "pvp"
         ],
         image: {
             src: imagesUrl + 'games/population-one.jpg'
@@ -428,10 +458,12 @@ const mockServerGames = [
         maxPlayersOnline: 24,
         familyFriendly: false,
         duration: 99999999,
-        minAge: 15
+        minAge: 15,
+        lang: "it",
     },
     {
         id: "item-9",
+        slug: "puzzle-bobble-3d-vacation-odyssey",
         title: "Puzzle Bobble 3D: Vacation Odyssey",
         author: "Survios, Taito Corporation",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -452,16 +484,18 @@ const mockServerGames = [
         familyFriendly: true,
         minAge: 10,
         duration: 3000000,
+        lang: "it",
     },
     {
         id: "item-10",
+        slug: "ragnarock",
         title: "Ragnarock",
         author: "WanadevStudio",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["rhythm"],
         stationIds: ["item1"],
         tags: [
-            "Music"
+            "music"
         ],
         image: {
             src: imagesUrl + 'games/ragnarock.jpg'
@@ -476,25 +510,17 @@ const mockServerGames = [
         maxPlayersOnline: 0,
         familyFriendly: true,
         duration: 2000000,
+        lang: "it",
     },
     {
         id: "item-11",
+        slug: "the-room-vr-a-dark-matter",
         title: "The Room VR: A Dark Matter",
         author: "Fireproof Games",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["adventure"],
         stationIds: ["item1"],
-        tags: [
-            "Horror",
-            "Puzzle",
-            "Mistery",
-            "Horror",
-            "Puzzle",
-            "Mistery",
-            "Horror",
-            "Puzzle",
-            "Mistery"
-        ],
+        tags: [],
         image: {
             src: imagesUrl + 'games/the-room-a-dark-matter.jpg'
         },
@@ -507,16 +533,18 @@ const mockServerGames = [
         maxPlayersOffline: 4,
         maxPlayersOnline: 0,
         familyFriendly: false,
+        lang: "it",
     },
     {
         id: "item-13",
+        slug: "zenith-the-last-city",
         title: "Zenith: The Last City",
         author: "Ramen VR",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         categories: ["action"],
         stationIds: ["item1"],
         tags: [
-            "Open World"
+            "open-world"
         ],
         image: {
             src: imagesUrl + 'games/zenith-the-last-city.jpg',
@@ -528,41 +556,254 @@ const mockServerGames = [
             src: imagesUrl + 'games/zenith-the-last-city-spine.jpg',
         },
         maxPlayersOffline: 1,
-        maxPlayersOnline: 20,
-        familyFriendly: false,
+        maxPlayersOnline: 8,
+        motionSickness: 2,
+        difficulty: 4,
+        duration: 1800000,
+        minAge: 12,
+        gallery: [
+            {
+                type: "youtube",
+                src: "https://www.youtube.com/embed/oPEho2Zb_JM?playlist=oPEho2Zb_JM&controls=0&showinfo=0&rel=0&autoplay=1&loop=1&mute=1",
+                title: "Zenith: The Last City Trailer"
+            }
+        ],
+        lang: "it",
+    },
+];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockServerGameInfoData :any = {};
+mockServerGameInfoData.categories = [
+    {
+        id: "1",
+        type: "category",
+        name: "rpg",
+        label: "RPG",
+        description: "Game category: roleplay",
+        icon: ['fas', 'dice-d20'],
+        lang: "en"
+    },{
+        id: "2",
+        type: "category",
+        name: "gdr",
+        label: "GDR",
+        description: "Categoria gioco: gioco di ruolo",
+        icon: ['fas', 'dice-d20'],
+        lang: "it"
+    },{
+        id: "3",
+        type: "category",
+        name: "action",
+        label: "Azione",
+        description: "Categoria gioco: Azione",
+        icon: ['fas', 'hand-fist'],
+        lang: "it"
+    },{
+        id: "4",
+        type: "category",
+        name: "sport",
+        label: "Sport",
+        description: "Categoria gioco: Sport",
+        icon: ['fas', 'volleyball'],
+        lang: "it"
+    },{
+        id: "5",
+        type: "category",
+        name: "adventure",
+        label: "Avventura",
+        description: "Categoria gioco: Avventura",
+        icon: ['fas', 'hat-wizard'],
+        lang: "it"
+    },{
+        id: "6",
+        type: "category",
+        name: "rhythm",
+        label: "Ritmo",
+        description: "Categoria gioco: Ritmo",
+        icon: ['fas', 'music'],
+        lang: "it"
+    },{
+        id: "7",
+        type: "category",
+        name: "puzzle",
+        label: "Puzzle",
+        description: "Categoria gioco: Puzzle",
+        icon: ['fas', 'puzzle-piece'],
+        lang: "it"
+    },{
+        id: "8",
+        type: "category",
+        name: "shooter",
+        label: "Sparatutto",
+        description: "Categoria gioco: Sparatutto",
+        icon: ['fas', 'gun'],
+        lang: "it"
+    },{
+        id: "9",
+        type: "category",
+        name: "party-game",
+        label: "Party",
+        description: "Categoria gioco: Party",
+        icon: ['fas', 'people-group'],
+        lang: "it"
+    },
+];
+mockServerGameInfoData.tags = [
+    {
+        id: "10",
+        type: "tag",
+        name: "golf",
+        label: "Golf",
+        description: "Tag di gioco: golf",
+        icon: ['fas', 'tag'],
+        lang: "it"
+    },
+    {
+        id: "2",
+        type: "tag",
+        name: "pvp",
+        label: "PVP",
+        description: "Tag di gioco: giocatore contro giocatore",
+        icon: ['fas', 'tag'],
+        lang: "it"
+    },
+    {
+        id: "11",
+        type: "tag",
+        name: "coop",
+        label: "COOP",
+        description: "Tag di gioco: COOP",
+        icon: ['fas', 'tag'],
+        lang: "it"
+    },
+    {
+        id: "12",
+        type: "tag",
+        name: "dance",
+        label: "Danza",
+        description: "Tag di gioco: danza",
+        icon: ['fas', 'tag'],
+        lang: "it"
+    },
+    {
+        id: "13",
+        type: "tag",
+        name: "music",
+        label: "Musica",
+        description: "Tag di gioco: musica",
+        icon: ['fas', 'tag'],
+        lang: "it"
+    },
+    {
+        id: "14",
+        type: "tag",
+        name: "lightsabers",
+        label: "Spade laser",
+        description: "Tag di gioco: spade laser",
+        icon: ['fas', 'tag'],
+        lang: "it"
+    },
+    {
+        id: "15",
+        type: "tag",
+        name: "battle-royale",
+        label: "Battle Royale",
+        description: "Tag di gioco: battle royale",
+        icon: ['fas', 'tag'],
+        lang: "it"
+    },
+    {
+        id: "16",
+        type: "tag",
+        name: "open-world",
+        label: "Open World",
+        description: "Tag di gioco: open world",
+        icon: ['fas', 'tag'],
+        lang: "it"
+    },
+];
+mockServerGameInfoData.gameParameters = [
+    {
+        id: "17",
+        type: "parameter",
+        name: "title",
+        label: "Titolo",
+        description: "Titolo gioco",
+        icon: ['fas', 'heading'],
+        lang: "it"
+    }, {
+        id: "18",
+        type: "parameter",
+        name: "minAge",
+        label: "Età minima",
+        description: "Età minima per giocare",
+        icon: ['fas', 'id-card'],
+        lang: "it"
+    },{
+        id: "19",
+        type: "parameter",
+        name: "duration",
+        label: "Durata",
+        description: "Durata gioco",
+        icon: ['fas', 'hourglass'],
+        lang: "it"
+    },{
+        id: "20",
+        type: "parameter",
+        name: "maxPlayersOffline",
+        label: "Numero giocatori (locale)",
+        description: "Numero giocatori (locale) in gioco",
+        icon: ['fas', 'people-group'],
+        lang: "it"
+    }, {
+        id: "21",
+        type: "parameter",
+        name: "maxPlayersOffline",
+        label: "Number of players (locale)",
+        description: "Number of players (locale) in game",
+        icon: ['fas', 'people-group'],
+        lang: "en"
     },
 ];
 
 export default {
 
     /**
-     * GET schedules from server and save them in central store
+     * GET stations
+     *
      *
      * @param {Function} dispatch
      * @param {Function} commit
-     * @param {number} lastUpdate
      * @param {number} refresh
+     * @param {Function} rootGetters
+     * @param {string[]} languageArray
      */
     async getStations({
         dispatch,
         commit,
         rootState: {
             main: {
-                lastUpdate: { stations: lastUpdate = 0 },
-                refresh: { stations: refresh = 3600000 }
+                refresh: {
+                    stations: refresh = 3600000
+                }
             }
-        }
-    }: ActionContext<stateEcommerceMap, stateRootMap>): Promise<void> {
+        },
+        rootGetters
+    }: ActionContext<stateEcommerceMap, stateRootMap>, languageArray :string[]): Promise<void> {
+        // TTL of every single branch requested
+        languageArray = [...new Set(languageArray)].filter((lang) =>
+            !(refresh + rootGetters['main/getLastUpdate']('infoData', lang) > Date.now())
+        );
         // TTL
-        if(lastUpdate + refresh > Date.now()){
+        if(languageArray.length < 1)
             return Promise.resolve();
-        }
         return Promise.resolve()
             .then(() => {
-                for(let i = mockServerStations.length; i--; ){
+                let i :number;
+                for(i = mockServerStations.length; i--; )
                     commit("setStation", mockServerStations[i]);
-                }
-                commit("main/setLastUpdate", ['stationsList'], { root: true });
+                for(i = languageArray.length; i--; )
+                    commit("main/setLastUpdate", ['stationsList', languageArray[i]], { root: true });
             })
             .catch(() => dispatch("main/handleServerError", "getStations ERROR", { root: true }));
     },
@@ -572,29 +813,34 @@ export default {
      *
      * @param {Function} dispatch
      * @param {Function} commit
-     * @param {number} lastUpdate
      * @param {number} refresh
+     * @param {Function} rootGetters
+     * @param {string[]} languageArray
      */
     async getGames({
         dispatch,
         commit,
         rootState: {
             main: {
-                lastUpdate: { games: lastUpdate = 0 },
                 refresh: { games: refresh = 3600000 }
             }
-        }
-    }: ActionContext<stateEcommerceMap, stateRootMap>): Promise<void> {
+        },
+        rootGetters
+    }: ActionContext<stateEcommerceMap, stateRootMap>, languageArray :string[]): Promise<void> {
+        // TTL of every single branch requested
+        languageArray = [...new Set(languageArray)].filter((lang) =>
+            !(refresh + rootGetters['main/getLastUpdate']('gamesList', lang) > Date.now())
+        );
         // TTL
-        if(lastUpdate + refresh > Date.now()){
+        if(languageArray.length < 1)
             return Promise.resolve();
-        }
         return Promise.resolve()
             .then(() => {
-                for(let i = mockServerGames.length; i--; ){
-                    commit("setGame", mockServerGames[i]);
-                }
-                commit("main/setLastUpdate", ['gamesList'], { root: true });
+                let i :number;
+                for(i = mockServerGames.length; i--; )
+                    commit("setDataRecord", ["games", mockServerGames[i]]);
+                for(i = languageArray.length; i--; )
+                    commit("main/setLastUpdate", ['gamesList', languageArray[i]], { root: true });
             })
             .catch(() => dispatch("main/handleServerError", "getGames ERROR", { root: true }));
     },
@@ -635,21 +881,81 @@ export default {
                 let deliverColors :string[] = [];
                 for(let i = mockServerUsers.length; i--; ){
                     // if no colors available, recharge
-                    if(deliverColors.length < 1){
+                    if(deliverColors.length < 1)
                         deliverColors = shuffle(randomColorList);
-                    }
-                    commit("setUser", {
+                    commit("setDataRecord", ['users', {
                         ...mockServerUsers[i],
                         color: deliverColors.pop(),
                         // backgroundColor: 'purple',
                         // borderColor: 'black',
                         // textColor: '#FFF', TODO colori chiari?
-                    });
+                    }]);
                     commit("main/setLastUpdate", ['user', mockServerUsers[i].id], { root: true });
                 }
                 commit("main/setLastUpdate", ['userList'], { root: true });
             })
             .catch(() => dispatch("main/handleServerError", "getUsers ERROR", { root: true }));
+    },
+
+
+    /**
+     * GET schedules from server and save them in central store
+     *
+     * @param {Function} dispatch
+     * @param {Function} commit
+     * @param {Object} rootState
+     * @param {Function} rootGetters
+     * @param {string[]} branchArray
+     * @param {string[]} languageArray - empty = all languages
+     */
+    async getInfoData({
+          dispatch,
+          commit,
+          rootState: {
+              main: {
+                  refresh: {
+                      infoData: refresh = 3600000
+                  }
+              }
+          },
+          rootGetters
+      }: ActionContext<stateEcommerceMap, stateRootMap>, [ branchArray = [], languageArray = [] ] :[string[], string[]]): Promise<void> {
+        let i :number;
+        let k :number;
+        // languages and branches are united, both in lastUpdate and in branch strategy
+        // (the check will be done with them merged)
+        let branchLanguageArray :string[] = [];
+        for(i = branchArray.length; i--; )
+            for(k = languageArray.length; k--; )
+                branchLanguageArray.push(branchArray[i] + "-" + languageArray[k])
+        // then TTL for this merged branchArray
+        branchLanguageArray = [...new Set(branchLanguageArray)].filter((id) =>
+            !(refresh + rootGetters['main/getLastUpdate']('infoData', id) > Date.now())
+        );
+        // if no branches remained, no need to go on
+        if(branchLanguageArray.length < 1)
+            return Promise.resolve();
+        // then we need to split the remaining combinations to ask for the missing ones only,
+        // resetting the arrays and re-populating them
+        branchArray = [];
+        languageArray = [];
+        for(i = branchLanguageArray.length; i--; ){
+            const [ branch, language ] = branchLanguageArray[i].split("-");
+            branchArray.push(branch);
+            languageArray.push(language);
+        }
+        return Promise.resolve()
+            .then(() => {
+                // we don't need the combined branchLanguageArray, but only the branchArray, because the language info
+                // will be containe in the object and used in the mutation
+                for(let b = branchArray.length; b--; )
+                    for(let i = mockServerGameInfoData[branchArray[b]].length; i--; )
+                        commit("setInfoData", [branchArray[b], mockServerGameInfoData[branchArray[b]][i]]);
+                // for every combination: need to update setLastUpdate
+                for(i = branchLanguageArray.length; i--; )
+                    commit("main/setLastUpdate", ['infoData', branchLanguageArray[i]], { root: true });
+            })
+            .catch(() => dispatch("main/handleServerError", "getStations ERROR", { root: true }));
     },
 
     // ------------- SCHEDULES -------------
@@ -686,7 +992,7 @@ export default {
             // filter away the records tat are not expired so doesn't need to be re-downloaded
             let filteredIdArray :string[] = [];
             filteredIdArray = [...new Set(idArray)].filter((id :string) => {
-                return !(refresh + rootGetters['user/getLastUpdate']('scheduleRecords', id) > Date.now());
+                return !(refresh + rootGetters['main/getLastUpdate']('scheduleRecords', id) > Date.now());
             });
             //se non c'è nulla da aggiornare, mi fermo
             if(filteredIdArray.length < 1)
@@ -793,7 +1099,7 @@ export default {
         });
         // server
         return Promise.resolve(scheduleId)
-            .catch(() => commit("removeSchedule", scheduleId));
+            .catch(() => commit("removeDataRecord", ["scheduleRecords", scheduleId]));
     },
 
     /**
@@ -849,6 +1155,7 @@ export default {
                 unsaved: false
             });
             commit("removeScheduleArchive", id);
+            commit("removeDataRecord", ["scheduleArchive", id]);
             return Promise.resolve();
         }
         // if not on archive, download from server
@@ -951,10 +1258,9 @@ export default {
         const scheduleArray :scheduleMap[] = [];
         // loop throught schedules to be removed
         for(let i = scheduleIdList.length; i--; ){
-            if(scheduleRecords[scheduleIdList[i]]){
-                scheduleArray.push(scheduleRecords[scheduleIdList[i]])
-            }
-            commit("removeSchedule", scheduleIdList[i]);
+            if(scheduleRecords[scheduleIdList[i]])
+                scheduleArray.push(scheduleRecords[scheduleIdList[i]]);
+            commit("removeDataRecord", ["scheduleRecords", scheduleIdList[i]]);
         }
         // if we are deleting a schedule event that was paid, we need to refund the steps/hours spent
         // server-side calculation (and security) too

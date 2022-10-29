@@ -57,7 +57,7 @@
 				<v-btn
 					v-show="selectedRecord?.methodId && selectedRecord?.type"
 					variant="tonal"
-					@click="emit('button:click:method', selectedRecord?.methodId)"
+					@click="emit('click:button:method', selectedRecord?.methodId)"
 				>
 					{{ t('dialog-info-payment.button-go-to-method') }}
 					<font-awesome-icon class="ml-3" :icon="['fas', 'arrow-right-long']" />

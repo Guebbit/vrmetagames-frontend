@@ -149,6 +149,7 @@ $product-comic-panel-mobile-threshold: 900px !default;
 
         .panel-content{
             margin: 0 auto;
+			// TODO
             max-width: 1200px;
 
             & > div{

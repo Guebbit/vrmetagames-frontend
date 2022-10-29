@@ -3,16 +3,20 @@ import { stateMainMap, stateRootMap } from "@/interfaces";
 
 export default {
 
-    initApp({ dispatch }: ActionContext<stateMainMap, stateRootMap>){
+    initApp({ dispatch }: ActionContext<stateMainMap, stateRootMap>, locale :string){
         // first authenticate user
         dispatch('user/getCurrentUser', undefined, { root: true })
             // then download all info from server
-            .finally(() => Promise.all([
-                dispatch('ecommerce/getStations', undefined, { root: true }),
-                dispatch('ecommerce/getGames', undefined, { root: true }),
-                dispatch('ecommerce/getUsers', undefined, { root: true }),
-                dispatch('ecommerce/getSchedules', undefined, { root: true }),
-            ]))
+            .finally(() => {
+                // TODO get language from user, it has priority over locale
+                return Promise.all([
+                    dispatch('ecommerce/getInfoData', [["categories", "tags", "gameParameters"], [locale]], { root: true }),
+                    dispatch('ecommerce/getStations', [locale], { root: true }),
+                    dispatch('ecommerce/getGames', [locale], { root: true }),
+                    dispatch('ecommerce/getUsers', undefined, { root: true }),
+                    dispatch('ecommerce/getSchedules', undefined, { root: true }),
+                ])
+            })
     },
 
     /**

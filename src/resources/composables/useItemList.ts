@@ -1,25 +1,20 @@
-import { computed, ref } from "vue";
+import { computed, ref, isReadonly, type Ref  } from "vue";
 import type { LocationQuery, LocationQueryValue } from "vue-router";
 import { search, sort, getJSON } from "guebbit-javascript-library"
-import type { filterRulesMap, filterGroupMap, filterFunctionMap, logicGatesType, sortParameterType } from "guebbit-javascript-library";
+import type { filterAnyMap, logicGatesType, sortParameterType } from "guebbit-javascript-library";
 import useItemDetails from "@/resources/composables/useItemDetails";
 import type { itemStructureSettingsMap } from "@/resources/composables/useItemStructure";
 import type { AnyRef } from "@/interfaces";
 
 export interface itemListSettingsMap extends itemStructureSettingsMap {
-    [key :string]: unknown
-}
-
-export interface itemListFiltersMap {
-    logic?: logicGatesType,
-    rules?: Array<filterRulesMap | filterGroupMap | filterFunctionMap>,
+    globalFilterLogic?: logicGatesType,
 }
 
 export default<T>(
     itemRecords :AnyRef<Record<string, T>>,
     loadPromise :Promise<unknown | unknown[]> = Promise.resolve(),
-    filters: AnyRef<itemListFiltersMap> = ref({}),
-    sorters: AnyRef<Array<sortParameterType>> = ref([]),
+    filters: AnyRef<filterAnyMap[]> = ref([]),
+    sorters: AnyRef<sortParameterType[]> = ref([]),
     settings :itemListSettingsMap = {}
 ) => {
 
@@ -37,7 +32,6 @@ export default<T>(
         loadPromise,
         settings
     );
-
 
 
     /**
@@ -83,20 +77,42 @@ export default<T>(
      *  List of all FILTERED itemRecords
      */
     const itemListFiltered = computed(() => {
-        const { logic = 'AND', rules = [] } = filters.value;
+        const { globalFilterLogic = 'AND' } = settings;
         // if no filters are set
-        if(rules.length < 1)
+        if(filters.value.length < 1)
             return itemList.value;
         // guebbit filter
         return sort(
             search(
                 [ ...itemList.value ] as Array<Record<string, unknown | unknown[]>>,
-                rules,
-                logic
+                filters.value,
+                globalFilterLogic
             ),
             sorters.value
         );
     });
+
+    /**
+     * Filters RESET
+     * filterAnyMap items must be navigated and search resetted
+     * WARNING: Use ONLY if sorters and filters are REF
+     */
+    function resetFilters(){
+        if(isReadonly(filters))
+            return;
+        // TODO fare una funzione su guebbit-javascript-library che naviga i filterAnyMap e restituisce una copia vuota
+        // (filters as Ref<filterAnyMap[]>).value = [];
+    }
+
+    /**
+     * Sort RESET
+     * WARNING: Use ONLY if sorters and filters are REF
+     */
+    function resetSort() {
+        if(!isReadonly(sorters))
+            (sorters as Ref<sortParameterType[]>).value = [];
+    }
+
 
     /**
      *
@@ -122,6 +138,8 @@ export default<T>(
         selectedRecord,
         itemList,
         itemListFiltered,
+        resetSort,
+        resetFilters,
         fromObjectToUrl,
         fromUrlToObject,
         encodeURIObject,

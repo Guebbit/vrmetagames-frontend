@@ -1,12 +1,18 @@
+import * as mutations from "../_commons/mutations"
+
+import flaticonController from "@/assets/svg/videogames/flaticon_nintendo-controller.svg?component";
+import flaticonAR from "@/assets/svg/videogames/flaticon_augmented-reality.svg?component";
+import flaticonPlayStation5 from "@/assets/svg/videogames/flaticon_ps4-console.svg?component";
+
 import type {
     stateEcommerceMap,
     scheduleMap,
-    userMap,
     stationMap,
-    gameMap,
+    infoChunkMap
 } from "@/interfaces";
 
 export default {
+    ...mutations,
 
     /**
      * Set station data
@@ -17,31 +23,43 @@ export default {
     setStation({ stations }: stateEcommerceMap, stationData: stationMap) {
         if(!stationData.id)
             return;
-        stations[stationData.id] = stationData;
+        const { id, name, lang } = stationData;
+        // custom svg icon
+        switch (name){
+            case 'oculus':
+                stationData.icon = flaticonAR;
+            break;
+            case 'ps5':
+                stationData.icon = flaticonPlayStation5;
+            break;
+            default:
+                stationData.icon = flaticonController;
+            break;
+        }
+        // if language branch doesn't exist
+        if (!Object.prototype.hasOwnProperty.call(stations, lang))
+            stations[lang] = {};
+        stations[lang][id] = stationData;
     },
 
     /**
-     * Set game data
+     * Set info data
      *
-     * @param {Object} games
-     * @param {Object} gameData
-     */
-    setGame({ games }: stateEcommerceMap, gameData: gameMap) {
-        if(!gameData.id)
-            return;
-        games[gameData.id] = gameData;
-    },
-
-    /**
-     * Set user data
+     * Normally it would be divided on languages,
+     * but for simplicity (to normalize and it changes nothing)
+     * we will merge branch and lang
      *
-     * @param {Object} users
-     * @param {Object} userData
+     * @param {Object} info
+     * @param {string} branch
+     * @param {Object} infoData
      */
-    setUser({ users }: stateEcommerceMap, userData: userMap) {
-        if(!userData.id)
+    setInfoData({ info }: stateEcommerceMap, [branch, infoData]: [string, infoChunkMap]) {
+        if(!infoData.id || !infoData.lang)
             return;
-        users[userData.id] = userData;
+        branch = branch  + "-" + infoData.lang;
+        if (!Object.prototype.hasOwnProperty.call(info, branch))
+            info[branch] = {};
+        info[branch][infoData.id] = infoData;
     },
 
     /**
@@ -59,26 +77,6 @@ export default {
             scheduleArchive[scheduleData.id] = scheduleRecords[scheduleData.id];
         // saving data
         scheduleRecords[scheduleData.id] = scheduleData;
-    },
-
-    /**
-     * Remove schedule data
-     *
-     * @param {Object} scheduleRecords
-     * @param {string} id
-     */
-    removeSchedule({ scheduleRecords }: stateEcommerceMap, id: string) {
-        delete scheduleRecords[id];
-    },
-
-    /**
-     * Remove schedule from archive
-     *
-     * @param {Object} scheduleArchive
-     * @param {string} id
-     */
-    removeScheduleArchive({ scheduleArchive }: stateEcommerceMap, id: string) {
-        delete scheduleArchive[id];
     },
 
     /**

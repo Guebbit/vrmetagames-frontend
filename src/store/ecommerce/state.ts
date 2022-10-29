@@ -1,14 +1,10 @@
 export default {
-    // schedule records
     scheduleRecords: {},
-    // archive with clones of scheduleRecords for comparation purposes
     scheduleArchive: {},
-    // users (all)
     users: {},
-    // game stations
     stations: {},
-    // games
     games:{},
+    info: {},
     // ecommerce settings
     scheduleTimeStep: 1800000,      // 1800 seconds = 30 min
     scheduleEditableSteps: 1,       // 1 step = 30 min

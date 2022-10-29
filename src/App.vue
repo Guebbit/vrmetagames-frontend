@@ -65,6 +65,7 @@
 
 <script setup lang="ts">
 import { toRefs } from "vue";
+import { useI18n } from "vue-i18n";
 import { useStore } from "@/store";
 import MainNavigation from "@/components/generic/Header.vue";
 
@@ -72,6 +73,8 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faXmark, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 library.add(faXmark, faCircleInfo);
+
+const { locale } = useI18n();
 
 const {
     state,
@@ -82,7 +85,7 @@ const {
 const { loading, toasts } = toRefs(state.main);
 
 commit('main/startLoading', 'main');
-dispatch('main/initApp').finally(() => commit('main/stopLoading', 'main'));
+dispatch('main/initApp', locale.value).finally(() => commit('main/stopLoading', 'main'));
 </script>
 
 <style lang="scss">

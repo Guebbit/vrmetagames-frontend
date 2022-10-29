@@ -26,9 +26,9 @@
 						:dateFormat="uiFormatDate"
 						:timeFormat="uiFormatTime"
 
-						@button:click:confirm="formSubmit"
-						@button:click:remove="showDeleteDialog = true"
-						@button:click:unselect="selectedIdentifier = null"
+						@click:button:confirm="formSubmit"
+						@click:button:remove="showDeleteDialog = true"
+						@click:button:unselect="selectedIdentifier = null"
 					/>
 					<!-- form -->
                     <ScheduleFormCard
@@ -45,9 +45,9 @@
 
 						@submit="formSubmit"
 						@message:emit="sendMessage(t('generic.info'), t('play-page.resolve-form-changed'))"
-						@button:click:backward-day="formValueGo('back', 1, 'day')"
-						@button:click:now-day="formValueGo('now')"
-						@button:click:forward-day="formValueGo('forward', 1, 'day')"
+						@click:button:backward-day="formValueGo('back', 1, 'day')"
+						@click:button:now-day="formValueGo('now')"
+						@click:button:forward-day="formValueGo('forward', 1, 'day')"
                     />
 
 					<!-- magic button to resolve problems automatically -->
@@ -163,9 +163,9 @@
 									:timeFormat="uiFormatTime"
 
 									@click="scheduleSelect(id)"
-									@button:click:confirm="scheduleSelect(id); showConfirmDialog = true;"
-									@button:click:cancel="showDeleteDialog = true"
-									@button:click:renew="showRenewDialog = true"
+									@click:button:confirm="scheduleSelect(id); showConfirmDialog = true;"
+									@click:button:cancel="showDeleteDialog = true"
+									@click:button:renew="showRenewDialog = true"
 								/>
 							</v-col>
 						</v-row>
@@ -201,9 +201,9 @@
 									:timeFormat="uiFormatTime"
 
 									@click="scheduleSelect(id)"
-									@button:click:confirm="scheduleSelect(id); showConfirmDialog = true;"
-									@button:click:cancel="showDeleteDialog = true"
-									@button:click:renew="showRenewDialog = true"
+									@click:button:confirm="scheduleSelect(id); showConfirmDialog = true;"
+									@click:button:cancel="showDeleteDialog = true"
+									@click:button:renew="showRenewDialog = true"
 								/>
 							</v-col>
 						</v-row>
@@ -237,8 +237,8 @@
 		<DialogConfirmItem
 			v-model="showConfirmDialog"
 
-			@button:click:confirm="confirmSelectedSchedule(); selectedIdentifier = undefined; showConfirmDialog = false;"
-			@button:click:cancel="showConfirmDialog = false"
+			@click:button:confirm="confirmSelectedSchedule(); selectedIdentifier = undefined; showConfirmDialog = false;"
+			@click:button:cancel="showConfirmDialog = false"
 		/>
 
 		<DialogDeleteItem
@@ -247,8 +247,8 @@
 			:dateFormat="uiFormatDate"
 			:timeFormat="uiFormatTime"
 
-			@button:click:confirm="scheduleRemove([selectedIdentifier]); selectedIdentifier = null; showDeleteDialog = false"
-			@button:click:cancel="showDeleteDialog = false"
+			@click:button:confirm="scheduleRemove([selectedIdentifier]); selectedIdentifier = null; showDeleteDialog = false"
+			@click:button:cancel="showDeleteDialog = false"
 		/>
 
 		<DialogRenewItem
@@ -257,14 +257,14 @@
 			:dateFormat="uiFormatDate"
 			:timeFormat="uiFormatTime"
 
-			@button:click:cancel="showRenewDialog = false"
+			@click:button:cancel="showRenewDialog = false"
 		/>
 
 		<DialogDeleteAll
 			v-model="showDeleteAllDialog"
 
-			@button:click:confirm="scheduleRemoveAll();showDeleteAllDialog = false;"
-			@button:click:cancel="showDeleteAllDialog = false"
+			@click:button:confirm="scheduleRemoveAll();showDeleteAllDialog = false;"
+			@click:button:cancel="showDeleteAllDialog = false"
 		/>
     </div>
 	<Footer
@@ -311,7 +311,7 @@ import { sendScheduleRequestMap } from "@/interfaces";
 library.add(faCalendar, faCalendarCheck, faClock, faPlay, faCheck, faCircleInfo, faCartArrowDown, faHatWizard, faGear, faTrashCan, faArrowDown19, faArrowUp91, faArrowDownAZ, faArrowUpZA);
 
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { state, getters, commit, dispatch } = useStore();
 const { scheduleRecords, scheduleTimeStep } = toRefs(state.ecommerce);
 
@@ -335,7 +335,7 @@ const {
 } = useItemDetails(
 	scheduleRecords,
 	Promise.all([
-		dispatch('main/initApp'),
+		dispatch('main/initApp', locale.value),
 		dispatch('ecommerce/getSchedules')
 	]),
 	{
@@ -374,9 +374,9 @@ const {
 onMounted(() => fillForm());
 
 /**
- * Stations for ScheduleFormCard list of possible stations
+ * List of stations, for ScheduleFormCard list of possible stations
  */
-const stationsList = computed(() => getters['ecommerce/stationsList']);
+const stationsList = computed(() => getters['ecommerce/stationsList'](locale.value));
 
 /**
  * Select schedule

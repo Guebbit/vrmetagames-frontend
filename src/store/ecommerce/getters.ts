@@ -1,5 +1,8 @@
 import dayjs from "dayjs";
 import { arrayColumns, rangeOverlaps } from "guebbit-javascript-library";
+import useTimeHelpers from "@/resources/composables/useTimeHelpers";
+import { i18n } from "@/plugins/i18n";
+
 
 import type { GetterTree } from 'vuex';
 import type {
@@ -10,7 +13,14 @@ import type {
     scheduleMapExtended,
     scheduleMapBackground,
     gameMapExtended,
+    infoChunkMap,
 } from "@/interfaces";
+
+const { locale } = i18n.global;
+
+const {
+    translateMillisecondsToReadable
+} = useTimeHelpers();
 
 export default {
 
@@ -46,15 +56,18 @@ export default {
         const extendedRecords :Record<string, scheduleMapBackground | scheduleMapExtended>  = {};
         // joining data
         for(let i = scheduleArray.length; i--; ){
+            // I should already have these values
+            const user = users?.[scheduleArray[i].userId];
+            const station = stations?.[locale]?.[scheduleArray[i].stationId];
             // put event in calendar
             extendedRecords[scheduleArray[i].id] = {
                 ...scheduleArray[i],
                 // if NOT admin, there will be NO user info
-                user: users?.[scheduleArray[i].userId],
+                user,
                 // neither user color, they will be all the same
-                color: users?.[scheduleArray[i].userId]?.color,
+                color: user?.color,
                 // stations data
-                station: stations?.[scheduleArray[i].stationId],
+                station,
                 className: 'regular-schedule'
             }
         }
@@ -208,7 +221,7 @@ export default {
      * @param {string} currentUserId
      */
     scheduleListCartUser: (context: stateEcommerceMap, { scheduleListCartTotal }, { user: { userInfo: { id :currentUserId}}}) :scheduleMap[] =>
-        scheduleListCartTotal.filter(({ id, userId } :scheduleMap) => !userId || currentUserId === userId),
+        scheduleListCartTotal.filter(({ userId } :scheduleMap) => !userId || currentUserId === userId),
 
     /**
      * Get list of FUTURE schedules
@@ -241,7 +254,8 @@ export default {
      */
     totalStations({ stations } :stateEcommerceMap) :Record<string, number> {
         const stationTypes :Record<string, number> = {};
-        stationTypes['global'] = Object.values(stations).reduce((total, { capacity = 0 }) => {
+        // TODO separare "stations" in "language data" e "technical data"
+        stationTypes['global'] = Object.values(stations[locale] || []).reduce((total, { capacity = 0 }) => {
             return total + capacity;
         }, 0);
         // TODO array of types? stationTypes['oculus'] somma di tutte le stations con questa caratteristica? Al posto di capacity
@@ -254,12 +268,12 @@ export default {
      *
      * @param {number} scheduleTimeCost
      */
-    getStepCost: ({ scheduleTimeCost }: stateEcommerceMap) :(steps :number) => number => {
+    getStepCost: ({ scheduleTimeCost }: stateEcommerceMap) :(steps :number) => number =>
         /**
          * @param {number} steps - number of steps
          * @return {number} cost of all steps (discounts applied)
          */
-        return (steps = 0) :number => {
+        (steps = 0) :number => {
             let totalCost = 0;
             const discountedSteps = Object.keys(scheduleTimeCost).reverse();
             // remove default price (0)
@@ -286,8 +300,7 @@ export default {
             }, steps);
             // remaining steps with standard price
             return totalCost + (leftoverSteps * scheduleTimeCost[0]);
-        }
-    },
+        },
 
 
     /**
@@ -297,14 +310,13 @@ export default {
      * @param {Object} scheduleRecords
      * @return {boolean}
      */
-    getSchedulesByTime: ({ scheduleRecords }: stateEcommerceMap) => {
-
+    getSchedulesByTime: ({ scheduleRecords }: stateEcommerceMap) =>
         /**
          * @param {number} dateFrom
          * @param {number} dateTo
          * @param {string[]} resourceIdArray
          */
-        return (dateFrom :number, dateTo :number, resourceIdArray :string[] = []) => {
+        (dateFrom :number, dateTo :number, resourceIdArray :string[] = []) => {
             let scheduleList = Object.values(scheduleRecords);
             // if a resource was specified, I check only the schedules of that same resource
             if(resourceIdArray.length > 0){
@@ -312,7 +324,7 @@ export default {
                     return resourceId && resourceIdArray.some(r=> resourceId.indexOf(r) >= 0);
                 })
             }
-            // main filter 
+            // main filter
             return scheduleList.filter(({ start, end } :scheduleMap) => {
                 // if null, take today (should never happen, but typescript have warnings)
                 const eventStart = start ? start : Date.now();
@@ -320,8 +332,7 @@ export default {
                 const eventEnd = end ? end : eventStart;
                 return rangeOverlaps(dateFrom, dateTo, eventStart, eventEnd);
             });
-        }
-    },
+        },
 
     /**
      * SAME as getSchedulesByTime, but "breaking" the result for every slot
@@ -329,8 +340,7 @@ export default {
      * @param {number} scheduleTimeStep
      * @param {Function} getSchedulesByTime
      */
-    getSchedulesBySlots: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesByTime }) :(dateFrom :number, dateTo :number, slotDuration ?:number, resourceIdArray ?:string[]) => Record<string, string[]> => {
-
+    getSchedulesBySlots: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesByTime }) :(dateFrom :number, dateTo :number, slotDuration ?:number, resourceIdArray ?:string[]) => Record<string, string[]> =>
         /**
          * @param {number} dateFrom
          * @param {number} dateTo
@@ -338,7 +348,7 @@ export default {
          * @param {string[]} resourceIdArray
          * @return {boolean}
          */
-        return (dateFrom :number, dateTo :number, slotDuration = scheduleTimeStep, resourceIdArray :string[] = []) :Record<string, string[]> => {
+        (dateFrom :number, dateTo :number, slotDuration = scheduleTimeStep, resourceIdArray :string[] = []) :Record<string, string[]> => {
             // if even only 1 time slot in higher than eventNumberLimit, it fails
             // from start to end step by step
             let stepperStart = dateFrom;
@@ -353,8 +363,7 @@ export default {
                 // stepper end
             } while (stepperEnd <= dateTo);
             return cappedSlots;
-        }
-    },
+        },
 
     /**
      * Check if schedule is editable.
@@ -367,13 +376,12 @@ export default {
      * @param {boolean} isAdmin
      * @return {Function<boolean>}
      */
-    determineScheduleIsEditable: ({ scheduleRecords }: stateEcommerceMap, { scheduleEditableTime }, { user: { userInfo: { id :currentUserId, isAdmin }}}) => {
-
+    determineScheduleIsEditable: ({ scheduleRecords }: stateEcommerceMap, { scheduleEditableTime }, { user: { userInfo: { id :currentUserId, isAdmin }}}) =>
         /**
          * @param {string} id
          * @return {boolean}
          */
-        return (id :string) :string[] => {
+        (id :string) :string[] => {
             if(!Object.prototype.hasOwnProperty.call(scheduleRecords, id)){
                 return ['error-404'];
             }
@@ -393,8 +401,7 @@ export default {
             }
             // return all errors
             return errorArray;
-        }
-    },
+        },
 
     /**
      * Same as above but optimized to be fast. Return boolean and doesn't care about errors
@@ -405,16 +412,13 @@ export default {
      * @param {boolean} isAdmin
      * @return {Function<boolean>}
      */
-    checkScheduleIsEditable: ({ scheduleRecords }: stateEcommerceMap, { scheduleEditableTime }, { user: { userInfo: { id :currentUserId, isAdmin }}}) => {
-        return (id :string) :boolean => {
-            if(!Object.prototype.hasOwnProperty.call(scheduleRecords, id)){
-                return false;
-            }
-            const { start, userId } = scheduleRecords[id];
-            return !(!isAdmin && currentUserId !== userId ||
-                !isAdmin && start < Date.now() ||
-                !isAdmin && start + scheduleEditableTime >= Date.now());
-        }
+    checkScheduleIsEditable: ({ scheduleRecords }: stateEcommerceMap, { scheduleEditableTime }, { user: { userInfo: { id :currentUserId, isAdmin }}}) => (id :string) :boolean => {
+        if(!Object.prototype.hasOwnProperty.call(scheduleRecords, id))
+            return false;
+        const { start, userId } = scheduleRecords[id];
+        return !(!isAdmin && currentUserId !== userId ||
+            !isAdmin && start < Date.now() ||
+            !isAdmin && start + scheduleEditableTime >= Date.now());
     },
 
     /**
@@ -429,14 +433,14 @@ export default {
      * @param {Object} rootState
      * @param {Object} rootGetters
      */
-    determineScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, totalStations }, rootState, rootGetters) => {
+    determineScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, totalStations }, rootState, rootGetters) =>
         /**
          * @param {number} dateFrom
          * @param {number} dateTo
          * @param {string} id - id of event, to filter away while counting (would be counted 2 times)
          * @param {string[]} resourceIdArray
          */
-        return (dateFrom ?:number, dateTo ?:number, id ?:string, resourceIdArray :string[] = []) :string[] => {
+        (dateFrom ?:number, dateTo ?:number, id ?:string, resourceIdArray :string[] = []) :string[] => {
             const errorArray :string[] = [];
             // ----- businessHours check -----
             if(!rootGetters['main/isOpen'](dateFrom) || !rootGetters['main/isOpen'](dateTo))
@@ -452,13 +456,13 @@ export default {
                 errorArray.push('max-reached');
             // result
             return errorArray;
-        }
-    },
+        },
+
     /**
      * Same as above but optimized to be fast. Return boolean and doesn't care about errors
      */
-    checkScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, totalStations }, rootState, rootGetters) => {
-        return (dateFrom ?:number, dateTo ?:number, id ?:string, resourceIdArray :string[] = []) :boolean => {
+    checkScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, totalStations }, rootState, rootGetters) =>
+        (dateFrom ?:number, dateTo ?:number, id ?:string, resourceIdArray :string[] = []) :boolean => {
             // ----- businessHours check -----
             if(!rootGetters['main/isOpen'](dateFrom) || !rootGetters['main/isOpen'](dateTo))
                 return false;
@@ -468,8 +472,7 @@ export default {
                 // TODO different stations with different possible games
                 return idArray.length - (id && idArray.includes(id) ? 1 : 0) >= totalStations['global']
             });
-        }
-    },
+        },
 
     /**
      * List of games extended with station's data
@@ -480,18 +483,27 @@ export default {
      */
     gameDetailedRecords: ({ games, stations } :stateEcommerceMap) :Record<string, gameMapExtended> => {
         const extendedRecords :Record<string, gameMapExtended> = {};
+        // if no locale is found
+        if(!Object.prototype.hasOwnProperty.call(games, locale))
+            return {}
         // iterate throught all games (original list)
-        for(const key in games) {
-            if (!Object.prototype.hasOwnProperty.call(games, key))
+        for(const key in games[locale]) {
+            //if no game were found in this locale (TODO find if present in another locale?
+            if (!Object.prototype.hasOwnProperty.call(games[locale], key))
                 continue;
+            const extendedGame :gameMapExtended = { ...games[locale][key] };
             // station details
             const stationsJoin :stationMap[] = [];
-            for(let i = games[key].stationIds.length; i--; )
-                if (Object.prototype.hasOwnProperty.call(stations, games[key].stationIds[i]))
-                    stationsJoin.push(stations[games[key].stationIds[i]]);
+            for(let i = extendedGame.stationIds.length; i--; )
+                if (Object.prototype.hasOwnProperty.call(stations, locale) && Object.prototype.hasOwnProperty.call(stations[locale], extendedGame.stationIds[i]))
+                    stationsJoin.push(stations[locale][extendedGame.stationIds[i]]);
+            if(extendedGame.duration){
+                const { hours, minutes } = translateMillisecondsToReadable(extendedGame.duration);
+                extendedGame.durationText = (hours > 0 ? hours + "h " : "") + minutes + "m";
+            }
             // final record
-            extendedRecords[games[key].id] = {
-                ...games[key],
+            extendedRecords[extendedGame.id] = {
+                ...extendedGame,
                 stations: stationsJoin
             }
         }
@@ -499,12 +511,35 @@ export default {
     },
 
     /**
-     * Station list sorted by order
+     * Station list filtered by locale
+     *
      * @param {Object} stations
      * @return {Object[]}
      */
-    stationsList: ({ stations } :stateEcommerceMap) =>
-        Object.values(stations).sort(({ order :a = 0}, { order :b = 0}) => a - b),
+    stationRecords: ({ stations } :stateEcommerceMap) => (locale :string) :Record<string, stationMap> => {
+        if(!Object.prototype.hasOwnProperty.call(stations, locale))
+            return {};
+        return stations[locale];
+    },
+
+    /**
+     * Station list sorted by order
+     *
+     * @param state
+     * @param stationRecords
+     */
+    stationsList: (state  :stateEcommerceMap, { stationRecords }) => (locale :string) :stationMap[] =>
+        Object.values(stationRecords(locale) as stationMap[]).sort(({ order :a = 0}, { order :b = 0}) => a - b),
+
+    /**
+     *
+     * @param info
+     */
+    getInfoData: ({ info }: stateEcommerceMap) => (branch :keyof stateEcommerceMap['info']) :Record<string, infoChunkMap> => {
+        if(!Object.prototype.hasOwnProperty.call(info, branch))
+            return {};
+        return info[branch];
+    },
 
     /**
      * get item or leaf by id of state
@@ -512,20 +547,13 @@ export default {
      *
      * @param {Object} state
      */
-    getItem: (state: stateEcommerceMap) => {
-
-        /**
-         * @param {string} branch
-         * @param {string} id
-         */
-        return (branch :keyof stateEcommerceMap, id :string | number) => {
-            if(!Object.prototype.hasOwnProperty.call(state, branch) || !Object.prototype.hasOwnProperty.call(state[branch], id)){
-                return undefined;
-            }
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            return state[branch][id]
+    getItem: (state: stateEcommerceMap) => (branch :keyof stateEcommerceMap, id :string | number) => {
+        if(!Object.prototype.hasOwnProperty.call(state, branch) || !Object.prototype.hasOwnProperty.call(state[branch], id)){
+            return undefined;
         }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return state[branch][id]
     },
 
 } as GetterTree<stateEcommerceMap, stateRootMap>;

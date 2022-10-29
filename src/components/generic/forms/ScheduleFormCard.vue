@@ -15,7 +15,7 @@
 							<div class="v-btn-group v-btn-group--density-default">
 								<v-btn
 									class="flex-grow-1 h-auto"
-									@click="emit('button:click:backward-day')"
+									@click="emit('click:button:backward-day')"
 									:disabled="!allowPastSelection && formValuesIsToday"
 								>
 									<font-awesome-icon size="xl" :icon="['fas', 'chevron-left']" />
@@ -25,13 +25,13 @@
 									:class="{
 										'bg-secondary': formValuesIsToday
 									}"
-									@click="emit('button:click:now-day')"
+									@click="emit('click:button:now-day')"
 								>
 									{{ t('generic.today') }}
 								</v-btn>
 								<v-btn
 									class="flex-grow-1 h-auto"
-									@click="emit('button:click:forward-day')"
+									@click="emit('click:button:forward-day')"
 								>
 									<font-awesome-icon size="xl" :icon="['fas', 'chevron-right']" />
 								</v-btn>
@@ -182,12 +182,23 @@
 									>
 										{{ item.title }}
 										<template v-slot:prepend>
+											<!--
 											<font-awesome-icon class="v-icon v-icon--size-default v-icon--start" :icon="['fas', item.raw.icon]" />
+											-->
+											<component
+												:is="item.raw.icon"
+												class="v-icon v-icon--size-default v-icon--start"
+												style="fill: white"
+											/>
 										</template>
 									</v-list-item>
 								</template>
 								<template v-slot:prepend-inner>
-									<font-awesome-icon class="v-icon v-icon--size-default v-icon--start" :icon="['fas', selectedStationIcon]" />
+									<component
+										:is="selectedStationIcon"
+										class="v-icon v-icon--size-default v-icon--start"
+										style="fill: white"
+									/>
 								</template>
 							</v-select>
 						</v-col>
@@ -244,9 +255,9 @@ const { t } = useI18n();
 const emit = defineEmits([
 	'submit',
 	'message:emit',
-	'button:click:backward-day',
-	'button:click:now-day',
-	'button:click:forward-day',
+	'click:button:backward-day',
+	'click:button:now-day',
+	'click:button:forward-day',
 	'update:modelValue',
 ]);
 
@@ -344,7 +355,7 @@ const showSelectStation = ref(false);
 /**
  * Selected station record
  */
-const selectedStationIcon = computed(() => props.stations.find(({ id }) => id === modelValueC.value.selectedStation)?.icon || 'couch' );
+const selectedStationIcon = computed(() => props.stations.find(({ id }) => id === modelValueC.value.selectedStation)?.icon);
 
 /**
  * UI

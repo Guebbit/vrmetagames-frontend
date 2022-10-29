@@ -491,9 +491,9 @@
 								mini
 
 								@click="scheduleSelect(id)"
-								@button:click:confirm="showConfirmDialog = true"
-								@button:click:cancel="showDeleteDialog = true"
-								@button:click:renew="showRenewDialog = true"
+								@click:button:confirm="showConfirmDialog = true"
+								@click:button:cancel="showDeleteDialog = true"
+								@click:button:renew="showRenewDialog = true"
 							/>
 						</v-col>
 					</v-row>
@@ -508,7 +508,7 @@
 			:dateFormat="uiFormatDate"
 			:timeFormat="uiFormatTime"
 
-			@button:click:method="(value) => { selectedPaymentId = false; selectTargetPaymentMethod(value); showPaymentMethodDialog = true; }"
+			@click:button:method="(value) => { selectedPaymentId = false; selectTargetPaymentMethod(value); showPaymentMethodDialog = true; }"
 		/>
 
 		<DialogInfoPaymentMethod

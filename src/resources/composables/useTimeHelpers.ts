@@ -1,7 +1,6 @@
 import { secondsToTime } from "guebbit-javascript-library";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { scheduleReadableMap } from "@/resources/composables/useScheduleHelpers";
 dayjs.extend(customParseFormat);
 
 export default (fromDatetime = 'YYYY-MM-DD HH:mm:ss', toDatetime = 'YYYY-MM-DD HH:mm:ss') => {

@@ -107,8 +107,9 @@ export default {
             commit("setAuthenticationTokens", {
                 jwt: '1234'
             });
+            // TODO GET USER LOCALE
             // redo init, with authentication this time (TTL of previous info prevent useless calls)
-            return dispatch("main/initApp", undefined, { root: true });
+            return dispatch("main/initApp", "it", { root: true });
         })
         .catch(() => dispatch("main/handleServerError", "getStations ERROR", { root: true }));
     },
@@ -127,7 +128,8 @@ export default {
             commit("setAuthenticationTokens", {
                 jwt: '1234'
             });
-            return dispatch("main/initApp", undefined, { root: true });
+            // TODO GET USER LOCALE
+            return dispatch("main/initApp", "it", { root: true });
         })
         .catch(() => dispatch("main/handleServerError", "getStations ERROR", { root: true }));
     },
@@ -145,8 +147,9 @@ export default {
             commit("setAuthenticationTokens", {
                 jwt: '1234'
             });
+            // TODO GET USER LOCALE
             // redo init, with authentication this time (TTL of previous info prevent useless calls)
-            return dispatch("main/initApp", undefined, { root: true });
+            return dispatch("main/initApp", "it", { root: true });
         })
             .catch(() => dispatch("main/handleServerError", "getStations ERROR", { root: true }));
     },

@@ -1,4 +1,4 @@
-import type { imageMap } from "@/interfaces";
+import type { mediaChunkMap } from "@/interfaces";
 
 export interface paymentMethodMap {
     id: string
@@ -25,7 +25,7 @@ export interface paymentMap {
 
 export interface currentUserMap {
     id?: string
-    avatar?: imageMap
+    avatar?: mediaChunkMap
     username?: string
     firstname?: string
     lastname?: string

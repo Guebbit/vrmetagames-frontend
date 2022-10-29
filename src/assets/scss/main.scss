@@ -63,6 +63,33 @@
         (24, 24px),
 ));
 
+// TODO guebbit-include
+.opacity-0{
+    opacity: 0;
+}
+.opacity-25 {
+    opacity: 0.25;
+};
+.opacity-50 {
+    opacity: 0.5;
+};
+.opacity-75 {
+    opacity: 0.75;
+};
+.opacity-100 {
+    opacity: 1;
+}
+.min-width-30 {
+    min-width: 30px;
+}
+.min-width-50 {
+    min-width: 50px;
+}
+.min-width-100 {
+    min-width: 100px;
+}
+
+
 .hero-panel-content{
     padding: 24px;
 }

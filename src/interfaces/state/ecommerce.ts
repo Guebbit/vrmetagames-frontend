@@ -1,4 +1,4 @@
-import type { currentUserMap, imageMap } from "@/interfaces";
+import type { currentUserMap, mediaChunkMap, infoChunkMap } from "@/interfaces";
 
 /**
  *
@@ -80,18 +80,19 @@ export interface scheduleMapBackground {
 
 /**
  *
- * gallery: TODO
- * capacity: TODO infinite if not specified
+ * icon - svg custom icon
+ * capacity - TODO infinite if not specified
  */
 export interface stationMap {
     id: string
     name: string
-    icon: string
-    label: Record<string, string>
-    image: imageMap
-    gallery?: imageMap[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    icon: any
+    label: string
+    gallery?: mediaChunkMap[]
     capacity?: number
     order?: number
+    lang: string
 }
 
 /**
@@ -99,15 +100,17 @@ export interface stationMap {
  */
 export interface gameMap {
     id :string
+    slug: string
     title :string
     author?: string
     description?: string
     categories :string[]
     stationIds :string[]
     tags :string[]
-    image?: imageMap
-    coverFront?: imageMap
-    coverSpine?: imageMap
+    image?: mediaChunkMap
+    coverFront?: mediaChunkMap
+    coverSpine?: mediaChunkMap
+    gallery?: mediaChunkMap[]
     // TODO CHECK INFO:
     maxPlayersOffline?: number
     maxPlayersOnline?: number
@@ -123,24 +126,32 @@ export interface gameMap {
  * TODO categories & tags
  */
 export interface gameMapExtended extends gameMap {
-    stations?: stationMap[]
+    stations?: stationMap[],
+    durationText?: string
 }
 
 /**
- * scheduleRecords      - schedules (fullcalendar, user bookings)
- * users                - users
- * stations             - stations
- * games                - games
- * scheduleTimeCost     - payment for each step. 0 = default 5.00€, 1 step (half hour) special price 6.00€, no 2 step price = default price
- * scheduleTimeStep     - minimum time slot
- * scheduleEditableTime - schedule is editable\removable until 1 hour from current time
+ * scheduleRecords      - schedules (input: server, fullcalendar, user bookings)
+ * scheduleArchive      - archive with clones of scheduleRecords for comparation purposes
+ * users                - users (all)
+ * stations             - gaming stations (languages)
+ * games                - games (all) (languages)
+ * info                 - infoChunk of data (languages, but language key merged with branch key)
+ *      - games: parameters of gameMapExtended to use in filters, sort, etc
+ *      - users: same as above, for userMap
+ *      - categories: game categories
+ * scheduleTimeStep         - minimum time slot (example: 1800000 milliseconds = 1800 seconds = 30 min)
+ * scheduleEditableSteps    - schedule is editable\removable until 1 hour from current time (example: 1 step = 30 min)
+ * scheduleImminentSteps    - schedule that is incoming and need to be notified to user (example: 48 step = 1 day)
+ * scheduleTimeCost         - payment for each step. (example: 0 = default 5.00€, 1 step (half hour) special price 6.00€, no 2 step price = default price)
  */
 export interface stateEcommerceMap {
     scheduleRecords: Record<string, scheduleMap>
     scheduleArchive: Record<string, scheduleMap>
     users: Record<string, userMap>
-    stations: Record<string, stationMap>
-    games: Record<string, gameMap>
+    stations: Record<string, Record<string, stationMap>>
+    games: Record<string, Record<string, gameMap>>
+    info: Record<string, Record<string, infoChunkMap>>
     scheduleTimeStep: number
     scheduleEditableSteps :number
     scheduleImminentSteps :number

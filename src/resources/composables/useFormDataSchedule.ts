@@ -334,10 +334,14 @@ export default ({
      * Number of stations can't be inferior of selected Station capacity
      */
     watch([() => formValues.value.numStations, () => formValues.value.selectedStation], ([numStations, selectedStation]) => {
-        // check validity
-        if(!numStations || !selectedStation || !Object.prototype.hasOwnProperty.call(stations.value, selectedStation))
+        // TODO tech info only - da pensare a come fare?
+        const firstLanguageAvailable = Object.keys(stations.value)[0];
+        if(!firstLanguageAvailable)
             return;
-        const { capacity } = stations.value[selectedStation];
+        // check validity
+        if(!numStations || !selectedStation || !Object.prototype.hasOwnProperty.call(stations.value[firstLanguageAvailable], selectedStation))
+            return;
+        const { capacity } = stations.value[firstLanguageAvailable][selectedStation];
         if(capacity && capacity < numStations)
             formValues.value.numStations = capacity;
     });
