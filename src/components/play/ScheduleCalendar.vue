@@ -9,7 +9,7 @@
 		:secondary      = "themeColors.secondary"
 		:background     = "themeColors.surface"
 		:text           = "themeColors['on-surface']"
-		:eventsPerDay   = "totalStations['global'] || 0"
+		:eventsPerDay   = "stationsCapacities['global'] || 0"
 		:slotDuration   = "scheduleTimeStep"
 		:handleAllow    = "fullcalendarHandleEventAllow"
 		:disableNativeApi = "true"
@@ -185,14 +185,14 @@ function fullcalendarEventApiTranslate({ id, resourceId, start, end, allDay } :E
 /**
  * Schedules
  */
-const scheduleDetailedRecords = computed<Record<string, scheduleMapExtended>>(() => getters['ecommerce/scheduleDetailedRecords']);
+const scheduleDetailedRecords = computed<Record<string, scheduleMapExtended>>(() => getters['ecommerce/scheduleDetailedRecords'](locale.value));
 const scheduleCalendarBackgrounds = computed<scheduleMapBackground[]>(() => getters['ecommerce/scheduleCalendarBackgrounds']);
 
 /**
  * List of stations, for ScheduleFormCard list of possible stations
  */
 const stationsList = computed(() => getters['ecommerce/stationsList'](locale.value));
-const totalStations = computed(() => getters['ecommerce/totalStations']);
+const stationsCapacities = computed(() => getters['ecommerce/stationsCapacities']);
 
 /**
  * FULLCALENDAR RESOURCE MODE

@@ -3,7 +3,6 @@ import { arrayColumns, rangeOverlaps } from "guebbit-javascript-library";
 import useTimeHelpers from "@/resources/composables/useTimeHelpers";
 import { i18n } from "@/plugins/i18n";
 
-
 import type { GetterTree } from 'vuex';
 import type {
     stateRootMap,
@@ -16,7 +15,7 @@ import type {
     infoChunkMap,
 } from "@/interfaces";
 
-const { locale } = i18n.global;
+const { locale: localeDefault } = i18n.global;
 
 const {
     translateMillisecondsToReadable
@@ -49,7 +48,7 @@ export default {
      * @param {Object[]} stations
      * @return {Object[]}
      */
-    scheduleDetailedRecords: ({ scheduleRecords, users, stations } :stateEcommerceMap) :Record<string, scheduleMapBackground | scheduleMapExtended> => {
+    scheduleDetailedRecords: ({ scheduleRecords, users, stations } :stateEcommerceMap) => (locale = localeDefault) :Record<string, scheduleMapBackground | scheduleMapExtended> => {
         // regular schedules
         const scheduleArray = Object.values(scheduleRecords);
         // result with advanced schedules
@@ -79,11 +78,11 @@ export default {
      * @param scheduleRecords
      * @param users
      * @param stations
-     * @param totalStations
+     * @param stationsCapacities
      * @param rootState
      * @param rootGetters
      */
-    scheduleCalendarBackgrounds: ({ scheduleRecords } :stateEcommerceMap, { totalStations }, rootState, rootGetters) :scheduleMapBackground[] => {
+    scheduleCalendarBackgrounds: ({ scheduleRecords } :stateEcommerceMap, { stationsCapacities }, rootState, rootGetters) :scheduleMapBackground[] => {
         // iterator
         let i :number;
         // regular schedules
@@ -102,7 +101,7 @@ export default {
         for(i = businessSeconds.length; i--; ){
             // TODO different stations with different possible games
             // multiply for total stations
-            businessAvailableTime[i] = businessSeconds[i] * totalStations['global'];
+            businessAvailableTime[i] = businessSeconds[i] * stationsCapacities['global'];
         }
 
         /**
@@ -241,6 +240,12 @@ export default {
     scheduleListIncomingTotal: ({ scheduleRecords }: stateEcommerceMap) :scheduleMap[] =>
         Object.values(scheduleRecords).filter(({ paid = true, start } :scheduleMap) => paid && start > Date.now()), // && confirmed),
 
+    /**
+     * Technical data, language is indifferent so the first available will be chosen
+     *
+     * @param {object} stations
+     */
+    stationsTech: ({ stations } :stateEcommerceMap) => stations[Object.keys(stations)[0]],
 
     /**
      * Total number of stations
@@ -249,16 +254,19 @@ export default {
      *
      * There can be different stations with different possible games/characteristics/limits
      *
-     * @param {object[]} stations
+     * @param {object} state
+     * @param {object[]} stationsTech
      * @return {number}
      */
-    totalStations({ stations } :stateEcommerceMap) :Record<string, number> {
+    stationsCapacities: (state :stateEcommerceMap, { stationsTech }: { stationsTech: stationMap[] }) :Record<string, number> => {
+        // language is indifferent in this case, need only techincal data
+        const techStationsList = Object.values(stationsTech);
         const stationTypes :Record<string, number> = {};
-        // TODO separare "stations" in "language data" e "technical data"
-        stationTypes['global'] = Object.values(stations[locale] || []).reduce((total, { capacity = 0 }) => {
-            return total + capacity;
-        }, 0);
-        // TODO array of types? stationTypes['oculus'] somma di tutte le stations con questa caratteristica? Al posto di capacity
+        stationTypes['global'] = 0; //techStationsList.reduce((total, { capacity = 0 }) => total + capacity, 0);
+        for(let i = techStationsList.length; i--; ){
+            stationTypes[techStationsList[i].name] = techStationsList[i].capacity || 0;
+            stationTypes['global'] += (techStationsList[i].capacity || 0);
+        }
         return stationTypes;
     },
 
@@ -429,11 +437,11 @@ export default {
      *
      * @param {number} scheduleTimeStep
      * @param {Function} getSchedulesBySlots
-     * @param {Object} totalStations
+     * @param {Object} stationsCapacities
      * @param {Object} rootState
      * @param {Object} rootGetters
      */
-    determineScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, totalStations }, rootState, rootGetters) =>
+    determineScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, stationsCapacities }, rootState, rootGetters) =>
         /**
          * @param {number} dateFrom
          * @param {number} dateTo
@@ -450,7 +458,7 @@ export default {
             if(
                 cappedSlots.some((idArray :string[]) => {
                     // TODO different stations with different possible games
-                    return idArray.length - (id && idArray.includes(id) ? 1 : 0) >= totalStations['global']
+                    return idArray.length - (id && idArray.includes(id) ? 1 : 0) >= stationsCapacities['global']
                 })
             )
                 errorArray.push('max-reached');
@@ -461,7 +469,7 @@ export default {
     /**
      * Same as above but optimized to be fast. Return boolean and doesn't care about errors
      */
-    checkScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, totalStations }, rootState, rootGetters) =>
+    checkScheduleIsAllowed: ({ scheduleTimeStep }: stateEcommerceMap, { getSchedulesBySlots, stationsCapacities }, rootState, rootGetters) =>
         (dateFrom ?:number, dateTo ?:number, id ?:string, resourceIdArray :string[] = []) :boolean => {
             // ----- businessHours check -----
             if(!rootGetters['main/isOpen'](dateFrom) || !rootGetters['main/isOpen'](dateTo))
@@ -470,7 +478,7 @@ export default {
             const cappedSlots :string[][] = Object.values(getSchedulesBySlots(dateFrom, dateTo, scheduleTimeStep, resourceIdArray));
             return !cappedSlots.some((idArray: string[]) => {
                 // TODO different stations with different possible games
-                return idArray.length - (id && idArray.includes(id) ? 1 : 0) >= totalStations['global']
+                return idArray.length - (id && idArray.includes(id) ? 1 : 0) >= stationsCapacities['global']
             });
         },
 
@@ -481,7 +489,7 @@ export default {
      * @param {Object} games
      * @param {Object} stations
      */
-    gameDetailedRecords: ({ games, stations } :stateEcommerceMap) :Record<string, gameMapExtended> => {
+    gameDetailedRecords: ({ games, stations } :stateEcommerceMap) => (locale = localeDefault) :Record<string, gameMapExtended> => {
         const extendedRecords :Record<string, gameMapExtended> = {};
         // if no locale is found
         if(!Object.prototype.hasOwnProperty.call(games, locale))
@@ -516,7 +524,7 @@ export default {
      * @param {Object} stations
      * @return {Object[]}
      */
-    stationRecords: ({ stations } :stateEcommerceMap) => (locale :string) :Record<string, stationMap> => {
+    stationRecords: ({ stations } :stateEcommerceMap) => (locale = localeDefault) :Record<string, stationMap> => {
         if(!Object.prototype.hasOwnProperty.call(stations, locale))
             return {};
         return stations[locale];
@@ -528,7 +536,7 @@ export default {
      * @param state
      * @param stationRecords
      */
-    stationsList: (state  :stateEcommerceMap, { stationRecords }) => (locale :string) :stationMap[] =>
+    stationsList: (state  :stateEcommerceMap, { stationRecords }) => (locale = localeDefault) :stationMap[] =>
         Object.values(stationRecords(locale) as stationMap[]).sort(({ order :a = 0}, { order :b = 0}) => a - b),
 
     /**

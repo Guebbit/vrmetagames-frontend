@@ -167,7 +167,6 @@ const mockServerUsers = [
     }
 ];
 const mockServerStations = [
-    /*
     {
         id: 'item1',
         name: 'oculus',
@@ -178,7 +177,6 @@ const mockServerStations = [
         order: 1,
         lang: "en"
     },
-    */
     {
         id: 'item1',
         name: 'oculus',
@@ -207,11 +205,11 @@ const mockServerGames = [
         title: "Walkabout Mini Golf",
         author: "Mighty Coconut",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["sport"],
+        categories: ["2"],
         stationIds: ["item1"],
         tags: [
-            "golf",
-            "pvp"
+            "10",
+            "22"
         ],
         image: {
             src: imagesUrl + 'games/walkabout-mini-golf.jpg',
@@ -241,11 +239,11 @@ const mockServerGames = [
         title: "Acron: Attack of the Squirrels!",
         author: "Resolution Games",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["party-game", "action"],
+        categories: ["9", "3"],
         stationIds: ["item1"],
         tags: [
-            "pvp",
-            "coop"
+            "22",
+            "11"
         ],
         image: {
             src: imagesUrl + 'games/acron-attack-of-the-squirrels.jpg'
@@ -284,10 +282,10 @@ const mockServerGames = [
         title: "Blaston Spectator",
         author: "Resolution Games",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["shooter"],
+        categories: ["8"],
         stationIds: ["item1"],
         tags: [
-            "pvp"
+            "22"
         ],
         image: {
             src: imagesUrl + 'games/blaston.jpg'
@@ -309,7 +307,7 @@ const mockServerGames = [
         title: "Echo Arena",
         author: "",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["sport"],
+        categories: ["2"],
         stationIds: ["item1"],
         tags: [],
         image: {
@@ -332,7 +330,7 @@ const mockServerGames = [
         title: "Angry Birds VR: Isle of Pigs",
         author: "Resolution Games",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["puzzle"],
+        categories: ["7"],
         stationIds: ["item1", "item2"],
         tags: [],
         image: {
@@ -359,12 +357,12 @@ const mockServerGames = [
         title: "Beat Saber",
         author: "Beat Games",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["rhythm"],
+        categories: ["6"],
         stationIds: ["item1", "item2"],
         tags: [
-            "dance",
-            "music",
-            "lightsabers"
+            "12",
+            "13",
+            "14"
         ],
         image: {
             src: imagesUrl + 'games/beat-saber.jpg',
@@ -389,7 +387,7 @@ const mockServerGames = [
         title: "Loco Dojo",
         author: "Make Real",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["action"],
+        categories: ["3"],
         stationIds: ["item2"],
         tags: [],
         image: {
@@ -416,7 +414,7 @@ const mockServerGames = [
         title: "Nock",
         author: "",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["action"],
+        categories: ["3"],
         stationIds: ["item1"],
         tags: [],
         image: {
@@ -439,11 +437,11 @@ const mockServerGames = [
         title: "Population: One",
         author: "BigBox VR, Inc.",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["shooter", "action"],
+        categories: ["8", "3"],
         stationIds: ["item1"],
         tags: [
-            "battle-royale",
-            "pvp"
+            "15",
+            "22"
         ],
         image: {
             src: imagesUrl + 'games/population-one.jpg'
@@ -467,7 +465,7 @@ const mockServerGames = [
         title: "Puzzle Bobble 3D: Vacation Odyssey",
         author: "Survios, Taito Corporation",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["puzzle"],
+        categories: ["7"],
         stationIds: ["item1"],
         tags: [],
         image: {
@@ -492,10 +490,10 @@ const mockServerGames = [
         title: "Ragnarock",
         author: "WanadevStudio",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["rhythm"],
+        categories: ["6"],
         stationIds: ["item1"],
         tags: [
-            "music"
+            "13"
         ],
         image: {
             src: imagesUrl + 'games/ragnarock.jpg'
@@ -518,7 +516,7 @@ const mockServerGames = [
         title: "The Room VR: A Dark Matter",
         author: "Fireproof Games",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["adventure"],
+        categories: ["5"],
         stationIds: ["item1"],
         tags: [],
         image: {
@@ -541,10 +539,10 @@ const mockServerGames = [
         title: "Zenith: The Last City",
         author: "Ramen VR",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        categories: ["action"],
+        categories: ["3"],
         stationIds: ["item1"],
         tags: [
-            "open-world"
+            "16"
         ],
         image: {
             src: imagesUrl + 'games/zenith-the-last-city.jpg',
@@ -575,7 +573,7 @@ const mockServerGames = [
 const mockServerGameInfoData :any = {};
 mockServerGameInfoData.categories = [
     {
-        id: "1",
+        id: "2",
         type: "category",
         name: "rpg",
         label: "RPG",
@@ -659,7 +657,7 @@ mockServerGameInfoData.tags = [
         lang: "it"
     },
     {
-        id: "2",
+        id: "22",
         type: "tag",
         name: "pvp",
         label: "PVP",
@@ -697,7 +695,7 @@ mockServerGameInfoData.tags = [
     {
         id: "14",
         type: "tag",
-        name: "lightsabers",
+        name: "14",
         label: "Spade laser",
         description: "Tag di gioco: spade laser",
         icon: ['fas', 'tag'],
@@ -756,7 +754,7 @@ mockServerGameInfoData.gameParameters = [
         icon: ['fas', 'people-group'],
         lang: "it"
     }, {
-        id: "21",
+        id: "20",
         type: "parameter",
         name: "maxPlayersOffline",
         label: "Number of players (locale)",
@@ -838,7 +836,7 @@ export default {
             .then(() => {
                 let i :number;
                 for(i = mockServerGames.length; i--; )
-                    commit("setDataRecord", ["games", mockServerGames[i]]);
+                    commit("setDataRecord", ["games", mockServerGames[i], ["lang", "id"]]);
                 for(i = languageArray.length; i--; )
                     commit("main/setLastUpdate", ['gamesList', languageArray[i]], { root: true });
             })

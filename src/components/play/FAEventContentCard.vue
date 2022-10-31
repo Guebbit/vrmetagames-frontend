@@ -20,9 +20,13 @@
              }"
         >
 			<img :src="schedule.user?.avatar ? schedule.user?.avatar.src : defaultUserAvatarSrc">
-			<img v-if="schedule.station"
-				:src="schedule.station.image.src"
-			>
+			<component
+				v-if="schedule.station"
+				:is="schedule.station.icon"
+				role="icon"
+				:aria-label="schedule.station.label"
+				class="ml-2"
+			/>
             <div class="ml-3">
                 <b class="time">{{ time }}</b>
                 <span v-show="scheduleHeight > 80"><br> {{ schedule.username }}</span>
@@ -97,12 +101,16 @@ onUpdated(() => {
     .regular-card{
         display: flex;
         max-height: 100%;
+		svg,
         img{
             max-width: 4em;
             max-height: 4em;
             border-radius: 3px 0 6px 0;
             object-fit: cover;
         }
+		svg{
+			fill: rgb(var(--v-theme-on-surface))
+		}
     }
     .time{
         font-size: 1.2em;

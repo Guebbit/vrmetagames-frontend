@@ -29,7 +29,6 @@
 					/>
 				</v-col>
 				<v-col cols="8" md="10" lg="10" xl="4">
-					<pre>{{sortingParametersSelected}}</pre>
 					<v-select
 						v-model="sortingParametersSelected"
 						:items="Object.values(gameParameters)"
@@ -141,7 +140,7 @@
                             <v-btn
                                 v-for="cat in gameCategories"
                                 :key="cat.id + '-button'"
-                                :value="cat.name"
+                                :value="cat.id"
 								class="px-6 py-4 rounded-0"
                             >
 								<span class="hidden-md-and-down mr-3">
@@ -383,8 +382,10 @@
 							class="ma-2"
 							size="small"
 							label=""
+							color="secondary"
 						>
-							{{ tag }} aaaaa
+							{{ gameTags[tag].label }}
+							<font-awesome-icon class="v-icon v-icon--size-small v-icon--end" :icon="gameTags[tag].icon" />
 						</v-chip>
 					</div>
 
@@ -392,53 +393,56 @@
 						<v-list-item-action class="flex-gap-12">
 							<v-btn
 								v-for="station in game.stations"
-								:key="'game-list-stations-' + game.id + '-' + station"
-								size="large"
-								icon=""
+								:key="'station-icon-' + station.id"
 								variant="text"
-								color="secondary"
 								@click.stop.prevent="push({
 									name: 'Games',
 									query: {
-										filters: encodeURIComponent(
-											JSON.stringify({
-												stations: [station.id]
-											})
+										stations: encodeURIComponent(
+											JSON.stringify([station.id])
 										)
 									}
 								})"
 							>
-								<font-awesome-icon size="xl" :icon="station.icon" />
+								<component
+									:is="station.icon"
+									role="icon"
+									:aria-label="station.label"
+									style="font-size: 2em"
+									class="regular-icon fill-white"
+								/>
 							</v-btn>
 						</v-list-item-action>
 						<v-list-item-action class="flex-gap-12">
-							<div v-for="cat in game.categories" :key="cat" >
-								{{cat}}
-								{{ gameCategories[cat] }}
-								bbbbb
-							</div>
-							<!--
-							<v-btn
+							<v-tooltip
 								v-for="cat in game.categories"
 								:key="'game-list-cat-' + game.id + '-' + cat"
-								size="large"
-								icon=""
-								variant="text"
-								color="primary"
-								@click.stop.prevent="push({
-									name: 'Games',
-									query: {
-										filters: encodeURIComponent(
-											JSON.stringify({
-												categories: [cat]
-											})
-										)
-									}
-								})"
+								:text="gameCategories[cat].label"
+								location="top"
 							>
-								<font-awesome-icon size="xl" :icon="categoryIcon(cat)" />
-							</v-btn>
-							-->
+								<template v-slot:activator="{ props }">
+									<v-btn
+										size="large"
+										icon=""
+										variant="text"
+										color="primary"
+										:aria-details="gameCategories[cat].label"
+										@click.stop.prevent="push({
+											name: 'Games',
+											query: {
+												filters: encodeURIComponent(
+													JSON.stringify({
+														categories: [cat]
+													})
+												)
+											}
+										})"
+										v-bind="props"
+									>
+										<font-awesome-icon size="xl" :icon="gameCategories[cat].icon" />
+									</v-btn>
+								</template>
+							</v-tooltip>
 						</v-list-item-action>
 					</template>
 				</v-list-item>
@@ -486,16 +490,10 @@ const { t, locale } = useI18n();
 const { getters, dispatch } = useStore();
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 
-//TODO locale dove? dentro getters meglio
 /**
  * List of stations
  */
 const stationsList = computed(() => getters['ecommerce/stationsList'](locale.value));
-
-/**
- * List of games (extended)
- */
-const gameDetailedRecords = computed(() => getters['ecommerce/gameDetailedRecords']);
 
 /**
  * Visualization mode
@@ -911,7 +909,7 @@ const {
 	fromUrlToObject,
 	resetSort,
 } = useItemList<gameMapExtended>(
-	gameDetailedRecords,
+	computed(() => getters['ecommerce/gameDetailedRecords'](locale.value)),
 	Promise.all([
 		dispatch('main/initApp', locale.value),
 		dispatch('ecommerce/getGames', [locale.value])
@@ -925,7 +923,7 @@ const {
  */
 const preloadFilters = () => {
 	const { sort = [], toggle = {}, v = defaultModeVisualization, ...regularFilters } = fromUrlToObject(route.query as Record<string, string>);
-	console.log("VVVVV", v)
+	modeVisualization.value = v as number;
 	sortList.value = sort as sortParameterType[];
 	toggleFilters.value = toggle as Record<string, number>;
 	/**

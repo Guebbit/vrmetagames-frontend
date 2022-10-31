@@ -3,16 +3,28 @@ import { createNestedProperty, removeNestedProperty } from "guebbit-javascript-l
 /**
  *
  * @param data - data from which take the param info
- * @param {string} paramLang - parameter containing language (default: lang)
- * @param {string | number} paramId - parameter containing identifier (default: ID)
+ * @param {string[]} branchKeys - parameters containing data which will become a branch (like lang, id, etc)
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const createBranchTree = (data: any, paramLang :string | undefined = "lang", paramId :string | number | undefined = "id") => [
-    // paramLang can be falsy, in that case they will be put in the root (standard javascript behaviour)
-    data[paramLang] || "",
-    // paramId is the last leaf
-    data[paramId]
-];
+const createBranchTree = (data: any, branchKeys :Array<string | number> = []) => {
+    const branches :string[] = [];
+    for(let i = 0, len = branchKeys.length; i < len; i++)
+        branches.push(data[branchKeys[i]])
+    return branches
+};
+
+/**
+ *
+ * @param data - data from which take the param info
+ * @param {string[]} branchKeys - parameters that I need to check they exist
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const checkBranchTree = (data: any, branchKeys :Array<string | number> = []) => {
+    for(let i = branchKeys.length; i--; )
+        if(!branchKeys[i] || !Object.prototype.hasOwnProperty.call(data, branchKeys[i]) || !data[branchKeys[i]])
+            return false;
+    return true;
+};
 
 /**
  * SET generic record data
@@ -21,20 +33,18 @@ const createBranchTree = (data: any, paramLang :string | undefined = "lang", par
  * @param {Object} state - central state
  * @param {string} branches - parameters of state (branch of tree, the first should always exist because it's state root)
  * @param {Object} data - data to insert in state
- * @param {string} paramLang - parameter containing language (default: lang)
- * @param {string | number} paramId - parameter containing identifier (default: ID)
- * @param {string} language - language (optional)
+ * @param {string[]} params - parameters containing data which will become a branch (like lang, id, etc)
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const setDataRecord = (state: any, [branches, data, paramLang = "lang", paramId = "id"]: [string | number | Array<string | number>, Record<string, any>, string | undefined, string | number | undefined]) => {
-    // paramId must exist within data
-    if(!Object.prototype.hasOwnProperty.call(data, paramId) || !data[paramId])
+export const setDataRecord = (state: any, [branches, data, params = ["id"]]: [string | number | Array<string | number>, Record<string, any>, Array<string | number>]) => {
+    // requested params must exist
+    if(!checkBranchTree(data, params))
         return;
     // if not array, it must become one
     if(!Array.isArray(branches))
         branches = [branches];
     // put the data in the required nested property (WARNING: state will be edited within this function)
-    createNestedProperty(state, [...branches, ...createBranchTree(data, paramLang, paramId)], data);
+    createNestedProperty(state, [...branches, ...createBranchTree(data, params)], data);
 };
 
 
@@ -64,6 +74,8 @@ export const removeDataRecord = (state: any, [branches, id]: [string | number | 
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const setDataArray = (state: Record<string, any[]>, [branch, data, identifier = '']: [string, Record<string, unknown>, string | number]) => {
+    // TODO fare e testare (sulla linea di setDataRecord)
+    /*
     // has to exist in the state object and not be empty
     if (!Object.prototype.hasOwnProperty.call(state, branch) || !state[branch])
         return;
@@ -79,6 +91,7 @@ export const setDataArray = (state: Record<string, any[]>, [branch, data, identi
         state[branch][index] = data;
     else
         state[branch].push(data);
+    */
 };
 
 
@@ -91,13 +104,10 @@ export const setDataArray = (state: Record<string, any[]>, [branch, data, identi
  * @param {string | number} identifier - if numeric it can be the index to remove
  */
 export const removeDataArray = (state: Record<string, Record<string, unknown>>, [branch, id, identifier = '']: [string, string | number, string | number]) => {
-    // has to exist in the state object and not be empty
-    if (!Object.prototype.hasOwnProperty.call(state, branch) || !state[branch])
-        return;
-    // TODO
+    // TODO fare e testare (sulla linea di removeDataRecord)
 };
 
-// TODO sia per record che per array data
+// TODO fare e testare sia per record che per array data
 /*
 addWallet({ users }: stateEcommerceMap, [id, amount = 0]: [string, number]) {
     if(!Object.prototype.hasOwnProperty.call(users, id))

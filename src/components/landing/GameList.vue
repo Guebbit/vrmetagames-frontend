@@ -55,7 +55,7 @@
 // https://swiperjs.com/vue#use-swiper
 // https://swiperjs.com/swiper-api
 
-import { computed, ref, toRefs, defineProps } from "vue";
+import { computed, ref, defineProps } from "vue";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
 
@@ -72,10 +72,10 @@ import { faPlay, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 library.add(faPlay, faCircleInfo);
 
 
-const { t } = useI18n();
-const { state } = useStore();
+const { t, locale } = useI18n();
+const { getters } = useStore();
 
-const props = defineProps({
+defineProps({
     controls: {
         type: Boolean,
         default: () => {
@@ -84,9 +84,7 @@ const props = defineProps({
     }
 });
 
-const { games } = toRefs(state.ecommerce);
-const gamesList = computed<gameMap[]>(() => Object.values(games.value));
-
+const gamesList = computed<gameMap[]>(() => Object.values(getters['ecommerce/gameDetailedRecords'](locale.value)));
 
 const modules = [
     Autoplay,

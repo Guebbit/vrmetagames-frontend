@@ -23,7 +23,8 @@ STORE
 
 GENERIC:
  - gestione ticket\request da utenti ad admin (generici + rimozione di schedule non più automaticamente removibili?)
- - Imparare ARIA e usability
+ - Imparare ARIA e usability + usare
+ - Inserire tooltips in giro
  - molte funzioni nei getters possono essere messe dentro un composable e richiamate nei getters (eliminare alcune shortcuts da composable a getter)
 
 ADMIN:

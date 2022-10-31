@@ -88,12 +88,25 @@
 .min-width-100 {
     min-width: 100px;
 }
+// TODO guebbit-include
+
+
+
+
 
 
 .hero-panel-content{
     padding: 24px;
 }
 
+// TODO temporary
+.regular-icon{
+    width: 1em;
+    height: 1em;
+}
+.fill-white {
+    fill: rgb(var(--v-theme-on-surface));
+}
 
 @include media-mobile(){
     .desktop-only{

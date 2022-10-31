@@ -1,5 +1,6 @@
 <template>
 	<ProductComicPanel
+		v-if="selectedRecord"
 		:primary="themeColors.secondary"
 		:secondary="themeColors.primary"
 	>
@@ -40,7 +41,6 @@
 		<template #content>
 			<div class="d-flex justify-space-between align-center mb-5">
 				<div class="panel-station-icons">
-					<!-- TODO query nei push({}) outdated -->
 					<v-btn
 						v-for="station in selectedRecord.stations"
 						:key="'station-icon-' + station.id"
@@ -48,25 +48,25 @@
 						@click.stop.prevent="push({
 							name: 'Games',
 							query: {
-								filters: encodeURIComponent(
-									JSON.stringify({
-										stations: [station.id]
-									})
+								stations: encodeURIComponent(
+									JSON.stringify([station.id])
 								)
 							}
 						})"
 					>
 						<component
-							:is="stationIcon(station.id)"
-							role="presentation"
-							:aria-describedby="'game-details-description-' + selectedRecord.id"
+							:is="station.icon"
+							role="icon"
+							:aria-label="station.label"
+							class="regular-icon fill-white"
 						/>
 					</v-btn>
 				</div>
 				<div class="categories-wrapper">
 					<v-btn
-						v-for="(cat, i) in selectedRecord.categories"
-						:key="'category-title-' + i"
+						v-for="cat in selectedRecord.categories"
+						v-show="gameCategories[cat]"
+						:key="'category-title-' + cat"
 						:size="
 							selectedRecord.categories.length > 2 ? 'small' :
 								selectedRecord.categories.length > 1 ? 'default' : 'large'
@@ -75,11 +75,8 @@
 						variant="tonal"
 						color="light"
 					>
-						{{
-							selectedRecord.categories.length > 2 ? 'small' :
-								selectedRecord.categories.length <= 2 ? 'default' : 'large'
-						}}
-						<font-awesome-icon class="ml-3" size="xl" :icon="categoryIcon(cat)" />
+						{{ gameCategories[cat].label }}
+						<font-awesome-icon class="ml-3" size="xl" :icon="gameCategories[cat].icon" />
 					</v-btn>
 				</div>
 			</div>
@@ -87,12 +84,14 @@
 			<h4 class="panel-subtitle text-white">{{ selectedRecord.author }}</h4>
 			<div class="panel-chips">
 				<v-chip
-					v-for="(badge, i) in selectedRecord.tags"
-					:key="'badge-' + i"
+					v-for="tag in selectedRecord.tags"
+					v-show="gameTags[tag]"
+					:key="'badge-' + tag"
 					class="ma-2"
 					text-color="white"
 				>
-					{{ badge }}
+					{{ gameTags[tag].label }}
+					<font-awesome-icon class="v-icon v-icon--size-small v-icon--end" :icon="gameTags[tag].icon" />
 				</v-chip>
 			</div>
 			<p
@@ -106,36 +105,41 @@
 				class="bg-transparent"
 				variant="text"
 			>
-				<v-list-item
+				<template
 					v-for="item in gameRatingsList"
 					:key="'game-ratings-' + item.name"
 				>
-					<v-list-item-content class="d-flex justify-space-between align-center">
-						<div>
-							<font-awesome-icon
-								v-show="item.icon"
-								:icon="item.icon"
-								size="xl"
-								class="min-width-30 mr-2"
-							/>
-							{{ item.label }}
-						</div>
-						<v-rating
-							:modelValue="selectedRecord[item.name]"
-						>
-							<template v-slot:item="{ isFilled }">
+					<v-list-item
+						v-if="selectedRecord[item.name]"
+					>
+						<v-list-item-content class="d-flex justify-space-between align-center">
+							<div>
 								<font-awesome-icon
-									:icon="isFilled ? item.iconFill : item.iconEmpty"
+									v-show="item.icon"
+									:icon="item.icon"
 									size="xl"
-									class="min-width-30"
-									:class="{
+									class="min-width-30 mr-2"
+								/>
+								{{ item.label }}
+							</div>
+							<v-rating
+								:modelValue="selectedRecord[item.name]"
+								readonly=""
+							>
+								<template v-slot:item="{ isFilled }">
+									<font-awesome-icon
+										:icon="isFilled ? item.iconFill : item.iconEmpty"
+										size="xl"
+										class="min-width-30"
+										:class="{
 												'opacity-50': !isFilled,
 											}"
-								/>
-							</template>
-						</v-rating>
-					</v-list-item-content>
-				</v-list-item>
+									/>
+								</template>
+							</v-rating>
+						</v-list-item-content>
+					</v-list-item>
+				</template>
 			</v-list>
 
 			<div class="panel-info-icons">
@@ -191,6 +195,13 @@
 			</div>
 		</template>
 	</ProductComicPanel>
+	<v-alert
+		v-else
+		outlined
+		type="error"
+	>
+		{{ t('product-page.not-found') }}
+	</v-alert>
 </template>
 
 <script setup lang="ts">
@@ -204,10 +215,6 @@ import useItemDetails from "@/resources/composables/useItemDetails";
 import ProductComicPanel from "@/components/basics/blocks/ProductComicPanel.vue";
 import GameInfoNotice from "@/components/products/GameInfoNotice.vue";
 import ImageHoverUpCard from "@/components/basics/cards/ImageHoverUpCard.vue";
-import flaticonController from "@/assets/svg/videogames/flaticon_nintendo-controller.svg?component";
-import flaticonAR from "@/assets/svg/videogames/flaticon_augmented-reality.svg?component";
-import flaticonPlayStation5 from "@/assets/svg/videogames/flaticon_ps4-console.svg?component";
-
 import type { gameMap } from "@/interfaces";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -227,7 +234,7 @@ library.add(
 	faCircle, faHandBackFist
 );
 
-const { push, replace } = useRouter();
+const { push } = useRouter();
 const { t, locale } = useI18n();
 const { getters, dispatch } = useStore();
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
@@ -244,9 +251,14 @@ const props = defineProps({
 });
 
 /**
- * List of games (extended)
+ *
  */
-const gameDetailedRecords = computed(() => getters['ecommerce/gameDetailedRecords']);
+const gameCategories = computed(() => getters['ecommerce/getInfoData']("categories-" + locale.value));
+
+/**
+ *
+ */
+const gameTags = computed(() => getters['ecommerce/getInfoData']("tags-" + locale.value));
 
 /**
  * page details toolbox
@@ -255,7 +267,7 @@ const {
 	selectedRecord,
 	selectTargetRecord
 } = useItemDetails<gameMap>(
-	gameDetailedRecords,
+	computed(() => getters['ecommerce/gameDetailedRecords'](locale.value)),
 	Promise.all([
 		dispatch('main/initApp', locale.value),
 		dispatch('ecommerce/getGames', [locale.value])
@@ -289,46 +301,6 @@ const gameRatingsList = [
 		label: t('product-page.label-difficulty'),
 	},
 ];
-
-/**
- *
- * @param category
- */
-function categoryIcon(category :string) :[string, string]{
-	switch (category){
-		case 'gdr':
-			return ['fas', 'dice-d20'];
-		case 'action':
-			return ['fas', 'hand-fist'];
-		case 'sport':
-			return ['fas', 'volleyball'];
-		case 'adventure':
-			return ['fas', 'hat-wizard'];
-		case 'rhythm':
-			return ['fas', 'music'];
-		case 'puzzle':
-			return ['fas', 'puzzle-piece'];
-		case 'shooter':
-			return ['fas', 'gun'];
-		case 'party-game':
-			return ['fas', 'people-group'];
-	}
-	return ['fas', 'play'];
-}
-
-/**
- *
- * @param id
- */
-function stationIcon(id :string){
-	switch (id){
-		case 'item1':
-			return flaticonAR;
-		case 'item2':
-			return flaticonPlayStation5;
-	}
-	return flaticonController;
-}
 </script>
 
 <style lang="scss">
@@ -354,11 +326,6 @@ function stationIcon(id :string){
 			font-size: 5em;
 			height: auto;
 			width: auto;
-			svg{
-				fill: rgb(var(--v-theme-on-surface));
-				width: 1em;
-				height: 1em;
-			}
 		}
 	}
 

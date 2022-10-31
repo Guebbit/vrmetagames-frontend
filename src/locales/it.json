@@ -207,6 +207,7 @@
     "prices-description-2": "Quindi acquistando 40 ore si otterrà 2 volte il prezzo speciale da 20 ore."
   },
   "product-page": {
+    "not-found": "Gioco non trovato",
     "edit-product": "Modifica prodotto",
     "label-maxPlayersOffline": "N. giocatori locale",
     "label-maxPlayersOnline": "N. giocatori online",
