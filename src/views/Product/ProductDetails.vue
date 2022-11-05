@@ -35,6 +35,7 @@
 			</template>
 		</GameDetailsPage>
 
+
 		<v-dialog
             v-model="showProductEditDialog"
             fullscreen=""

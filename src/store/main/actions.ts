@@ -1,9 +1,11 @@
 import { ActionContext } from "vuex";
-import { stateMainMap, stateRootMap } from "@/interfaces";
+import { i18n } from "@/plugins/i18n";
+import type { stateMainMap, stateRootMap } from "@/interfaces";
+const { locale: localeDefault } = i18n.global;
 
 export default {
 
-    initApp({ dispatch }: ActionContext<stateMainMap, stateRootMap>, locale :string){
+    initApp({ dispatch }: ActionContext<stateMainMap, stateRootMap>, locale = localeDefault){
         // first authenticate user
         dispatch('user/getCurrentUser', undefined, { root: true })
             // then download all info from server

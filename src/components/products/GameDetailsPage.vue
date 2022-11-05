@@ -244,10 +244,6 @@ const props = defineProps({
 		type: String,
 		required: true
 	},
-	extended: {
-		type: Boolean,
-		default: () => true
-	}
 });
 
 /**

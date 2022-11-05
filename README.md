@@ -40,6 +40,7 @@ SCHEDULE
 
 PRODUCTS
  - route.query e filters si aggiornano in contemporanea: ripensare
+ - lingua, editore, data di uscita
 
 COMPONENTS
  - BookCard lieve overflow hidden a destra, all'hover\rotate
