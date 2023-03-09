@@ -152,7 +152,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useStore } from "@/store";
 
-import { shyJs } from 'guebbit-javascript-library';
+import { shyJs } from '@guebbit/javascript-library';
 import InclinedButton from "@/components/basics/buttons/InclinedButton.vue";
 import vrmetagamesLogo from "@/assets/svg/logo/logo.svg?component";
 import { defaultUserAvatarSrc } from "@/resources/constants";

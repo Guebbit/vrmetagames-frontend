@@ -3,7 +3,7 @@ import { useStore } from "@/store";
 import dayjs from "dayjs";
 import useTimeHelpers from "@/resources/composables/useTimeHelpers";
 import { scheduleMap } from "@/interfaces";
-import { timeToSeconds } from "guebbit-javascript-library";
+import { timeToSeconds } from "@guebbit/javascript-library";
 
 export interface scheduleTimeReadableMap {
     date: string

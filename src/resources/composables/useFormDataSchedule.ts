@@ -5,7 +5,7 @@ import useFormStructure, { formRules } from "@/resources/composables/useFormStru
 import * as yup from "yup";
 import dayjs, { type ManipulateType } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { timeToSeconds } from "guebbit-javascript-library";
+import { timeToSeconds } from "@guebbit/javascript-library";
 import useTimeHelpers from "@/resources/composables/useTimeHelpers";
 import { stationMap } from "@/interfaces";
 

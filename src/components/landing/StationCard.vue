@@ -58,7 +58,7 @@
 // https://vuejs.org/guide/reusability/composables.html#what-is-a-composable
 
 import { defineComponent } from "vue";
-import { secondsToTime } from "guebbit-javascript-library";
+import { secondsToTime } from "@guebbit/javascript-library";
 import { useI18n } from "vue-i18n";
 import dayjs from 'dayjs';
 

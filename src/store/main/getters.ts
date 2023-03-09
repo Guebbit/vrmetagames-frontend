@@ -1,6 +1,6 @@
 import { GetterTree } from 'vuex';
 import { stateRootMap, stateMainMap } from "@/interfaces";
-import { timeToSeconds } from "guebbit-javascript-library";
+import { timeToSeconds } from "@guebbit/javascript-library";
 
 export default {
 

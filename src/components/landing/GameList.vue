@@ -59,7 +59,7 @@ import { computed, ref, defineProps } from "vue";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
 
-import BookCard from "guebbit-vue-library/src/components/cards/BookCard.vue";
+import { BookCard } from "@guebbit/vue-library";
 import type { gameMap } from '@/interfaces';
 
 import { Autoplay, Scrollbar } from 'swiper';

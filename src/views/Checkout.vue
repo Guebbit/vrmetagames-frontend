@@ -11,7 +11,7 @@
                     <v-card-text>
                         <v-list>
                             <v-list-item>
-								<p class="simple-icon-text">
+								<p class="simple-text-icon">
 									<font-awesome-icon size="2x" class="text-secondary" :icon="['fas', 'wallet']" />
 									<span class="text-h5">{{ userInfoWalletDuration }}</span>
 								</p>
@@ -24,7 +24,7 @@
                 </v-card>
 
 				<v-card class="mb-4 pricings-card">
-					<v-card-text style="font-size: 1.2em">
+					<v-card-text>
 						<v-list>
 							<v-list-item>
 								{{ t('checkout-page.prices-description-1') }}
@@ -34,13 +34,13 @@
 							</v-list-item>
 							<v-list-item class="pricings-list">
 								<p class="my-4">
-									<b class="text-secondary" style="display: inline-block; min-width: 80px">1 ora: </b> <span>10€</span>
+									<b class="text-secondary d-inline-block min-width-p80">1 ora: </b> <span>10€</span>
 								</p>
 								<p class="my-4">
-									<b class="text-secondary" style="display: inline-block; min-width: 80px">5 ore: </b> <span>40€<small class="ml-3" style="opacity: 0.25;"><s>50€</s></small></span>
+									<b class="text-secondary d-inline-block min-width-p80">5 ore: </b> <span>40€<small class="ml-3 opacity-25"><s>50€</s></small></span>
 								</p>
 								<p class="my-4">
-									<b class="text-secondary" style="display: inline-block; min-width: 80px">10 ore: </b> <span>50€<small class="ml-3" style="opacity: 0.25;"><s>100€</s></small></span>
+									<b class="text-secondary d-inline-block min-width-p80">10 ore: </b> <span>50€<small class="ml-3 opacity-25"><s>100€</s></small></span>
 								</p>
 								<!--
 								TODO fare bene
@@ -482,6 +482,12 @@ const fillWalletUntilDiscountLabel = computed<string>(() => {
             font-size: 1.2em;
         }
     }
+
+	.user-info-section{
+		.pricings-card{
+			font-size: 1.2em;
+		}
+	}
 
     // ORDER
     @include media-mobile(){

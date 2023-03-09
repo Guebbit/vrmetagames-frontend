@@ -1,6 +1,6 @@
 import { useStore } from "@/store";
 import { computed, onBeforeMount, toRefs } from "vue";
-import { getUUID } from "guebbit-javascript-library";
+import { getUUID } from "@guebbit/javascript-library";
 
 export interface itemStructureSettingsMap {
   defaultLoading?: boolean

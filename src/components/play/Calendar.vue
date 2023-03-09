@@ -56,7 +56,7 @@ import {
     getUUID,
     rangeOverlaps,
 	arrayColumns
-} from "guebbit-javascript-library";
+} from "@guebbit/javascript-library";
 
 import '@fullcalendar/core/vdom';   // solves problem with Vite
 import FullCalendar from '@fullcalendar/vue3';

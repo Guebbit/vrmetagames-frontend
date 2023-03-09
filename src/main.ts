@@ -4,7 +4,7 @@ import router from "./router";
 import { store, key } from "./store";
 import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
-import { i18n } from "./plugins/i18n"
+import { i18n } from "./plugins/i18n";
 
 // CSS
 import "vuetify/styles";

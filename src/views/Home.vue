@@ -340,7 +340,7 @@
                         :key="'quote-list-item-' + index"
                     >
                         <div class="d-flex fill-height justify-center align-center">
-                            <blockquote class="great-blockquote">
+                            <blockquote class="blockquote-great">
                                 <p>{{ text }}</p>
                                 <cite>{{ author }}</cite>
                             </blockquote>
@@ -518,7 +518,7 @@ import { ref, computed, onMounted, toRefs } from "vue";
 import { useTheme } from "vuetify";
 import { useI18n } from "vue-i18n";
 import { useStore } from "@/store";
-import { scripts } from 'guebbit-javascript-library';
+import { scripts } from '@guebbit/javascript-library';
 
 // Components
 import Panel from "guebbit-vue-library/src/components/blocks/Panel.vue";
@@ -674,7 +674,7 @@ onMounted(() => {
     }
 
     .quote-section{
-        .great-blockquote{
+        .blockquote-great{
             max-width: 500px;
         }
     }

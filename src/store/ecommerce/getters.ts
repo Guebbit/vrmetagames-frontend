@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { arrayColumns, rangeOverlaps } from "guebbit-javascript-library";
+import { arrayColumns, rangeOverlaps } from "@guebbit/javascript-library";
 import useTimeHelpers from "@/resources/composables/useTimeHelpers";
 import { i18n } from "@/plugins/i18n";
 

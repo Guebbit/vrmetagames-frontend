@@ -1,23 +1,22 @@
 // TODO OPTIMIZE
 @import 'main/global';
 @import 'main/transitions';
-@import 'atoms/ButtonParallelogram';
-@import 'atoms/AnimationLoadingAlexWarnesRotatingSquares';
-@import 'guebbit-scss-library/components/atoms/ButtonBrandIcon';
-@import 'guebbit-scss-library/components/atoms/SimpleList';
-@import 'guebbit-scss-library/components/atoms/SimpleBlockquote';
-@import 'guebbit-scss-library/components/atoms/GreatBlockquote';
-@import 'guebbit-scss-library/components/atoms/HoverLineHighlight';
-@import 'guebbit-scss-library/components/atoms/StatusCircle';
-@import "guebbit-scss-library/components/molecules/TypographyPanel";
+@import '@guebbit/scss-library/components/atoms/buttons/ButtonParallelogram';
+@import '@guebbit/scss-library/components/atoms/buttons/ButtonBrandIcon';
+@import '@guebbit/scss-library/components/atoms/typography/SimpleIconText';
+@import '@guebbit/scss-library/components/atoms/lists/SimpleList';
+@import '@guebbit/scss-library/components/atoms/cards/BlockquoteSimple';
+@import '@guebbit/scss-library/components/atoms/cards/BlockquoteGreat';
+@import '@guebbit/scss-library/components/atoms/highlights/HoverLineHighlight';
+@import '@guebbit/scss-library/components/atoms/drawings/StatusCircle';
+@import "@guebbit/scss-library/components/molecules/panels/TypographyPanel";
+@import '@guebbit/scss-library/components/atoms/animations/ProgressionAlexWarnesRotatingSquares';
+
 @import 'fixes/SwiperJSHelper';
 // TODO TEMPORARY: hope that vuetify make this easily modifiable
 @import 'fixes/VuetifyBetaFixes';
 @import 'fixes/elevation';
 @import 'fixes/svgstyle';
-
-// TODO guebbit (magari ancora meno di atom?)
-@import 'atoms/SimpleIconText';
 
 
 @include guebbit-include-brand-colors;
@@ -57,43 +56,22 @@
     }
 }
 
-@include guebbit-include-flex-gap((
-        (6, 6px),
-        (12, 12px),
-        (24, 24px),
-));
+@include guebbit-include-instruction("flex-gap", (
+    (6, 6px),
+    (12, 12px),
+    (24, 24px),
+), true);
 
-// TODO guebbit-include
-.opacity-0{
-    opacity: 0;
-}
-.opacity-25 {
-    opacity: 0.25;
-};
-.opacity-50 {
-    opacity: 0.5;
-};
-.opacity-75 {
-    opacity: 0.75;
-};
-.opacity-100 {
-    opacity: 1;
-}
-.min-width-30 {
-    min-width: 30px;
-}
-.min-width-50 {
-    min-width: 50px;
-}
-.min-width-100 {
-    min-width: 100px;
-}
-// TODO guebbit-include
+@include guebbit-include-instruction("opacity", (
+    (25, 0.25),
+    (50, 0.5),
+), true);
 
 
-
-
-
+@include guebbit-include-instruction("min-width", (
+    (p30, 30px),
+    (p80, 80px),
+), true);
 
 .hero-panel-content{
     padding: 24px;
@@ -151,39 +129,39 @@
 
 
 .facebook-color{
-    color: g-color-get('socials', 'facebook') !important;
+    color: guebbit-color-get('socials', 'facebook') !important;
     &:before{
-        background: g-color-get('socials', 'facebook') !important;
+        background: guebbit-color-get('socials', 'facebook') !important;
     }
 }
 .instagram-color{
-    color: g-color-get('socials', 'instagram-fallback') !important;
+    color: guebbit-color-get('socials', 'instagram-fallback') !important;
     &:before{
-        background: g-color-get('socials', 'instagram') !important;
+        background: guebbit-color-get('socials', 'instagram') !important;
     }
 }
 .tiktok-color{
-    color: g-color-get('socials', 'tiktok-fallback') !important;
+    color: guebbit-color-get('socials', 'tiktok-fallback') !important;
     &:before{
-        background: g-color-get('socials', 'tiktok') !important;
+        background: guebbit-color-get('socials', 'tiktok') !important;
     }
 }
 .youtube-color{
-    color: g-color-get('socials', 'youtube') !important;
+    color: guebbit-color-get('socials', 'youtube') !important;
     &:before{
-        background: g-color-get('socials', 'youtube') !important;
+        background: guebbit-color-get('socials', 'youtube') !important;
     }
 }
 .whatsapp-color{
-    color: g-color-get('socials', 'whatsapp') !important;
+    color: guebbit-color-get('socials', 'whatsapp') !important;
     &:before{
-        background: g-color-get('socials', 'whatsapp') !important;
+        background: guebbit-color-get('socials', 'whatsapp') !important;
     }
 }
 .telegram-color{
-    color: g-color-get('socials', 'telegram') !important;
+    color: guebbit-color-get('socials', 'telegram') !important;
     &:before{
-        background: g-color-get('socials', 'telegram') !important;
+        background: guebbit-color-get('socials', 'telegram') !important;
     }
 }
 

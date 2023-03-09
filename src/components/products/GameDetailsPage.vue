@@ -3,6 +3,7 @@
 		v-if="selectedRecord"
 		:primary="themeColors.secondary"
 		:secondary="themeColors.primary"
+		:shadow="'#ff00ff'"
 	>
 		<template #background >
 			<v-img
@@ -118,7 +119,7 @@
 									v-show="item.icon"
 									:icon="item.icon"
 									size="xl"
-									class="min-width-30 mr-2"
+									class="min-width-p30 mr-2"
 								/>
 								{{ item.label }}
 							</div>
@@ -130,7 +131,7 @@
 									<font-awesome-icon
 										:icon="isFilled ? item.iconFill : item.iconEmpty"
 										size="xl"
-										class="min-width-30"
+										class="min-width-p30"
 										:class="{
 												'opacity-50': !isFilled,
 											}"
@@ -226,7 +227,6 @@ import {
 import {
 	faCircle, faHandBackFist
 } from "@fortawesome/free-regular-svg-icons"
-
 
 library.add(
 	faUser, faUsers, faUserGroup, faGlobe, faPeopleRoof, faPlay, faArrowRight,
@@ -335,7 +335,7 @@ const gameRatingsList = [
 	.panel-info-icons{
 		font-size: 0.9em;
 		margin-top: 24px;
-		.icon-text-resources{
+		.simple-text-icon{
 			color: rgb(var(--v-theme-on-surface));
 			max-width: 6em;
 		}

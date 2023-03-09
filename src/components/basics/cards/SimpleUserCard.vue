@@ -67,7 +67,6 @@ const props = defineProps({
 $simple-user-card-background: #ffffff !default;
 $simple-user-card-color: #303336 !default;
 
-
 .simple-user-card {
     position: relative;
     color: $simple-user-card-color;

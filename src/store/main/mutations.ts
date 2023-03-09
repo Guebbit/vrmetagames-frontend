@@ -1,4 +1,4 @@
-import { getUUID } from "guebbit-javascript-library";
+import { getUUID } from "@guebbit/javascript-library";
 import type { stateMainMap, toastMap } from "@/interfaces";
 
 export default {

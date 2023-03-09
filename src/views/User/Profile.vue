@@ -451,7 +451,7 @@
 						<v-spacer></v-spacer>
 					</v-toolbar>
 					<div v-show="scheduleList.length < 1">
-						<h3 class="simple-icon-text d-inline-flex">
+						<h3 class="simple-text-icon d-inline-flex">
 							<font-awesome-icon :icon="['fas', 'circle-info']" />
 							{{ t('profile-page.schedule-list-empty') }}
 						</h3>

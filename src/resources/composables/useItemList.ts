@@ -1,7 +1,7 @@
 import { computed, ref, isReadonly, type Ref  } from "vue";
 import type { LocationQuery, LocationQueryValue } from "vue-router";
-import { search, sort, getJSON } from "guebbit-javascript-library"
-import type { filterAnyMap, logicGatesType, sortParameterType } from "guebbit-javascript-library";
+import { search, sort, getJSON } from "@guebbit/javascript-library"
+import type { filterAnyMap, logicGatesType, sortParameterType } from "@guebbit/javascript-library";
 import useItemDetails from "@/resources/composables/useItemDetails";
 import type { itemStructureSettingsMap } from "@/resources/composables/useItemStructure";
 import type { AnyRef } from "@/interfaces";
@@ -100,7 +100,7 @@ export default<T>(
     function resetFilters(){
         if(isReadonly(filters))
             return;
-        // TODO fare una funzione su guebbit-javascript-library che naviga i filterAnyMap e restituisce una copia vuota
+        // TODO fare una funzione su @guebbit/javascript-library che naviga i filterAnyMap e restituisce una copia vuota
         // (filters as Ref<filterAnyMap[]>).value = [];
     }
 

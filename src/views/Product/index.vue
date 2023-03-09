@@ -462,7 +462,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useTheme } from "vuetify";
 import { useStore } from "@/store";
 import { useI18n } from "vue-i18n";
-import type { sortParameterType, sortParameterOrderType, filterRulesMap, filterGroupMap, filterAnyMap } from "guebbit-javascript-library";
+import type { sortParameterType, sortParameterOrderType, filterRulesMap, filterGroupMap, filterAnyMap } from "@guebbit/javascript-library";
 
 import useItemList from "@/resources/composables/useItemList";
 import GameDetailsPage from "@/components/products/GameDetailsPage.vue";
@@ -645,7 +645,7 @@ const filterableParametersList = [
 ]
 
 /**
- * Filter rules (for searchRecords of guebbit-javascript-library)
+ * Filter rules (for searchRecords of @guebbit/javascript-library)
  * General logic: AND
  * Target logic: default OR, can be And
  * So every rule in the array has to be true

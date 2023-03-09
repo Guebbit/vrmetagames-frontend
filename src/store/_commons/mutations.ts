@@ -1,4 +1,4 @@
-import { createNestedProperty, removeNestedProperty } from "guebbit-javascript-library";
+import { createNestedProperty, removeNestedProperty } from "@guebbit/javascript-library";
 
 /**
  *

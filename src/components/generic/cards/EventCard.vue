@@ -9,17 +9,17 @@
         :background="themeColors.surface"
     >
         <div class="card-main-info">
-            <div class="simple-icon-text">
+            <div class="simple-text-icon">
                 <font-awesome-icon :icon="['fas', 'clock']" />
                 {{ scheduleReadable?.hourStart }}
                 <font-awesome-icon :icon="['fas', 'arrow-right-long']" class="text-white" />
                 {{ scheduleReadable?.hourEnd }}
             </div>
-            <div class="simple-icon-text">
+            <div class="simple-text-icon">
                 <font-awesome-icon :icon="['fas', 'play']" />
                 {{ labelDuration }}
             </div>
-            <div class="simple-icon-text">
+            <div class="simple-text-icon">
                 <font-awesome-icon :icon="['fas', 'coins']" />
                 {{ scheduleReadable?.cost }} €
             </div>

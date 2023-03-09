@@ -1,6 +1,6 @@
 <template>
 	<span
-		class="icon-text-resources"
+		class="simple-text-icon"
 		:class="{
 			'long-text': label.length > 10
 		}"
@@ -34,9 +34,7 @@ const props = defineProps({
 </script>
 
 <style lang="scss">
-@import "@/assets/scss/atoms/IconTextResources.scss";
-
-.icon-text-resources {
+.simple-text-icon {
 	margin: 12px;
 	.icon{
 		color: inherit;

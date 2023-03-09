@@ -2,13 +2,13 @@
     <!-- TODO generico, rimuovere vuetify -->
     <Panel
         class="product-comic-panel"
-        v-bind="$props"
         centered
         :backgroundImage="backgroundImage"
         :style="{
             '--product-comic-panel-primary': primary,
             '--product-comic-panel-secondary': secondary,
         }"
+		v-bind="$props"
     >
         <!-- TODO background => background || backgroundMedia -->
         <template #background >

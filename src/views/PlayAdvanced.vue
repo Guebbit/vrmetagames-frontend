@@ -146,7 +146,7 @@
 							-->
 						</v-toolbar>
 						<div class="mb-5 text-center" v-show="scheduleListCartUser.length < 1">
-							<h3 class="simple-icon-text d-inline-flex">
+							<h3 class="simple-text-icon d-inline-flex">
 								<font-awesome-icon :icon="['fas', 'circle-info']" />
 								{{ t('play-page.schedule-list-empty') }}
 							</h3>
@@ -184,7 +184,7 @@
 							<v-spacer></v-spacer>
 						</v-toolbar>
 						<div class="mb-5 text-center" v-show="scheduleListIncomingUser.length < 1">
-							<h3 class="simple-icon-text d-inline-flex">
+							<h3 class="simple-text-icon d-inline-flex">
 								<font-awesome-icon :icon="['fas', 'circle-info']" />
 								{{ t('play-page.schedule-list-empty') }}
 							</h3>

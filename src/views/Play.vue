@@ -270,15 +270,15 @@
 								</div>
 
 								<!-- TODO wallet + clock icon + money-bill -->
-								<p class="simple-icon-text">
+								<p class="simple-text-icon">
 									<font-awesome-icon size="2x" class="text-secondary" :icon="['fas', 'wallet']" />
 									<span class="text-h5">{{ userInfoWalletDuration }} <small>({{ userInfoWalletRemainingDuration }} rimanenti dopo il pagamento)</small></span>
 								</p>
-								<p class="simple-icon-text">
+								<p class="simple-text-icon">
 									<font-awesome-icon size="2x" class="text-secondary" :icon="['fas', 'clock']" />
 									<span class="text-h5">{{ scheduleCartDuration }} </span>
 								</p>
-								<p class="simple-icon-text">
+								<p class="simple-text-icon">
 									<font-awesome-icon size="2x" class="text-secondary" :icon="['fas', 'money-bill']" />
 									<span class="text-h5">{{ scheduleCartFinalCost }} € <small><s>{{ scheduleCartTotalCost }} €</s></small></span>
 								</p>

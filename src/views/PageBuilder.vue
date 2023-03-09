@@ -30,8 +30,6 @@ import type { pageBuilderMap } from "@/resources/composables/usePageBuilder";
 const { global: { current: { value: { colors: themeColors } } } } = useTheme();
 const { locale, t } = useI18n();
 
-console.log("GGGGGGGGGG", useI18n())
-
 const props = defineProps({
     uri: {
         type: String,

@@ -1,6 +1,6 @@
 import { randomColorList, imagesUrl } from "@/resources/constants";
 import { shuffle } from "lodash";
-import { getUUID } from "guebbit-javascript-library";
+import { getUUID } from "@guebbit/javascript-library";
 
 import type { ActionContext } from "vuex";
 import type { stateEcommerceMap, stateRootMap, scheduleMap, sendScheduleRequestMap } from "@/interfaces";
@@ -212,18 +212,21 @@ const mockServerGames = [
             "22"
         ],
         image: {
+            type: "image",
             src: imagesUrl + 'games/walkabout-mini-golf.jpg',
             thumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf.jpg',
             title: 'walkabout mini golf sport game',
             alt: 'image for the game walkabout mini golf'
         },
         coverFront: {
+            type: "image",
             src: imagesUrl + 'games/walkabout-mini-golf-cover.jpg',
             thumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-cover.jpg',
             title: 'walkabout mini golf sport game cover',
             alt: 'cover for the game walkabout mini golf'
         },
         coverSpine: {
+            type: "image",
             src: imagesUrl + 'games/walkabout-mini-golf-spine.jpg',
             thumbnail: imagesUrl + 'games/thumbnails/walkabout-mini-golf-spine.jpg',
             role: 'presentation'
@@ -246,12 +249,15 @@ const mockServerGames = [
             "11"
         ],
         image: {
+            type: "image",
             src: imagesUrl + 'games/acron-attack-of-the-squirrels.jpg'
         },
         coverFront: {
+            type: "image",
             src: imagesUrl + 'games/acron-attack-of-the-squirrels-cover.jpg'
         },
         coverSpine: {
+            type: "image",
             src: imagesUrl + 'games/acron-attack-of-the-squirrels-spine.jpg'
         },
         maxPlayersOffline: 8,
@@ -288,12 +294,15 @@ const mockServerGames = [
             "22"
         ],
         image: {
+            type: "image",
             src: imagesUrl + 'games/blaston.jpg'
         },
         coverFront: {
+            type: "image",
             src: imagesUrl + 'games/blaston-cover.jpg'
         },
         coverSpine: {
+            type: "image",
             src: imagesUrl + 'games/blaston-spine.jpg'
         },
         maxPlayersOffline: 1,
@@ -545,12 +554,15 @@ const mockServerGames = [
             "16"
         ],
         image: {
+            type: "image",
             src: imagesUrl + 'games/zenith-the-last-city.jpg',
         },
         coverFront: {
+            type: "image",
             src: imagesUrl + 'games/zenith-the-last-city-cover.jpg',
         },
         coverSpine: {
+            type: "image",
             src: imagesUrl + 'games/zenith-the-last-city-spine.jpg',
         },
         maxPlayersOffline: 1,
@@ -563,7 +575,47 @@ const mockServerGames = [
             {
                 type: "youtube",
                 src: "https://www.youtube.com/embed/oPEho2Zb_JM?playlist=oPEho2Zb_JM&controls=0&showinfo=0&rel=0&autoplay=1&loop=1&mute=1",
-                title: "Zenith: The Last City Trailer"
+                title: "Zenith: The Last City Trailer",
+                role: "presentation"
+            },
+            {
+                type: "youtube",
+                src: "https://www.youtube.com/embed/oPEho2Zb_JM?playlist=oPEho2Zb_JM&controls=0&showinfo=0&rel=0&autoplay=1&loop=1&mute=1",
+            },
+            {
+                type: "video",
+                src: "https://cdn.virtual-room.com/app/uploads/2018/12/teaser-home-virtualroom.mp4",
+                thumbnail: "http://placekitten.com/200/200"
+            },
+            {
+                type: "image",
+                src: "http://placekitten.com/1400/1400",
+                thumbnail: "http://placekitten.com/100/100"
+            },
+            {
+                type: "image",
+                src: "http://placekitten.com/1300/1300",
+                thumbnail: "http://placekitten.com/100/100"
+            },
+            {
+                type: "image",
+                src: "http://placekitten.com/1200/1200",
+                thumbnail: "http://placekitten.com/100/100"
+            },
+            {
+                type: "image",
+                src: "http://placekitten.com/1500/1500",
+                thumbnail: "http://placekitten.com/100/100"
+            },
+            {
+                type: "image",
+                src: "http://placekitten.com/1600/1000",
+                thumbnail: "http://placekitten.com/100/100"
+            },
+            {
+                type: "image",
+                src: "http://placekitten.com/1000/1600",
+                thumbnail: "http://placekitten.com/100/100"
             }
         ],
         lang: "it",
