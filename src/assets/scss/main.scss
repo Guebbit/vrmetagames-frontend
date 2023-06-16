@@ -3,14 +3,14 @@
 @import 'main/transitions';
 @import '@guebbit/scss-library/components/atoms/buttons/ButtonParallelogram';
 @import '@guebbit/scss-library/components/atoms/buttons/ButtonBrandIcon';
-@import '@guebbit/scss-library/components/atoms/typography/SimpleIconText';
+@import '@guebbit/scss-library/components/atoms/typography/SimpleTextIcon';
 @import '@guebbit/scss-library/components/atoms/lists/SimpleList';
 @import '@guebbit/scss-library/components/atoms/cards/BlockquoteSimple';
 @import '@guebbit/scss-library/components/atoms/cards/BlockquoteGreat';
 @import '@guebbit/scss-library/components/atoms/highlights/HoverLineHighlight';
-@import '@guebbit/scss-library/components/atoms/drawings/StatusCircle';
+@import '@guebbit/scss-library/components/atoms/animations/StatusCircle';
 @import "@guebbit/scss-library/components/molecules/panels/TypographyPanel";
-@import '@guebbit/scss-library/components/atoms/animations/ProgressionAlexWarnesRotatingSquares';
+@import '@guebbit/scss-library/components/atoms/animations/AlexWarnesRotatingSquares';
 
 @import 'fixes/SwiperJSHelper';
 // TODO TEMPORARY: hope that vuetify make this easily modifiable

@@ -13,7 +13,7 @@
 				v-show="loading.includes('main')"
 				class="theme-app-loading bg-background"
             >
-				<div class="animation-loading-alex-warnes rotating-squares">
+				<div class="alex-warnes-progressions rotating-squares">
 					<div></div>
 					<div></div>
 				</div>
@@ -22,7 +22,7 @@
 		<!-- Minor loading -->
 		<div
 			v-show="!loading.includes('main') && loading.length > 0"
-			class="theme-page-loading animation-loading-alex-warnes rotating-squares"
+			class="theme-page-loading alex-warnes-progressions rotating-squares"
 		>
 			<div></div>
 			<div></div>
